@@ -1,0 +1,15 @@
+# depslib dependency file v1.0
+1221510000 source:c:\documents\projects\ds2keyserver.current\ds2key.server\ds2key\main.c
+	<stdio.h>
+	<winsock.h>
+	<sys/types.h>
+	<string.h>
+	<sys/socket.h>
+	<netinet/in.h>
+	<arpa/inet.h>
+	<netdb.h>
+	<unistd.h>
+	"main.h"
+
+1221509980 c:\documents\projects\ds2keyserver.current\ds2key.server\ds2key\main.h
+
