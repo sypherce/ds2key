@@ -34,10 +34,10 @@
 		<Linker>
 			<Add library="wsock32" />
 		</Linker>
-		<Unit filename="main.c">
+		<Unit filename="DS2Key\main.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="main.h" />
+		<Unit filename="DS2Key\main.h" />
 		<Extensions>
 			<code_completion />
 			<debugger />

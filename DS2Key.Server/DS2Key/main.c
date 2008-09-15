@@ -18,6 +18,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <stdio.h>
 #ifdef WIN32
+#ifdef WINVER
+#undef WINVER
+#endif
+#define WINVER 0x0500
+#include <windows.h>
 #include <winsock.h>
 #define stricmp _stricmp
 #define strnicmp _strnicmp
@@ -34,6 +39,37 @@ typedef unsigned char bool;
 #endif//WIN32
 #include "main.h"
 
+void doInput(INPUT *input, unsigned int type, unsigned int key, bool state)
+{
+	input->type = type;
+	if(input->type == INPUT_KEYBOARD)
+	{
+		input->ki.wVk = key;
+		input->ki.dwFlags = KEYEVENTF_SCANCODE;
+		if(state)
+			input->ki.dwFlags |= KEYEVENTF_KEYUP;
+		input->ki.wScan = MapVirtualKey(key, 0);
+		input->ki.time = 0;
+		input->ki.dwExtraInfo = 0;
+	}
+	else if(input->type == INPUT_MOUSE)
+	{
+		input->mi.dx = 65535*(key&0xff) / 256;
+		input->mi.dy = 65535*((key >> 8)&0xff) / 192;
+		input->mi.dwFlags = MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE;
+		//click, not working yet
+		/*if(state)
+		{
+			printf("state");
+			input->mi.dwFlags |= MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTDOWN;
+		}*/
+		input->mi.dwExtraInfo = 0;
+		input->mi.mouseData = 0;
+		input->mi.time = 0;
+	}
+	SendInput(1,(LPINPUT)input,sizeof(INPUT));
+}
+
 int main(int argc, char *argv[])
 {
 	int sd, rc, n, cliLen, serverPort;
@@ -41,57 +77,89 @@ int main(int argc, char *argv[])
 	char msg[MAX_MSG];
 #ifdef WIN32
 	WSADATA wsaData;
+	INPUT input;
+#else//WIN32
 #endif//WIN32
+	unsigned int profile[1][11];
+	enum pKeys{pUp, pDown, pLeft, pRight, pA, pB, pX, pY, pL, pR, pStart, pSelect};
+	profile[0][pUp] = VK_UP;
+	profile[0][pDown] = VK_DOWN;
+	profile[0][pLeft] = VK_LEFT;
+	profile[0][pRight] = VK_RIGHT;
+	profile[0][pA] = 'A';
+	profile[0][pB] = 'B';
+	profile[0][pX] = 'X';
+	profile[0][pY] = 'Y';
+	profile[0][pL] = 'L';
+	profile[0][pR] = 'R';
+	profile[0][pStart] = VK_RETURN;
+	profile[0][pSelect] = VK_SELECT;
+	profile[1][pUp] = 'Q';
+	profile[1][pDown] = 'W';
+	profile[1][pLeft] = 'E';
+	profile[1][pRight] = 'T';
+	profile[1][pA] = 'U';
+	profile[1][pB] = 'I';
+	profile[1][pX] = 'O';
+	profile[1][pY] = 'P';
+	profile[1][pL] = 'S';
+	profile[1][pR] = 'D';
+	profile[1][pStart] = 'F';
+	profile[1][pSelect] = 'G';
 
-	if(argc > 1)
-	{
-		unsigned int i;
-		unsigned int strlenargv1 = strlen(argv[1]);
-		for(i = 0; i < strlenargv1; i++)
+	{//read Arguments
+		if(argc > 1)
 		{
-			if(argv[1][i] < '0' || argv[1][i] > '9' || strlenargv1 > 5)
+			unsigned int i;
+			unsigned int strlenargv1 = strlen(argv[1]);
+			for(i = 0; i < strlenargv1; i++)
 			{
-				printf("Usage: %s [port]\n", argv[0]);
-				exit(1);
+				if(argv[1][i] < '0' || argv[1][i] > '9' || strlenargv1 > 5)
+				{
+					printf("Usage: %s [port]\n", argv[0]);
+					exit(1);
+				}
 			}
+			serverPort = atoi(argv[1]);
 		}
-		serverPort = atoi(argv[1]);
-	}
-	else
-	{
-		serverPort = LOCAL_SERVER_PORT;
-	}
+		else
+		{
+			serverPort = LOCAL_SERVER_PORT;
+		}
 
-	if(serverPort <= 0)
-	{
-		fprintf(stderr,"%i: bad port number\n", serverPort);
-		exit(1);
-	}
+		if(serverPort <= 0)
+		{
+			fprintf(stderr,"%i: bad port number\n", serverPort);
+			exit(1);
+		}
+	}//read Arguments
 
-#ifdef WIN32
-	WSAStartup(0x0202, &wsaData); /*windows socket startup */
-#endif//WIN32
+	{//setup connections
+	#ifdef WIN32
+		WSAStartup(0x0202, &wsaData); /*windows socket startup */
+	#endif//WIN32
 
-	/* socket creation */
-	sd=socket(AF_INET, SOCK_DGRAM, 0);
-	if(sd < 0)
-	{
-		fprintf(stderr,"%s: cannot open socket\n", argv[0]);
-		exit(1);
-	}
+		/* socket creation */
+		sd=socket(AF_INET, SOCK_DGRAM, 0);
+		if(sd < 0)
+		{
+			fprintf(stderr,"%s: cannot open socket\n", argv[0]);
+			exit(1);
+		}
 
-	/* bind local server port */
-	servAddr.sin_family = AF_INET;
-	servAddr.sin_addr.s_addr = htonl(INADDR_ANY);
-	servAddr.sin_port = htons((unsigned short)serverPort);
-	rc = bind(sd, (struct sockaddr*) &servAddr, sizeof(servAddr));
-	if(rc < 0)
-	{
-		fprintf(stderr,"%s: cannot bind port number %d\n", argv[0], serverPort);
-		exit(1);
-	}
+		/* bind local server port */
+		servAddr.sin_family = AF_INET;
+		servAddr.sin_addr.s_addr = htonl(INADDR_ANY);
+		servAddr.sin_port = htons((unsigned short)serverPort);
+		rc = bind(sd, (struct sockaddr*) &servAddr, sizeof(servAddr));
+		if(rc < 0)
+		{
+			fprintf(stderr,"%s: cannot bind port number %d\n", argv[0], serverPort);
+			exit(1);
+		}
 
-	printf("%s: waiting for data on port UDP %u\n", argv[0], serverPort);
+		printf("%s: waiting for data on port UDP %u\n", argv[0], serverPort);
+	}//setup connections
 
 	/* server infinite loop */
 	while(1)
@@ -110,55 +178,129 @@ int main(int argc, char *argv[])
 		}
 
 		if(!strnicmp(msg, "/p", 2	))
+		{
 			printf("%s: profile set to %s\n", msg, &msg[2]);
+		}
 		else if(!stricmp(msg, "/dl0"))
+		{
+			doInput(&input, INPUT_KEYBOARD, profile[0][pLeft], 0);
 			printf("%s: left button pressed\n", msg);
+		}
 		else if(!stricmp(msg, "/dl1"))
+		{
+			doInput(&input, INPUT_KEYBOARD, profile[0][pLeft], 1);
 			printf("%s: left button released\n", msg);
+		}
 		else if(!stricmp(msg, "/dr0"))
+		{
+			doInput(&input, INPUT_KEYBOARD, profile[0][pRight], 0);
 			printf("%s: right button pressed\n", msg);
+		}
 		else if(!stricmp(msg, "/dr1"))
+		{
+			doInput(&input, INPUT_KEYBOARD, profile[0][pRight], 1);
 			printf("%s: right button released\n", msg);
+		}
 		else if(!stricmp(msg, "/du0"))
+		{
+			doInput(&input, INPUT_KEYBOARD, profile[0][pUp], 0);
 			printf("%s: up button pressed\n", msg);
+		}
 		else if(!stricmp(msg, "/du1"))
+		{
+			doInput(&input, INPUT_KEYBOARD, profile[0][pUp], 1);
 			printf("%s: up button released\n", msg);
+		}
 		else if(!stricmp(msg, "/dd0"))
+		{
+			doInput(&input, INPUT_KEYBOARD, profile[0][pDown], 0);
 			printf("%s: down button pressed\n", msg);
+		}
 		else if(!stricmp(msg, "/dd1"))
+		{
+			doInput(&input, INPUT_KEYBOARD, profile[0][pDown], 1);
 			printf("%s: down button released\n", msg);
+		}
 		else if(!stricmp(msg, "/ba0"))
+		{
+			doInput(&input, INPUT_KEYBOARD, profile[0][pA], 0);
 			printf("%s: a button pressed\n", msg);
+		}
 		else if(!stricmp(msg, "/ba1"))
+		{
+			doInput(&input, INPUT_KEYBOARD, profile[0][pA], 1);
 			printf("%s: a button released\n", msg);
+		}
 		else if(!stricmp(msg, "/bb0"))
+		{
+			doInput(&input, INPUT_KEYBOARD, profile[0][pB], 0);
 			printf("%s: b button pressed\n", msg);
+		}
 		else if(!stricmp(msg, "/bb1"))
+		{
+			doInput(&input, INPUT_KEYBOARD, profile[0][pB], 1);
 			printf("%s: b button released\n", msg);
+		}
 		else if(!stricmp(msg, "/bx0"))
+		{
+			doInput(&input, INPUT_KEYBOARD, profile[0][pX], 0);
 			printf("%s: x button pressed\n", msg);
+		}
 		else if(!stricmp(msg, "/bx1"))
+		{
+			doInput(&input, INPUT_KEYBOARD, profile[0][pX], 1);
 			printf("%s: x button released\n", msg);
+		}
 		else if(!stricmp(msg, "/by0"))
+		{
+			doInput(&input, INPUT_KEYBOARD, profile[0][pY], 0);
 			printf("%s: y button pressed\n", msg);
+		}
 		else if(!stricmp(msg, "/by1"))
+		{
+			doInput(&input, INPUT_KEYBOARD, profile[0][pY], 1);
 			printf("%s: y button released\n", msg);
+		}
 		else if(!stricmp(msg, "/bl0"))
+		{
+			doInput(&input, INPUT_KEYBOARD, profile[0][pL], 0);
 			printf("%s: l button pressed\n", msg);
+		}
 		else if(!stricmp(msg, "/bl1"))
+		{
+			doInput(&input, INPUT_KEYBOARD, profile[0][pL], 1);
 			printf("%s: l button released\n", msg);
+		}
 		else if(!stricmp(msg, "/br0"))
+		{
+			doInput(&input, INPUT_KEYBOARD, profile[0][pR], 0);
 			printf("%s: r button pressed\n", msg);
+		}
 		else if(!stricmp(msg, "/br1"))
+		{
+			doInput(&input, INPUT_KEYBOARD, profile[0][pR], 1);
 			printf("%s: r button released\n", msg);
+		}
 		else if(!stricmp(msg, "/bt0"))
+		{
+			doInput(&input, INPUT_KEYBOARD, profile[0][pStart], 0);
 			printf("%s: start button pressed\n", msg);
+		}
 		else if(!stricmp(msg, "/bt1"))
+		{
+			doInput(&input, INPUT_KEYBOARD, profile[0][pStart], 1);
 			printf("%s: start button released\n", msg);
+		}
 		else if(!stricmp(msg, "/be0"))
+		{
+			doInput(&input, INPUT_KEYBOARD, profile[0][pSelect], 0);
 			printf("%s: select button pressed\n", msg);
+		}
 		else if(!stricmp(msg, "/be1"))
+		{
+			doInput(&input, INPUT_KEYBOARD, profile[0][pSelect], 1);
 			printf("%s: select button released\n", msg);
+		}
 		else if(!strnicmp(msg, "/m", 2))
 		{
 			char *xc = &msg[2];
@@ -178,6 +320,7 @@ int main(int argc, char *argv[])
 			zc--;
 			yc[0] = '.';
 			zc[0] = '.';
+			doInput(&input, INPUT_MOUSE, (y << 8) | x, 0);
 			if(z == 0)
 				printf("%s: touch screen pressed at %i, %i\n", msg, x, y);
 			else//z == 0
