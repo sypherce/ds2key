@@ -30,12 +30,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 typedef unsigned char bool;
 #else//WIN32
 #include <sys/types.h>
-#include <string.h> /* memset() */
+#include <string.h>//memset()
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
-#include <unistd.h> /* close() */
+#include <unistd.h>//close()
 #endif//WIN32
 #include "main.h"
 
@@ -58,11 +58,13 @@ void doInput(INPUT *input, unsigned int type, unsigned int key, bool state)
 		input->mi.dy = 65535*((key >> 8)&0xff) / 192;
 		input->mi.dwFlags = MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE;
 		//click, not working yet
-		/*if(state)
+		/*
+		if(state)
 		{
 			printf("state");
 			input->mi.dwFlags |= MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTDOWN;
-		}*/
+		}
+		*/
 		input->mi.dwExtraInfo = 0;
 		input->mi.mouseData = 0;
 		input->mi.time = 0;
@@ -144,10 +146,10 @@ int main(int argc, char *argv[])
 
 	{//setup connections
 	#ifdef WIN32
-		WSAStartup(0x0202, &wsaData); /*windows socket startup */
+		WSAStartup(0x0202, &wsaData);//windows socket startup
 	#endif//WIN32
 
-		/* socket creation */
+		//socket creation
 		sd=socket(AF_INET, SOCK_DGRAM, 0);
 		if(sd < 0)
 		{
@@ -155,7 +157,7 @@ int main(int argc, char *argv[])
 			exit(1);
 		}
 
-		/* bind local server port */
+		//bind local server port
 		servAddr.sin_family = AF_INET;
 		servAddr.sin_addr.s_addr = htonl(INADDR_ANY);
 		servAddr.sin_port = htons((unsigned short)serverPort);
@@ -169,13 +171,13 @@ int main(int argc, char *argv[])
 		printf("%s: waiting for data on port UDP %u\n", argv[0], serverPort);
 	}//setup connections
 
-	/* server infinite loop */
+	//server infinite loop
 	while(1)
 	{
-		/* init buffer */
+		//init buffer
 		memset(msg, 0x0, MAX_MSG);
 
-		/* receive message */
+		//receive message
 		cliLen = sizeof(cliAddr);
 		n = recvfrom(sd, msg, MAX_MSG, 0, (struct sockaddr*) &cliAddr, &cliLen);
 
@@ -371,14 +373,13 @@ int main(int argc, char *argv[])
 			doInput(&input, INPUT_MOUSE, (y << 8) | x, 0);
 			if(z == 0)
 				printf("%s: touch screen pressed at %i, %i\n", msg, x, y);
-			else//z == 0
+			else//z != 0
 				printf("%s: touch screen released at %i, %i\n", msg, x, y);
 		}
 		else
-		/* print received message */
-		printf("%s: undefined command\n", msg);
+			printf("%s: undefined command\n", msg);
 
-	}/* end of server infinite loop */
+	}//end of server infinite loop
 
 	return 0;
 }

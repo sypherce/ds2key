@@ -15,8 +15,8 @@ unsigned short int keysDownGH(unsigned char color)
 	else if(color == GH_GREEN)
 		return GH_Green(GH_keysDown);
 	else if(color == GH_ANY)
-		return GH_Any(GH_keysDown);		
-	//else
+		return GH_Any(GH_keysDown);	
+
 	return 0;
 }
 
@@ -32,7 +32,7 @@ unsigned short int keysHeldGH(unsigned char color)
 		return GH_Green(GH_keysHeld);
 	else if(color == GH_ANY)
 		return GH_Any(GH_keysHeld);		
-	//else
+
 	return 0;
 }
 unsigned short int keysUpGH(unsigned char color)
@@ -47,7 +47,7 @@ unsigned short int keysUpGH(unsigned char color)
 		return GH_Green(GH_keysUp);
 	else if(color == GH_ANY)
 		return GH_Any(GH_keysUp);		
-	//else
+
 	return 0;
 }
 
