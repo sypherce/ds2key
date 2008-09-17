@@ -60,6 +60,13 @@ void initGHPad(void)
 
 void updateGHPad(void)
 {
-	oldKeysGH = keysGH;
-	keysGH = ~SRAM[0x0];
+	if(insertedGHPad)
+	{
+		oldKeysGH = keysGH;
+		keysGH = ~SRAM[0x0];
+	}
+	else
+	{
+		oldKeysGH = keysGH;
+	}
 }
