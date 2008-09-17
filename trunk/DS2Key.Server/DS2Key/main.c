@@ -80,8 +80,8 @@ int main(int argc, char *argv[])
 	INPUT input;
 #else//WIN32
 #endif//WIN32
-	unsigned int profile[1][11];
-	enum pKeys{pUp, pDown, pLeft, pRight, pA, pB, pX, pY, pL, pR, pStart, pSelect};
+	enum pKeys{pUp, pDown, pLeft, pRight, pA, pB, pX, pY, pL, pR, pStart, pSelect, pBlue, pYellow, pRed, pGreen, pEND};
+	unsigned int profile[1][pEND];
 	profile[0][pUp] = VK_UP;
 	profile[0][pDown] = VK_DOWN;
 	profile[0][pLeft] = VK_LEFT;
@@ -94,6 +94,10 @@ int main(int argc, char *argv[])
 	profile[0][pR] = 'R';
 	profile[0][pStart] = VK_RETURN;
 	profile[0][pSelect] = VK_SELECT;
+	profile[0][pBlue] = '1';
+	profile[0][pYellow] = '2';
+	profile[0][pRed] = '3';
+	profile[0][pGreen] = '4';
 	profile[1][pUp] = 'Q';
 	profile[1][pDown] = 'W';
 	profile[1][pLeft] = 'E';
@@ -106,6 +110,10 @@ int main(int argc, char *argv[])
 	profile[1][pR] = 'D';
 	profile[1][pStart] = 'F';
 	profile[1][pSelect] = 'G';
+	profile[1][pBlue] = '5';
+	profile[1][pYellow] = '6';
+	profile[1][pRed] = '7';
+	profile[1][pGreen] = '8';
 
 	{//read Arguments
 		if(argc > 1)
@@ -300,6 +308,46 @@ int main(int argc, char *argv[])
 		{
 			doInput(&input, INPUT_KEYBOARD, profile[0][pSelect], 1);
 			printf("%s: select button released\n", msg);
+		}
+		else if(!stricmp(msg, "/gb0"))
+		{
+			doInput(&input, INPUT_KEYBOARD, profile[0][pBlue], 0);
+			printf("%s: blue button pressed\n", msg);
+		}
+		else if(!stricmp(msg, "/gb1"))
+		{
+			doInput(&input, INPUT_KEYBOARD, profile[0][pBlue], 1);
+			printf("%s: blue button released\n", msg);
+		}
+		else if(!stricmp(msg, "/gy0"))
+		{
+			doInput(&input, INPUT_KEYBOARD, profile[0][pYellow], 0);
+			printf("%s: yellow button pressed\n", msg);
+		}
+		else if(!stricmp(msg, "/gy1"))
+		{
+			doInput(&input, INPUT_KEYBOARD, profile[0][pYellow], 1);
+			printf("%s: yellow button released\n", msg);
+		}
+		else if(!stricmp(msg, "/gr0"))
+		{
+			doInput(&input, INPUT_KEYBOARD, profile[0][pRed], 0);
+			printf("%s: red button pressed\n", msg);
+		}
+		else if(!stricmp(msg, "/gr1"))
+		{
+			doInput(&input, INPUT_KEYBOARD, profile[0][pRed], 1);
+			printf("%s: red button released\n", msg);
+		}
+		else if(!stricmp(msg, "/gg0"))
+		{
+			doInput(&input, INPUT_KEYBOARD, profile[0][pGreen], 0);
+			printf("%s: green button pressed\n", msg);
+		}
+		else if(!stricmp(msg, "/gg1"))
+		{
+			doInput(&input, INPUT_KEYBOARD, profile[0][pGreen], 1);
+			printf("%s: green button released\n", msg);
 		}
 		else if(!strnicmp(msg, "/m", 2))
 		{
