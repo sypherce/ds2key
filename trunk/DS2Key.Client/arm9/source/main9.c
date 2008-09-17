@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 //for some odd reason I can't seem to find vcount in ndslib -sigh- (I mean, in a place it doesn't conflict with other things)
 #define		VCOUNT		(*((u16 volatile *) 0x04000006))
+#define waitForVBL() {while(VCOUNT > 192); while(VCOUNT < 192);}
 
 //---------------------------------------------------------------------------------
 //Dswifi helper functions
@@ -92,7 +93,7 @@ void sendCommand(int socket, struct sockaddr_in sockaddr, unsigned long ip, unsi
 	sockaddr.sin_family = AF_INET;
 	sockaddr.sin_port = htons(port);
 	sockaddr.sin_addr.s_addr = ip;
-	if(sendto(socket, command, strlen(command), 0, (struct sockaddr*)&sockaddr, sizeof(sockaddr)) == -1)
+	if(sendto(socket, command, strlen(command), 0, (struct sockaddr*)&sockaddr, sizeof(sockaddr)) >= 0)
 		printf("Sent: %s\n", command);
 	else
 		printf("Failed to send: %s\n", command);
@@ -248,7 +249,7 @@ int main(int argc, char *argv[])
 		}
 		lastx = stylusPos.px;
 		lasty = stylusPos.py;
-		//swiWaitForVBlank();
+		waitForVBL();
 	}
 
 	shutdown(my_socket,0);//good practice to shutdown the socket.

@@ -355,25 +355,17 @@ int main(int argc, char *argv[])
 		{
 			char *xc = &msg[2];
 			char *yc = strchr(xc,'.');
-			char *zc = strchr(yc, '.');
+			char *zc = strchr(&yc[1], '.');
 			unsigned char x;
 			unsigned char y;
 			bool z;
-			yc[0] = 0;
-			yc++;
-			zc[0] = 0;
-			zc++;
 			x = (unsigned char)atoi(xc);
-			y = (unsigned char)atoi(yc);
-			z = (unsigned char)atoi(zc);
-			yc--;
-			zc--;
-			yc[0] = '.';
-			zc[0] = '.';
+			y = (unsigned char)atoi(&yc[1]);
+			z = (bool)atoi(&zc[1]);
 			doInput(&input, INPUT_MOUSE, (y << 8) | x, 0);
-			if(z == 0)
+			if(z)
 				printf("%s: touch screen pressed at %i, %i\n", msg, x, y);
-			else//z != 0
+			else//!z
 				printf("%s: touch screen released at %i, %i\n", msg, x, y);
 		}
 		else
