@@ -54,8 +54,8 @@ void doInput(INPUT *input, unsigned int type, unsigned int key, bool state)
 	}
 	else if(input->type == INPUT_MOUSE)
 	{
-		input->mi.dx = 65535*(key&0xff) / 256;
-		input->mi.dy = 65535*((key >> 8)&0xff) / 192;
+		input->mi.dx = 65535 * (key&0xff) / 256;
+		input->mi.dy = 65535 * ((key >> 8)&0xff) / 192;
 		input->mi.dwFlags = MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE;
 		//click, not working yet
 		/*
@@ -69,7 +69,7 @@ void doInput(INPUT *input, unsigned int type, unsigned int key, bool state)
 		input->mi.mouseData = 0;
 		input->mi.time = 0;
 	}
-	SendInput(1,(LPINPUT)input,sizeof(INPUT));
+	SendInput(1, (LPINPUT)input, sizeof(INPUT));
 }
 
 int main(int argc, char *argv[])
@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
 		{
 			unsigned int i;
 			unsigned int strlenargv1 = strlen(argv[1]);
-			for(i = 0; i < strlenargv1; i++)
+			for(i = 0;i < strlenargv1;i++)
 			{
 				if(argv[1][i] < '0' || argv[1][i] > '9' || strlenargv1 > 5)
 				{
@@ -139,21 +139,21 @@ int main(int argc, char *argv[])
 
 		if(serverPort <= 0)
 		{
-			fprintf(stderr,"%i: bad port number\n", serverPort);
+			fprintf(stderr, "%i: bad port number\n", serverPort);
 			exit(1);
 		}
 	}//read Arguments
 
 	{//setup connections
-	#ifdef WIN32
+#ifdef WIN32
 		WSAStartup(0x0202, &wsaData);//windows socket startup
-	#endif//WIN32
+#endif//WIN32
 
 		//socket creation
-		sd=socket(AF_INET, SOCK_DGRAM, 0);
+		sd = socket(AF_INET, SOCK_DGRAM, 0);
 		if(sd < 0)
 		{
-			fprintf(stderr,"%s: cannot open socket\n", argv[0]);
+			fprintf(stderr, "%s: cannot open socket\n", argv[0]);
 			exit(1);
 		}
 
@@ -164,7 +164,7 @@ int main(int argc, char *argv[])
 		rc = bind(sd, (struct sockaddr*) &servAddr, sizeof(servAddr));
 		if(rc < 0)
 		{
-			fprintf(stderr,"%s: cannot bind port number %d\n", argv[0], serverPort);
+			fprintf(stderr, "%s: cannot bind port number %d\n", argv[0], serverPort);
 			exit(1);
 		}
 
@@ -187,7 +187,7 @@ int main(int argc, char *argv[])
 			continue;
 		}
 
-		if(!strnicmp(msg, "/p", 2	))
+		if(!strnicmp(msg, "/p", 2))
 		{
 			printf("%s: profile set to %s\n", msg, &msg[2]);
 		}
@@ -354,7 +354,7 @@ int main(int argc, char *argv[])
 		else if(!strnicmp(msg, "/m", 2))
 		{
 			char *xc = &msg[2];
-			char *yc = strchr(xc,'.');
+			char *yc = strchr(xc, '.');
 			char *zc = strchr(&yc[1], '.');
 			unsigned char x;
 			unsigned char y;

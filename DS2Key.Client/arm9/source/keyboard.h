@@ -16,10 +16,23 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef __MAIN_H__
-#define __MAIN_H__
+#ifndef __KEYBOARD_H__
+#define __KEYBOARD_H__
 
-#define LOCAL_SERVER_PORT 9501
-#define MAX_MSG 12
+#define KB_NORMAL 0
+#define KB_CAPS   1
+#define KB_SHIFT  2
 
-#endif//__MAIN_H__
+extern u8 keyboardOffset;
+extern uint16 *keyboardMapPointer; 
+extern char *keyTextPos;
+extern char *keyText;
+extern char keyEnter;
+extern unsigned int keyLength;
+extern int m_Mode;
+
+extern char *initKeyboard(char *text, unsigned int length, char enter);
+extern void deInitKeyboard();
+extern unsigned char updateKeyboard(unsigned char x, unsigned char y);
+
+#endif//__KEYBOARD_H__
