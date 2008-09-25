@@ -15,11 +15,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
 #ifndef __MAIN_H__
-#define __MAIN_H__
+	#define __MAIN_H__
 
-#define LOCAL_SERVER_PORT 9501
-#define MAX_MSG 12
+	#define LOCAL_SERVER_PORT	9501
+	#define MAX_MSG				12
 
-#endif//__MAIN_H__
+#endif //__MAIN_H__

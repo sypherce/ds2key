@@ -15,28 +15,27 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
 #include <stdio.h>
 #ifdef WIN32
-#ifdef WINVER
-#undef WINVER
-#endif
-#define WINVER 0x0500
-#include <windows.h>
-#include <winsock.h>
-#define stricmp _stricmp
-#define strnicmp _strnicmp
-#define sscanf sscanf_s
+	#ifdef WINVER
+		#undef WINVER
+	#endif
+	#define WINVER	0x0500
+	#include <windows.h>
+	#include <winsock.h>
+	#define stricmp		_stricmp
+	#define strnicmp	_strnicmp
+	#define sscanf		sscanf_s
 typedef unsigned char bool;
-#else//WIN32
-#include <sys/types.h>
-#include <string.h>//memset()
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <unistd.h>//close()
-#endif//WIN32
+#else //WIN32
+	#include <sys/types.h>
+	#include <string.h> //memset()
+	#include <sys/socket.h>
+	#include <netinet/in.h>
+	#include <arpa/inet.h>
+	#include <netdb.h>
+	#include <unistd.h> //close()
+#endif //WIN32
 #include "main.h"
 
 void doInput(INPUT *input, unsigned int type, unsigned int key, bool state)
@@ -47,16 +46,20 @@ void doInput(INPUT *input, unsigned int type, unsigned int key, bool state)
 		input->ki.wVk = key;
 		input->ki.dwFlags = KEYEVENTF_SCANCODE;
 		if(state)
+		{
 			input->ki.dwFlags |= KEYEVENTF_KEYUP;
+		}
+
 		input->ki.wScan = MapVirtualKey(key, 0);
 		input->ki.time = 0;
 		input->ki.dwExtraInfo = 0;
 	}
 	else if(input->type == INPUT_MOUSE)
 	{
-		input->mi.dx = 65535 * (key&0xff) / 256;
-		input->mi.dy = 65535 * ((key >> 8)&0xff) / 192;
+		input->mi.dx = 65535 * (key & 0xff) / 256;
+		input->mi.dy = 65535 * ((key >> 8) & 0xff) / 192;
 		input->mi.dwFlags = MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE;
+
 		//click, not working yet
 		/*
 		if(state)
@@ -69,7 +72,8 @@ void doInput(INPUT *input, unsigned int type, unsigned int key, bool state)
 		input->mi.mouseData = 0;
 		input->mi.time = 0;
 	}
-	SendInput(1, (LPINPUT)input, sizeof(INPUT));
+
+	SendInput(1, (LPINPUT) input, sizeof(INPUT));
 }
 
 int main(int argc, char *argv[])
@@ -77,12 +81,12 @@ int main(int argc, char *argv[])
 	int sd, rc, n, cliLen, serverPort;
 	struct sockaddr_in cliAddr, servAddr;
 	char msg[MAX_MSG];
-#ifdef WIN32
+	#ifdef WIN32
 	WSADATA wsaData;
 	INPUT input;
-#else//WIN32
-#endif//WIN32
-	enum pKeys{pUp, pDown, pLeft, pRight, pA, pB, pX, pY, pL, pR, pStart, pSelect, pBlue, pYellow, pRed, pGreen, pEND};
+	#else //WIN32
+	#endif //WIN32
+	enum pKeys { pUp, pDown, pLeft, pRight, pA, pB, pX, pY, pL, pR, pStart, pSelect, pBlue, pYellow, pRed, pGreen, pEND };
 	unsigned int profile[1][pEND];
 	profile[0][pUp] = VK_UP;
 	profile[0][pDown] = VK_DOWN;
@@ -117,12 +121,12 @@ int main(int argc, char *argv[])
 	profile[1][pRed] = '7';
 	profile[1][pGreen] = '8';
 
-	{//read Arguments
+	{	//read Arguments
 		if(argc > 1)
 		{
 			unsigned int i;
 			unsigned int strlenargv1 = strlen(argv[1]);
-			for(i = 0;i < strlenargv1;i++)
+			for(i = 0; i < strlenargv1; i++)
 			{
 				if(argv[1][i] < '0' || argv[1][i] > '9' || strlenargv1 > 5)
 				{
@@ -130,6 +134,7 @@ int main(int argc, char *argv[])
 					exit(1);
 				}
 			}
+
 			serverPort = atoi(argv[1]);
 		}
 		else
@@ -142,12 +147,11 @@ int main(int argc, char *argv[])
 			fprintf(stderr, "%i: bad port number\n", serverPort);
 			exit(1);
 		}
-	}//read Arguments
-
-	{//setup connections
-#ifdef WIN32
-		WSAStartup(0x0202, &wsaData);//windows socket startup
-#endif//WIN32
+	}	//read Arguments
+	{	//setup connections
+		#ifdef WIN32
+		WSAStartup(0x0202, &wsaData);	//windows socket startup
+		#endif //WIN32
 
 		//socket creation
 		sd = socket(AF_INET, SOCK_DGRAM, 0);
@@ -161,7 +165,7 @@ int main(int argc, char *argv[])
 		servAddr.sin_family = AF_INET;
 		servAddr.sin_addr.s_addr = htonl(INADDR_ANY);
 		servAddr.sin_port = htons((unsigned short)serverPort);
-		rc = bind(sd, (struct sockaddr*) &servAddr, sizeof(servAddr));
+		rc = bind(sd, (struct sockaddr *) &servAddr, sizeof(servAddr));
 		if(rc < 0)
 		{
 			fprintf(stderr, "%s: cannot bind port number %d\n", argv[0], serverPort);
@@ -169,7 +173,7 @@ int main(int argc, char *argv[])
 		}
 
 		printf("%s: waiting for data on port UDP %u\n", argv[0], serverPort);
-	}//setup connections
+	}	//setup connections
 
 	//server infinite loop
 	while(1)
@@ -179,7 +183,7 @@ int main(int argc, char *argv[])
 
 		//receive message
 		cliLen = sizeof(cliAddr);
-		n = recvfrom(sd, msg, MAX_MSG, 0, (struct sockaddr*) &cliAddr, &cliLen);
+		n = recvfrom(sd, msg, MAX_MSG, 0, (struct sockaddr *) &cliAddr, &cliLen);
 
 		if(n < 0)
 		{
@@ -361,17 +365,24 @@ int main(int argc, char *argv[])
 			bool z;
 			x = (unsigned char)atoi(xc);
 			y = (unsigned char)atoi(&yc[1]);
-			z = (bool)atoi(&zc[1]);
+			z = (bool) atoi(&zc[1]);
 			doInput(&input, INPUT_MOUSE, (y << 8) | x, 0);
 			if(z)
+			{
 				printf("%s: touch screen pressed at %i, %i\n", msg, x, y);
-			else//!z
+			}
+			else
+			{	//!z
 				printf("%s: touch screen released at %i, %i\n", msg, x, y);
+			}
 		}
 		else
+		{
 			printf("%s: undefined command\n", msg);
 
-	}//end of server infinite loop
+		}
+
+	}	//end of server infinite loop
 
 	return 0;
 }

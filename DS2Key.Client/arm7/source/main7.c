@@ -15,18 +15,17 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
 #include <nds.h>
 #include <stdlib.h>
 #include <dswifi7.h>
 
 #define MSG_WIFI_INITIALIZE 0x10000001
-#define MSG_WIFI_SYNC 0x10000002
+#define MSG_WIFI_SYNC		0x10000002
 
 void startSound(int sampleRate, const void *data, u32 bytes, u8 channel, u8 vol, u8 pan, u8 format)
 {
 	SCHANNEL_TIMER(channel) = SOUND_FREQ(sampleRate);
-	SCHANNEL_SOURCE(channel) = (u32)data;
+	SCHANNEL_SOURCE(channel) = (u32) data;
 	SCHANNEL_LENGTH(channel) = bytes >> 2;
 	SCHANNEL_CR(channel) = SCHANNEL_ENABLE | SOUND_ONE_SHOT | SOUND_VOL(vol) | SOUND_PAN(pan) | (format == 1 ? SOUND_8BIT : SOUND_16BIT);
 }
@@ -34,13 +33,14 @@ void startSound(int sampleRate, const void *data, u32 bytes, u8 channel, u8 vol,
 s32 getFreeSoundChannel()
 {
 	int i;
-	for(i = 0;i < 16;i++)
+	for(i = 0; i < 16; i++)
 	{
-		if((SCHANNEL_CR(i) &SCHANNEL_ENABLE) == 0)
+		if((SCHANNEL_CR(i) & SCHANNEL_ENABLE) == 0)
 		{
 			return i;
 		}
 	}
+
 	return -1;
 }
 
@@ -49,13 +49,13 @@ touchPosition first, tempPos;
 
 void VcountHandler()
 {
-	static int lastbut =  -1;
+	static int lastbut = -1;
 
 	uint16 but = 0, x = 0, y = 0, xpx = 0, ypx = 0, z1 = 0, z2 = 0;
 
 	but = REG_KEYXY;
 
-	if(!((but ^ lastbut) &(1 << 6)))
+	if(!((but ^ lastbut) & (1 << 6)))
 	{
 		tempPos = touchReadXY();
 
@@ -86,7 +86,7 @@ void VcountHandler()
 	}
 	else
 	{
-		if(abs(xpx - first.px) > 10 || abs(ypx - first.py) > 10 || (but &(1 << 6)))
+		if(abs(xpx - first.px) > 10 || abs(ypx - first.py) > 10 || (but & (1 << 6)))
 		{
 			but |= (1 << 6);
 			lastbut = but;
@@ -103,6 +103,7 @@ void VcountHandler()
 			IPC->mailBusy = 0;
 		}
 	}
+
 	IPC->buttons = but;
 	vcount ^= (80 ^ 130);
 	SetYtrigger(vcount);
@@ -118,7 +119,7 @@ void VblankHandler(void)
 
 	if(0 != snd)
 	{
-		for(i = 0;i < snd->count;i++)
+		for(i = 0; i < snd->count; i++)
 		{
 			s32 chan = getFreeSoundChannel();
 
@@ -132,12 +133,12 @@ void VblankHandler(void)
 	Wifi_Update();
 }
 
-void arm7_synctoarm9()//send fifo message
+void arm7_synctoarm9()	//send fifo message
 {
 	REG_IPC_FIFO_TX = MSG_WIFI_SYNC;
 }
 
-void arm7_fifo()//check incoming fifo messages
+void arm7_fifo()	//check incoming fifo messages
 {
 	u32 msg = REG_IPC_FIFO_RX;
 	if(msg == MSG_WIFI_SYNC)
@@ -171,20 +172,23 @@ int main(int argc, char **argv)
 	// trade some mail, to get a pointer from arm9
 	while(1)
 	{
-		while(REG_IPC_FIFO_CR &IPC_FIFO_RECV_EMPTY)
+		while(REG_IPC_FIFO_CR & IPC_FIFO_RECV_EMPTY)
 		{
 			swiWaitForVBlank();
 		}
+
 		fifo_temp = REG_IPC_FIFO_RX;
 		if(fifo_temp == MSG_WIFI_INITIALIZE)
 		{
 			break;
 		}
 	}
-	while(REG_IPC_FIFO_CR &IPC_FIFO_RECV_EMPTY)
+
+	while(REG_IPC_FIFO_CR & IPC_FIFO_RECV_EMPTY)
 	{
 		swiWaitForVBlank();
 	}
+
 	fifo_temp = REG_IPC_FIFO_RX;
 	Wifi_Init(fifo_temp);
 
@@ -200,4 +204,3 @@ int main(int argc, char **argv)
 		swiWaitForVBlank();
 	}
 }
-
