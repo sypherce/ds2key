@@ -15,7 +15,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
 #include <nds.h>
 #include <string.h>
 #include "keyboard.h"
@@ -24,9 +23,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 //keyboard function variables
 u8 keyboardOffset = 6;
-uint16 *keyboardMapPointer; 
-char *keyTextPos = (char*)NULL;
-char *keyText = (char*)NULL;
+uint16 *keyboardMapPointer;
+char *keyTextPos = (char *)NULL;
+char *keyText = (char *)NULL;
 char keyEnter = 0;
 unsigned int keyLength = 0;
 int m_Mode = KB_NORMAL;
@@ -45,7 +44,7 @@ void deInitKeyboard()
 {
 	keyLength = 0;
 	keyEnter = 0;
-	keyText = keyTextPos = (char*)NULL;
+	keyText = keyTextPos = (char *)NULL;
 	memset(keyboardMapPointer, 0, keyboardMap_bin_size >> 1);
 }
 
@@ -65,14 +64,15 @@ unsigned char updateKeyboard(unsigned char x, unsigned char y)
 			if(m_Mode == KB_SHIFT)
 			{
 				m_Mode = KB_NORMAL;
-				dmaCopy((uint16*)keyboardMap_bin, keyboardMapPointer, keyboardMap_bin_size >> 1);
+				dmaCopy((uint16 *)keyboardMap_bin, keyboardMapPointer, keyboardMap_bin_size >> 1);
 			}
 		}
+
 		if(c == CAP || c == SHF)
 		{
 			if(m_Mode == KB_NORMAL)
 			{
-				dmaCopy((uint16*)keyboardMap_bin + (keyboardMap_bin_size >> 2), keyboardMapPointer, keyboardMap_bin_size >> 1);
+				dmaCopy((uint16 *)keyboardMap_bin + (keyboardMap_bin_size >> 2), keyboardMapPointer, keyboardMap_bin_size >> 1);
 				if(c == SHF)
 				{
 					m_Mode = KB_SHIFT;
@@ -84,7 +84,7 @@ unsigned char updateKeyboard(unsigned char x, unsigned char y)
 			}
 			else
 			{
-				dmaCopy((uint16*)keyboardMap_bin, keyboardMapPointer, keyboardMap_bin_size >> 1);
+				dmaCopy((uint16 *)keyboardMap_bin, keyboardMapPointer, keyboardMap_bin_size >> 1);
 				m_Mode = KB_NORMAL;
 			}
 		}
@@ -111,6 +111,7 @@ unsigned char updateKeyboard(unsigned char x, unsigned char y)
 					*keyTextPos = c;
 					returnVal = 1;
 				}
+
 				keyTextPos++;
 			}
 		}

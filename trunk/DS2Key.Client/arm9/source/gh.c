@@ -15,7 +15,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
 #include <nds.h>
 #include "gh.h"
 
@@ -51,15 +50,26 @@ unsigned short int keysDownGH(unsigned char color)
 unsigned short int keysHeldGH(unsigned char color)
 {
 	if(color == GH_BLUE)
+	{
 		return GH_Blue(GH_keysHeld);
+	}
 	else if(color == GH_YELLOW)
+	{
 		return GH_Yellow(GH_keysHeld);
+	}
 	else if(color == GH_RED)
+	{
 		return GH_Red(GH_keysHeld);
+	}
 	else if(color == GH_GREEN)
+	{
 		return GH_Green(GH_keysHeld);
+	}
 	else if(color == GH_ANY)
+	{
 		return GH_Any(GH_keysHeld);
+
+	}
 
 	return 0;
 }
@@ -67,15 +77,26 @@ unsigned short int keysHeldGH(unsigned char color)
 unsigned short int keysUpGH(unsigned char color)
 {
 	if(color == GH_BLUE)
+	{
 		return GH_Blue(GH_keysUp);
+	}
 	else if(color == GH_YELLOW)
+	{
 		return GH_Yellow(GH_keysUp);
+	}
 	else if(color == GH_RED)
+	{
 		return GH_Red(GH_keysUp);
+	}
 	else if(color == GH_GREEN)
+	{
 		return GH_Green(GH_keysUp);
+	}
 	else if(color == GH_ANY)
+	{
 		return GH_Any(GH_keysUp);
+
+	}
 
 	return 0;
 }
