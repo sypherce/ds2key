@@ -23,9 +23,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	#define WINVER	0x0500
 	#include <windows.h>
 	#include <winsock.h>
-	#define stricmp		_stricmp
-	#define strnicmp	_strnicmp
-	#define sscanf		sscanf_s
+	#ifdef _MSC_VER
+		#define stricmp		_stricmp
+		#define strnicmp	_strnicmp
+		#define sscanf		sscanf_s
+	#endif
 typedef unsigned char bool;
 #else //WIN32
 	#include <sys/types.h>
@@ -37,6 +39,10 @@ typedef unsigned char bool;
 	#include <unistd.h> //close()
 #endif //WIN32
 #include "main.h"
+#include "VK.h"
+
+enum pKeys { pIP, pIP2, pUp, pDown, pLeft, pRight, pA, pB, pX, pY, pL, pR, pStart, pSelect, pBlue, pYellow, pRed, pGreen, pEND };
+unsigned int profile[256][pEND];
 
 void doInput(INPUT *input, unsigned int type, unsigned int key, bool state)
 {
@@ -76,9 +82,183 @@ void doInput(INPUT *input, unsigned int type, unsigned int key, bool state)
 	SendInput(1, (LPINPUT) input, sizeof(INPUT));
 }
 
+char *longToIP(unsigned long longIP, char *charIP)
+{
+	#ifdef _MSC_VER
+	sprintf_s(charIP, 16, "%i.%i.%i.%i", (((unsigned char *) &longIP)[0]), ((unsigned char *) &longIP)[1], ((unsigned char *) &longIP)[2], ((unsigned char *) &longIP)[3]);
+	#else //_MSC_VER
+	sprintf(charIP, "%i.%i.%i.%i", (((unsigned char *) &longIP)[0]), ((unsigned char *) &longIP)[1], ((unsigned char *) &longIP)[2], ((unsigned char *) &longIP)[3]);
+	#endif //_MSC_VER
+	return charIP;
+}
+
+int serverPort;
+
+bool writeDefaultConfig()
+{
+	FILE *file;
+	serverPort = LOCAL_SERVER_PORT;
+	file = fopen("ds2key.ini", "w+");
+	if(file)
+	{
+		fprintf(file, "%i\n", serverPort);
+		fclose(file);
+	}
+	else
+	{
+		return 1;
+	}
+
+	return 0;
+}
+
+bool writeDefaultProfileConfig(unsigned char profileNumber)
+{
+	FILE *file;
+	char filename[16];
+	#ifdef _MSC_VER
+	sprintf_s(filename, 16, "ds2key.p%i.ini", profileNumber);
+	#else //_MSC_VER
+	sprintf(filename, "ds2key.p%i.ini", profileNumber);
+	#endif //_MSC_VER
+	file = fopen(filename, "w+");
+	if(file)
+	{
+		printf("\n\n%s\n\n", filename);
+		fprintf(file, "%s\n", getVKString(VK_UP));
+		fprintf(file, "%s\n", getVKString(VK_DOWN));
+		fprintf(file, "%s\n", getVKString(VK_LEFT));
+		fprintf(file, "%s\n", getVKString(VK_RIGHT));
+		fprintf(file, "%s\n", getVKString('A'));
+		fprintf(file, "%s\n", getVKString('B'));
+		fprintf(file, "%s\n", getVKString('X'));
+		fprintf(file, "%s\n", getVKString('Y'));
+		fprintf(file, "%s\n", getVKString('L'));
+		fprintf(file, "%s\n", getVKString('R'));
+		fprintf(file, "%s\n", getVKString(VK_RETURN));
+		fprintf(file, "%s\n", getVKString(VK_RSHIFT));
+		fprintf(file, "%s\n", getVKString('1'));
+		fprintf(file, "%s\n", getVKString('2'));
+		fprintf(file, "%s\n", getVKString('3'));
+		fprintf(file, "%s\n", getVKString('4'));
+		fclose(file);
+	}
+	else
+	{
+		return 1;
+	}
+
+	return 0;
+}
+
+bool getLine(char *buffer)
+{
+	char *d = strchr(buffer, '\n');
+	if(!d)
+	{
+		return 1;
+	}
+
+	d[0] = 0;
+
+	return 1;
+}
+
+bool readProfileConfig(unsigned char profileNumber)
+{
+	FILE *file;
+	char filename[16];
+	#define readProfileKey(key) \
+		{ \
+			if(tmpBuffer[0] != 0) \
+			{ \
+				int i = 0; \
+				getLine(tmpBuffer); \
+				profile[profileNumber][key] = getVKNumber(tmpBuffer); \
+				tmpBuffer = tmpBuffer + strlen(tmpBuffer) + 1; \
+				while(tmpBuffer[i] == (char)0xa || tmpBuffer == (char)0xd) \
+				{ \
+					i++; \
+				} \
+ \
+				tmpBuffer = &tmpBuffer[i]; \
+			} \
+		}
+
+	#ifdef _MSC_VER
+	sprintf_s(filename, 16, "ds2key.p%i.ini", profileNumber);
+	#else //_MSC_VER
+	sprintf(filename, "ds2key.p%i.ini", profileNumber);
+	#endif //_MSC_VER
+	file = fopen(filename, "r");
+	if(file)
+	{
+		unsigned long int size;
+		char *buffer;
+		char *tmpBuffer;
+		char *currentKey;
+		char *key0d;
+		char *key0a;
+		char *keyEnd;
+		size_t result;
+		fseek(file, 0, SEEK_END);
+		size = ftell(file);
+		rewind(file);
+
+		// allocate memory to contain the whole file:
+		buffer = (char *)malloc(sizeof(char) * size);
+		if(buffer == NULL)
+		{
+			fprintf(stderr, "Memory error");
+			return 1;
+		}
+
+		result = fread(buffer, 1, size, file);
+		if(result != size)
+		{
+			buffer[result] = 0;
+
+			//fprintf(stderr, "Reading error");
+			//return 1;
+		}
+
+		fclose(file);
+
+		tmpBuffer = buffer;
+
+		readProfileKey(pUp);
+		readProfileKey(pDown);
+		readProfileKey(pLeft);
+		readProfileKey(pRight);
+		readProfileKey(pA);
+		readProfileKey(pB);
+		readProfileKey(pX);
+		readProfileKey(pY);
+		readProfileKey(pL);
+		readProfileKey(pR);
+		readProfileKey(pStart);
+		readProfileKey(pSelect);
+		readProfileKey(pBlue);
+		readProfileKey(pYellow);
+		readProfileKey(pRed);
+		readProfileKey(pGreen);
+		free(buffer);
+	}
+	else
+	{
+		writeDefaultProfileConfig(profileNumber);
+
+		return 1;
+	}
+
+	return 0;
+}
+
+unsigned char currentIP[16];
+
 int main(int argc, char *argv[])
 {
-	int sd, rc, n, cliLen, serverPort;
+	int sd, rc, n, cliLen;
 	struct sockaddr_in cliAddr, servAddr;
 	char msg[MAX_MSG];
 	#ifdef WIN32
@@ -86,60 +266,37 @@ int main(int argc, char *argv[])
 	INPUT input;
 	#else //WIN32
 	#endif //WIN32
-	enum pKeys { pUp, pDown, pLeft, pRight, pA, pB, pX, pY, pL, pR, pStart, pSelect, pBlue, pYellow, pRed, pGreen, pEND };
-	unsigned int profile[1][pEND];
-	profile[0][pUp] = VK_UP;
-	profile[0][pDown] = VK_DOWN;
-	profile[0][pLeft] = VK_LEFT;
-	profile[0][pRight] = VK_RIGHT;
-	profile[0][pA] = 'A';
-	profile[0][pB] = 'B';
-	profile[0][pX] = 'X';
-	profile[0][pY] = 'Y';
-	profile[0][pL] = 'L';
-	profile[0][pR] = 'R';
-	profile[0][pStart] = VK_RETURN;
-	profile[0][pSelect] = VK_SELECT;
-	profile[0][pBlue] = '1';
-	profile[0][pYellow] = '2';
-	profile[0][pRed] = '3';
-	profile[0][pGreen] = '4';
-	profile[1][pUp] = 'Q';
-	profile[1][pDown] = 'W';
-	profile[1][pLeft] = 'E';
-	profile[1][pRight] = 'T';
-	profile[1][pA] = 'U';
-	profile[1][pB] = 'I';
-	profile[1][pX] = 'O';
-	profile[1][pY] = 'P';
-	profile[1][pL] = 'S';
-	profile[1][pR] = 'D';
-	profile[1][pStart] = 'F';
-	profile[1][pSelect] = 'G';
-	profile[1][pBlue] = '5';
-	profile[1][pYellow] = '6';
-	profile[1][pRed] = '7';
-	profile[1][pGreen] = '8';
+	int pI;
+	for(pI = 0; pI <= 255; pI++)
+	{
+		((unsigned long *) &profile[pI])[pIP] = 0;
+	}
+
+	initVKTable();
 
 	{	//read Arguments
-		if(argc > 1)
+		FILE *file = fopen("ds2key.ini", "r");
+		if(file)
 		{
-			unsigned int i;
-			unsigned int strlenargv1 = strlen(argv[1]);
-			for(i = 0; i < strlenargv1; i++)
+			char buffer[256];
+			if(fread(buffer, 1, 255, file))
 			{
-				if(argv[1][i] < '0' || argv[1][i] > '9' || strlenargv1 > 5)
+				fclose(file);
+				serverPort = atoi(buffer);
+				if(serverPort == 0)
 				{
-					printf("Usage: %s [port]\n", argv[0]);
-					exit(1);
+					writeDefaultConfig();
 				}
 			}
-
-			serverPort = atoi(argv[1]);
+			else
+			{
+				fclose(file);
+				writeDefaultConfig();
+			}
 		}
 		else
 		{
-			serverPort = LOCAL_SERVER_PORT;
+			writeDefaultConfig();
 		}
 
 		if(serverPort <= 0)
@@ -178,12 +335,16 @@ int main(int argc, char *argv[])
 	//server infinite loop
 	while(1)
 	{
+		unsigned char *ip;
+		unsigned int currentProfile;
+
 		//init buffer
 		memset(msg, 0x0, MAX_MSG);
 
 		//receive message
 		cliLen = sizeof(cliAddr);
 		n = recvfrom(sd, msg, MAX_MSG, 0, (struct sockaddr *) &cliAddr, &cliLen);
+		ip = longToIP(cliAddr.sin_addr.S_un.S_addr, currentIP);
 
 		if(n < 0)
 		{
@@ -191,169 +352,196 @@ int main(int argc, char *argv[])
 			continue;
 		}
 
+		for(currentProfile = 0; currentProfile <= 255; currentProfile++)
+		{
+			if(cliAddr.sin_addr.S_un.S_addr == ((unsigned long *) &profile[currentProfile])[0])
+			{
+				break;
+			}
+			else if(currentProfile == 255)
+			{
+				//send /p?, for now it sets profile to 0
+				currentProfile = 0;
+				readProfileConfig(currentProfile);
+				((unsigned long *) &profile[currentProfile])[0] = cliAddr.sin_addr.S_un.S_addr;
+				break;
+			}
+		}
+
 		if(!strnicmp(msg, "/p", 2))
 		{
-			printf("%s: profile set to %s\n", msg, &msg[2]);
+			for(currentProfile = 0; currentProfile <= 255; currentProfile++)
+			{
+				if(cliAddr.sin_addr.S_un.S_addr == ((unsigned long *) &profile[currentProfile])[0])
+				{
+					((unsigned long *) &profile[currentProfile])[0] = 0;
+				}
+			}
+
+			readProfileConfig(atoi(&msg[2]));
+
+			printf("%s: [%s] profile set to %s\n", ip, msg, &msg[2]);
+			((unsigned long *) &profile[atoi(&msg[2])])[0] = cliAddr.sin_addr.S_un.S_addr;
 		}
 		else if(!stricmp(msg, "/dl0"))
 		{
-			doInput(&input, INPUT_KEYBOARD, profile[0][pLeft], 0);
-			printf("%s: left button pressed\n", msg);
+			doInput(&input, INPUT_KEYBOARD, profile[currentProfile][pLeft], 0);
+			printf("%s: [%s] left button pressed\n", ip, msg);
 		}
 		else if(!stricmp(msg, "/dl1"))
 		{
-			doInput(&input, INPUT_KEYBOARD, profile[0][pLeft], 1);
-			printf("%s: left button released\n", msg);
+			doInput(&input, INPUT_KEYBOARD, profile[currentProfile][pLeft], 1);
+			printf("%s: [%s] left button released\n", ip, msg);
 		}
 		else if(!stricmp(msg, "/dr0"))
 		{
-			doInput(&input, INPUT_KEYBOARD, profile[0][pRight], 0);
-			printf("%s: right button pressed\n", msg);
+			doInput(&input, INPUT_KEYBOARD, profile[currentProfile][pRight], 0);
+			printf("%s: [%s] right button pressed\n", ip, msg);
 		}
 		else if(!stricmp(msg, "/dr1"))
 		{
-			doInput(&input, INPUT_KEYBOARD, profile[0][pRight], 1);
-			printf("%s: right button released\n", msg);
+			doInput(&input, INPUT_KEYBOARD, profile[currentProfile][pRight], 1);
+			printf("%s: [%s] right button released\n", ip, msg);
 		}
 		else if(!stricmp(msg, "/du0"))
 		{
-			doInput(&input, INPUT_KEYBOARD, profile[0][pUp], 0);
-			printf("%s: up button pressed\n", msg);
+			doInput(&input, INPUT_KEYBOARD, profile[currentProfile][pUp], 0);
+			printf("%s: [%s] up button pressed\n", ip, msg);
 		}
 		else if(!stricmp(msg, "/du1"))
 		{
-			doInput(&input, INPUT_KEYBOARD, profile[0][pUp], 1);
-			printf("%s: up button released\n", msg);
+			doInput(&input, INPUT_KEYBOARD, profile[currentProfile][pUp], 1);
+			printf("%s: [%s] up button released\n", ip, msg);
 		}
 		else if(!stricmp(msg, "/dd0"))
 		{
-			doInput(&input, INPUT_KEYBOARD, profile[0][pDown], 0);
-			printf("%s: down button pressed\n", msg);
+			doInput(&input, INPUT_KEYBOARD, profile[currentProfile][pDown], 0);
+			printf("%s: [%s] down button pressed\n", ip, msg);
 		}
 		else if(!stricmp(msg, "/dd1"))
 		{
-			doInput(&input, INPUT_KEYBOARD, profile[0][pDown], 1);
-			printf("%s: down button released\n", msg);
+			doInput(&input, INPUT_KEYBOARD, profile[currentProfile][pDown], 1);
+			printf("%s: [%s] down button released\n", ip, msg);
 		}
 		else if(!stricmp(msg, "/ba0"))
 		{
-			doInput(&input, INPUT_KEYBOARD, profile[0][pA], 0);
-			printf("%s: a button pressed\n", msg);
+			doInput(&input, INPUT_KEYBOARD, profile[currentProfile][pA], 0);
+			printf("%s: [%s] a button pressed\n", ip, msg);
 		}
 		else if(!stricmp(msg, "/ba1"))
 		{
-			doInput(&input, INPUT_KEYBOARD, profile[0][pA], 1);
-			printf("%s: a button released\n", msg);
+			doInput(&input, INPUT_KEYBOARD, profile[currentProfile][pA], 1);
+			printf("%s: [%s] a button released\n", ip, msg);
 		}
 		else if(!stricmp(msg, "/bb0"))
 		{
-			doInput(&input, INPUT_KEYBOARD, profile[0][pB], 0);
-			printf("%s: b button pressed\n", msg);
+			doInput(&input, INPUT_KEYBOARD, profile[currentProfile][pB], 0);
+			printf("%s: [%s] b button pressed\n", ip, msg);
 		}
 		else if(!stricmp(msg, "/bb1"))
 		{
-			doInput(&input, INPUT_KEYBOARD, profile[0][pB], 1);
-			printf("%s: b button released\n", msg);
+			doInput(&input, INPUT_KEYBOARD, profile[currentProfile][pB], 1);
+			printf("%s: [%s] b button released\n", ip, msg);
 		}
 		else if(!stricmp(msg, "/bx0"))
 		{
-			doInput(&input, INPUT_KEYBOARD, profile[0][pX], 0);
-			printf("%s: x button pressed\n", msg);
+			doInput(&input, INPUT_KEYBOARD, profile[currentProfile][pX], 0);
+			printf("%s: [%s] x button pressed\n", ip, msg);
 		}
 		else if(!stricmp(msg, "/bx1"))
 		{
-			doInput(&input, INPUT_KEYBOARD, profile[0][pX], 1);
-			printf("%s: x button released\n", msg);
+			doInput(&input, INPUT_KEYBOARD, profile[currentProfile][pX], 1);
+			printf("%s: [%s] x button released\n", ip, msg);
 		}
 		else if(!stricmp(msg, "/by0"))
 		{
-			doInput(&input, INPUT_KEYBOARD, profile[0][pY], 0);
-			printf("%s: y button pressed\n", msg);
+			doInput(&input, INPUT_KEYBOARD, profile[currentProfile][pY], 0);
+			printf("%s: [%s] y button pressed\n", ip, msg);
 		}
 		else if(!stricmp(msg, "/by1"))
 		{
-			doInput(&input, INPUT_KEYBOARD, profile[0][pY], 1);
-			printf("%s: y button released\n", msg);
+			doInput(&input, INPUT_KEYBOARD, profile[currentProfile][pY], 1);
+			printf("%s: [%s] y button released\n", ip, msg);
 		}
 		else if(!stricmp(msg, "/bl0"))
 		{
-			doInput(&input, INPUT_KEYBOARD, profile[0][pL], 0);
-			printf("%s: l button pressed\n", msg);
+			doInput(&input, INPUT_KEYBOARD, profile[currentProfile][pL], 0);
+			printf("%s: [%s] l button pressed\n", ip, msg);
 		}
 		else if(!stricmp(msg, "/bl1"))
 		{
-			doInput(&input, INPUT_KEYBOARD, profile[0][pL], 1);
-			printf("%s: l button released\n", msg);
+			doInput(&input, INPUT_KEYBOARD, profile[currentProfile][pL], 1);
+			printf("%s: [%s] l button released\n", ip, msg);
 		}
 		else if(!stricmp(msg, "/br0"))
 		{
-			doInput(&input, INPUT_KEYBOARD, profile[0][pR], 0);
-			printf("%s: r button pressed\n", msg);
+			doInput(&input, INPUT_KEYBOARD, profile[currentProfile][pR], 0);
+			printf("%s: [%s] r button pressed\n", ip, msg);
 		}
 		else if(!stricmp(msg, "/br1"))
 		{
-			doInput(&input, INPUT_KEYBOARD, profile[0][pR], 1);
-			printf("%s: r button released\n", msg);
+			doInput(&input, INPUT_KEYBOARD, profile[currentProfile][pR], 1);
+			printf("%s: [%s] r button released\n", ip, msg);
 		}
 		else if(!stricmp(msg, "/bt0"))
 		{
-			doInput(&input, INPUT_KEYBOARD, profile[0][pStart], 0);
-			printf("%s: start button pressed\n", msg);
+			doInput(&input, INPUT_KEYBOARD, profile[currentProfile][pStart], 0);
+			printf("%s: [%s] start button pressed\n", ip, msg);
 		}
 		else if(!stricmp(msg, "/bt1"))
 		{
-			doInput(&input, INPUT_KEYBOARD, profile[0][pStart], 1);
-			printf("%s: start button released\n", msg);
+			doInput(&input, INPUT_KEYBOARD, profile[currentProfile][pStart], 1);
+			printf("%s: [%s] start button released\n", ip, msg);
 		}
 		else if(!stricmp(msg, "/be0"))
 		{
-			doInput(&input, INPUT_KEYBOARD, profile[0][pSelect], 0);
-			printf("%s: select button pressed\n", msg);
+			doInput(&input, INPUT_KEYBOARD, profile[currentProfile][pSelect], 0);
+			printf("%s: [%s] select button pressed\n", ip, msg);
 		}
 		else if(!stricmp(msg, "/be1"))
 		{
-			doInput(&input, INPUT_KEYBOARD, profile[0][pSelect], 1);
-			printf("%s: select button released\n", msg);
+			doInput(&input, INPUT_KEYBOARD, profile[currentProfile][pSelect], 1);
+			printf("%s: [%s] select button released\n", ip, msg);
 		}
 		else if(!stricmp(msg, "/gb0"))
 		{
-			doInput(&input, INPUT_KEYBOARD, profile[0][pBlue], 0);
-			printf("%s: blue button pressed\n", msg);
+			doInput(&input, INPUT_KEYBOARD, profile[currentProfile][pBlue], 0);
+			printf("%s: [%s] blue button pressed\n", ip, msg);
 		}
 		else if(!stricmp(msg, "/gb1"))
 		{
-			doInput(&input, INPUT_KEYBOARD, profile[0][pBlue], 1);
-			printf("%s: blue button released\n", msg);
+			doInput(&input, INPUT_KEYBOARD, profile[currentProfile][pBlue], 1);
+			printf("%s: [%s] blue button released\n", ip, msg);
 		}
 		else if(!stricmp(msg, "/gy0"))
 		{
-			doInput(&input, INPUT_KEYBOARD, profile[0][pYellow], 0);
-			printf("%s: yellow button pressed\n", msg);
+			doInput(&input, INPUT_KEYBOARD, profile[currentProfile][pYellow], 0);
+			printf("%s: [%s] yellow button pressed\n", ip, msg);
 		}
 		else if(!stricmp(msg, "/gy1"))
 		{
-			doInput(&input, INPUT_KEYBOARD, profile[0][pYellow], 1);
-			printf("%s: yellow button released\n", msg);
+			doInput(&input, INPUT_KEYBOARD, profile[currentProfile][pYellow], 1);
+			printf("%s: [%s] yellow button released\n", ip, msg);
 		}
 		else if(!stricmp(msg, "/gr0"))
 		{
-			doInput(&input, INPUT_KEYBOARD, profile[0][pRed], 0);
-			printf("%s: red button pressed\n", msg);
+			doInput(&input, INPUT_KEYBOARD, profile[currentProfile][pRed], 0);
+			printf("%s: [%s] red button pressed\n", ip, msg);
 		}
 		else if(!stricmp(msg, "/gr1"))
 		{
-			doInput(&input, INPUT_KEYBOARD, profile[0][pRed], 1);
-			printf("%s: red button released\n", msg);
+			doInput(&input, INPUT_KEYBOARD, profile[currentProfile][pRed], 1);
+			printf("%s: [%s] red button released\n", ip, msg);
 		}
 		else if(!stricmp(msg, "/gg0"))
 		{
-			doInput(&input, INPUT_KEYBOARD, profile[0][pGreen], 0);
-			printf("%s: green button pressed\n", msg);
+			doInput(&input, INPUT_KEYBOARD, profile[currentProfile][pGreen], 0);
+			printf("%s: [%s] green button pressed\n", ip, msg);
 		}
 		else if(!stricmp(msg, "/gg1"))
 		{
-			doInput(&input, INPUT_KEYBOARD, profile[0][pGreen], 1);
-			printf("%s: green button released\n", msg);
+			doInput(&input, INPUT_KEYBOARD, profile[currentProfile][pGreen], 1);
+			printf("%s: [%s] green button released\n", ip, msg);
 		}
 		else if(!strnicmp(msg, "/m", 2))
 		{
@@ -369,16 +557,16 @@ int main(int argc, char *argv[])
 			doInput(&input, INPUT_MOUSE, (y << 8) | x, 0);
 			if(z)
 			{
-				printf("%s: touch screen pressed at %i, %i\n", msg, x, y);
+				printf("%s: [%s] touch screen pressed at %i, %i\n", ip, msg, x, y);
 			}
 			else
 			{	//!z
-				printf("%s: touch screen released at %i, %i\n", msg, x, y);
+				printf("%s: [%s] touch screen released at %i, %i\n", ip, msg, x, y);
 			}
 		}
 		else
 		{
-			printf("%s: undefined command\n", msg);
+			printf("%s: [%s] undefined command\n", ip, msg);
 
 		}
 
