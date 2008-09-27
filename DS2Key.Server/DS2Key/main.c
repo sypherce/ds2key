@@ -294,13 +294,13 @@ int main(int argc, char *argv[])
 	initVKTable();
 
 	{
-		FILE *file = fopen("ds2key.ini", "r");
 		FILE *file;
 
 		//read Arguments
 		#ifdef _MSC_VER
 		fopen_s(&file, "ds2key.ini", "r");
 		#else //_MSC_VER
+		file = fopen("ds2key.ini", "r");
 		#endif //_MSC_VER
 		if(file)
 		{
