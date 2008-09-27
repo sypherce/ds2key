@@ -23,10 +23,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	#define WINVER	0x0500
 	#include <windows.h>
 	#include <winsock.h>
-	#ifdef _MSC_VER
+	#ifdef _MSC_VER //less warnings from microsoft
 		#define stricmp		_stricmp
 		#define strnicmp	_strnicmp
-		#define sscanf		sscanf_s
 	#endif
 typedef unsigned char bool;
 #else //WIN32
@@ -84,11 +83,8 @@ void doInput(INPUT *input, unsigned int type, unsigned int key, bool state)
 
 char *longToIP(unsigned long longIP, char *charIP)
 {
-	#ifdef _MSC_VER
-	sprintf_s(charIP, 16, "%i.%i.%i.%i", (((unsigned char *) &longIP)[0]), ((unsigned char *) &longIP)[1], ((unsigned char *) &longIP)[2], ((unsigned char *) &longIP)[3]);
-	#else //_MSC_VER
 	sprintf(charIP, "%i.%i.%i.%i", (((unsigned char *) &longIP)[0]), ((unsigned char *) &longIP)[1], ((unsigned char *) &longIP)[2], ((unsigned char *) &longIP)[3]);
-	#endif //_MSC_VER
+
 	return charIP;
 }
 
@@ -98,11 +94,7 @@ bool writeDefaultConfig()
 {
 	FILE *file;
 	serverPort = LOCAL_SERVER_PORT;
-	#ifdef _MSC_VER
-	fopen_s(&file, "ds2key.ini", "w+");
-	#else //_MSC_VER
 	file = fopen("ds2key.ini", "w+");
-	#endif //_MSC_VRE
 	if(file)
 	{
 		fprintf(file, "%i\n", serverPort);
@@ -120,13 +112,8 @@ bool writeDefaultProfileConfig(unsigned char profileNumber)
 {
 	FILE *file;
 	char filename[16];
-	#ifdef _MSC_VER
-	sprintf_s(filename, 16, "ds2key.p%i.ini", profileNumber);
-	fopen_s(&file, filename, "w+");
-	#else //_MSC_VER
 	sprintf(filename, "ds2key.p%i.ini", profileNumber);
 	file = fopen(filename, "w+");
-	#endif //_MSC_VER
 	if(file)
 	{
 		fprintf(file, "%s\n", getVKString(VK_UP));
@@ -207,13 +194,8 @@ bool readProfileConfig(unsigned char profileNumber)
 			} \
 		}
 
-	#ifdef _MSC_VER
-	sprintf_s(filename, 16, "ds2key.p%i.ini", profileNumber);
-	fopen_s(&file, filename, "r");
-	#else //_MSC_VER
 	sprintf(filename, "ds2key.p%i.ini", profileNumber);
 	file = fopen(filename, "r");
-	#endif //_MSC_VER;
 	if(file)
 	{
 		unsigned long int size;
@@ -297,11 +279,7 @@ int main(int argc, char *argv[])
 		FILE *file;
 
 		//read Arguments
-		#ifdef _MSC_VER
-		fopen_s(&file, "ds2key.ini", "r");
-		#else //_MSC_VER
 		file = fopen("ds2key.ini", "r");
-		#endif //_MSC_VER
 		if(file)
 		{
 			char buffer[256];
