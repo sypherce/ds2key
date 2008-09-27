@@ -34,6 +34,10 @@
 		<Linker>
 			<Add library="wsock32" />
 		</Linker>
+		<Unit filename="DS2Key\VK.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="DS2Key\VK.h" />
 		<Unit filename="DS2Key\main.c">
 			<Option compilerVar="CC" />
 		</Unit>

@@ -35,6 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	{ \
 		while(REG_VCOUNT > 192); \
 		while(REG_VCOUNT < 192); \
+		vblfunction(); \
 	}
 
 #define MSG_WIFI_INITIALIZE				0x10000001
@@ -184,7 +185,6 @@ int main(int argc, char *argv[])
 
 		//send fifo message to initialize the arm7 wifi
 		REG_IPC_FIFO_CR = IPC_FIFO_ENABLE | IPC_FIFO_SEND_CLEAR;	//enable & clear FIFO
-
 		Wifi_pass = Wifi_Init(WIFIINIT_OPTION_USELED);
 		REG_IPC_FIFO_TX = MSG_WIFI_INITIALIZE;
 		REG_IPC_FIFO_TX = Wifi_pass;
@@ -250,9 +250,18 @@ int main(int argc, char *argv[])
 
 	//Tell the socket to connect to the IP address we found, on port 80 (HTTP)
 	sain.sin_family = AF_INET;
+	sain.sin_addr.s_addr = htonl(INADDR_ANY);
 	sain.sin_port = htons(atoi(port));
-	sain.sin_addr.s_addr = INADDR_ANY;
+	i = bind(my_socket, (struct sockaddr *) &sain, sizeof(sain));
+	if(i < 0)
+	{
+		printf("cannot bind port number %i\n", atoi(port));
+		while(1);
+	}
+
+	i = 1;
 	ioctl(my_socket, FIONBIO, &i);
+
 	printf("Connected to server!\n");
 
 	//send our request
@@ -268,8 +277,23 @@ int main(int argc, char *argv[])
 		touchPosition stylusPos = touchReadXY();
 		unsigned char x = stylusPos.px >> 3;
 		unsigned char y = (stylusPos.py >> 3) - keyboardOffset;
+		int n;
+		int cliLen = sizeof(sain);
+		char msg[4];
 		scanKeys();
 		updateGHPad();
+
+		n = recvfrom(my_socket, msg, 4, 0, (struct sockaddr *) &sain, &cliLen);
+
+		if(n > 0)
+		{
+			if(!strcmp(msg, "/p?"))
+			{
+				sprintf(cProfile, "/p%i", atoi(profile));
+				sendCommand(cProfile);
+			}
+		}
+
 		if(!screenPos && !settings)
 		{
 			if(keysDown() & KEY_A)
