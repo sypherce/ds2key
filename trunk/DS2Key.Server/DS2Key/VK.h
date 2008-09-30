@@ -1,5 +1,5 @@
 #ifndef __VK_H__
-	#define __VK_H__
+#define __VK_H__
 
 extern char *vkTable[0xff];
 extern void initVKTable();

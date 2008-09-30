@@ -17,25 +17,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <stdio.h>
 #ifdef WIN32
-	#ifdef WINVER
-		#undef WINVER
-	#endif
-	#define WINVER	0x0500
-	#include <windows.h>
-	#include <winsock.h>
-	#ifdef _MSC_VER //less warnings from microsoft
-		#define stricmp		_stricmp
-		#define strnicmp	_strnicmp
-	#endif
+#ifdef WINVER
+#undef WINVER
+#endif
+#define WINVER	0x0500
+#include <windows.h>
+#include <winsock.h>
+#ifdef _MSC_VER //less warnings from microsoft
+#define stricmp		_stricmp
+#define strnicmp	_strnicmp
+#endif
 typedef unsigned char bool;
 #else //WIN32
-	#include <sys/types.h>
-	#include <string.h> //memset()
-	#include <sys/socket.h>
-	#include <netinet/in.h>
-	#include <arpa/inet.h>
-	#include <netdb.h>
-	#include <unistd.h> //close()
+#include <sys/types.h>
+#include <string.h> //memset()
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <unistd.h> //close()
 #endif //WIN32
 #include "main.h"
 #include "VK.h"
@@ -177,22 +177,22 @@ bool readProfileConfig(unsigned char profileNumber)
 {
 	FILE *file;
 	char filename[16];
-	#define readProfileKey(key) \
+#define readProfileKey(key) \
+	{ \
+		if(tmpBuffer[0] != 0) \
 		{ \
-			if(tmpBuffer[0] != 0) \
+			int i = 0; \
+			getLine(tmpBuffer); \
+			profile[profileNumber][key] = getVKNumber(tmpBuffer); \
+			tmpBuffer = tmpBuffer + strlen(tmpBuffer) + 1; \
+			while(tmpBuffer[i] == (char)0xa || tmpBuffer[i] == (char)0xd) \
 			{ \
-				int i = 0; \
-				getLine(tmpBuffer); \
-				profile[profileNumber][key] = getVKNumber(tmpBuffer); \
-				tmpBuffer = tmpBuffer + strlen(tmpBuffer) + 1; \
-				while(tmpBuffer[i] == (char)0xa || tmpBuffer[i] == (char)0xd) \
-				{ \
-					i++; \
-				} \
- \
-				tmpBuffer = &tmpBuffer[i]; \
+				i++; \
 			} \
-		}
+ \
+			tmpBuffer = &tmpBuffer[i]; \
+		} \
+	}
 
 	sprintf(filename, "ds2key.p%i.ini", profileNumber);
 	file = fopen(filename, "r");
@@ -262,11 +262,11 @@ int main(int argc, char *argv[])
 	int sd, rc, n, cliLen;
 	struct sockaddr_in cliAddr, servAddr;
 	char msg[MAX_MSG];
-	#ifdef WIN32
+#ifdef WIN32
 	WSADATA wsaData;
 	INPUT input;
-	#else //WIN32
-	#endif //WIN32
+#else //WIN32
+#endif //WIN32
 	int pI;
 	for(pI = 0; pI <= 255; pI++)
 	{
@@ -310,9 +310,9 @@ int main(int argc, char *argv[])
 		}
 	}	//read Arguments
 	{	//setup connections
-		#ifdef WIN32
+#ifdef WIN32
 		WSAStartup(0x0202, &wsaData);	//windows socket startup
-		#endif //WIN32
+#endif //WIN32
 
 		//socket creation
 		sd = socket(AF_INET, SOCK_DGRAM, 0);

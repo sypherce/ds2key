@@ -110,7 +110,7 @@ void fifo()
 
 	switch(message)
 	{
-			#ifdef ARM7
+	#ifdef ARM7
 
 		//lights
 		case MSG_BOTH_BACKLIGHTS_ON:
@@ -216,7 +216,7 @@ void fifo()
 				break;
 			}
 
-			#endif
+	#endif //ARM7
 
 		case MSG_WIFI_SYNC:
 			{

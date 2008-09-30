@@ -16,11 +16,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef __KEYBOARD_H__
-	#define __KEYBOARD_H__
+#define __KEYBOARD_H__
 
-	#define KB_NORMAL	0
-	#define KB_CAPS		1
-	#define KB_SHIFT	2
+#define KB_NORMAL	0
+#define KB_CAPS		1
+#define KB_SHIFT	2
 
 extern u8 keyboardOffset;
 extern uint16 *keyboardMapPointer;
