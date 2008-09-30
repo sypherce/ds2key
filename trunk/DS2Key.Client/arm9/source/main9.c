@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include "fifo.h"
 #include "keyboard.h"
 
 #include "keyboardTiles_bin.h"
@@ -32,15 +33,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "spritesTiles_bin.h"
 #include "spritesPal_bin.h"
 #include "gh.h"
-
-#define waitForVBL() \
-	{ \
-		while(REG_VCOUNT > SCREEN_HEIGHT); \
-		while(REG_VCOUNT < SCREEN_HEIGHT); \
-	}
-
-#define MSG_WIFI_INITIALIZE				0x10000001
-#define MSG_WIFI_SYNC					0x10000002
 
 #define min(a, b)						(((a) < (b)) ? (a) : (b))
 #define max(a, b)						(((a) > (b)) ? (a) : (b))
@@ -58,6 +50,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 bool screenPos = 0;
 bool mouseLock = false;
 bool settings = false;
+int lightCounter = 0;
+char lightTimeout = 4;
 
 //a global copy of sprite attribute memory
 SpriteEntry sprites[128];
@@ -84,7 +78,6 @@ void initSprites(void)
 		sprites[i].attribute[2] = 0;
 	}
 
-	waitForVBL();
 	updateOAM();
 }
 
@@ -110,28 +103,9 @@ void Timer_50ms(void)
 	Wifi_Timer(50);
 }
 
-//notification function to send fifo message to arm7
-void arm9_synctoarm7()	//send fifo message
-{
-	REG_IPC_FIFO_TX = MSG_WIFI_SYNC;
-}
-
-//interrupt handler to receive fifo messages from arm7
-void arm9_fifo()	//check incoming fifo messages
-{
-	u32 message = REG_IPC_FIFO_RX;
-
-	switch(message)
-	{
-		case MSG_WIFI_SYNC:
-			Wifi_Sync();
-			break;
-	}
-}
-
 void vblfunction()
 {
-
+	lightCounter++;
 }
 
 unsigned long iptoi(char *ipchar)
@@ -223,14 +197,6 @@ int main(int argc, char *argv[])
 	printf("DS2Key\n-\n");
 
 	{	//wifi init
-		u32 Wifi_pass;
-
-		//send fifo message to initialize the arm7 wifi
-		REG_IPC_FIFO_CR = IPC_FIFO_ENABLE | IPC_FIFO_SEND_CLEAR;	//enable & clear FIFO
-		Wifi_pass = Wifi_Init(WIFIINIT_OPTION_USELED);
-		REG_IPC_FIFO_TX = MSG_WIFI_INITIALIZE;
-		REG_IPC_FIFO_TX = Wifi_pass;
-
 		TIMER3_CR = 0;	//disable timer3
 		irqInit();
 
@@ -238,20 +204,16 @@ int main(int argc, char *argv[])
 		irqEnable(IRQ_VBLANK);
 		irqSet(IRQ_TIMER3, Timer_50ms); //setup timer IRQ
 		irqEnable(IRQ_TIMER3);
-		irqSet(IRQ_FIFO_NOT_EMPTY, arm9_fifo);	//setup fifo IRQ
+		irqSet(IRQ_FIFO_NOT_EMPTY, fifo);	//setup fifo IRQ
 		irqEnable(IRQ_FIFO_NOT_EMPTY);
 
-		REG_IPC_FIFO_CR = IPC_FIFO_ENABLE | IPC_FIFO_RECV_IRQ;	//enable FIFO IRQ
-		Wifi_SetSyncHandler(arm9_synctoarm7);	//tell wifi lib to use our handler to notify arm7
+		REG_IPC_FIFO_CR = IPC_FIFO_ENABLE | IPC_FIFO_SEND_CLEAR | IPC_FIFO_RECV_IRQ;
 
 		//set timer3
 		TIMER3_DATA = TIMER_FREQ_256(50);
 		TIMER3_CR = TIMER_ENABLE | TIMER_IRQ_REQ | TIMER_DIV_256;
 
-		while(Wifi_CheckInit() == 0)	//wait for arm7 to be initted successfully
-		{
-			waitForVBL();
-		}
+		initWifi();
 	}	//wifi init
 
 	printf("Connecting via WFC data\n");
@@ -335,6 +297,7 @@ int main(int argc, char *argv[])
 	}	//sprites
 
 	initGHPad();
+	lightCounter = 0;
 	while(1)
 	{
 		unsigned int lastx = 299;
@@ -357,6 +320,24 @@ int main(int argc, char *argv[])
 		}
 
 		updateOAM();
+
+		if((!screenPos && !mouseLock && !settings && lightCounter >= lightTimeout * 60) || keysHeld() & KEY_LID)
+		{
+			turnOffBothBacklights();
+		}
+		else
+		{
+			turnOnBothBacklights();
+		}
+
+		if((keysHeld() & KEY_A) | (keysHeld() & KEY_B) | (keysHeld() & KEY_X) | (keysHeld() & KEY_Y) | (keysHeld() & KEY_L) | (keysHeld() & KEY_R) | (keysHeld() & KEY_START) | (keysHeld() & KEY_SELECT) | (keysHeld() & KEY_UP) | (keysHeld() & KEY_DOWN) | (keysHeld() & KEY_LEFT) | (keysHeld() & KEY_RIGHT) | (keysDownGH(GH_BLUE)) | (keysDownGH(GH_YELLOW)) | (keysDownGH(GH_RED)) | (keysDownGH(GH_GREEN)))
+		{
+			lightCounter = lightTimeout * 60;
+		}
+		else if(keysUp() & KEY_LID)
+		{
+			lightCounter = 0;
+		}
 
 		n = recvfrom(my_socket, msg, 4, 0, (struct sockaddr *) &sain, &cliLen);
 
@@ -534,6 +515,7 @@ int main(int argc, char *argv[])
 
 		if(keysDown() & KEY_TOUCH)
 		{
+			lightCounter = 0;
 			if(!screenPos)
 			{
 				if(mouseLock)
@@ -546,6 +528,7 @@ int main(int argc, char *argv[])
 						sprites[SPRITE_SETTINGS].posX = SPRITE_SETTINGS_X;
 						sprites[SPRITE_SETTINGS].posY = SPRITE_SETTINGS_Y;
 						mouseLock = false;
+						lightCounter = 0;
 					}
 				}
 				else
@@ -645,8 +628,14 @@ int main(int argc, char *argv[])
 					}
 
 					iprintf("\x1b[3;0H        IP: %s\n\n\n        Port: %s\n\n\n        Profile: %s\n\n\n\n\n\n      ", ip, port, profile);
+					lightCounter = 0;
 				}
 			}
+		}
+
+		if(keysHeld() & KEY_TOUCH)
+		{
+			lightCounter = 0;
 		}
 
 		if(mouseLock && !settings && keysHeld() & KEY_TOUCH && ((lastx != stylusPos.px || lasty != stylusPos.py) || (lastx == 299 || lasty == 299)))
@@ -665,7 +654,7 @@ int main(int argc, char *argv[])
 
 		lastx = stylusPos.px;
 		lasty = stylusPos.py;
-		waitForVBL();
+		swiWaitForVBlank();
 	}
 
 	shutdown(my_socket, 0); //good practice to shutdown the socket.

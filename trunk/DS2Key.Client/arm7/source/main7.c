@@ -18,9 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <nds.h>
 #include <stdlib.h>
 #include <dswifi7.h>
-
-#define MSG_WIFI_INITIALIZE 0x10000001
-#define MSG_WIFI_SYNC		0x10000002
+#include "fifo.h"
 
 void startSound(int sampleRate, const void *data, u32 bytes, u8 channel, u8 vol, u8 pan, u8 format)
 {
@@ -133,23 +131,8 @@ void VblankHandler(void)
 	Wifi_Update();
 }
 
-void arm7_synctoarm9()	//send fifo message
-{
-	REG_IPC_FIFO_TX = MSG_WIFI_SYNC;
-}
-
-void arm7_fifo()	//check incoming fifo messages
-{
-	u32 msg = REG_IPC_FIFO_RX;
-	if(msg == MSG_WIFI_SYNC)
-	{
-		Wifi_Sync();
-	}
-}
-
 int main(int argc, char **argv)
 {
-	u32 fifo_temp;
 	REG_IPC_FIFO_CR = IPC_FIFO_ENABLE | IPC_FIFO_SEND_CLEAR;
 
 	rtcReset();
@@ -169,36 +152,10 @@ int main(int argc, char **argv)
 	irqSet(IRQ_WIFI, Wifi_Interrupt);
 	irqEnable(IRQ_WIFI);
 
-	// trade some mail, to get a pointer from arm9
-	while(1)
-	{
-		while(REG_IPC_FIFO_CR & IPC_FIFO_RECV_EMPTY)
-		{
-			swiWaitForVBlank();
-		}
-
-		fifo_temp = REG_IPC_FIFO_RX;
-		if(fifo_temp == MSG_WIFI_INITIALIZE)
-		{
-			break;
-		}
-	}
-
-	while(REG_IPC_FIFO_CR & IPC_FIFO_RECV_EMPTY)
-	{
-		swiWaitForVBlank();
-	}
-
-	fifo_temp = REG_IPC_FIFO_RX;
-	Wifi_Init(fifo_temp);
-
-	irqSet(IRQ_FIFO_NOT_EMPTY, arm7_fifo);
+	irqSet(IRQ_FIFO_NOT_EMPTY, fifo);
 	irqEnable(IRQ_FIFO_NOT_EMPTY);
 	REG_IPC_FIFO_CR = IPC_FIFO_ENABLE | IPC_FIFO_RECV_IRQ;
 
-	Wifi_SetSyncHandler(arm7_synctoarm9);
-
-	// Keep the ARM7 idle
 	while(1)
 	{
 		swiWaitForVBlank();

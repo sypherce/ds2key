@@ -17,9 +17,9 @@ include $(DEVKITARM)/ds_rules
 # INCLUDES is a list of directories containing header files
 #---------------------------------------------------------------------------------
 BUILD		:=	build
-SOURCES		:=	source
+SOURCES		:=	source ../common/source
 DATA		:=	data
-INCLUDES	:=	include
+INCLUDES	:=	include ../common/source
 
 #---------------------------------------------------------------------------------
 # options for code generation
