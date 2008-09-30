@@ -1,10 +1,9 @@
 #include <windows.h>
 #include "VK.h"
 
-#ifdef WIN32
-	#define stricmp		_stricmp
-#endif//WIN32
-
+#ifdef _MSC_VER //less warnings from microsoft
+	#define stricmp _stricmp
+#endif //_MSC_VER
 char *vkTable[0xff];
 
 unsigned char getVKNumber(unsigned char *key)
