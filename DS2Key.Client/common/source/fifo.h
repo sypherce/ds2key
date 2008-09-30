@@ -16,28 +16,28 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef __FIFO_H__
-	#define __FIFO_H__
+#define __FIFO_H__
 
-	#define PM_BACKLIGHTS	(PM_BACKLIGHT_BOTTOM | PM_BACKLIGHT_TOP)
+#define PM_BACKLIGHTS	(PM_BACKLIGHT_BOTTOM | PM_BACKLIGHT_TOP)
 
 //lights
-	#define MSG_BOTH_BACKLIGHTS_ON		0x10000001
-	#define MSG_TOP_BACKLIGHT_ON		0x10000002
-	#define MSG_BOTTOM_BACKLIGHT_ON		0x10000003
-	#define MSG_BOTH_BACKLIGHTS_OFF		0x10000004
-	#define MSG_TOP_BACKLIGHT_OFF		0x10000005
-	#define MSG_BOTTOM_BACKLIGHT_OFF	0x10000006
-	#define MSG_BOTH_BACKLIGHTS_TOGGLE	0x10000007
-	#define MSG_TOP_BACKLIGHT_TOGGLE	0x10000008
-	#define MSG_BOTTOM_BACKLIGHT_TOGGLE 0x10000009
+#define MSG_BOTH_BACKLIGHTS_ON		0x10000001
+#define MSG_TOP_BACKLIGHT_ON		0x10000002
+#define MSG_BOTTOM_BACKLIGHT_ON		0x10000003
+#define MSG_BOTH_BACKLIGHTS_OFF		0x10000004
+#define MSG_TOP_BACKLIGHT_OFF		0x10000005
+#define MSG_BOTTOM_BACKLIGHT_OFF	0x10000006
+#define MSG_BOTH_BACKLIGHTS_TOGGLE	0x10000007
+#define MSG_TOP_BACKLIGHT_TOGGLE	0x10000008
+#define MSG_BOTTOM_BACKLIGHT_TOGGLE 0x10000009
 
 //wifi
-	#define MSG_WIFI_INITIALIZE 0x10000010
-	#define MSG_WIFI_SYNC		0x10000011
+#define MSG_WIFI_INITIALIZE 0x10000010
+#define MSG_WIFI_SYNC		0x10000011
 
-	#ifdef ARM7
-	#endif //ARM7
-	#ifdef ARM9
+#ifdef ARM7
+#endif //ARM7
+#ifdef ARM9
 
 //lights
 void turnOnBothBacklights();
@@ -52,7 +52,7 @@ void toggleBottomBacklight();
 
 //wifi
 extern void initWifi();
-	#endif //ARM9
+#endif //ARM9
 extern void cpuSync();
 extern void fifo();
 

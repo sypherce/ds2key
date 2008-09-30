@@ -2,7 +2,7 @@
 #include "VK.h"
 
 #ifdef _MSC_VER //less warnings from microsoft
-	#define stricmp _stricmp
+#define stricmp _stricmp
 #endif //_MSC_VER
 char *vkTable[0xff];
 
@@ -42,10 +42,10 @@ void initVKTable()
 	vkTable[VK_RBUTTON] = "KEY_RBUTTON";
 	vkTable[VK_CANCEL] = "KEY_CANCEL";
 	vkTable[VK_MBUTTON] = "KEY_MBUTTON";
-	#if (_WIN32_WINNT >= 0x0500)
+#if (_WIN32_WINNT >= 0x0500)
 	vkTable[VK_XBUTTON1] = "KEY_XBUTTON1";
 	vkTable[VK_XBUTTON2] = "KEY_XBUTTON2";
-	#endif
+#endif
 	vkTable[VK_BACK] = "KEY_BACK";
 	vkTable[VK_TAB] = "KEY_TAB";
 	vkTable[VK_CLEAR] = "KEY_CLEAR";
@@ -171,7 +171,7 @@ void initVKTable()
 	vkTable[VK_RCONTROL] = "KEY_RCONTROL";
 	vkTable[VK_LMENU] = "KEY_LMENU";
 	vkTable[VK_RMENU] = "KEY_RMENU";
-	#if (_WIN32_WINNT >= 0x0500)
+#if (_WIN32_WINNT >= 0x0500)
 	vkTable[VK_BROWSER_BACK] = "KEY_BROWSER_BACK";
 	vkTable[VK_BROWSER_FORWARD] = "KEY_BROWSER_FORWARD";
 	vkTable[VK_BROWSER_REFRESH] = "KEY_BROWSER_REFRESH";
@@ -190,14 +190,14 @@ void initVKTable()
 	vkTable[VK_LAUNCH_MEDIA_SELECT] = "KEY_LAUNCH_MEDIA_SELECT";
 	vkTable[VK_LAUNCH_APP1] = "KEY_LAUNCH_APP1";
 	vkTable[VK_LAUNCH_APP2] = "KEY_LAUNCH_APP2";
-	#endif
+#endif
 	vkTable[VK_OEM_1] = "KEY_OEM_1";
-	#if (_WIN32_WINNT >= 0x0500)
+#if (_WIN32_WINNT >= 0x0500)
 	vkTable[VK_OEM_PLUS] = "KEY_OEM_PLUS";
 	vkTable[VK_OEM_COMMA] = "KEY_OEM_COMMA";
 	vkTable[VK_OEM_MINUS] = "KEY_OEM_MINUS";
 	vkTable[VK_OEM_PERIOD] = "KEY_OEM_PERIOD";
-	#endif
+#endif
 	vkTable[VK_OEM_2] = "KEY_OEM_2";
 	vkTable[VK_OEM_3] = "KEY_OEM_3";
 	vkTable[VK_OEM_4] = "KEY_OEM_4";
@@ -205,13 +205,13 @@ void initVKTable()
 	vkTable[VK_OEM_6] = "KEY_OEM_6";
 	vkTable[VK_OEM_7] = "KEY_OEM_7";
 	vkTable[VK_OEM_8] = "KEY_OEM_8";
-	#if (_WIN32_WINNT >= 0x0500)
+#if (_WIN32_WINNT >= 0x0500)
 	vkTable[VK_OEM_102] = "KEY_OEM_102";
-	#endif
+#endif
 	vkTable[VK_PROCESSKEY] = "KEY_PROCESSKEY";
-	#if (_WIN32_WINNT >= 0x0500)
+#if (_WIN32_WINNT >= 0x0500)
 	vkTable[VK_PACKET] = "KEY_PACKET";
-	#endif
+#endif
 	vkTable[VK_ATTN] = "KEY_ATTN";
 	vkTable[VK_CRSEL] = "KEY_CRSEL";
 	vkTable[VK_EXSEL] = "KEY_EXSEL";
