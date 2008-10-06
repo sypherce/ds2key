@@ -27,25 +27,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "fifo.h"
 #include "keyboard.h"
 
-#include "keyboardTiles_bin.h"
-#include "keyboardMap_bin.h"
-#include "keyboardPal_bin.h"
-#include "spritesTiles_bin.h"
-#include "spritesPal_bin.h"
+#include "keyboardImage.h"
+#include "spritesImage.h"
 #include "gh.h"
 
 #define min(a, b)						(((a) < (b)) ? (a) : (b))
 #define max(a, b)						(((a) > (b)) ? (a) : (b))
 #define stylusBetween(x1, y1, x2, y2)	(stylusPos.px >= min((x1), (x2)) && stylusPos.px <= max((x1), (x2)) && stylusPos.py >= min((y1), (y2)) && stylusPos.py <= max((y1), (y2)))
 
-#define SPRITE_MOUSE					0
-#define SPRITE_SETTINGS					1
-#define SPRITE_HIDDEN_X					SCREEN_WIDTH
-#define SPRITE_HIDDEN_Y					SCREEN_HEIGHT
-#define SPRITE_SETTINGS_X				0
-#define SPRITE_SETTINGS_Y				0
-#define SPRITE_MOUSE_X					244
-#define SPRITE_MOUSE_Y					175
+#define SPRITE_MOUSE 0
+#define SPRITE_SETTINGS	1
+#define SPRITE_HIDDEN_X	SCREEN_WIDTH
+#define SPRITE_HIDDEN_Y	SCREEN_HEIGHT
+#define SPRITE_SETTINGS_X 0
+#define SPRITE_SETTINGS_Y 0
+#define SPRITE_MOUSE_X 244
+#define SPRITE_MOUSE_Y 175
 
 bool screenPos = 0;
 bool mouseLock = false;
@@ -57,7 +54,7 @@ char lightTimeout = 4;
 SpriteEntry sprites[128];
 
 //rotation attributes overlap so assign then to the same location
-pSpriteRotation spriteRotations = (pSpriteRotation) sprites;
+pSpriteRotation spriteRotations = (pSpriteRotation)sprites;
 int spriteRotationAngle = 0;
 
 //copy our sprite to object attribute memory
@@ -120,6 +117,7 @@ unsigned long iptoi(char *ipchar)
 			iplong = (iplong >> 8) | (i1 << 24);
 			i1 = 0;
 			i2++;
+
 			if(*ipchar == 0 && i2 < 4)
 			{
 				iplong = iplong >> ((4 - i2) * 8);
@@ -145,7 +143,8 @@ void sendCommand(int socket, struct sockaddr_in sockaddr, unsigned long ip, unsi
 	sockaddr.sin_family = AF_INET;
 	sockaddr.sin_port = htons(port);
 	sockaddr.sin_addr.s_addr = ip;
-	if(sendto(socket, command, strlen(command), 0, (struct sockaddr *) &sockaddr, sizeof(sockaddr)) >= 0)
+
+	if(sendto(socket, command, strlen(command), 0, (struct sockaddr *)&sockaddr, sizeof(sockaddr)) >= 0)
 	{
 		iprintf("\x1b[22;0HSent: %s          ", command);
 	}
@@ -162,49 +161,56 @@ int main(int argc, char *argv[])
 	char cProfile[6];
 	int i = 1;
 	struct sockaddr_in sain;
-	unsigned char portLength = 6;
+	const unsigned char portLength = 6;
 	char port[portLength + 1];
-	unsigned char ipLength = 16;
+	const unsigned char ipLength = 16;
 	char ip[ipLength + 1];
-	unsigned char profileLength = 4;
+	const unsigned char profileLength = 4;
 	char profile[profileLength + 1];
 	char lastProfile[profileLength + 1];
 	int my_socket;
 	lcdMainOnBottom();
-	{	//setup keyboard screen
+	{   //setup keyboard screen
 		DISPLAY_CR = MODE_0_2D | DISPLAY_BG0_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_ACTIVE;
 		BG0_CR = BG_COLOR_16 | BG_32x32 | BG_MAP_BASE(0) | BG_TILE_BASE(1);
 		VRAM_A_CR = VRAM_ENABLE | VRAM_A_MAIN_SPRITE;
 		VRAM_B_CR = VRAM_ENABLE | VRAM_B_MAIN_BG_0x06000000;
 
-		dmaCopy((uint16 *)keyboardPal_bin, (uint16 *)BG_PALETTE, keyboardPal_bin_size);
-		keyboardMapPointer = (uint16 *) (BG_MAP_RAM(0) + (0x40 * keyboardOffset));
+		//copy keyboard palette to ram
+		dmaCopy((uint16 *)keyboardImagePal, (uint16 *)BG_PALETTE, keyboardImagePalLen);
+		keyboardMapPointer = (uint16 *)(BG_MAP_RAM(0) + (0x40 * keyboardOffset));
 		deInitKeyboard();
-		dmaCopy((uint16 *)keyboardTiles_bin, (uint16 *)BG_TILE_RAM(1), keyboardTiles_bin_size);
+
+		//copy keyboard tiles to ram
+		dmaCopy((uint16 *)keyboardImageTiles, (uint16 *)BG_TILE_RAM(1), keyboardImageTilesLen);
+
+		//dirty hack to make tile 0 the same as tile 1
+		dmaCopy((uint16 *)BG_TILE_RAM(1) + 16, (uint16 *)BG_TILE_RAM(1), 32);
 
 		initSprites();
-	}	//setup keyboard screen
-	{	//setup console screen
+	}   //setup keyboard screen
+	{   //setup console screen
 		SUB_DISPLAY_CR = MODE_0_2D | DISPLAY_BG0_ACTIVE;
 		SUB_BG0_CR = BG_MAP_BASE(31);
 		VRAM_C_CR = VRAM_ENABLE | VRAM_C_SUB_BG_0x06200000;
 
-		BG_PALETTE_SUB[255] = RGB15(31, 31, 31);
+		BG_PALETTE_SUB[0] = RGB15(8, 20, 29);
+		BG_PALETTE_SUB[255] = RGB15(0, 0, 0);
 
 		consoleInitDefault((u16 *)SCREEN_BASE_BLOCK_SUB(31), (u16 *)CHAR_BASE_BLOCK_SUB(0), 16);
-	}	//setup console screen
+	}   //setup console screen
 
 	printf("DS2Key\n-\n");
 
-	{	//wifi init
-		TIMER3_CR = 0;	//disable timer3
+	{   //wifi init
+		TIMER3_CR = 0;  //disable timer3
 		irqInit();
 
 		irqSet(IRQ_VBLANK, vblfunction);
 		irqEnable(IRQ_VBLANK);
 		irqSet(IRQ_TIMER3, Timer_50ms); //setup timer IRQ
 		irqEnable(IRQ_TIMER3);
-		irqSet(IRQ_FIFO_NOT_EMPTY, fifo);	//setup fifo IRQ
+		irqSet(IRQ_FIFO_NOT_EMPTY, fifo);   //setup fifo IRQ
 		irqEnable(IRQ_FIFO_NOT_EMPTY);
 
 		REG_IPC_FIFO_CR = IPC_FIFO_ENABLE | IPC_FIFO_SEND_CLEAR | IPC_FIFO_RECV_IRQ;
@@ -214,15 +220,16 @@ int main(int argc, char *argv[])
 		TIMER3_CR = TIMER_ENABLE | TIMER_IRQ_REQ | TIMER_DIV_256;
 
 		initWifi();
-	}	//wifi init
+	}   //wifi init
 
 	printf("Connecting via WFC data\n");
-	{	//wifi connect
+	{   //wifi connect
 		//simple WFC connect:
 		Wifi_AutoConnect(); //request connect
 		while(1)
 		{
 			int i = Wifi_AssocStatus(); //check status
+
 			if(i == ASSOCSTATUS_ASSOCIATED)
 			{
 				printf("Connected successfully!\n");
@@ -232,10 +239,12 @@ int main(int argc, char *argv[])
 			if(i == ASSOCSTATUS_CANNOTCONNECT)
 			{
 				printf("Could not connect!\n");
-				while(1);
+				while(1)
+				{
+				}
 			}
 		}
-	}	//wifi connect
+	}   //wifi connect
 
 	my_socket = socket(AF_INET, SOCK_DGRAM, 0);
 	memset(port, 0, portLength);
@@ -250,11 +259,14 @@ int main(int argc, char *argv[])
 	sain.sin_family = AF_INET;
 	sain.sin_addr.s_addr = htonl(INADDR_ANY);
 	sain.sin_port = htons(atoi(port));
-	i = bind(my_socket, (struct sockaddr *) &sain, sizeof(sain));
+	i = bind(my_socket, (struct sockaddr *)&sain, sizeof(sain));
+
 	if(i < 0)
 	{
 		printf("cannot bind port number %i\n", atoi(port));
-		while(1);
+		while(1)
+		{
+		}
 	}
 
 	i = 1;
@@ -266,7 +278,7 @@ int main(int argc, char *argv[])
 	sendCommand(cProfile);
 	printf("%s\n", cProfile);
 
-	{	//sprites
+	{   //sprites
 		int spriteGFXPos = 0;
 
 		//mouse
@@ -274,8 +286,8 @@ int main(int argc, char *argv[])
 		sprites[SPRITE_MOUSE].attribute[1] = ATTR1_SIZE_16 | SPRITE_MOUSE_X;
 		sprites[SPRITE_MOUSE].attribute[2] = ATTR2_PALETTE(0) | (spriteGFXPos >> 4);
 		{
-			dmaCopy((uint16 *)spritesPal_bin, &SPRITE_PALETTE[0], keyboardPal_bin_size);
-			dmaCopy((uint16 *)spritesTiles_bin, &SPRITE_GFX[spriteGFXPos], (keyboardTiles_bin_size << 1));
+			dmaCopy((uint16 *)spritesImagePal, &SPRITE_PALETTE[0], spritesImagePalLen);
+			dmaCopy((uint16 *)spritesImageTiles, &SPRITE_GFX[spriteGFXPos], (spritesImageTilesLen << 1));
 			spriteGFXPos += 8 * 8;
 		}
 
@@ -284,7 +296,7 @@ int main(int argc, char *argv[])
 		sprites[SPRITE_SETTINGS].attribute[1] = ATTR1_SIZE_16 | SPRITE_SETTINGS_X;
 		sprites[SPRITE_SETTINGS].attribute[2] = ATTR2_PALETTE(0) | (spriteGFXPos >> 4);
 		{
-			dmaCopy((uint16 *)spritesTiles_bin + spriteGFXPos, &SPRITE_GFX[spriteGFXPos], (keyboardTiles_bin_size << 1));
+			dmaCopy((uint16 *)spritesImageTiles + spriteGFXPos, &SPRITE_GFX[spriteGFXPos], (spritesImageTilesLen << 1));
 			spriteGFXPos += i;
 		}
 
@@ -293,8 +305,7 @@ int main(int argc, char *argv[])
 		spriteRotations[0].hdy = 0;
 		spriteRotations[0].vdx = 0;
 		spriteRotations[0].vdy = 256;
-
-	}	//sprites
+	}   //sprites
 
 	initGHPad();
 	lightCounter = 0;
@@ -339,7 +350,7 @@ int main(int argc, char *argv[])
 			lightCounter = 0;
 		}
 
-		n = recvfrom(my_socket, msg, 4, 0, (struct sockaddr *) &sain, &cliLen);
+		n = recvfrom(my_socket, msg, 4, 0, (struct sockaddr *)&sain, &cliLen);
 
 		if(n > 0)
 		{
@@ -516,6 +527,7 @@ int main(int argc, char *argv[])
 		if(keysDown() & KEY_TOUCH)
 		{
 			lightCounter = 0;
+
 			if(!screenPos)
 			{
 				if(mouseLock)
@@ -534,6 +546,7 @@ int main(int argc, char *argv[])
 				else
 				{
 					unsigned char keyboard = updateKeyboard(x, y);
+
 					if(keyboard)
 					{
 						if(keyboard == 1)
@@ -563,7 +576,6 @@ int main(int argc, char *argv[])
 							sprites[SPRITE_SETTINGS].posX = SPRITE_HIDDEN_X;
 							sprites[SPRITE_SETTINGS].posY = SPRITE_HIDDEN_Y;
 							mouseLock = true;
-							memset(keyboardMapPointer, 0, keyboardMap_bin_size >> 1);
 						}
 						else if(stylusBetween(0, 0, 15, 15))
 						{
@@ -573,16 +585,16 @@ int main(int argc, char *argv[])
 							sprites[SPRITE_SETTINGS].posY = SPRITE_HIDDEN_Y;
 							settings = true;
 							toggleScreen();
-							deInitKeyboard();
 							iprintf("\x1b[3;0H[Edit]  IP: %s\n\n\n[Edit]  Port: %s\n\n\n[Edit]  Profile: %s\n\n\n\n\n\n[Done]", ip, port, profile);
 						}
 					}
 				}
 			}
-			else	//if(screenPos)
+			else    //if(screenPos)
 			{
 				bool exit = false;
-				if(stylusBetween(0, 120, 48, 128))	//done
+
+				if(stylusBetween(0, 120, 48, 128))  //done
 				{
 					sprites[SPRITE_MOUSE].posX = SPRITE_MOUSE_X;
 					sprites[SPRITE_MOUSE].posY = SPRITE_MOUSE_Y;
@@ -592,17 +604,17 @@ int main(int argc, char *argv[])
 					settings = false;
 					exit = true;
 				}
-				else if(stylusBetween(0, 24, 48, 32))	//ip
+				else if(stylusBetween(0, 24, 48, 32))   //ip
 				{
 					initKeyboard(ip, ipLength, 0);
 					exit = true;
 				}
-				else if(stylusBetween(0, 48, 48, 56))	//port
+				else if(stylusBetween(0, 48, 48, 56))   //port
 				{
 					initKeyboard(port, portLength, 0);
 					exit = true;
 				}
-				else if(stylusBetween(0, 72, 48, 80))	//profile
+				else if(stylusBetween(0, 72, 48, 80))   //profile
 				{
 					initKeyboard(profile, profileLength, 0);
 					exit = true;
@@ -615,16 +627,10 @@ int main(int argc, char *argv[])
 				if(exit)
 				{
 					toggleScreen();
+
 					if(settings)
 					{
-						if(m_Mode == KB_NORMAL)
-						{
-							dmaCopy((uint16 *)keyboardMap_bin, keyboardMapPointer, keyboardMap_bin_size >> 1);
-						}
-						else
-						{
-							dmaCopy((uint16 *)keyboardMap_bin + (keyboardMap_bin_size >> 2), keyboardMapPointer, keyboardMap_bin_size >> 1);
-						}
+						drawKeyboard();
 					}
 
 					iprintf("\x1b[3;0H        IP: %s\n\n\n        Port: %s\n\n\n        Profile: %s\n\n\n\n\n\n      ", ip, port, profile);

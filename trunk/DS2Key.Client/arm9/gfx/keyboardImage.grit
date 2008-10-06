@@ -1,0 +1,14 @@
+# Warning Level (3)
+-W3
+
+# Transparecy (Magic Pink)
+-gTff00ff
+
+# Graphics Format (Tile)
+-gt
+
+# Graphics Depth (16 colors / 4bit)
+-gB4
+
+# Include Map
+-m

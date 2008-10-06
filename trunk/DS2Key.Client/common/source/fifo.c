@@ -24,63 +24,90 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //lights
 void turnOnBothBacklights()
 {
-	while(!(REG_IPC_FIFO_CR & IPC_FIFO_SEND_EMPTY));
+	while(!(REG_IPC_FIFO_CR & IPC_FIFO_SEND_EMPTY))
+	{
+	}
+
 	REG_IPC_FIFO_TX = MSG_BOTH_BACKLIGHTS_ON;
 	swiWaitForVBlank();
 }
 
 void turnOnsetTopBacklight()
 {
-	while(!(REG_IPC_FIFO_CR & IPC_FIFO_SEND_EMPTY));
+	while(!(REG_IPC_FIFO_CR & IPC_FIFO_SEND_EMPTY))
+	{
+	}
+
 	REG_IPC_FIFO_TX = MSG_TOP_BACKLIGHT_ON;
 	swiWaitForVBlank();
 }
 
 void turnOnBottomBacklight()
 {
-	while(!(REG_IPC_FIFO_CR & IPC_FIFO_SEND_EMPTY));
+	while(!(REG_IPC_FIFO_CR & IPC_FIFO_SEND_EMPTY))
+	{
+	}
+
 	REG_IPC_FIFO_TX = MSG_BOTTOM_BACKLIGHT_ON;
 	swiWaitForVBlank();
 }
 
 void turnOffBothBacklights()
 {
-	while(!(REG_IPC_FIFO_CR & IPC_FIFO_SEND_EMPTY));
+	while(!(REG_IPC_FIFO_CR & IPC_FIFO_SEND_EMPTY))
+	{
+	}
+
 	REG_IPC_FIFO_TX = MSG_BOTH_BACKLIGHTS_OFF;
 	swiWaitForVBlank();
 }
 
 void turnOffTopBacklight()
 {
-	while(!(REG_IPC_FIFO_CR & IPC_FIFO_SEND_EMPTY));
+	while(!(REG_IPC_FIFO_CR & IPC_FIFO_SEND_EMPTY))
+	{
+	}
+
 	REG_IPC_FIFO_TX = MSG_TOP_BACKLIGHT_OFF;
 	swiWaitForVBlank();
 }
 
 void turnOffBottomBacklight()
 {
-	while(!(REG_IPC_FIFO_CR & IPC_FIFO_SEND_EMPTY));
+	while(!(REG_IPC_FIFO_CR & IPC_FIFO_SEND_EMPTY))
+	{
+	}
+
 	REG_IPC_FIFO_TX = MSG_BOTTOM_BACKLIGHT_OFF;
 	swiWaitForVBlank();
 }
 
 void toggleBothBacklights()
 {
-	while(!(REG_IPC_FIFO_CR & IPC_FIFO_SEND_EMPTY));
+	while(!(REG_IPC_FIFO_CR & IPC_FIFO_SEND_EMPTY))
+	{
+	}
+
 	REG_IPC_FIFO_TX = MSG_BOTH_BACKLIGHTS_TOGGLE;
 	swiWaitForVBlank();
 }
 
 void toggleTopBacklight()
 {
-	while(!(REG_IPC_FIFO_CR & IPC_FIFO_SEND_EMPTY));
+	while(!(REG_IPC_FIFO_CR & IPC_FIFO_SEND_EMPTY))
+	{
+	}
+
 	REG_IPC_FIFO_TX = MSG_TOP_BACKLIGHT_TOGGLE;
 	swiWaitForVBlank();
 }
 
 void toggleBottomBacklight()
 {
-	while(!(REG_IPC_FIFO_CR & IPC_FIFO_SEND_EMPTY));
+	while(!(REG_IPC_FIFO_CR & IPC_FIFO_SEND_EMPTY))
+	{
+	}
+
 	REG_IPC_FIFO_TX = MSG_BOTTOM_BACKLIGHT_TOGGLE;
 	swiWaitForVBlank();
 }
@@ -114,114 +141,117 @@ void fifo()
 
 		//lights
 		case MSG_BOTH_BACKLIGHTS_ON:
-			{
-				u32 reg = readPowerManagement(PM_CONTROL_REG) | PM_BACKLIGHTS;
-				writePowerManagement(PM_CONTROL_REG, reg);
-				break;
-			}
+		{
+			u32 reg = readPowerManagement(PM_CONTROL_REG) | PM_BACKLIGHTS;
+			writePowerManagement(PM_CONTROL_REG, reg);
+			break;
+		}
 
 		case MSG_TOP_BACKLIGHT_ON:
-			{
-				u32 reg = readPowerManagement(PM_CONTROL_REG) | PM_BACKLIGHT_TOP;
-				writePowerManagement(PM_CONTROL_REG, reg);
-				break;
-			}
+		{
+			u32 reg = readPowerManagement(PM_CONTROL_REG) | PM_BACKLIGHT_TOP;
+			writePowerManagement(PM_CONTROL_REG, reg);
+			break;
+		}
 
 		case MSG_BOTTOM_BACKLIGHT_ON:
-			{
-				u32 reg = readPowerManagement(PM_CONTROL_REG) | PM_BACKLIGHT_BOTTOM;
-				writePowerManagement(PM_CONTROL_REG, reg);
-				break;
-			}
+		{
+			u32 reg = readPowerManagement(PM_CONTROL_REG) | PM_BACKLIGHT_BOTTOM;
+			writePowerManagement(PM_CONTROL_REG, reg);
+			break;
+		}
 
 		case MSG_BOTH_BACKLIGHTS_OFF:
-			{
-				u32 reg = readPowerManagement(PM_CONTROL_REG) &~PM_BACKLIGHTS;
-				writePowerManagement(PM_CONTROL_REG, reg & 255);
-				break;
-			}
+		{
+			u32 reg = readPowerManagement(PM_CONTROL_REG) & ~PM_BACKLIGHTS;
+			writePowerManagement(PM_CONTROL_REG, reg & 255);
+			break;
+		}
 
 		case MSG_TOP_BACKLIGHT_OFF:
-			{
-				u32 reg = readPowerManagement(PM_CONTROL_REG) &~PM_BACKLIGHT_TOP;
-				writePowerManagement(PM_CONTROL_REG, reg & 255);
-				break;
-			}
+		{
+			u32 reg = readPowerManagement(PM_CONTROL_REG) & ~PM_BACKLIGHT_TOP;
+			writePowerManagement(PM_CONTROL_REG, reg & 255);
+			break;
+		}
 
 		case MSG_BOTTOM_BACKLIGHT_OFF:
-			{
-				u32 reg = readPowerManagement(PM_CONTROL_REG) &~PM_BACKLIGHT_BOTTOM;
-				writePowerManagement(PM_CONTROL_REG, reg & 255);
-				break;
-			}
+		{
+			u32 reg = readPowerManagement(PM_CONTROL_REG) & ~PM_BACKLIGHT_BOTTOM;
+			writePowerManagement(PM_CONTROL_REG, reg & 255);
+			break;
+		}
 
 		case MSG_BOTH_BACKLIGHTS_TOGGLE:
-			{
-				u32 reg = readPowerManagement(PM_CONTROL_REG);
-				if(reg & PM_BACKLIGHTS)
-				{
-					reg &= ~PM_BACKLIGHTS;
-				}
-				else
-				{
-					reg |= PM_BACKLIGHTS;
-				}
+		{
+			u32 reg = readPowerManagement(PM_CONTROL_REG);
 
-				writePowerManagement(PM_CONTROL_REG, reg);
-				break;
+			if(reg & PM_BACKLIGHTS)
+			{
+				reg &= ~PM_BACKLIGHTS;
 			}
+			else
+			{
+				reg |= PM_BACKLIGHTS;
+			}
+
+			writePowerManagement(PM_CONTROL_REG, reg);
+			break;
+		}
 
 		case MSG_TOP_BACKLIGHT_TOGGLE:
-			{
-				u32 reg = readPowerManagement(PM_CONTROL_REG);
-				if(reg & PM_BACKLIGHT_TOP)
-				{
-					reg &= ~PM_BACKLIGHT_TOP;
-				}
-				else
-				{
-					reg |= PM_BACKLIGHT_TOP;
-				}
+		{
+			u32 reg = readPowerManagement(PM_CONTROL_REG);
 
-				writePowerManagement(PM_CONTROL_REG, reg);
-				break;
+			if(reg & PM_BACKLIGHT_TOP)
+			{
+				reg &= ~PM_BACKLIGHT_TOP;
 			}
+			else
+			{
+				reg |= PM_BACKLIGHT_TOP;
+			}
+
+			writePowerManagement(PM_CONTROL_REG, reg);
+			break;
+		}
 
 		case MSG_BOTTOM_BACKLIGHT_TOGGLE:
-			{
-				u32 reg = readPowerManagement(PM_CONTROL_REG);
-				if(reg & PM_BACKLIGHT_BOTTOM)
-				{
-					reg &= ~PM_BACKLIGHT_BOTTOM;
-				}
-				else
-				{
-					reg |= PM_BACKLIGHT_BOTTOM;
-				}
+		{
+			u32 reg = readPowerManagement(PM_CONTROL_REG);
 
-				writePowerManagement(PM_CONTROL_REG, reg);
-				break;
+			if(reg & PM_BACKLIGHT_BOTTOM)
+			{
+				reg &= ~PM_BACKLIGHT_BOTTOM;
+			}
+			else
+			{
+				reg |= PM_BACKLIGHT_BOTTOM;
 			}
 
-		//wifi
+			writePowerManagement(PM_CONTROL_REG, reg);
+			break;
+		}
+
+			//wifi
 		case MSG_WIFI_INITIALIZE:
+		{
+			while(REG_IPC_FIFO_CR & IPC_FIFO_RECV_EMPTY)
 			{
-				while(REG_IPC_FIFO_CR & IPC_FIFO_RECV_EMPTY)
-				{
-					swiWaitForVBlank();
-				}
-
-				Wifi_Init(REG_IPC_FIFO_RX);
-				Wifi_SetSyncHandler(cpuSync);
-				break;
+				swiWaitForVBlank();
 			}
+
+			Wifi_Init(REG_IPC_FIFO_RX);
+			Wifi_SetSyncHandler(cpuSync);
+			break;
+		}
 
 	#endif //ARM7
 
 		case MSG_WIFI_SYNC:
-			{
-				Wifi_Sync();
-				break;
-			}
+		{
+			Wifi_Sync();
+			break;
+		}
 	}
 }

@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define __KEYBOARD_HIT_H__
 #define BSP 0x8 // Backspace
 #define CAP 0x2 // Caps
-#define RET '\n'	// Enter
+#define RET '\n' // Enter
 #define SHF 0x4 // Shift
 #define SPC ' ' // Space
 extern const unsigned char keyboard_Hit[];

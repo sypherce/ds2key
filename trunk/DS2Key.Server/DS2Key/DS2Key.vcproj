@@ -175,11 +175,15 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\config.c"
+				>
+			</File>
+			<File
 				RelativePath=".\main.c"
 				>
 			</File>
 			<File
-				RelativePath=".\VK.c"
+				RelativePath=".\vk.c"
 				>
 			</File>
 		</Filter>
@@ -189,11 +193,15 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\config.h"
+				>
+			</File>
+			<File
 				RelativePath=".\main.h"
 				>
 			</File>
 			<File
-				RelativePath=".\VK.h"
+				RelativePath=".\vk.h"
 				>
 			</File>
 		</Filter>
