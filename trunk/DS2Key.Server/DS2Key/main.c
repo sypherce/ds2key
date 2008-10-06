@@ -274,7 +274,7 @@ int main(int argc, char *argv[])
 			}
 			else if(!stricmp(msg, "/by1"))
 			{
-				doInput(&input, INPUT_KEYBOARD, profile[currentProfile][pY], 0);
+				doInput(&input, INPUT_KEYBOARD, profile[currentProfile][pY], 1);
 				printf("%s: [%s] y button released\n", ip, msg);
 			}
 			else if(!stricmp(msg, "/bl0"))
