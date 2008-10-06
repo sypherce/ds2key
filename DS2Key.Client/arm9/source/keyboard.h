@@ -18,9 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef __KEYBOARD_H__
 #define __KEYBOARD_H__
 
-#define KB_NORMAL	0
-#define KB_CAPS		1
-#define KB_SHIFT	2
+enum keyboardState { keyboardNormal, keyboardCapsLock, keyboardShift };
 
 extern u8 keyboardOffset;
 extern uint16 *keyboardMapPointer;
@@ -28,8 +26,9 @@ extern char *keyTextPos;
 extern char *keyText;
 extern char keyEnter;
 extern unsigned int keyLength;
-extern int m_Mode;
+extern unsigned char m_Mode;
 
+extern void drawKeyboard();
 extern char *initKeyboard(char *text, unsigned int length, char enter);
 extern void deInitKeyboard();
 extern unsigned char updateKeyboard(unsigned char x, unsigned char y);

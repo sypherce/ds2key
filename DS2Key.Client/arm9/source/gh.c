@@ -68,7 +68,6 @@ unsigned short int keysHeldGH(unsigned char color)
 	else if(color == GH_ANY)
 	{
 		return GH_Any(GH_keysHeld);
-
 	}
 
 	return 0;
@@ -95,7 +94,6 @@ unsigned short int keysUpGH(unsigned char color)
 	else if(color == GH_ANY)
 	{
 		return GH_Any(GH_keysUp);
-
 	}
 
 	return 0;

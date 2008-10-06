@@ -15,26 +15,30 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef __MAIN_H__
-#define __MAIN_H__
+#ifndef __CONFIG_H__
+#define __CONFIG_H__
 
 //Windows Defines
 #ifdef WIN32
-#ifdef _MSC_VER //less warnings from microsoft
-#define stricmp	_stricmp
-#define strnicmp _strnicmp
-#endif
 #define bool BOOL
 #endif //WIN32
 
 //Normal Defines
-#define MAX_MSG 12
+#define DEFAULT_SERVER_PORT 9501
+#define pTouch pTouch0X0Y
+enum pKeys { pIP, pIP2, pUp, pDown, pLeft, pRight, pA, pB, pX, pY, pL, pR, pStart, pSelect, pBlue, pYellow, pRed, pGreen, pTouch0X0Y, pTouch1X0Y, pTouch2X0Y, pTouch3X0Y, pTouch0X1Y, pTouch1X1Y, pTouch2X1Y, pTouch3X1Y, pTouch0X2Y, pTouch1X2Y, pTouch2X2Y, pTouch3X2Y, pEND };
 
 //Variables
-extern char currentIP[16];
+extern int serverPort;
+extern unsigned int profile[256][pEND];
 
 //Functions
-extern void doInput(INPUT *input, unsigned int type, unsigned int key, bool state);
-extern char *longToIP(unsigned long longIP, char *charIP);
+extern bool writeConfig();
+extern bool writeDefaultConfig();
+extern bool writeProfileConfig(unsigned char profileNumber);
+extern bool writeDefaultProfileConfig(unsigned char profileNumber);
+extern bool getLine(char *buffer);
+extern bool readConfig();
+extern bool readProfileConfig(unsigned char profileNumber);
 
-#endif //__MAIN_H__
+#endif //__CONFIG_H__

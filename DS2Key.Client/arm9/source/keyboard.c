@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <string.h>
 #include "keyboard.h"
 #include "keyboard.hit.h"
-#include "keyboardMap_bin.h"
+#include "keyboardImage.h"
 
 //keyboard function variables
 u8 keyboardOffset = 6;
@@ -28,7 +28,19 @@ char *keyTextPos = (char *)NULL;
 char *keyText = (char *)NULL;
 char keyEnter = 0;
 unsigned int keyLength = 0;
-int m_Mode = KB_NORMAL;
+unsigned char m_Mode = keyboardNormal;
+
+void drawKeyboard()
+{
+	if(m_Mode == keyboardNormal)
+	{
+		dmaCopy((uint16 *)keyboardImageMap, keyboardMapPointer, keyboardImageMapLen >> 1);
+	}
+	else
+	{
+		dmaCopy((uint16 *)keyboardImageMap + (keyboardImageMapLen >> 2), keyboardMapPointer, keyboardImageMapLen >> 1);
+	}
+}
 
 char *initKeyboard(char *text, unsigned int length, char enter)
 {
@@ -45,48 +57,45 @@ void deInitKeyboard()
 	keyLength = 0;
 	keyEnter = 0;
 	keyText = keyTextPos = (char *)NULL;
-	memset(keyboardMapPointer, 0, keyboardMap_bin_size >> 1);
+	m_Mode = keyboardNormal;
+	memset(keyboardMapPointer, 0, keyboardImageMapLen >> 1);
 }
 
 unsigned char updateKeyboard(unsigned char x, unsigned char y)
 {
 	unsigned char returnVal = 0;
 	char c = 0;
+
 	if(keyLength > 0 && x >= 4 && x <= 27 && y <= 12)
 	{
-		if(m_Mode == KB_NORMAL)
+		if(m_Mode == keyboardNormal)
 		{
 			c = keyboard_Hit[x + (y * 32)];
 		}
 		else
 		{
 			c = keyboard_Hit_Shift[x + (y * 32)];
-			if(m_Mode == KB_SHIFT)
-			{
-				m_Mode = KB_NORMAL;
-				dmaCopy((uint16 *)keyboardMap_bin, keyboardMapPointer, keyboardMap_bin_size >> 1);
-			}
 		}
 
 		if(c == CAP || c == SHF)
 		{
-			if(m_Mode == KB_NORMAL)
+			if(m_Mode == keyboardNormal)
 			{
-				dmaCopy((uint16 *)keyboardMap_bin + (keyboardMap_bin_size >> 2), keyboardMapPointer, keyboardMap_bin_size >> 1);
 				if(c == SHF)
 				{
-					m_Mode = KB_SHIFT;
+					m_Mode = keyboardShift;
 				}
 				else
 				{
-					m_Mode = KB_CAPS;
+					m_Mode = keyboardCapsLock;
 				}
 			}
 			else
 			{
-				dmaCopy((uint16 *)keyboardMap_bin, keyboardMapPointer, keyboardMap_bin_size >> 1);
-				m_Mode = KB_NORMAL;
+				m_Mode = keyboardNormal;
 			}
+
+			drawKeyboard();
 		}
 		else if(c)
 		{
@@ -108,6 +117,12 @@ unsigned char updateKeyboard(unsigned char x, unsigned char y)
 				}
 				else
 				{
+					if(m_Mode == keyboardShift)
+					{
+						m_Mode = keyboardNormal;
+						drawKeyboard();
+					}
+
 					*keyTextPos = c;
 					returnVal = 1;
 				}

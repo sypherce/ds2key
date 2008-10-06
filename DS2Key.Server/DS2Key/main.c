@@ -20,36 +20,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef WINVER
 #undef WINVER
 #endif
-#define WINVER	0x0500
-#include <windows.h>
+#define WINVER 0x0500
 #include <winsock.h>
-#ifdef _MSC_VER //less warnings from microsoft
-#define stricmp		_stricmp
-#define strnicmp	_strnicmp
-#endif
-typedef unsigned char bool;
 #else //WIN32
-#include <sys/types.h>
-#include <string.h> //memset()
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <unistd.h> //close()
 #endif //WIN32
 #include "main.h"
-#include "VK.h"
+#include "config.h"
+#include "vk.h"
 
-enum pKeys { pIP, pIP2, pUp, pDown, pLeft, pRight, pA, pB, pX, pY, pL, pR, pStart, pSelect, pBlue, pYellow, pRed, pGreen, pEND };
-unsigned int profile[256][pEND];
+//Variables
+char currentIP[16];
+bool mouseKeys[13];
+bool mouseKeysLast[13];
 
 void doInput(INPUT *input, unsigned int type, unsigned int key, bool state)
 {
 	input->type = type;
+
 	if(input->type == INPUT_KEYBOARD)
 	{
 		input->ki.wVk = key;
 		input->ki.dwFlags = KEYEVENTF_SCANCODE;
+
 		if(state)
 		{
 			input->ki.dwFlags |= KEYEVENTF_KEYUP;
@@ -69,8 +61,8 @@ void doInput(INPUT *input, unsigned int type, unsigned int key, bool state)
 		/*
 		if(state)
 		{
-			printf("state");
-			input->mi.dwFlags |= MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTDOWN;
+		printf("state");
+		input->mi.dwFlags |= MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTDOWN;
 		}
 		*/
 		input->mi.dwExtraInfo = 0;
@@ -78,184 +70,15 @@ void doInput(INPUT *input, unsigned int type, unsigned int key, bool state)
 		input->mi.time = 0;
 	}
 
-	SendInput(1, (LPINPUT) input, sizeof(INPUT));
+	SendInput(1, (LPINPUT)input, sizeof(INPUT));
 }
 
 char *longToIP(unsigned long longIP, char *charIP)
 {
-	sprintf(charIP, "%i.%i.%i.%i", (((unsigned char *) &longIP)[0]), ((unsigned char *) &longIP)[1], ((unsigned char *) &longIP)[2], ((unsigned char *) &longIP)[3]);
+	sprintf(charIP, "%i.%i.%i.%i", (((unsigned char *)&longIP)[0]), ((unsigned char *)&longIP)[1], ((unsigned char *)&longIP)[2], ((unsigned char *)&longIP)[3]);
 
 	return charIP;
 }
-
-int serverPort;
-
-bool writeDefaultConfig()
-{
-	FILE *file;
-	serverPort = LOCAL_SERVER_PORT;
-	file = fopen("ds2key.ini", "w+");
-	if(file)
-	{
-		fprintf(file, "%i\n", serverPort);
-		fclose(file);
-	}
-	else
-	{
-		return 1;
-	}
-
-	return 0;
-}
-
-bool writeDefaultProfileConfig(unsigned char profileNumber)
-{
-	FILE *file;
-	char filename[16];
-	sprintf(filename, "ds2key.p%i.ini", profileNumber);
-	file = fopen(filename, "w+");
-	if(file)
-	{
-		fprintf(file, "%s\n", getVKString(VK_UP));
-		fprintf(file, "%s\n", getVKString(VK_DOWN));
-		fprintf(file, "%s\n", getVKString(VK_LEFT));
-		fprintf(file, "%s\n", getVKString(VK_RIGHT));
-		fprintf(file, "%s\n", getVKString('A'));
-		fprintf(file, "%s\n", getVKString('B'));
-		fprintf(file, "%s\n", getVKString('X'));
-		fprintf(file, "%s\n", getVKString('Y'));
-		fprintf(file, "%s\n", getVKString('L'));
-		fprintf(file, "%s\n", getVKString('R'));
-		fprintf(file, "%s\n", getVKString(VK_RETURN));
-		fprintf(file, "%s\n", getVKString(VK_RSHIFT));
-		fprintf(file, "%s\n", getVKString('1'));
-		fprintf(file, "%s\n", getVKString('2'));
-		fprintf(file, "%s\n", getVKString('3'));
-		fprintf(file, "%s\n", getVKString('4'));
-
-		profile[profileNumber][pUp] = VK_UP;
-		profile[profileNumber][pDown] = VK_DOWN;
-		profile[profileNumber][pLeft] = VK_LEFT;
-		profile[profileNumber][pRight] = VK_RIGHT;
-		profile[profileNumber][pA] = 'A';
-		profile[profileNumber][pB] = 'B';
-		profile[profileNumber][pX] = 'X';
-		profile[profileNumber][pY] = 'Y';
-		profile[profileNumber][pL] = 'L';
-		profile[profileNumber][pR] = 'R';
-		profile[profileNumber][pStart] = VK_RETURN;
-		profile[profileNumber][pSelect] = VK_RSHIFT;
-		profile[profileNumber][pBlue] = '1';
-		profile[profileNumber][pYellow] = '2';
-		profile[profileNumber][pRed] = '3';
-		profile[profileNumber][pGreen] = '4';
-
-		fclose(file);
-	}
-	else
-	{
-		return 1;
-	}
-
-	return 0;
-}
-
-bool getLine(char *buffer)
-{
-	char *d = strchr(buffer, '\n');
-	if(!d)
-	{
-		return 1;
-	}
-
-	d[0] = 0;
-
-	return 1;
-}
-
-bool readProfileConfig(unsigned char profileNumber)
-{
-	FILE *file;
-	char filename[16];
-#define readProfileKey(key) \
-	{ \
-		if(tmpBuffer[0] != 0) \
-		{ \
-			int i = 0; \
-			getLine(tmpBuffer); \
-			profile[profileNumber][key] = getVKNumber(tmpBuffer); \
-			tmpBuffer = tmpBuffer + strlen(tmpBuffer) + 1; \
-			while(tmpBuffer[i] == (char)0xa || tmpBuffer[i] == (char)0xd) \
-			{ \
-				i++; \
-			} \
- \
-			tmpBuffer = &tmpBuffer[i]; \
-		} \
-	}
-
-	sprintf(filename, "ds2key.p%i.ini", profileNumber);
-	file = fopen(filename, "r");
-	if(file)
-	{
-		unsigned long int size;
-		char *buffer;
-		char *tmpBuffer;
-		size_t result;
-		fseek(file, 0, SEEK_END);
-		size = ftell(file);
-		rewind(file);
-
-		// allocate memory to contain the whole file:
-		buffer = (char *)malloc(sizeof(char) * size);
-		if(buffer == NULL)
-		{
-			fprintf(stderr, "Memory error");
-			return 1;
-		}
-
-		result = fread(buffer, 1, size, file);
-		if(result != size)
-		{
-			buffer[result] = 0;
-
-			//fprintf(stderr, "Reading error");
-			//return 1;
-		}
-
-		fclose(file);
-
-		tmpBuffer = buffer;
-
-		readProfileKey(pUp);
-		readProfileKey(pDown);
-		readProfileKey(pLeft);
-		readProfileKey(pRight);
-		readProfileKey(pA);
-		readProfileKey(pB);
-		readProfileKey(pX);
-		readProfileKey(pY);
-		readProfileKey(pL);
-		readProfileKey(pR);
-		readProfileKey(pStart);
-		readProfileKey(pSelect);
-		readProfileKey(pBlue);
-		readProfileKey(pYellow);
-		readProfileKey(pRed);
-		readProfileKey(pGreen);
-		free(buffer);
-	}
-	else
-	{
-		writeDefaultProfileConfig(profileNumber);
-
-		return 1;
-	}
-
-	return 0;
-}
-
-unsigned char currentIP[16];
 
 int main(int argc, char *argv[])
 {
@@ -270,52 +93,23 @@ int main(int argc, char *argv[])
 	int pI;
 	for(pI = 0; pI <= 255; pI++)
 	{
-		((unsigned long *) &profile[pI])[pIP] = 0;
+		((unsigned long *)&profile[pI])[pIP] = 0;
 	}
 
 	initVKTable();
 
-	{
-		FILE *file;
+	memset(mouseKeys, 0, 12);
+	memset(mouseKeysLast, 0, 12);
 
-		//read Arguments
-		file = fopen("ds2key.ini", "r");
-		if(file)
-		{
-			char buffer[256];
-			if(fread(buffer, 1, 255, file))
-			{
-				fclose(file);
-				serverPort = atoi(buffer);
-				if(serverPort == 0)
-				{
-					writeDefaultConfig();
-				}
-			}
-			else
-			{
-				fclose(file);
-				writeDefaultConfig();
-			}
-		}
-		else
-		{
-			writeDefaultConfig();
-		}
-
-		if(serverPort <= 0)
-		{
-			fprintf(stderr, "%i: bad port number\n", serverPort);
-			exit(1);
-		}
-	}	//read Arguments
-	{	//setup connections
+	readConfig();
+	{   //setup connections
 #ifdef WIN32
-		WSAStartup(0x0202, &wsaData);	//windows socket startup
+		WSAStartup(0x0202, &wsaData);   //windows socket startup
 #endif //WIN32
 
 		//socket creation
 		sd = socket(AF_INET, SOCK_DGRAM, 0);
+
 		if(sd < 0)
 		{
 			fprintf(stderr, "%s: cannot open socket\n", argv[0]);
@@ -326,7 +120,8 @@ int main(int argc, char *argv[])
 		servAddr.sin_family = AF_INET;
 		servAddr.sin_addr.s_addr = htonl(INADDR_ANY);
 		servAddr.sin_port = htons((unsigned short)serverPort);
-		rc = bind(sd, (struct sockaddr *) &servAddr, sizeof(servAddr));
+		rc = bind(sd, (struct sockaddr *)&servAddr, sizeof(servAddr));
+
 		if(rc < 0)
 		{
 			fprintf(stderr, "%s: cannot bind port number %d\n", argv[0], serverPort);
@@ -334,12 +129,12 @@ int main(int argc, char *argv[])
 		}
 
 		printf("%s: waiting for data on port UDP %u\n", argv[0], serverPort);
-	}	//setup connections
+	}   //setup connections
 
 	//server infinite loop
 	while(1)
 	{
-		unsigned char *ip;
+		char *ip;
 		unsigned int currentProfile;
 
 		//init buffer
@@ -347,7 +142,7 @@ int main(int argc, char *argv[])
 
 		//receive message
 		cliLen = sizeof(cliAddr);
-		n = recvfrom(sd, msg, MAX_MSG, 0, (struct sockaddr *) &cliAddr, &cliLen);
+		n = recvfrom(sd, msg, MAX_MSG, 0, (struct sockaddr *)&cliAddr, &cliLen);
 		ip = longToIP(cliAddr.sin_addr.S_un.S_addr, currentIP);
 
 		if(n < 0)
@@ -360,30 +155,31 @@ int main(int argc, char *argv[])
 		{
 			for(currentProfile = 0; currentProfile <= 255; currentProfile++)
 			{
-				if(cliAddr.sin_addr.S_un.S_addr == ((unsigned long *) &profile[currentProfile])[0])
+				if(cliAddr.sin_addr.S_un.S_addr == ((unsigned long *)&profile[currentProfile])[0])
 				{
-					((unsigned long *) &profile[currentProfile])[0] = 0;
+					((unsigned long *)&profile[currentProfile])[0] = 0;
 				}
 			}
 
 			readProfileConfig(atoi(&msg[2]));
 
 			printf("%s: [%s] profile set to %s\n", ip, msg, &msg[2]);
-			((unsigned long *) &profile[atoi(&msg[2])])[0] = cliAddr.sin_addr.S_un.S_addr;
+			((unsigned long *)&profile[atoi(&msg[2])])[0] = cliAddr.sin_addr.S_un.S_addr;
 		}
 		else
 		{
 			bool noProfile = FALSE;
 			for(currentProfile = 0; currentProfile <= 255; currentProfile++)
 			{
-				if(cliAddr.sin_addr.S_un.S_addr == ((unsigned long *) &profile[currentProfile])[0])
+				if(cliAddr.sin_addr.S_un.S_addr == ((unsigned long *)&profile[currentProfile])[0])
 				{
 					break;
 				}
 				else if(currentProfile == 255)
 				{
 					char *command = "/p?";
-					if(sendto(sd, command, strlen(command), 0, (struct sockaddr *) &cliAddr, sizeof(cliAddr)) >= 0)
+
+					if(sendto(sd, command, strlen(command), 0, (struct sockaddr *)&cliAddr, sizeof(cliAddr)) >= 0)
 					{
 						printf("Sent: %s\n", command);
 					}
@@ -400,7 +196,6 @@ int main(int argc, char *argv[])
 
 			if(noProfile)
 			{
-
 			}
 			else if(!stricmp(msg, "/dl0"))
 			{
@@ -479,7 +274,7 @@ int main(int argc, char *argv[])
 			}
 			else if(!stricmp(msg, "/by1"))
 			{
-				doInput(&input, INPUT_KEYBOARD, profile[currentProfile][pY], 1);
+				doInput(&input, INPUT_KEYBOARD, profile[currentProfile][pY], 0);
 				printf("%s: [%s] y button released\n", ip, msg);
 			}
 			else if(!stricmp(msg, "/bl0"))
@@ -569,28 +364,180 @@ int main(int argc, char *argv[])
 				char *zc = strchr(&yc[1], '.');
 				unsigned char x;
 				unsigned char y;
+				unsigned char buttonX;
+				unsigned char buttonY;
 				bool z;
+				bool commandSent = 0;
 				x = (unsigned char)atoi(xc);
 				y = (unsigned char)atoi(&yc[1]);
-				z = (bool) atoi(&zc[1]);
-				doInput(&input, INPUT_MOUSE, (y << 8) | x, 0);
-				if(z)
+				z = (bool)atoi(&zc[1]);
+				buttonX = (x / 64);
+				buttonY = (y / 64);
+
+				if(buttonX == 0)
 				{
-					printf("%s: [%s] touch screen pressed at %i, %i\n", ip, msg, x, y);
+					if(buttonY == 0)
+					{
+						if(strcmp("KEY_NONE", getVKString(profile[currentProfile][pTouch0X0Y])))
+						{
+							mouseKeys[0] = 1; //doInput(&input, INPUT_KEYBOARD, profile[currentProfile][pTouch0X0Y], 0);
+							commandSent = 1;
+						}
+					}
+					else if(buttonY == 1)
+					{
+						if(strcmp("KEY_NONE", getVKString(profile[currentProfile][pTouch0X1Y])))
+						{
+							mouseKeys[4] = 1;
+							commandSent = 1;
+						}
+					}
+					else if(buttonY == 2)
+					{
+						if(strcmp("KEY_NONE", getVKString(profile[currentProfile][pTouch0X2Y])))
+						{
+							mouseKeys[8] = 1;
+							commandSent = 1;
+						}
+					}
+				}
+				else if(buttonX == 1)
+				{
+					if(buttonY == 0)
+					{
+						if(strcmp("KEY_NONE", getVKString(profile[currentProfile][pTouch1X0Y])))
+						{
+							mouseKeys[1] = 1;
+							commandSent = 1;
+						}
+					}
+					else if(buttonY == 1)
+					{
+						if(strcmp("KEY_NONE", getVKString(profile[currentProfile][pTouch1X1Y])))
+						{
+							mouseKeys[5] = 1;
+							commandSent = 1;
+						}
+					}
+					else if(buttonY == 2)
+					{
+						if(strcmp("KEY_NONE", getVKString(profile[currentProfile][pTouch1X2Y])))
+						{
+							mouseKeys[9] = 1;
+							commandSent = 1;
+						}
+					}
+				}
+				else if(buttonX == 2)
+				{
+					if(buttonY == 0)
+					{
+						if(strcmp("KEY_NONE", getVKString(profile[currentProfile][pTouch2X0Y])))
+						{
+							mouseKeys[2] = 1;
+							commandSent = 1;
+						}
+					}
+					else if(buttonY == 1)
+					{
+						if(strcmp("KEY_NONE", getVKString(profile[currentProfile][pTouch2X1Y])))
+						{
+							mouseKeys[6] = 1;
+							commandSent = 1;
+						}
+					}
+					else if(buttonY == 2)
+					{
+						if(strcmp("KEY_NONE", getVKString(profile[currentProfile][pTouch2X2Y])))
+						{
+							mouseKeys[10] = 1;
+							commandSent = 1;
+						}
+					}
+				}
+				else if(buttonX == 3)
+				{
+					if(buttonY == 0)
+					{
+						if(strcmp("KEY_NONE", getVKString(profile[currentProfile][pTouch3X0Y])))
+						{
+							mouseKeys[3] = 1;
+							commandSent = 1;
+						}
+					}
+					else if(buttonY == 1)
+					{
+						if(strcmp("KEY_NONE", getVKString(profile[currentProfile][pTouch3X1Y])))
+						{
+							mouseKeys[7] = 1;
+							commandSent = 1;
+						}
+					}
+					else if(buttonY == 2)
+					{
+						if(strcmp("KEY_NONE", getVKString(profile[currentProfile][pTouch3X2Y])))
+						{
+							mouseKeys[11] = 1;
+							commandSent = 1;
+						}
+					}
+				}
+
+				if(commandSent == 0)
+				{
+					doInput(&input, INPUT_MOUSE, (y << 8) | x, 0);
+
+					if(z)
+					{
+						printf("%s: [%s] touch screen pressed at %i, %i\n", ip, msg, x, y);
+					}
+					else
+					{
+						printf("%s: [%s] touch screen released at %i, %i\n", ip, msg, x, y);
+					}
 				}
 				else
-				{	//!z
-					printf("%s: [%s] touch screen released at %i, %i\n", ip, msg, x, y);
+				{
+					int key;
+					for(key = 0; key < 12; key++)
+					{
+						int status = 0;
+
+						if(mouseKeys[key] && !z)
+						{
+							mouseKeys[key] = 0;
+							printf("\n\n-key: %i, %i\n", key, mouseKeys[key]);
+							doInput(&input, INPUT_KEYBOARD, profile[currentProfile][pTouch + key], !mouseKeys[key]);
+							mouseKeysLast[key] = 0;
+							status = 1;
+						}
+						else if(mouseKeys[key] != mouseKeysLast[key])
+						{
+							printf("\n\n+key: %i, %i\n", key, mouseKeys[key]);
+							doInput(&input, INPUT_KEYBOARD, profile[currentProfile][pTouch + key], !mouseKeys[key]);
+							mouseKeysLast[key] = mouseKeys[key];
+							status = mouseKeys[key] + 1;
+						}
+
+						if(status == 1)
+						{
+							printf("%s: [%s] released touch screen button %i\n", ip, msg, key);
+						}
+						else if(status == 2)
+						{
+							printf("%s: [%s] pressed touch screen button %i\n", ip, msg, key);
+						}
+
+						mouseKeys[key] = 0;
+					}
 				}
 			}
 			else
 			{
 				printf("%s: [%s] undefined command\n", ip, msg);
-
 			}
 		}
-
-	}	//end of server infinite loop
+	}   //end of server infinite loop
 
 	return 0;
 }
