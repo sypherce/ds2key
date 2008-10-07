@@ -38,14 +38,14 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="DS2Key\config.h" />
+		<Unit filename="DS2Key\key.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="DS2Key\key.h" />
 		<Unit filename="DS2Key\main.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="DS2Key\main.h" />
-		<Unit filename="DS2Key\vk.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="DS2Key\vk.h" />
 		<Extensions>
 			<code_completion />
 			<debugger />

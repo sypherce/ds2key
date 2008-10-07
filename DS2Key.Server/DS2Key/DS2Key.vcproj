@@ -179,11 +179,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\main.c"
+				RelativePath=".\key.c"
 				>
 			</File>
 			<File
-				RelativePath=".\vk.c"
+				RelativePath=".\main.c"
 				>
 			</File>
 		</Filter>
@@ -197,11 +197,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\main.h"
+				RelativePath=".\key.h"
 				>
 			</File>
 			<File
-				RelativePath=".\vk.h"
+				RelativePath=".\main.h"
 				>
 			</File>
 		</Filter>

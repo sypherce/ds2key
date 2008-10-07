@@ -6,9 +6,12 @@
 #define WINVER 0x0500
 #include <windows.h>
 #else //WIN32
+#include <stdlib.h>
+#include <string.h>
+#include <X11/keysym.h>
 #endif //WIN32
 #include "config.h"
-#include "vk.h"
+#include "key.h"
 
 //Variables
 int serverPort;
@@ -48,34 +51,34 @@ bool writeProfileConfig(unsigned char profileNumber)
 
 	if(file)
 	{
-		fprintf(file, "%s\n", getVKString(profile[profileNumber][pUp]));
-		fprintf(file, "%s\n", getVKString(profile[profileNumber][pDown]));
-		fprintf(file, "%s\n", getVKString(profile[profileNumber][pLeft]));
-		fprintf(file, "%s\n", getVKString(profile[profileNumber][pRight]));
-		fprintf(file, "%s\n", getVKString(profile[profileNumber][pA]));
-		fprintf(file, "%s\n", getVKString(profile[profileNumber][pB]));
-		fprintf(file, "%s\n", getVKString(profile[profileNumber][pX]));
-		fprintf(file, "%s\n", getVKString(profile[profileNumber][pY]));
-		fprintf(file, "%s\n", getVKString(profile[profileNumber][pL]));
-		fprintf(file, "%s\n", getVKString(profile[profileNumber][pR]));
-		fprintf(file, "%s\n", getVKString(profile[profileNumber][pStart]));
-		fprintf(file, "%s\n", getVKString(profile[profileNumber][pSelect]));
-		fprintf(file, "%s\n", getVKString(profile[profileNumber][pBlue]));
-		fprintf(file, "%s\n", getVKString(profile[profileNumber][pYellow]));
-		fprintf(file, "%s\n", getVKString(profile[profileNumber][pRed]));
-		fprintf(file, "%s\n", getVKString(profile[profileNumber][pGreen]));
-		fprintf(file, "%s\n", getVKString(profile[profileNumber][pTouch0X0Y]));
-		fprintf(file, "%s\n", getVKString(profile[profileNumber][pTouch1X0Y]));
-		fprintf(file, "%s\n", getVKString(profile[profileNumber][pTouch2X0Y]));
-		fprintf(file, "%s\n", getVKString(profile[profileNumber][pTouch3X0Y]));
-		fprintf(file, "%s\n", getVKString(profile[profileNumber][pTouch0X1Y]));
-		fprintf(file, "%s\n", getVKString(profile[profileNumber][pTouch1X1Y]));
-		fprintf(file, "%s\n", getVKString(profile[profileNumber][pTouch2X1Y]));
-		fprintf(file, "%s\n", getVKString(profile[profileNumber][pTouch3X1Y]));
-		fprintf(file, "%s\n", getVKString(profile[profileNumber][pTouch0X2Y]));
-		fprintf(file, "%s\n", getVKString(profile[profileNumber][pTouch1X2Y]));
-		fprintf(file, "%s\n", getVKString(profile[profileNumber][pTouch2X2Y]));
-		fprintf(file, "%s\n", getVKString(profile[profileNumber][pTouch3X2Y]));
+		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pUp]));
+		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pDown]));
+		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pLeft]));
+		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pRight]));
+		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pA]));
+		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pB]));
+		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pX]));
+		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pY]));
+		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pL]));
+		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pR]));
+		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pStart]));
+		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pSelect]));
+		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pBlue]));
+		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pYellow]));
+		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pRed]));
+		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pGreen]));
+		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pTouch0X0Y]));
+		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pTouch1X0Y]));
+		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pTouch2X0Y]));
+		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pTouch3X0Y]));
+		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pTouch0X1Y]));
+		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pTouch1X1Y]));
+		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pTouch2X1Y]));
+		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pTouch3X1Y]));
+		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pTouch0X2Y]));
+		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pTouch1X2Y]));
+		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pTouch2X2Y]));
+		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pTouch3X2Y]));
 
 		fclose(file);
 	}
@@ -89,34 +92,34 @@ bool writeProfileConfig(unsigned char profileNumber)
 
 bool writeDefaultProfileConfig(unsigned char profileNumber)
 {
-	profile[profileNumber][pUp] = VK_UP;
-	profile[profileNumber][pDown] = VK_DOWN;
-	profile[profileNumber][pLeft] = VK_LEFT;
-	profile[profileNumber][pRight] = VK_RIGHT;
-	profile[profileNumber][pA] = 'A';
-	profile[profileNumber][pB] = 'B';
-	profile[profileNumber][pX] = 'X';
-	profile[profileNumber][pY] = 'Y';
-	profile[profileNumber][pL] = 'L';
-	profile[profileNumber][pR] = 'R';
-	profile[profileNumber][pStart] = VK_RETURN;
-	profile[profileNumber][pSelect] = VK_RSHIFT;
-	profile[profileNumber][pBlue] = '1';
-	profile[profileNumber][pYellow] = '2';
-	profile[profileNumber][pRed] = '3';
-	profile[profileNumber][pGreen] = '4';
-	profile[profileNumber][pTouch0X0Y] = VK_NUMPAD7;
-	profile[profileNumber][pTouch1X0Y] = VK_NUMPAD8;
-	profile[profileNumber][pTouch2X0Y] = VK_NUMPAD8;
-	profile[profileNumber][pTouch3X0Y] = VK_NUMPAD9;
-	profile[profileNumber][pTouch0X1Y] = VK_NUMPAD4;
-	profile[profileNumber][pTouch1X1Y] = VK_NUMPAD5;
-	profile[profileNumber][pTouch2X1Y] = VK_NUMPAD5;
-	profile[profileNumber][pTouch3X1Y] = VK_NUMPAD6;
-	profile[profileNumber][pTouch0X2Y] = VK_NUMPAD1;
-	profile[profileNumber][pTouch1X2Y] = VK_NUMPAD2;
-	profile[profileNumber][pTouch2X2Y] = VK_NUMPAD2;
-	profile[profileNumber][pTouch3X2Y] = VK_NUMPAD3;
+	profile[profileNumber][pUp] = KEY_UP;
+	profile[profileNumber][pDown] = KEY_DOWN;
+	profile[profileNumber][pLeft] = KEY_LEFT;
+	profile[profileNumber][pRight] = KEY_RIGHT;
+	profile[profileNumber][pA] = KEY_A;
+	profile[profileNumber][pB] = KEY_B;
+	profile[profileNumber][pX] = KEY_X;
+	profile[profileNumber][pY] = KEY_Y;
+	profile[profileNumber][pL] = KEY_L;
+	profile[profileNumber][pR] = KEY_R;
+	profile[profileNumber][pStart] = KEY_RETURN;
+	profile[profileNumber][pSelect] = KEY_RSHIFT;
+	profile[profileNumber][pBlue] = KEY_1;
+	profile[profileNumber][pYellow] = KEY_2;
+	profile[profileNumber][pRed] = KEY_3;
+	profile[profileNumber][pGreen] = KEY_4;
+	profile[profileNumber][pTouch0X0Y] = KEY_NUMPAD7;
+	profile[profileNumber][pTouch1X0Y] = KEY_NUMPAD8;
+	profile[profileNumber][pTouch2X0Y] = KEY_NUMPAD8;
+	profile[profileNumber][pTouch3X0Y] = KEY_NUMPAD9;
+	profile[profileNumber][pTouch0X1Y] = KEY_NUMPAD4;
+	profile[profileNumber][pTouch1X1Y] = KEY_NUMPAD5;
+	profile[profileNumber][pTouch2X1Y] = KEY_NUMPAD5;
+	profile[profileNumber][pTouch3X1Y] = KEY_NUMPAD6;
+	profile[profileNumber][pTouch0X2Y] = KEY_NUMPAD1;
+	profile[profileNumber][pTouch1X2Y] = KEY_NUMPAD2;
+	profile[profileNumber][pTouch2X2Y] = KEY_NUMPAD2;
+	profile[profileNumber][pTouch3X2Y] = KEY_NUMPAD3;
 
 	return writeProfileConfig(profileNumber);
 }
@@ -188,7 +191,7 @@ bool readProfileConfig(unsigned char profileNumber)
 		{ \
 			int i = 0; \
 			getLine(tmpBuffer);	\
-			profile[profileNumber][key] = getVKNumber(tmpBuffer); \
+			profile[profileNumber][key] = getKeyNumber(tmpBuffer); \
 			tmpBuffer = tmpBuffer + strlen(tmpBuffer) + 1; \
 			while(tmpBuffer[i] == (char)0xa || tmpBuffer[i] == (char)0xd) \
 			{ \

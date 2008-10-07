@@ -25,16 +25,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define strnicmp _strnicmp
 #endif
 #define bool BOOL
+#else //WIN32
+#define INPUT_MOUSE 0
+#define INPUT_KEYBOARD 1
+#define bool unsigned char
+#define stricmp	strcasecmp
+#define strnicmp strncasecmp
 #endif //WIN32
 
 //Normal Defines
 #define MAX_MSG 12
 
 //Variables
+#ifndef WIN32
+extern int screen;
+extern Display *display;
+#endif //WIN32
 extern char currentIP[16];
 
 //Functions
-extern void doInput(INPUT *input, unsigned int type, unsigned int key, bool state);
+extern void doInput(unsigned int type, unsigned int key, bool state);
 extern char *longToIP(unsigned long longIP, char *charIP);
 
 #endif //__MAIN_H__

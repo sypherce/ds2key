@@ -21,6 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //Windows Defines
 #ifdef WIN32
 #define bool BOOL
+#else //WIN32
+#define bool unsigned char
 #endif //WIN32
 
 //Normal Defines
