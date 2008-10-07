@@ -52,32 +52,69 @@ void doInput(unsigned int type, unsigned int key, bool state)
 
 	if(input.type == INPUT_KEYBOARD)
 	{
-		input.ki.wVk = key;
-		input.ki.dwFlags = KEYEVENTF_SCANCODE;
-
-		if(state)
+		if(key == KEY_LBUTTON || key == KEY_RBUTTON || key == KEY_MBUTTON)
 		{
-			input.ki.dwFlags |= KEYEVENTF_KEYUP;
-		}
+			input.type = INPUT_MOUSE;
+			input.mi.dx = 0;
+			input.mi.dy = 0;
+			input.mi.dwExtraInfo = 0;
+			input.mi.mouseData = 0;
+			input.mi.time = 0;
 
-		input.ki.wScan = MapVirtualKey(key, 0);
-		input.ki.time = 0;
-		input.ki.dwExtraInfo = 0;
+			if(key == KEY_LBUTTON)
+			{
+				if(state)
+				{
+					input.mi.dwFlags = MOUSEEVENTF_LEFTUP | MOUSEEVENTF_MOVE;
+				}
+				else
+				{
+					input.mi.dwFlags = MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_MOVE;
+				}
+			}
+			else if(key == KEY_RBUTTON)
+			{
+				if(state)
+				{
+					input.mi.dwFlags = MOUSEEVENTF_RIGHTUP | MOUSEEVENTF_MOVE;
+				}
+				else
+				{
+					input.mi.dwFlags = MOUSEEVENTF_RIGHTDOWN | MOUSEEVENTF_MOVE;
+				}
+			}
+			else if(key == KEY_MBUTTON)
+			{
+				if(state)
+				{
+					input.mi.dwFlags = MOUSEEVENTF_MIDDLEUP | MOUSEEVENTF_MOVE;
+				}
+				else
+				{
+					input.mi.dwFlags = MOUSEEVENTF_MIDDLEDOWN | MOUSEEVENTF_MOVE;
+				}
+			}
+		}
+		else
+		{
+			input.ki.wVk = key;
+			input.ki.dwFlags = KEYEVENTF_SCANCODE;
+
+			if(state)
+			{
+				input.ki.dwFlags |= KEYEVENTF_KEYUP;
+			}
+
+			input.ki.wScan = MapVirtualKey(key, 0);
+			input.ki.time = 0;
+			input.ki.dwExtraInfo = 0;
+		}
 	}
 	else if(input.type == INPUT_MOUSE)
 	{
 		input.mi.dx = 65535 * (key & 0xff) / 256;
 		input.mi.dy = 65535 * ((key >> 8) & 0xff) / 192;
 		input.mi.dwFlags = MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE;
-
-		//click, not working yet
-		/*
-		if(state)
-		{
-		printf("state");
-		input.mi.dwFlags |= MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTDOWN;
-		}
-		*/
 		input.mi.dwExtraInfo = 0;
 		input.mi.mouseData = 0;
 		input.mi.time = 0;
