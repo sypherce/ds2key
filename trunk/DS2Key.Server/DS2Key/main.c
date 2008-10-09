@@ -41,7 +41,6 @@ INPUT input;
 int screen;
 Display *display;
 #endif //WIN32
-char currentIP[16];
 bool mouseKeys[13];
 bool mouseKeysLast[13];
 
@@ -129,13 +128,6 @@ void doInput(unsigned int type, unsigned int key, bool state)
 #endif
 }
 
-char *longToIP(unsigned long longIP, char *charIP)
-{
-	sprintf(charIP, "%i.%i.%i.%i", (((unsigned char *)&longIP)[0]), ((unsigned char *)&longIP)[1], ((unsigned char *)&longIP)[2], ((unsigned char *)&longIP)[3]);
-
-	return charIP;
-}
-
 int main(int argc, char *argv[])
 {
 	int sd, rc, n, cliLen;
@@ -210,7 +202,7 @@ int main(int argc, char *argv[])
 		//receive message
 		cliLen = sizeof(cliAddr);
 		n = recvfrom(sd, msg, MAX_MSG, 0, (struct sockaddr *)&cliAddr, &cliLen);
-		ip = longToIP(sockaddr_in__address(cliAddr), currentIP);
+		ip = inet_ntoa(cliAddr.sin_addr);
 
 		if(n < 0)
 		{

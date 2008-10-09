@@ -15,34 +15,24 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef __MAIN_H__
-#define __MAIN_H__
-
-//Windows Defines
-#ifdef WIN32
-#ifdef _MSC_VER //less warnings from microsoft
-#define stricmp	_stricmp
-#define strnicmp _strnicmp
-#endif
-#define bool BOOL
-#else //WIN32
-#define INPUT_MOUSE 0
-#define INPUT_KEYBOARD 1
-#define stricmp	strcasecmp
-#define strnicmp strncasecmp
-#define bool unsigned char
-#endif //WIN32
+#ifndef __CONFIG_H__
+#define __CONFIG_H__
 
 //Normal Defines
-#define MAX_MSG 12
+#define DEFAULT_IP 0x00000000
+#define DEFAULT_PORT 9501
+#define DEFAULT_PROFILE 0
+#define DS2KEY_INI "ds2key.ini"
 
 //Variables
-#ifndef WIN32
-extern int screen;
-extern Display *display;
-#endif //WIN32
+extern int ip;
+extern int port;
+extern int profile;
 
 //Functions
-extern void doInput(unsigned int type, unsigned int key, bool state);
+extern bool writeConfig();
+extern bool writeDefaultConfig();
+extern bool getLine(char *buffer);
+extern bool readConfig();
 
-#endif //__MAIN_H__
+#endif //__CONFIG_H__

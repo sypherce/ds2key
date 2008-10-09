@@ -15,34 +15,19 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef __MAIN_H__
-#define __MAIN_H__
-
-//Windows Defines
-#ifdef WIN32
-#ifdef _MSC_VER //less warnings from microsoft
-#define stricmp	_stricmp
-#define strnicmp _strnicmp
-#endif
-#define bool BOOL
-#else //WIN32
-#define INPUT_MOUSE 0
-#define INPUT_KEYBOARD 1
-#define stricmp	strcasecmp
-#define strnicmp strncasecmp
-#define bool unsigned char
-#endif //WIN32
-
-//Normal Defines
-#define MAX_MSG 12
+#ifndef __WIFI_H__
+#define __WIFI_H__
 
 //Variables
-#ifndef WIN32
-extern int screen;
-extern Display *display;
-#endif //WIN32
+extern struct sockaddr_in sain;
 
 //Functions
-extern void doInput(unsigned int type, unsigned int key, bool state);
+extern void Timer_50ms();
+extern unsigned long iptoi(char *ipchar, struct sockaddr_in sockaddr);
+extern void sendCommand(int socket, struct sockaddr_in sockaddr, unsigned long ip, unsigned int port, char *command);
+extern void wifiConnect();
 
-#endif //__MAIN_H__
+//Function Defines
+#define sendCommand(a) sendCommand(my_socket, sain, iptoi(cIP, sain), port, a)
+
+#endif //__WIFI_H__

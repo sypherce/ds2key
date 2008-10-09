@@ -16,6 +16,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <nds.h>
+#include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include "keyboard.h"
 #include "keyboard.hit.h"
@@ -24,8 +26,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //keyboard function variables
 u8 keyboardOffset = 6;
 uint16 *keyboardMapPointer;
-char *keyTextPos = (char *)NULL;
 char *keyText = (char *)NULL;
+int *keyNumber;
+char keyNumberText[7];
 char keyEnter = 0;
 unsigned int keyLength = 0;
 unsigned char m_Mode = keyboardNormal;
@@ -42,21 +45,41 @@ void drawKeyboard()
 	}
 }
 
-char *initKeyboard(char *text, unsigned int length, char enter)
+void initKeyboardString(char *text, unsigned int length, char enter)
 {
 	keyLength = length;
 	keyEnter = enter;
+	keyNumber = (int*)NULL;
 	keyText = text;
-	keyTextPos = text + strlen(text);
+}
 
-	return keyText;
+void initKeyboardInt(int *number, unsigned int length, char enter)
+{
+	keyLength = length;
+	keyEnter = enter;
+	keyNumber = number;
+	memset(keyNumberText, 0, 6);
+	if(*keyNumber < 100000)
+	{
+		sprintf(keyNumberText, "%i", *keyNumber);
+	}
+	keyText = keyNumberText;
+	if(strlen(keyText) == 1 && keyText[0] == '0')
+	{
+		keyText[0] = 0;
+	}
 }
 
 void deInitKeyboard()
 {
 	keyLength = 0;
 	keyEnter = 0;
-	keyText = keyTextPos = (char *)NULL;
+	keyNumber = (int*)NULL;
+	if(keyText == keyNumberText)
+	{
+		memset(keyNumberText, 0, 6);
+	}
+	keyText = (char *)NULL;
 	m_Mode = keyboardNormal;
 	memset(keyboardMapPointer, 0, keyboardImageMapLen >> 1);
 }
@@ -79,41 +102,51 @@ unsigned char updateKeyboard(unsigned char x, unsigned char y)
 
 		if(c == CAP || c == SHF)
 		{
-			if(m_Mode == keyboardNormal)
+			if(!keyNumber)
 			{
-				if(c == SHF)
+				if(m_Mode == keyboardNormal)
 				{
-					m_Mode = keyboardShift;
+					if(c == SHF)
+					{
+						m_Mode = keyboardShift;
+					}
+					else
+					{
+						m_Mode = keyboardCapsLock;
+					}
 				}
 				else
 				{
-					m_Mode = keyboardCapsLock;
+					m_Mode = keyboardNormal;
 				}
-			}
-			else
-			{
-				m_Mode = keyboardNormal;
-			}
 
-			drawKeyboard();
+				drawKeyboard();
+			}
+		}
+		else if(c == BSP)
+		{
+			if(keyText[0] != 0)
+			{
+				keyText[strlen(keyText)-1] = 0;
+				returnVal = 1;
+			}
+		}
+		else if(c == RET)
+		{
+			unsigned int strlenKeyText = strlen(keyText);
+			if(strlenKeyText < keyLength)
+			{
+				keyText[strlenKeyText] = keyEnter;
+			}
+			returnVal = 2;
 		}
 		else if(c)
 		{
-			if(c == BSP)
+			unsigned int strlenKeyText = strlen(keyText);
+			if(strlenKeyText < keyLength)
 			{
-				if((int)(keyTextPos - keyText) > 0)
+				if(keyNumber && ((c < '0' || c > '9') || (strlenKeyText < 2 && c == '0')))
 				{
-					keyTextPos--;
-					*keyTextPos = ' ';
-					returnVal = 1;
-				}
-			}
-			else if((int)(keyTextPos - keyText) < keyLength)
-			{
-				if(c == RET)
-				{
-					*keyTextPos = keyEnter;
-					returnVal = 2;
 				}
 				else
 				{
@@ -123,13 +156,15 @@ unsigned char updateKeyboard(unsigned char x, unsigned char y)
 						drawKeyboard();
 					}
 
-					*keyTextPos = c;
+					keyText[strlenKeyText] = c;
 					returnVal = 1;
 				}
-
-				keyTextPos++;
 			}
 		}
+	}
+	if(keyNumber)
+	{
+		*keyNumber = atoi(keyText);
 	}
 
 	return returnVal;
