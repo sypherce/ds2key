@@ -15,34 +15,26 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef __MAIN_H__
-#define __MAIN_H__
-
-//Windows Defines
-#ifdef WIN32
-#ifdef _MSC_VER //less warnings from microsoft
-#define stricmp	_stricmp
-#define strnicmp _strnicmp
-#endif
-#define bool BOOL
-#else //WIN32
-#define INPUT_MOUSE 0
-#define INPUT_KEYBOARD 1
-#define stricmp	strcasecmp
-#define strnicmp strncasecmp
-#define bool unsigned char
-#endif //WIN32
+#ifndef __SPRITE_H__
+#define __SPRITE_H__
 
 //Normal Defines
-#define MAX_MSG 12
+#define SPRITE_MOUSE 0
+#define SPRITE_SETTINGS	1
+#define SPRITE_HIDDEN_X	SCREEN_WIDTH
+#define SPRITE_HIDDEN_Y	SCREEN_HEIGHT
+#define SPRITE_SETTINGS_X 0
+#define SPRITE_SETTINGS_Y 0
+#define SPRITE_MOUSE_X 244
+#define SPRITE_MOUSE_Y 175
 
 //Variables
-#ifndef WIN32
-extern int screen;
-extern Display *display;
-#endif //WIN32
+extern SpriteEntry sprites[128];
+extern pSpriteRotation spriteRotations;
+extern int spriteRotationAngle;
 
 //Functions
-extern void doInput(unsigned int type, unsigned int key, bool state);
+extern void updateOAM();
+extern void initSprites();
 
-#endif //__MAIN_H__
+#endif //__SPRITE_H__

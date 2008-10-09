@@ -29,7 +29,8 @@ extern unsigned int keyLength;
 extern unsigned char m_Mode;
 
 extern void drawKeyboard();
-extern char *initKeyboard(char *text, unsigned int length, char enter);
+extern void initKeyboardString(char *text, unsigned int length, char enter);
+extern void initKeyboardInt(int *number, unsigned int length, char enter);
 extern void deInitKeyboard();
 extern unsigned char updateKeyboard(unsigned char x, unsigned char y);
 

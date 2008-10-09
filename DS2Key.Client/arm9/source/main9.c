@@ -15,68 +15,39 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+//includes
+#include <fat.h>
 #include <nds.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+//wifi includes
 #include <dswifi9.h>
-#include <sys/socket.h>
 #include <netinet/in.h>
-#include <netdb.h>
-#include "fifo.h"
-#include "keyboard.h"
 
-#include "keyboardImage.h"
-#include "spritesImage.h"
+//project includes
+#include "main9.h"
+#include "config.h"
+#include "wifi.h"
+#include "sprite.h"
+#include "keyboard.h"
 #include "gh.h"
 
-#define min(a, b)						(((a) < (b)) ? (a) : (b))
-#define max(a, b)						(((a) > (b)) ? (a) : (b))
-#define stylusBetween(x1, y1, x2, y2)	(stylusPos.px >= min((x1), (x2)) && stylusPos.px <= max((x1), (x2)) && stylusPos.py >= min((y1), (y2)) && stylusPos.py <= max((y1), (y2)))
+//common includes
+#include "fifo.h"
 
-#define SPRITE_MOUSE 0
-#define SPRITE_SETTINGS	1
-#define SPRITE_HIDDEN_X	SCREEN_WIDTH
-#define SPRITE_HIDDEN_Y	SCREEN_HEIGHT
-#define SPRITE_SETTINGS_X 0
-#define SPRITE_SETTINGS_Y 0
-#define SPRITE_MOUSE_X 244
-#define SPRITE_MOUSE_Y 175
+//image includes
+#include "keyboardImage.h"
+#include "spritesImage.h"
 
+//variables
 bool screenPos = 0;
 bool mouseLock = false;
 bool settings = false;
 int lightCounter = 0;
 char lightTimeout = 4;
-
-//a global copy of sprite attribute memory
-SpriteEntry sprites[128];
-
-//rotation attributes overlap so assign then to the same location
-pSpriteRotation spriteRotations = (pSpriteRotation)sprites;
-int spriteRotationAngle = 0;
-
-//copy our sprite to object attribute memory
-void updateOAM(void)
-{
-	DC_FlushRange(sprites, 128 * sizeof(SpriteEntry));
-	dmaCopy(sprites, OAM, 128 * sizeof(SpriteEntry));
-}
-
-//turn off all the sprites
-void initSprites(void)
-{
-	int i;
-	for(i = 0; i < SPRITE_COUNT; i++)
-	{
-		sprites[i].attribute[0] = ATTR0_DISABLED;
-		sprites[i].attribute[1] = 0;
-		sprites[i].attribute[2] = 0;
-	}
-
-	updateOAM();
-}
+struct sockaddr_in sain;
 
 void toggleScreen()
 {
@@ -92,83 +63,18 @@ void toggleScreen()
 	screenPos = !screenPos;
 }
 
-//---------------------------------------------------------------------------------
-//Dswifi helper functions
-//wifi timer function, to update internals of sgIP
-void Timer_50ms(void)
-{
-	Wifi_Timer(50);
-}
-
 void vblfunction()
 {
 	lightCounter++;
 }
 
-unsigned long iptoi(char *ipchar)
-{
-	int i1 = 0;
-	int i2 = 0;
-	unsigned long iplong = 0;
-	while(i2 < 4)
-	{
-		if(*ipchar == '.' || *ipchar == 0)
-		{
-			iplong = (iplong >> 8) | (i1 << 24);
-			i1 = 0;
-			i2++;
-
-			if(*ipchar == 0 && i2 < 4)
-			{
-				iplong = iplong >> ((4 - i2) * 8);
-				i2 = 4;
-			}
-		}
-		else
-		{
-			if(*ipchar >= '0' && *ipchar <= '9')
-			{
-				i1 = i1 * 10 + (*ipchar - '0');
-			}
-		}
-
-		ipchar++;
-	}
-
-	return iplong;
-}
-
-void sendCommand(int socket, struct sockaddr_in sockaddr, unsigned long ip, unsigned int port, char *command)
-{
-	sockaddr.sin_family = AF_INET;
-	sockaddr.sin_port = htons(port);
-	sockaddr.sin_addr.s_addr = ip;
-
-	if(sendto(socket, command, strlen(command), 0, (struct sockaddr *)&sockaddr, sizeof(sockaddr)) >= 0)
-	{
-		iprintf("\x1b[22;0HSent: %s          ", command);
-	}
-	else
-	{
-		iprintf("\x1b[22;0HFailed to send: %s", command);
-	}
-}
-
-#define sendCommand(a)	sendCommand(my_socket, sain, iptoi(ip), atoi(port), a)
-
 int main(int argc, char *argv[])
 {
-	char cProfile[6];
-	int i = 1;
-	struct sockaddr_in sain;
-	const unsigned char portLength = 6;
-	char port[portLength + 1];
-	const unsigned char ipLength = 16;
-	char ip[ipLength + 1];
-	const unsigned char profileLength = 4;
-	char profile[profileLength + 1];
-	char lastProfile[profileLength + 1];
+	int i;
+	int lastProfile;
 	int my_socket;
+	char cProfile[6];
+	char *cIP;
 	lcdMainOnBottom();
 	{   //setup keyboard screen
 		DISPLAY_CR = MODE_0_2D | DISPLAY_BG0_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_ACTIVE;
@@ -202,68 +108,61 @@ int main(int argc, char *argv[])
 
 	printf("DS2Key\n-\n");
 
-	{   //wifi init
-		TIMER3_CR = 0;  //disable timer3
+	{   //setup systems
 		irqInit();
 
-		irqSet(IRQ_VBLANK, vblfunction);
+		//setup vblank
+		irqSet(IRQ_VBLANK, vblfunction); //setup vblank IRQ
 		irqEnable(IRQ_VBLANK);
+		
+		//init fat disk system
+		if(emulator())
+		{
+		}
+		else
+		{
+			fatInitDefault();
+		}
+
+		//setup timer3
+		TIMER3_CR = 0;  //disable timer3
 		irqSet(IRQ_TIMER3, Timer_50ms); //setup timer IRQ
 		irqEnable(IRQ_TIMER3);
-		irqSet(IRQ_FIFO_NOT_EMPTY, fifo);   //setup fifo IRQ
-		irqEnable(IRQ_FIFO_NOT_EMPTY);
-
-		REG_IPC_FIFO_CR = IPC_FIFO_ENABLE | IPC_FIFO_SEND_CLEAR | IPC_FIFO_RECV_IRQ;
-
-		//set timer3
 		TIMER3_DATA = TIMER_FREQ_256(50);
 		TIMER3_CR = TIMER_ENABLE | TIMER_IRQ_REQ | TIMER_DIV_256;
 
-		initWifi();
-	}   //wifi init
+		//setup fifo IRQ
+		irqSet(IRQ_FIFO_NOT_EMPTY, fifo);
+		irqEnable(IRQ_FIFO_NOT_EMPTY);
+		REG_IPC_FIFO_CR = IPC_FIFO_ENABLE | IPC_FIFO_SEND_CLEAR | IPC_FIFO_RECV_IRQ;
+
+		if(emulator())
+		{
+			Wifi_Init(0);
+		}
+		else
+		{
+			initWifi();
+		}
+	}   //setup systems
 
 	printf("Connecting via WFC data\n");
-	{   //wifi connect
-		//simple WFC connect:
-		Wifi_AutoConnect(); //request connect
-		while(1)
-		{
-			int i = Wifi_AssocStatus(); //check status
-
-			if(i == ASSOCSTATUS_ASSOCIATED)
-			{
-				printf("Connected successfully!\n");
-				break;
-			}
-
-			if(i == ASSOCSTATUS_CANNOTCONNECT)
-			{
-				printf("Could not connect!\n");
-				while(1)
-				{
-				}
-			}
-		}
-	}   //wifi connect
+	wifiConnect();
 
 	my_socket = socket(AF_INET, SOCK_DGRAM, 0);
-	memset(port, 0, portLength);
-	strcpy(port, "9501");
-	memset(ip, 0, ipLength);
-	strcpy(ip, "192.168.1.2");
-	memset(profile, 0, profileLength);
-	strcpy(profile, "0");
-	memset(lastProfile, 0, profileLength);
-	strcpy(lastProfile, "0");
 
 	sain.sin_family = AF_INET;
 	sain.sin_addr.s_addr = htonl(INADDR_ANY);
-	sain.sin_port = htons(atoi(port));
+	sain.sin_port = htons(port);
 	i = bind(my_socket, (struct sockaddr *)&sain, sizeof(sain));
+
+	readConfig();
+	lastProfile = profile;
+	cIP = inet_ntoa(sain.sin_addr);
 
 	if(i < 0)
 	{
-		printf("cannot bind port number %i\n", atoi(port));
+		printf("cannot bind port number %i\n", port);
 		while(1)
 		{
 		}
@@ -274,7 +173,7 @@ int main(int argc, char *argv[])
 
 	printf("Connected to server!\n");
 
-	sprintf(cProfile, "/p%i", atoi(profile));
+	sprintf(cProfile, "/p%i", profile);
 	sendCommand(cProfile);
 	printf("%s\n", cProfile);
 
@@ -356,7 +255,7 @@ int main(int argc, char *argv[])
 		{
 			if(!strcmp(msg, "/p?"))
 			{
-				sprintf(cProfile, "/p%i", atoi(profile));
+				sprintf(cProfile, "/p%i", profile);
 				sendCommand(cProfile);
 			}
 		}
@@ -551,21 +450,21 @@ int main(int argc, char *argv[])
 					{
 						if(keyboard == 1)
 						{
-							iprintf("\x1b[3;0H        IP: %s\n\n\n        Port: %s\n\n\n        Profile: %s\n\n\n\n\n\n      ", ip, port, profile);
+							settingsPrint();
 						}
 
 						if(keyboard == 2)
 						{
-							if(strcmp(lastProfile, profile) != 0)
+							if(lastProfile != profile)
 							{
-								sprintf(cProfile, "/p%i", atoi(profile));
+								sprintf(cProfile, "/p%i", profile);
 								sendCommand(cProfile);
-								strcpy(lastProfile, profile);
+								lastProfile = profile;
 							}
 
 							toggleScreen();
 							deInitKeyboard();
-							iprintf("\x1b[3;0H[Edit]  IP: %s\n\n\n[Edit]  Port: %s\n\n\n[Edit]  Profile: %s\n\n\n\n\n\n[Done]", ip, port, profile);
+							settingsPrintButtons();
 						}
 					}
 					else if(!settings)
@@ -585,7 +484,7 @@ int main(int argc, char *argv[])
 							sprites[SPRITE_SETTINGS].posY = SPRITE_HIDDEN_Y;
 							settings = true;
 							toggleScreen();
-							iprintf("\x1b[3;0H[Edit]  IP: %s\n\n\n[Edit]  Port: %s\n\n\n[Edit]  Profile: %s\n\n\n\n\n\n[Done]", ip, port, profile);
+							settingsPrintButtons();
 						}
 					}
 				}
@@ -603,20 +502,24 @@ int main(int argc, char *argv[])
 					deInitKeyboard();
 					settings = false;
 					exit = true;
+					inet_aton(cIP, &sain.sin_addr);
+					ip = sain.sin_addr.s_addr;
+					cIP = inet_ntoa(sain.sin_addr);
+					writeConfig();
 				}
 				else if(stylusBetween(0, 24, 48, 32))   //ip
 				{
-					initKeyboard(ip, ipLength, 0);
+					initKeyboardString(cIP, 15, 0);
 					exit = true;
 				}
 				else if(stylusBetween(0, 48, 48, 56))   //port
 				{
-					initKeyboard(port, portLength, 0);
+					initKeyboardInt(&port, 5, 0);
 					exit = true;
 				}
 				else if(stylusBetween(0, 72, 48, 80))   //profile
 				{
-					initKeyboard(profile, profileLength, 0);
+					initKeyboardInt(&profile, 3, 0);
 					exit = true;
 				}
 
@@ -633,7 +536,7 @@ int main(int argc, char *argv[])
 						drawKeyboard();
 					}
 
-					iprintf("\x1b[3;0H        IP: %s\n\n\n        Port: %s\n\n\n        Profile: %s\n\n\n\n\n\n      ", ip, port, profile);
+					settingsPrint();
 					lightCounter = 0;
 				}
 			}
