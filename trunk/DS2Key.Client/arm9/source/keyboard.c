@@ -49,7 +49,7 @@ void initKeyboardString(char *text, unsigned int length, char enter)
 {
 	keyLength = length;
 	keyEnter = enter;
-	keyNumber = (int*)NULL;
+	keyNumber = (int *)NULL;
 	keyText = text;
 }
 
@@ -59,11 +59,14 @@ void initKeyboardInt(int *number, unsigned int length, char enter)
 	keyEnter = enter;
 	keyNumber = number;
 	memset(keyNumberText, 0, 6);
+
 	if(*keyNumber < 100000)
 	{
 		sprintf(keyNumberText, "%i", *keyNumber);
 	}
+
 	keyText = keyNumberText;
+
 	if(strlen(keyText) == 1 && keyText[0] == '0')
 	{
 		keyText[0] = 0;
@@ -74,11 +77,13 @@ void deInitKeyboard()
 {
 	keyLength = 0;
 	keyEnter = 0;
-	keyNumber = (int*)NULL;
+	keyNumber = (int *)NULL;
+
 	if(keyText == keyNumberText)
 	{
 		memset(keyNumberText, 0, 6);
 	}
+
 	keyText = (char *)NULL;
 	m_Mode = keyboardNormal;
 	memset(keyboardMapPointer, 0, keyboardImageMapLen >> 1);
@@ -127,22 +132,25 @@ unsigned char updateKeyboard(unsigned char x, unsigned char y)
 		{
 			if(keyText[0] != 0)
 			{
-				keyText[strlen(keyText)-1] = 0;
+				keyText[strlen(keyText) - 1] = 0;
 				returnVal = 1;
 			}
 		}
 		else if(c == RET)
 		{
 			unsigned int strlenKeyText = strlen(keyText);
+
 			if(strlenKeyText < keyLength)
 			{
 				keyText[strlenKeyText] = keyEnter;
 			}
+
 			returnVal = 2;
 		}
 		else if(c)
 		{
 			unsigned int strlenKeyText = strlen(keyText);
+
 			if(strlenKeyText < keyLength)
 			{
 				if(keyNumber && ((c < '0' || c > '9') || (strlenKeyText < 2 && c == '0')))
@@ -162,6 +170,7 @@ unsigned char updateKeyboard(unsigned char x, unsigned char y)
 			}
 		}
 	}
+
 	if(keyNumber)
 	{
 		*keyNumber = atoi(keyText);

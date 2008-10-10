@@ -83,7 +83,7 @@ bool readConfig()
 		unsigned long int size;
 		char *buffer;
 		char *tmpBuffer;
-		char *tmpString = 0;;
+		char *tmpString = 0;
 		size_t result;
 		fseek(file, 0, SEEK_END);
 		size = ftell(file);

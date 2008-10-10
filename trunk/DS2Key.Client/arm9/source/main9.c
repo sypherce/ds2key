@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
 		//setup vblank
 		irqSet(IRQ_VBLANK, vblfunction); //setup vblank IRQ
 		irqEnable(IRQ_VBLANK);
-		
+
 		//init fat disk system
 		if(emulator())
 		{
