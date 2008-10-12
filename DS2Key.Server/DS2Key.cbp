@@ -30,6 +30,7 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add option="-DGUI" />
 			<Add directory="C:\iup2_6\mingw3\include" />
 		</Compiler>
 		<Linker>
