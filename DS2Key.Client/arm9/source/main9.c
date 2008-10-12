@@ -116,10 +116,7 @@ int main(int argc, char *argv[])
 		irqEnable(IRQ_VBLANK);
 
 		//init fat disk system
-		if(emulator())
-		{
-		}
-		else
+		if(isRunningOnHW())
 		{
 			fatInitDefault();
 		}
@@ -136,13 +133,13 @@ int main(int argc, char *argv[])
 		irqEnable(IRQ_FIFO_NOT_EMPTY);
 		REG_IPC_FIFO_CR = IPC_FIFO_ENABLE | IPC_FIFO_SEND_CLEAR | IPC_FIFO_RECV_IRQ;
 
-		if(emulator())
+		if(isRunningOnHW())
 		{
-			Wifi_Init(0);
+			initWifi();
 		}
 		else
 		{
-			initWifi();
+			Wifi_Init(0);
 		}
 	}   //setup systems
 
@@ -152,7 +149,7 @@ int main(int argc, char *argv[])
 	my_socket = socket(AF_INET, SOCK_DGRAM, 0);
 
 	sain.sin_family = AF_INET;
-	sain.sin_addr.s_addr = htonl(INADDR_ANY);
+	sain.sin_addr.s_addr = htonl(ip);
 	sain.sin_port = htons(port);
 	i = bind(my_socket, (struct sockaddr *)&sain, sizeof(sain));
 

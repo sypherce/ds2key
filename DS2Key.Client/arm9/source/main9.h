@@ -31,6 +31,7 @@ extern int lightCounter;
 extern char lightTimeout;
 
 //Functions
+extern bool isRunningOnHW(); //this is from emuDetect.s
 extern void toggleScreen();
 extern void vblfunction();
 
@@ -38,6 +39,5 @@ extern void vblfunction();
 #define min(a, b) (((a) < (b)) ? (a) : (b))
 #define max(a, b) (((a) > (b)) ? (a) : (b))
 #define stylusBetween(x1, y1, x2, y2) (stylusPos.px >= min((x1), (x2)) && stylusPos.px <= max((x1), (x2)) && stylusPos.py >= min((y1), (y2)) && stylusPos.py <= max((y1), (y2)))
-#define emulator() (!PersonalData->name[0])
 
 #endif //__MAIN9_H__
