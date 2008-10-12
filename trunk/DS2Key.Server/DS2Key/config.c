@@ -10,6 +10,7 @@
 #include <string.h>
 #include <X11/keysym.h>
 #endif //WIN32
+
 #include "config.h"
 #include "key.h"
 
