@@ -52,34 +52,11 @@ bool writeProfileConfig(unsigned char profileNumber)
 
 	if(file)
 	{
-		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pUp]));
-		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pDown]));
-		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pLeft]));
-		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pRight]));
-		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pA]));
-		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pB]));
-		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pX]));
-		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pY]));
-		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pL]));
-		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pR]));
-		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pStart]));
-		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pSelect]));
-		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pBlue]));
-		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pYellow]));
-		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pRed]));
-		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pGreen]));
-		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pTouch0X0Y]));
-		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pTouch1X0Y]));
-		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pTouch2X0Y]));
-		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pTouch3X0Y]));
-		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pTouch0X1Y]));
-		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pTouch1X1Y]));
-		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pTouch2X1Y]));
-		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pTouch3X1Y]));
-		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pTouch0X2Y]));
-		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pTouch1X2Y]));
-		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pTouch2X2Y]));
-		fprintf(file, "%s\n", getKeyString(profile[profileNumber][pTouch3X2Y]));
+		int i;
+		for(i = 1; i < pEND; i++)
+		{
+			fprintf(file, "%s\n", getKeyString(profile[profileNumber][i]));
+		}
 
 		fclose(file);
 	}
@@ -186,23 +163,6 @@ bool readConfig()
 
 bool readProfileConfig(unsigned char profileNumber)
 {
-#define readProfileKey(key)	\
-	{ \
-		if(tmpBuffer[0] != 0) \
-		{ \
-			int i = 0; \
-			getLine(tmpBuffer);	\
-			profile[profileNumber][key] = getKeyNumber(tmpBuffer); \
-			tmpBuffer = tmpBuffer + strlen(tmpBuffer) + 1; \
-			while(tmpBuffer[i] == (char)0xa || tmpBuffer[i] == (char)0xd) \
-			{ \
-				i++; \
-			} \
- \
-			tmpBuffer = &tmpBuffer[i]; \
-		} \
-	}
-
 	FILE *file;
 	char filename[16];
 
@@ -245,34 +205,25 @@ bool readProfileConfig(unsigned char profileNumber)
 		tmpBuffer = buffer;
 
 		//set profile keys
-		readProfileKey(pUp);
-		readProfileKey(pDown);
-		readProfileKey(pLeft);
-		readProfileKey(pRight);
-		readProfileKey(pA);
-		readProfileKey(pB);
-		readProfileKey(pX);
-		readProfileKey(pY);
-		readProfileKey(pL);
-		readProfileKey(pR);
-		readProfileKey(pStart);
-		readProfileKey(pSelect);
-		readProfileKey(pBlue);
-		readProfileKey(pYellow);
-		readProfileKey(pRed);
-		readProfileKey(pGreen);
-		readProfileKey(pTouch0X0Y);
-		readProfileKey(pTouch1X0Y);
-		readProfileKey(pTouch2X0Y);
-		readProfileKey(pTouch3X0Y);
-		readProfileKey(pTouch0X1Y);
-		readProfileKey(pTouch1X1Y);
-		readProfileKey(pTouch2X1Y);
-		readProfileKey(pTouch3X1Y);
-		readProfileKey(pTouch0X2Y);
-		readProfileKey(pTouch1X2Y);
-		readProfileKey(pTouch2X2Y);
-		readProfileKey(pTouch3X2Y);
+		{
+			int i;
+			for(i = 1; i < pEND; i++)
+			{
+				if(tmpBuffer[0] != 0)
+				{
+					int i2 = 0;
+					getLine(tmpBuffer);
+					profile[profileNumber][i] = getKeyNumber(tmpBuffer);
+					tmpBuffer = tmpBuffer + strlen(tmpBuffer) + 1;
+					while(tmpBuffer[i2] == (char)0xa || tmpBuffer[i2] == (char)0xd)
+					{
+						i2++;
+					}
+
+					tmpBuffer = &tmpBuffer[i2];
+				}
+			}
+		}
 
 		//free "buffer" memory
 		free(buffer);

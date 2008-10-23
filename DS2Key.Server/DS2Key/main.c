@@ -16,15 +16,24 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
 #ifdef WIN32
 #ifdef WINVER
 #undef WINVER
-#endif
+#endif //WINVER
 #define WINVER 0x0500
+#define WIN32_LEAN_AND_MEAN
+#ifdef _WIN32_IE
+#undef _WIN32_IE
+#endif //_WIN32_IE
+#define _WIN32_IE 0x0600
+#include <windows.h>
+#include <shlwapi.h>
+#include <shellapi.h>
 #include <winsock.h>
 #define sockaddr_in__address(sockaddr_in) sockaddr_in.sin_addr.S_un.S_addr
 #else //WIN32
-#include <stdlib.h>
 #include <string.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -34,17 +43,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #endif //WIN32
 
 #ifdef GUI
-#include "iup.h"
 #include "gui.h"
+#include "resource.h"
 #endif //GUI
 
-#include "main.h"
 #include "config.h"
 #include "key.h"
 
 //Variables
 #ifdef WIN32
+HINSTANCE hInst;
 INPUT input;
+#ifdef GUI
+char *logText = (char *)NULL;
+#endif //GUI
 #else //WIN32
 int screen;
 Display *display;
@@ -53,7 +65,65 @@ bool mouseKeys[13];
 bool mouseKeysLast[13];
 struct sockaddr_in servAddr;
 int sd;
-char displayText[1024];
+#include "main.h"
+
+#ifdef GUI
+int _printf(const char *format, ...)
+#else //GUI
+int _printf(const char *format, ...)
+#endif //GUI
+{
+	int returnVal;
+	va_list argList;
+#ifdef GUI
+	HWND hwndLog;
+	int position;
+	int lines;
+	int logTextLen;
+	char displayText[1024];
+	//char *position = IupGetAttribute(ml, IUP_CARET);
+#endif //GUI
+	va_start(argList, format);
+
+#ifdef GUI
+	returnVal = vsprintf(displayText, format, argList);
+
+	if(logText != (char *)NULL)
+	{
+		logTextLen = strlen(logText);
+	}
+	else
+	{
+		logTextLen = 0;
+	}
+
+	logTextLen += strlen(displayText) + strlen("\x0d\x0a") + 1;
+	logText = (char *)realloc(logText, logTextLen);
+	strcat(logText, displayText);
+	strcat(logText, "\x0d\x0a");
+	hwndLog = GetDlgItem(hwndPointer[0], IDC_EDT_LOG);
+	position = SendMessage(hwndLog, EM_GETFIRSTVISIBLELINE, (WPARAM)NULL, (LPARAM)NULL);
+	lines = SendMessage(hwndLog, EM_GETLINECOUNT, (WPARAM)NULL, (LPARAM)NULL);
+	SetDlgItemText(hwndPointer[0], IDC_EDT_LOG, logText);
+
+	if(lines - 12 < position)
+	{
+		SendMessage(hwndLog, EM_LINESCROLL, (WPARAM)NULL, (LPARAM)lines - 10);
+	}
+	else
+	{
+		SendMessage(hwndLog, EM_LINESCROLL, (WPARAM)NULL, (LPARAM)position);
+	}
+
+#else //WIN32
+	returnVal = vprintf(format, argList);
+	printf("\n");
+#endif
+
+	va_end(argList);
+
+	return returnVal;
+}
 
 void doInput(unsigned int type, unsigned int key, bool state)
 {
@@ -153,11 +223,12 @@ void serverLoop()
 	//receive message
 	cliLen = sizeof(cliAddr);
 	n = recvfrom(sd, msg, MAX_MSG, 0, (struct sockaddr *)&cliAddr, &cliLen);
-	ip = inet_ntoa(cliAddr.sin_addr);
+	ip = (char *)inet_ntoa(cliAddr.sin_addr);
+
 
 	if(n < 0)
 	{
-		sprintf(displayText, "Cannot receive data");
+		//_printf("Cannot receive data");
 		return;
 	}
 
@@ -165,15 +236,15 @@ void serverLoop()
 	{
 		for(currentProfile = 0; currentProfile <= 255; currentProfile++)
 		{
-			if(sockaddr_in__address(cliAddr) == ((unsigned long *)&profile[currentProfile])[0])
+			if(sockaddr_in__address(cliAddr) == ((unsigned long *)&profile[currentProfile])[pIP])
 			{
-				((unsigned long *)&profile[currentProfile])[0] = 0;
+				((unsigned long *)&profile[currentProfile])[pIP] = 0;
 			}
 		}
 
 		readProfileConfig(atoi(&msg[2]));
 
-		sprintf(displayText, "%s: [%s] profile set to %s", ip, msg, &msg[2]);
+		_printf("%s: [%s] profile set to %s", ip, msg, &msg[2]);
 		((unsigned long *)&profile[atoi(&msg[2])])[0] = sockaddr_in__address(cliAddr);
 	}
 	else
@@ -181,7 +252,7 @@ void serverLoop()
 		bool noProfile = 0;
 		for(currentProfile = 0; currentProfile <= 255; currentProfile++)
 		{
-			if(sockaddr_in__address(cliAddr) == ((unsigned long *)&profile[currentProfile])[0])
+			if(sockaddr_in__address(cliAddr) == ((unsigned long *)&profile[currentProfile])[pIP])
 			{
 				break;
 			}
@@ -191,11 +262,11 @@ void serverLoop()
 
 				if(sendto(sd, command, strlen(command), 0, (struct sockaddr *)&cliAddr, sizeof(cliAddr)) >= 0)
 				{
-					sprintf(displayText, "Sent: %s", command);
+					_printf("Sent: %s", command);
 				}
 				else
 				{
-					sprintf(displayText, "Failed to send: %s", command);
+					_printf("Failed to send: %s", command);
 				}
 
 				noProfile = 1;
@@ -210,162 +281,162 @@ void serverLoop()
 		else if(!stricmp(msg, "/dl0"))
 		{
 			doInput(INPUT_KEYBOARD, profile[currentProfile][pLeft], 0);
-			sprintf(displayText, "%s: [%s] left button pressed", ip, msg);
+			_printf("%s: [%s] left button pressed", ip, msg);
 		}
 		else if(!stricmp(msg, "/dl1"))
 		{
 			doInput(INPUT_KEYBOARD, profile[currentProfile][pLeft], 1);
-			sprintf(displayText, "%s: [%s] left button released", ip, msg);
+			_printf("%s: [%s] left button released", ip, msg);
 		}
 		else if(!stricmp(msg, "/dr0"))
 		{
 			doInput(INPUT_KEYBOARD, profile[currentProfile][pRight], 0);
-			sprintf(displayText, "%s: [%s] right button pressed", ip, msg);
+			_printf("%s: [%s] right button pressed", ip, msg);
 		}
 		else if(!stricmp(msg, "/dr1"))
 		{
 			doInput(INPUT_KEYBOARD, profile[currentProfile][pRight], 1);
-			sprintf(displayText, "%s: [%s] right button released", ip, msg);
+			_printf("%s: [%s] right button released", ip, msg);
 		}
 		else if(!stricmp(msg, "/du0"))
 		{
 			doInput(INPUT_KEYBOARD, profile[currentProfile][pUp], 0);
-			sprintf(displayText, "%s: [%s] up button pressed", ip, msg);
+			_printf("%s: [%s] up button pressed", ip, msg);
 		}
 		else if(!stricmp(msg, "/du1"))
 		{
 			doInput(INPUT_KEYBOARD, profile[currentProfile][pUp], 1);
-			sprintf(displayText, "%s: [%s] up button released", ip, msg);
+			_printf("%s: [%s] up button released", ip, msg);
 		}
 		else if(!stricmp(msg, "/dd0"))
 		{
 			doInput(INPUT_KEYBOARD, profile[currentProfile][pDown], 0);
-			sprintf(displayText, "%s: [%s] down button pressed", ip, msg);
+			_printf("%s: [%s] down button pressed", ip, msg);
 		}
 		else if(!stricmp(msg, "/dd1"))
 		{
 			doInput(INPUT_KEYBOARD, profile[currentProfile][pDown], 1);
-			sprintf(displayText, "%s: [%s] down button released", ip, msg);
+			_printf("%s: [%s] down button released", ip, msg);
 		}
 		else if(!stricmp(msg, "/ba0"))
 		{
 			doInput(INPUT_KEYBOARD, profile[currentProfile][pA], 0);
-			sprintf(displayText, "%s: [%s] a button pressed", ip, msg);
+			_printf("%s: [%s] a button pressed", ip, msg);
 		}
 		else if(!stricmp(msg, "/ba1"))
 		{
 			doInput(INPUT_KEYBOARD, profile[currentProfile][pA], 1);
-			sprintf(displayText, "%s: [%s] a button released", ip, msg);
+			_printf("%s: [%s] a button released", ip, msg);
 		}
 		else if(!stricmp(msg, "/bb0"))
 		{
 			doInput(INPUT_KEYBOARD, profile[currentProfile][pB], 0);
-			sprintf(displayText, "%s: [%s] b button pressed", ip, msg);
+			_printf("%s: [%s] b button pressed", ip, msg);
 		}
 		else if(!stricmp(msg, "/bb1"))
 		{
 			doInput(INPUT_KEYBOARD, profile[currentProfile][pB], 1);
-			sprintf(displayText, "%s: [%s] b button released", ip, msg);
+			_printf("%s: [%s] b button released", ip, msg);
 		}
 		else if(!stricmp(msg, "/bx0"))
 		{
 			doInput(INPUT_KEYBOARD, profile[currentProfile][pX], 0);
-			sprintf(displayText, "%s: [%s] x button pressed", ip, msg);
+			_printf("%s: [%s] x button pressed", ip, msg);
 		}
 		else if(!stricmp(msg, "/bx1"))
 		{
 			doInput(INPUT_KEYBOARD, profile[currentProfile][pX], 1);
-			sprintf(displayText, "%s: [%s] x button released", ip, msg);
+			_printf("%s: [%s] x button released", ip, msg);
 		}
 		else if(!stricmp(msg, "/by0"))
 		{
 			doInput(INPUT_KEYBOARD, profile[currentProfile][pY], 0);
-			sprintf(displayText, "%s: [%s] y button pressed", ip, msg);
+			_printf("%s: [%s] y button pressed", ip, msg);
 		}
 		else if(!stricmp(msg, "/by1"))
 		{
 			doInput(INPUT_KEYBOARD, profile[currentProfile][pY], 1);
-			sprintf(displayText, "%s: [%s] y button released", ip, msg);
+			_printf("%s: [%s] y button released", ip, msg);
 		}
 		else if(!stricmp(msg, "/bl0"))
 		{
 			doInput(INPUT_KEYBOARD, profile[currentProfile][pL], 0);
-			sprintf(displayText, "%s: [%s] l button pressed", ip, msg);
+			_printf("%s: [%s] l button pressed", ip, msg);
 		}
 		else if(!stricmp(msg, "/bl1"))
 		{
 			doInput(INPUT_KEYBOARD, profile[currentProfile][pL], 1);
-			sprintf(displayText, "%s: [%s] l button released", ip, msg);
+			_printf("%s: [%s] l button released", ip, msg);
 		}
 		else if(!stricmp(msg, "/br0"))
 		{
 			doInput(INPUT_KEYBOARD, profile[currentProfile][pR], 0);
-			sprintf(displayText, "%s: [%s] r button pressed", ip, msg);
+			_printf("%s: [%s] r button pressed", ip, msg);
 		}
 		else if(!stricmp(msg, "/br1"))
 		{
 			doInput(INPUT_KEYBOARD, profile[currentProfile][pR], 1);
-			sprintf(displayText, "%s: [%s] r button released", ip, msg);
+			_printf("%s: [%s] r button released", ip, msg);
 		}
 		else if(!stricmp(msg, "/bt0"))
 		{
 			doInput(INPUT_KEYBOARD, profile[currentProfile][pStart], 0);
-			sprintf(displayText, "%s: [%s] start button pressed", ip, msg);
+			_printf("%s: [%s] start button pressed", ip, msg);
 		}
 		else if(!stricmp(msg, "/bt1"))
 		{
 			doInput(INPUT_KEYBOARD, profile[currentProfile][pStart], 1);
-			sprintf(displayText, "%s: [%s] start button released", ip, msg);
+			_printf("%s: [%s] start button released", ip, msg);
 		}
 		else if(!stricmp(msg, "/be0"))
 		{
 			doInput(INPUT_KEYBOARD, profile[currentProfile][pSelect], 0);
-			sprintf(displayText, "%s: [%s] select button pressed", ip, msg);
+			_printf("%s: [%s] select button pressed", ip, msg);
 		}
 		else if(!stricmp(msg, "/be1"))
 		{
 			doInput(INPUT_KEYBOARD, profile[currentProfile][pSelect], 1);
-			sprintf(displayText, "%s: [%s] select button released", ip, msg);
+			_printf("%s: [%s] select button released", ip, msg);
 		}
 		else if(!stricmp(msg, "/gb0"))
 		{
 			doInput(INPUT_KEYBOARD, profile[currentProfile][pBlue], 0);
-			sprintf(displayText, "%s: [%s] blue button pressed", ip, msg);
+			_printf("%s: [%s] blue button pressed", ip, msg);
 		}
 		else if(!stricmp(msg, "/gb1"))
 		{
 			doInput(INPUT_KEYBOARD, profile[currentProfile][pBlue], 1);
-			sprintf(displayText, "%s: [%s] blue button released", ip, msg);
+			_printf("%s: [%s] blue button released", ip, msg);
 		}
 		else if(!stricmp(msg, "/gy0"))
 		{
 			doInput(INPUT_KEYBOARD, profile[currentProfile][pYellow], 0);
-			sprintf(displayText, "%s: [%s] yellow button pressed", ip, msg);
+			_printf("%s: [%s] yellow button pressed", ip, msg);
 		}
 		else if(!stricmp(msg, "/gy1"))
 		{
 			doInput(INPUT_KEYBOARD, profile[currentProfile][pYellow], 1);
-			sprintf(displayText, "%s: [%s] yellow button released", ip, msg);
+			_printf("%s: [%s] yellow button released", ip, msg);
 		}
 		else if(!stricmp(msg, "/gr0"))
 		{
 			doInput(INPUT_KEYBOARD, profile[currentProfile][pRed], 0);
-			sprintf(displayText, "%s: [%s] red button pressed", ip, msg);
+			_printf("%s: [%s] red button pressed", ip, msg);
 		}
 		else if(!stricmp(msg, "/gr1"))
 		{
 			doInput(INPUT_KEYBOARD, profile[currentProfile][pRed], 1);
-			sprintf(displayText, "%s: [%s] red button released", ip, msg);
+			_printf("%s: [%s] red button released", ip, msg);
 		}
 		else if(!stricmp(msg, "/gg0"))
 		{
 			doInput(INPUT_KEYBOARD, profile[currentProfile][pGreen], 0);
-			sprintf(displayText, "%s: [%s] green button pressed", ip, msg);
+			_printf("%s: [%s] green button pressed", ip, msg);
 		}
 		else if(!stricmp(msg, "/gg1"))
 		{
 			doInput(INPUT_KEYBOARD, profile[currentProfile][pGreen], 1);
-			sprintf(displayText, "%s: [%s] green button released", ip, msg);
+			_printf("%s: [%s] green button released", ip, msg);
 		}
 		else if(!strnicmp(msg, "/m", 2))
 		{
@@ -499,11 +570,11 @@ void serverLoop()
 
 				if(z)
 				{
-					sprintf(displayText, "%s: [%s] touch screen pressed at %i, %i", ip, msg, x, y);
+					_printf("%s: [%s] touch screen pressed at %i, %i", ip, msg, x, y);
 				}
 				else
 				{
-					sprintf(displayText, "%s: [%s] touch screen released at %i, %i", ip, msg, x, y);
+					_printf("%s: [%s] touch screen released at %i, %i", ip, msg, x, y);
 				}
 			}
 			else
@@ -529,11 +600,11 @@ void serverLoop()
 
 					if(status == 1)
 					{
-						sprintf(displayText, "%s: [%s] released touch screen button %i", ip, msg, key);
+						_printf("%s: [%s] released touch screen button %i", ip, msg, key);
 					}
 					else if(status == 2)
 					{
-						sprintf(displayText, "%s: [%s] pressed touch screen button %i", ip, msg, key);
+						_printf("%s: [%s] pressed touch screen button %i", ip, msg, key);
 					}
 
 					mouseKeys[key] = 0;
@@ -542,43 +613,27 @@ void serverLoop()
 		}
 		else
 		{
-			sprintf(displayText, "%s: [%s] undefined command", ip, msg);
+			_printf("%s: [%s] undefined command", ip, msg);
 		}
-	}
-
-	if(displayText[0] != 0)
-	{
-#ifdef GUI
-		char *position = IupGetAttribute(ml, IUP_CARET);
-		while(displayText[strlen(displayText) - 2] == 0xd && displayText[strlen(displayText) - 1] == 0x2)
-		{
-			displayText[strlen(displayText) - 2] = 0;
-		}
-
-		IupSetAttribute(ml, IUP_APPEND, displayText);
-		IupSetAttribute(ml, IUP_CARET, position);
-#else
-		printf("%s\n", displayText);
-#endif
-		displayText[0] = 0;
 	}
 }
 
+#ifdef WIN32
+#ifdef GUI
+int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
+{
+#else //GUI
 int main(int argc, char *argv[])
 {
-#ifdef WIN32
+#endif //GUI
 	WSADATA wsaData;
 	unsigned long ioctlsocketCommand = 1;
+#ifdef GUI
+	hInst = hInstance;
+#endif //GUI
 #else //WIN32
-#endif //WIN32
-	int pI;
-	for(pI = 0; pI <= 255; pI++)
-	{
-		((unsigned long *)&profile[pI])[pIP] = 0;
-	}
-
-#ifdef WIN32
-#else //WIN32
+int main(int argc, char *argv[])
+{
 	display = XOpenDisplay(NULL);
 
 	if(display == NULL)
@@ -588,7 +643,7 @@ int main(int argc, char *argv[])
 	}
 
 	screen = DefaultScreen(display);
-#endif
+#endif //WIN32
 
 	initKeyTable();
 
@@ -633,15 +688,17 @@ int main(int argc, char *argv[])
 			exit(1);
 		}
 
-		sprintf(displayText, "Waiting for data on port UDP %u", serverPort);
+		#ifdef GUI
+		//sprintf(mlDefaultTxt, "Waiting for data on port UDP %u", serverPort);
+		#else
+		printf("Waiting for data on port UDP %u\n", serverPort);
+		#endif //GUI
 	}   //setup connections
 
 	//infinite loop
 	#ifdef GUI
-	initGui();
-	loopGui();
+	return DialogBox(hInstance, MAKEINTRESOURCE(IDD_DLG_MAIN), NULL, DialogProc);
 	#else
-	printf("%s\n", displayText);
 	while(1)
 	{
 		serverLoop();
