@@ -25,24 +25,36 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define strnicmp _strnicmp
 #endif
 #define bool BOOL
+#define sockaddr_in__address(sockaddr_in) sockaddr_in.sin_addr.S_un.S_addr
 #else //WIN32
 #define INPUT_MOUSE 0
 #define INPUT_KEYBOARD 1
 #define stricmp	strcasecmp
 #define strnicmp strncasecmp
 #define bool unsigned char
+#define sockaddr_in__address(sockaddr_in) sockaddr_in.sin_addr.s_addr
 #endif //WIN32
 
 //Normal Defines
 #define MAX_MSG 12
 
 //Variables
-#ifndef WIN32
+#ifdef WIN32
+extern HINSTANCE hInst;
+//extern INPUT input;
+#else //WIN32
 extern int screen;
 extern Display *display;
 #endif //WIN32
 
+extern bool mouseKeys[13];
+extern bool mouseKeysLast[13];
+extern struct sockaddr_in servAddr;
+extern int sd;
+
 //Functions
+extern int _printf(const char *format, ...);
 extern void doInput(unsigned int type, unsigned int key, bool state);
+extern void serverLoop();
 
 #endif //__MAIN_H__

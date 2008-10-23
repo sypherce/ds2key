@@ -6,19 +6,19 @@
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
-			<Target title="Debug">
-				<Option output="Debug\mingw\DS2Key" prefix_auto="1" extension_auto="1" />
-				<Option object_output="Debug\mingw\" />
+			<Target title="Debug (Console)">
+				<Option output="Debug\mingw\Console\DS2Key" prefix_auto="1" extension_auto="1" />
+				<Option object_output="Debug\mingw\Console\" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>
 			</Target>
-			<Target title="Release">
-				<Option output="Release\mingw\DS2Key" prefix_auto="1" extension_auto="1" />
-				<Option object_output="Release\mingw\" />
-				<Option type="0" />
+			<Target title="Release (Console)">
+				<Option output="Release\mingw\Console\DS2Key" prefix_auto="1" extension_auto="1" />
+				<Option object_output="Release\mingw\Console\" />
+				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
@@ -27,21 +27,47 @@
 					<Add option="-s" />
 				</Linker>
 			</Target>
+			<Target title="Debug (GUI)">
+				<Option output="Debug\mingw\GUI\DS2Key" prefix_auto="1" extension_auto="1" />
+				<Option object_output="Debug\mingw\GUI\" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="-DGUI" />
+				</Compiler>
+				<Linker>
+					<Add library="shlwapi" />
+					<Add library="comctl32" />
+					<Add library="ole32" />
+					<Add library="gdi32" />
+					<Add library="comdlg32" />
+				</Linker>
+			</Target>
+			<Target title="Release (GUI)">
+				<Option output="Release\mingw\GUI\DS2Key" prefix_auto="1" extension_auto="1" />
+				<Option object_output="Release\mingw\GUI\" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-DGUI" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="shlwapi" />
+					<Add library="comctl32" />
+					<Add library="ole32" />
+					<Add library="gdi32" />
+					<Add library="comdlg32" />
+				</Linker>
+			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
-			<Add option="-DGUI" />
-			<Add directory="C:\iup2_6\mingw3\include" />
 		</Compiler>
 		<Linker>
 			<Add library="wsock32" />
-			<Add library="iup" />
-			<Add library="iupcontrols" />
-			<Add library="comctl32" />
-			<Add library="ole32" />
-			<Add library="gdi32" />
-			<Add library="comdlg32" />
-			<Add directory="C:\iup2_6\mingw3" />
 		</Linker>
 		<Unit filename="DS2Key\config.c">
 			<Option compilerVar="CC" />
@@ -49,8 +75,13 @@
 		<Unit filename="DS2Key\config.h" />
 		<Unit filename="DS2Key\gui.c">
 			<Option compilerVar="CC" />
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
 		</Unit>
-		<Unit filename="DS2Key\gui.h" />
+		<Unit filename="DS2Key\gui.h">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
 		<Unit filename="DS2Key\key.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -59,6 +90,15 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="DS2Key\main.h" />
+		<Unit filename="DS2Key\resource.h">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="DS2Key\resource.rc">
+			<Option compilerVar="WINDRES" />
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
 		<Extensions>
 			<code_completion />
 			<debugger />
