@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define WINVER 0x0500
 #include <windows.h>
 #else //WIN32
+#include <string.h>
 #include <X11/keysym.h>
 #endif //WIN32
 #include "key.h"

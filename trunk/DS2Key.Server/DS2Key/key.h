@@ -30,7 +30,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define KEY_NONE 0
 #ifdef WIN32
 #define KEY_LBUTTON VK_LBUTTON
-#define KEY_LBUTTON VK_LBUTTON
 #define KEY_RBUTTON VK_RBUTTON
 #define KEY_CANCEL VK_CANCEL
 #define KEY_MBUTTON VK_MBUTTON
@@ -245,11 +244,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define KEY_PA1 VK_PA1
 #define KEY_OEM_CLEAR VK_OEM_CLEAR
 #else //WIN32
-#define KEY_LBUTTON KEY_NONE //LBUTTON
-#define KEY_LBUTTON KEY_NONE //LBUTTON
-#define KEY_RBUTTON KEY_NONE //RBUTTON
+#define KEY_LBUTTON 0x8000 //LBUTTON
+#define KEY_RBUTTON 0x8002 //RBUTTON
 #define KEY_CANCEL KEY_NONE //CANCEL
-#define KEY_MBUTTON KEY_NONE //MBUTTON
+#define KEY_MBUTTON 0x8001 //MBUTTON
 #define KEY_XBUTTON1 KEY_NONE //XBUTTON1
 #define KEY_XBUTTON2 KEY_NONE //XBUTTON2
 #define KEY_BACK XK_BackSpace

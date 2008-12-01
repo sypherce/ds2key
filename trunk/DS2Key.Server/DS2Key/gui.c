@@ -469,7 +469,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				}
 				case IDM_ABOUT:
 				{
-					MessageBox(hwndDlg, "DS2Key 1.0 (SVN).\nCopyright (C) 2008 Derrick (sypherce) Wirth.\nhttp://ds2key.1emulation.com/", "About DS2Key...", MB_ICONINFORMATION);
+					MessageBox(hwndDlg, "DS2Key 1.0 (SVN)\nCopyright (C) 2008 Derrick (sypherce) Wirth\nhttp://ds2key.1emulation.com/", "About DS2Key...", MB_ICONINFORMATION);
 
 					break;
 				}

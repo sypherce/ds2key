@@ -39,6 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <arpa/inet.h>
 #include <sys/fcntl.h>
 #include <X11/Xlib.h>
+#include <X11/extensions/XTest.h>
 #define sockaddr_in__address(sockaddr_in) sockaddr_in.sin_addr.s_addr
 #endif //WIN32
 
@@ -58,7 +59,6 @@ INPUT input;
 char *logText = (char *)NULL;
 #endif //GUI
 #else //WIN32
-int screen;
 Display *display;
 #endif //WIN32
 bool mouseKeys[13];
@@ -67,25 +67,21 @@ struct sockaddr_in servAddr;
 int sd;
 #include "main.h"
 
-#ifdef GUI
 int _printf(const char *format, ...)
-#else //GUI
-int _printf(const char *format, ...)
-#endif //GUI
 {
 	int returnVal;
 	va_list argList;
-#ifdef GUI
+#ifdef GUI_LOG_ENABLED
 	HWND hwndLog;
 	int position;
 	int lines;
 	int logTextLen;
 	char displayText[1024];
 	//char *position = IupGetAttribute(ml, IUP_CARET);
-#endif //GUI
+#endif //GUI_LOG_ENABLED
 	va_start(argList, format);
 
-#ifdef GUI
+#ifdef GUI_LOG_ENABLED
 	returnVal = vsprintf(displayText, format, argList);
 
 	if(logText != (char *)NULL)
@@ -115,10 +111,10 @@ int _printf(const char *format, ...)
 		SendMessage(hwndLog, EM_LINESCROLL, (WPARAM)NULL, (LPARAM)position);
 	}
 
-#else //WIN32
+#else //GUI_LOG_ENABLED
 	returnVal = vprintf(format, argList);
 	printf("\n");
-#endif
+#endif 
 
 	va_end(argList);
 
@@ -127,13 +123,11 @@ int _printf(const char *format, ...)
 
 void doInput(unsigned int type, unsigned int key, bool state)
 {
-#ifdef WIN32
-	input.type = type;
-
-	if(input.type == INPUT_KEYBOARD)
+	if(type == INPUT_KEYBOARD)
 	{
 		if(key == KEY_LBUTTON || key == KEY_RBUTTON || key == KEY_MBUTTON)
 		{
+#ifdef WIN32
 			input.type = INPUT_MOUSE;
 			input.mi.dx = 0;
 			input.mi.dy = 0;
@@ -174,9 +168,15 @@ void doInput(unsigned int type, unsigned int key, bool state)
 					input.mi.dwFlags = MOUSEEVENTF_MIDDLEDOWN | MOUSEEVENTF_MOVE;
 				}
 			}
+
+#else//WIN32
+            XTestFakeButtonEvent(display, key - KEY_LBUTTON + 1, !state, 0);
+#endif//WIN32
 		}
 		else
 		{
+#ifdef WIN32
+            input.type = type;
 			input.ki.wVk = key;
 			input.ki.dwFlags = KEYEVENTF_SCANCODE;
 
@@ -188,30 +188,56 @@ void doInput(unsigned int type, unsigned int key, bool state)
 			input.ki.wScan = MapVirtualKey(key, 0);
 			input.ki.time = 0;
 			input.ki.dwExtraInfo = 0;
+#else//WIN32
+            int code = XKeysymToKeycode(display, key);
+
+            XTestFakeKeyEvent(display, code, !state, CurrentTime);
+#endif//WIN32
 		}
 	}
-	else if(input.type == INPUT_MOUSE)
+	else if(type == INPUT_MOUSE)
 	{
+#ifdef WIN32
+	    input.type = type;
 		input.mi.dx = 65535 * (key & 0xff) / 256;
 		input.mi.dy = 65535 * ((key >> 8) & 0xff) / 192;
 		input.mi.dwFlags = MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE;
 		input.mi.dwExtraInfo = 0;
 		input.mi.mouseData = 0;
 		input.mi.time = 0;
+#else//WIN32
+        Window dummyWin;
+        int dummyX, dummyY;
+        unsigned int width, height, dummyBorder, dummyDepth;
+
+        int screen = DefaultScreen(display);
+        Window rootwindow = RootWindow(display, screen);
+
+        if(XGetGeometry(display, rootwindow, &dummyWin, &dummyX, &dummyY, &width, &height, &dummyBorder, &dummyDepth))
+        {
+            int x = width * (key & 0xff) / 256;
+            int y = height * ((key >> 8) & 0xff) / 192;
+
+            XTestFakeMotionEvent(display, screen, x, y, 0);
+        }
+#endif//WIN32
 	}
 
+#ifdef WIN32
 	SendInput(1, (LPINPUT)&input, sizeof(INPUT));
-#else
-	int code = XKeysymToKeycode(display, key);
-
-	XTestFakeKeyEvent(display, code, !state, CurrentTime);
-	XFlush(display);
-#endif
+#else//WIN32
+    XFlush(display);
+#endif//WIN32
 }
 
 void serverLoop()
 {
-	int n, cliLen;
+	int n;
+	#ifndef WIN32
+	socklen_t cliLen;
+	#else//WIN32
+	int cliLen;
+	#endif//WIN32
 	struct sockaddr_in cliAddr;
 	char msg[MAX_MSG];
 	char *ip;
@@ -642,7 +668,6 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 
-	screen = DefaultScreen(display);
 #endif //WIN32
 
 	initKeyTable();
