@@ -201,10 +201,33 @@ void doInput(unsigned int type, unsigned int key, bool state)
 	}
 	else if(type == INPUT_MOUSE)
 	{
+		unsigned char keyX = key & 0xff;
+		unsigned char keyY = (key >> 8) & 0xff;
+		if(keyX < 8)
+		{
+			keyX = 0;
+		}
+		else if(keyX > 256 - 8)
+		{
+			keyX = 256 - 8;
+		}
+
+		if(keyY < 8)
+		{
+			keyY = 0;
+		}
+		else if(keyY > 192 - 8)
+		{
+			keyY = 192 - 8;
+		}
+		keyX -= 8;
+		keyY -= 8;
+		//end border stuff
+
 #ifdef WIN32
 	    input.type = type;
-		input.mi.dx = 65535 * (key & 0xff) / 256;
-		input.mi.dy = 65535 * ((key >> 8) & 0xff) / 192;
+		input.mi.dx = 65535 * keyX / (256 - 16);//-16 border
+		input.mi.dy = 65535 * keyY / (192 - 16);//-16 border
 		input.mi.dwFlags = MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE;
 		input.mi.dwExtraInfo = 0;
 		input.mi.mouseData = 0;
@@ -219,8 +242,8 @@ void doInput(unsigned int type, unsigned int key, bool state)
 
         if(XGetGeometry(display, rootwindow, &dummyWin, &dummyX, &dummyY, &width, &height, &dummyBorder, &dummyDepth))
         {
-            int x = width * (key & 0xff) / 256;
-            int y = height * ((key >> 8) & 0xff) / 192;
+            int x = width * keyX / (256 - 16);//-16 border
+            int y = height * keyY / (192 - 16);//-16 border
 
             XTestFakeMotionEvent(display, screen, x, y, 0);
         }
