@@ -51,10 +51,13 @@ extern bool mouseKeys[13];
 extern bool mouseKeysLast[13];
 extern struct sockaddr_in servAddr;
 extern int sd;
+extern bool connectedDS2Key;
 
 //Functions
 extern int _printf(const char *format, ...);
 extern void doInput(unsigned int type, unsigned int key, bool state);
+extern void connectDS2Key();
+extern void disconnectDS2Key();
 extern void serverLoop();
 
 #endif //__MAIN_H__

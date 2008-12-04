@@ -35,6 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define sockaddr_in__address(sockaddr_in) sockaddr_in.sin_addr.S_un.S_addr
 #else //WIN32
 #include <string.h>
+#include <unistd.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/fcntl.h>
@@ -63,8 +64,11 @@ Display *display;
 #endif //WIN32
 bool mouseKeys[13];
 bool mouseKeysLast[13];
+int mouseXLast = -1;
+int mouseYLast = -1;
 struct sockaddr_in servAddr;
 int sd;
+bool connectedDS2Key;
 #include "main.h"
 
 int _printf(const char *format, ...)
@@ -114,7 +118,7 @@ int _printf(const char *format, ...)
 #else //GUI_LOG_ENABLED
 	returnVal = vprintf(format, argList);
 	printf("\n");
-#endif 
+#endif //GUI_LOG_ENABLED
 
 	va_end(argList);
 
@@ -230,432 +234,511 @@ void doInput(unsigned int type, unsigned int key, bool state)
 #endif//WIN32
 }
 
+void connectDS2Key()
+{   //setup connections
+    if(connectedDS2Key == 0)
+    {
+#ifdef WIN32
+        unsigned long ioctlsocketCommand = 1;
+        WSADATA wsaData;
+        WSAStartup(0x0202, &wsaData);   //windows socket startup
+#endif //WIN32
+
+        //socket creation
+        sd = socket(AF_INET, SOCK_DGRAM, 0);
+
+        if(sd < 0)
+        {
+            fprintf(stderr, "Cannot open socket\n");
+            return;
+        }
+
+        //bind local server port
+        servAddr.sin_family = AF_INET;
+        servAddr.sin_addr.s_addr = htonl(INADDR_ANY);
+        servAddr.sin_port = htons((unsigned short)serverPort);
+
+#ifdef WIN32
+
+        if(ioctlsocket(sd, FIONBIO, &ioctlsocketCommand) == -1)
+#else //WIN32
+
+        if(fcntl(sd, F_SETFL, O_NONBLOCK) == -1)
+#endif //WIN32
+        {
+            fprintf(stderr, "Setting to non-blocking failed\n");
+            return;
+        }
+
+        if(bind(sd, (struct sockaddr *)&servAddr, sizeof(servAddr)) == -1)
+        {
+            fprintf(stderr, "Cannot bind port number %d\n", serverPort);
+            return;
+        }
+
+        connectedDS2Key = 1;
+
+#ifdef GUI
+        //sprintf(mlDefaultTxt, "Waiting for data on port UDP %u", serverPort);
+#else
+        printf("Waiting for data on port UDP %u\n", serverPort);
+#endif //GUI
+    }
+}   //setup connections
+
+void disconnectDS2Key()
+{
+    if(connectedDS2Key == 1)
+    {
+#ifdef WIN32
+        closesocket(sd);
+        WSACleanup();
+#else//WIN32
+        close(sd);
+#endif//WIN32
+        connectedDS2Key = 0;
+    }
+}
+
 void serverLoop()
 {
-	int n;
-	#ifndef WIN32
-	socklen_t cliLen;
-	#else//WIN32
-	int cliLen;
-	#endif//WIN32
-	struct sockaddr_in cliAddr;
-	char msg[MAX_MSG];
-	char *ip;
-	unsigned int currentProfile;
+    if(connectedDS2Key)
+    {
+        int n;
+        #ifndef WIN32
+        socklen_t cliLen;
+        #else//WIN32
+        int cliLen;
+        #endif//WIN32
+        struct sockaddr_in cliAddr;
+        char msg[MAX_MSG];
+        char *ip;
+        unsigned int currentProfile;
 
-	//init buffer
-	memset(msg, 0x0, MAX_MSG);
+        //init buffer
+        memset(msg, 0x0, MAX_MSG);
 
-	//receive message
-	cliLen = sizeof(cliAddr);
-	n = recvfrom(sd, msg, MAX_MSG, 0, (struct sockaddr *)&cliAddr, &cliLen);
-	ip = (char *)inet_ntoa(cliAddr.sin_addr);
+        //receive message
+        cliLen = sizeof(cliAddr);
+        n = recvfrom(sd, msg, MAX_MSG, 0, (struct sockaddr *)&cliAddr, &cliLen);
+        ip = (char *)inet_ntoa(cliAddr.sin_addr);
 
 
-	if(n < 0)
-	{
-		//_printf("Cannot receive data");
-		return;
-	}
+        if(n < 0)
+        {
+            //_printf("Cannot receive data");
+            return;
+        }
 
-	if(!strnicmp(msg, "/p", 2))
-	{
-		for(currentProfile = 0; currentProfile <= 255; currentProfile++)
-		{
-			if(sockaddr_in__address(cliAddr) == ((unsigned long *)&profile[currentProfile])[pIP])
-			{
-				((unsigned long *)&profile[currentProfile])[pIP] = 0;
-			}
-		}
+        if(!strnicmp(msg, "/p", 2))
+        {
+            for(currentProfile = 0; currentProfile <= 255; currentProfile++)
+            {
+                if(sockaddr_in__address(cliAddr) == ((unsigned long *)&profile[currentProfile])[pIP])
+                {
+                    ((unsigned long *)&profile[currentProfile])[pIP] = 0;
+                }
+            }
 
-		readProfileConfig(atoi(&msg[2]));
+            readProfileConfig(atoi(&msg[2]));
 
-		_printf("%s: [%s] profile set to %s", ip, msg, &msg[2]);
-		((unsigned long *)&profile[atoi(&msg[2])])[0] = sockaddr_in__address(cliAddr);
-	}
-	else
-	{
-		bool noProfile = 0;
-		for(currentProfile = 0; currentProfile <= 255; currentProfile++)
-		{
-			if(sockaddr_in__address(cliAddr) == ((unsigned long *)&profile[currentProfile])[pIP])
-			{
-				break;
-			}
-			else if(currentProfile == 255)
-			{
-				char *command = "/p?";
+            _printf("%s: [%s] profile set to %s", ip, msg, &msg[2]);
+            ((unsigned long *)&profile[atoi(&msg[2])])[0] = sockaddr_in__address(cliAddr);
+        }
+        else
+        {
+            bool noProfile = 0;
+            for(currentProfile = 0; currentProfile <= 255; currentProfile++)
+            {
+                if(sockaddr_in__address(cliAddr) == ((unsigned long *)&profile[currentProfile])[pIP])
+                {
+                    break;
+                }
+                else if(currentProfile == 255)
+                {
+                    char *command = "/p?";
 
-				if(sendto(sd, command, strlen(command), 0, (struct sockaddr *)&cliAddr, sizeof(cliAddr)) >= 0)
-				{
-					_printf("Sent: %s", command);
-				}
-				else
-				{
-					_printf("Failed to send: %s", command);
-				}
+                    if(sendto(sd, command, strlen(command), 0, (struct sockaddr *)&cliAddr, sizeof(cliAddr)) >= 0)
+                    {
+                        _printf("Sent: %s", command);
+                    }
+                    else
+                    {
+                        _printf("Failed to send: %s", command);
+                    }
 
-				noProfile = 1;
+                    noProfile = 1;
 
-				break;
-			}
-		}
+                    break;
+                }
+            }
 
-		if(noProfile)
-		{
-		}
-		else if(!stricmp(msg, "/dl0"))
-		{
-			doInput(INPUT_KEYBOARD, profile[currentProfile][pLeft], 0);
-			_printf("%s: [%s] left button pressed", ip, msg);
-		}
-		else if(!stricmp(msg, "/dl1"))
-		{
-			doInput(INPUT_KEYBOARD, profile[currentProfile][pLeft], 1);
-			_printf("%s: [%s] left button released", ip, msg);
-		}
-		else if(!stricmp(msg, "/dr0"))
-		{
-			doInput(INPUT_KEYBOARD, profile[currentProfile][pRight], 0);
-			_printf("%s: [%s] right button pressed", ip, msg);
-		}
-		else if(!stricmp(msg, "/dr1"))
-		{
-			doInput(INPUT_KEYBOARD, profile[currentProfile][pRight], 1);
-			_printf("%s: [%s] right button released", ip, msg);
-		}
-		else if(!stricmp(msg, "/du0"))
-		{
-			doInput(INPUT_KEYBOARD, profile[currentProfile][pUp], 0);
-			_printf("%s: [%s] up button pressed", ip, msg);
-		}
-		else if(!stricmp(msg, "/du1"))
-		{
-			doInput(INPUT_KEYBOARD, profile[currentProfile][pUp], 1);
-			_printf("%s: [%s] up button released", ip, msg);
-		}
-		else if(!stricmp(msg, "/dd0"))
-		{
-			doInput(INPUT_KEYBOARD, profile[currentProfile][pDown], 0);
-			_printf("%s: [%s] down button pressed", ip, msg);
-		}
-		else if(!stricmp(msg, "/dd1"))
-		{
-			doInput(INPUT_KEYBOARD, profile[currentProfile][pDown], 1);
-			_printf("%s: [%s] down button released", ip, msg);
-		}
-		else if(!stricmp(msg, "/ba0"))
-		{
-			doInput(INPUT_KEYBOARD, profile[currentProfile][pA], 0);
-			_printf("%s: [%s] a button pressed", ip, msg);
-		}
-		else if(!stricmp(msg, "/ba1"))
-		{
-			doInput(INPUT_KEYBOARD, profile[currentProfile][pA], 1);
-			_printf("%s: [%s] a button released", ip, msg);
-		}
-		else if(!stricmp(msg, "/bb0"))
-		{
-			doInput(INPUT_KEYBOARD, profile[currentProfile][pB], 0);
-			_printf("%s: [%s] b button pressed", ip, msg);
-		}
-		else if(!stricmp(msg, "/bb1"))
-		{
-			doInput(INPUT_KEYBOARD, profile[currentProfile][pB], 1);
-			_printf("%s: [%s] b button released", ip, msg);
-		}
-		else if(!stricmp(msg, "/bx0"))
-		{
-			doInput(INPUT_KEYBOARD, profile[currentProfile][pX], 0);
-			_printf("%s: [%s] x button pressed", ip, msg);
-		}
-		else if(!stricmp(msg, "/bx1"))
-		{
-			doInput(INPUT_KEYBOARD, profile[currentProfile][pX], 1);
-			_printf("%s: [%s] x button released", ip, msg);
-		}
-		else if(!stricmp(msg, "/by0"))
-		{
-			doInput(INPUT_KEYBOARD, profile[currentProfile][pY], 0);
-			_printf("%s: [%s] y button pressed", ip, msg);
-		}
-		else if(!stricmp(msg, "/by1"))
-		{
-			doInput(INPUT_KEYBOARD, profile[currentProfile][pY], 1);
-			_printf("%s: [%s] y button released", ip, msg);
-		}
-		else if(!stricmp(msg, "/bl0"))
-		{
-			doInput(INPUT_KEYBOARD, profile[currentProfile][pL], 0);
-			_printf("%s: [%s] l button pressed", ip, msg);
-		}
-		else if(!stricmp(msg, "/bl1"))
-		{
-			doInput(INPUT_KEYBOARD, profile[currentProfile][pL], 1);
-			_printf("%s: [%s] l button released", ip, msg);
-		}
-		else if(!stricmp(msg, "/br0"))
-		{
-			doInput(INPUT_KEYBOARD, profile[currentProfile][pR], 0);
-			_printf("%s: [%s] r button pressed", ip, msg);
-		}
-		else if(!stricmp(msg, "/br1"))
-		{
-			doInput(INPUT_KEYBOARD, profile[currentProfile][pR], 1);
-			_printf("%s: [%s] r button released", ip, msg);
-		}
-		else if(!stricmp(msg, "/bt0"))
-		{
-			doInput(INPUT_KEYBOARD, profile[currentProfile][pStart], 0);
-			_printf("%s: [%s] start button pressed", ip, msg);
-		}
-		else if(!stricmp(msg, "/bt1"))
-		{
-			doInput(INPUT_KEYBOARD, profile[currentProfile][pStart], 1);
-			_printf("%s: [%s] start button released", ip, msg);
-		}
-		else if(!stricmp(msg, "/be0"))
-		{
-			doInput(INPUT_KEYBOARD, profile[currentProfile][pSelect], 0);
-			_printf("%s: [%s] select button pressed", ip, msg);
-		}
-		else if(!stricmp(msg, "/be1"))
-		{
-			doInput(INPUT_KEYBOARD, profile[currentProfile][pSelect], 1);
-			_printf("%s: [%s] select button released", ip, msg);
-		}
-		else if(!stricmp(msg, "/gb0"))
-		{
-			doInput(INPUT_KEYBOARD, profile[currentProfile][pBlue], 0);
-			_printf("%s: [%s] blue button pressed", ip, msg);
-		}
-		else if(!stricmp(msg, "/gb1"))
-		{
-			doInput(INPUT_KEYBOARD, profile[currentProfile][pBlue], 1);
-			_printf("%s: [%s] blue button released", ip, msg);
-		}
-		else if(!stricmp(msg, "/gy0"))
-		{
-			doInput(INPUT_KEYBOARD, profile[currentProfile][pYellow], 0);
-			_printf("%s: [%s] yellow button pressed", ip, msg);
-		}
-		else if(!stricmp(msg, "/gy1"))
-		{
-			doInput(INPUT_KEYBOARD, profile[currentProfile][pYellow], 1);
-			_printf("%s: [%s] yellow button released", ip, msg);
-		}
-		else if(!stricmp(msg, "/gr0"))
-		{
-			doInput(INPUT_KEYBOARD, profile[currentProfile][pRed], 0);
-			_printf("%s: [%s] red button pressed", ip, msg);
-		}
-		else if(!stricmp(msg, "/gr1"))
-		{
-			doInput(INPUT_KEYBOARD, profile[currentProfile][pRed], 1);
-			_printf("%s: [%s] red button released", ip, msg);
-		}
-		else if(!stricmp(msg, "/gg0"))
-		{
-			doInput(INPUT_KEYBOARD, profile[currentProfile][pGreen], 0);
-			_printf("%s: [%s] green button pressed", ip, msg);
-		}
-		else if(!stricmp(msg, "/gg1"))
-		{
-			doInput(INPUT_KEYBOARD, profile[currentProfile][pGreen], 1);
-			_printf("%s: [%s] green button released", ip, msg);
-		}
-		else if(!strnicmp(msg, "/m", 2))
-		{
-			char *xc = &msg[2];
-			char *yc = strchr(xc, '.');
-			char *zc = strchr(&yc[1], '.');
-			unsigned char x;
-			unsigned char y;
-			unsigned char buttonX;
-			unsigned char buttonY;
-			bool z;
-			bool commandSent = 0;
-			x = (unsigned char)atoi(xc);
-			y = (unsigned char)atoi(&yc[1]);
-			z = (bool)atoi(&zc[1]);
-			buttonX = (x / 64);
-			buttonY = (y / 64);
+            if(noProfile)
+            {
+            }
+            else if(!stricmp(msg, "/dl0"))
+            {
+                doInput(INPUT_KEYBOARD, profile[currentProfile][pLeft], 0);
+                _printf("%s: [%s] left button pressed", ip, msg);
+            }
+            else if(!stricmp(msg, "/dl1"))
+            {
+                doInput(INPUT_KEYBOARD, profile[currentProfile][pLeft], 1);
+                _printf("%s: [%s] left button released", ip, msg);
+            }
+            else if(!stricmp(msg, "/dr0"))
+            {
+                doInput(INPUT_KEYBOARD, profile[currentProfile][pRight], 0);
+                _printf("%s: [%s] right button pressed", ip, msg);
+            }
+            else if(!stricmp(msg, "/dr1"))
+            {
+                doInput(INPUT_KEYBOARD, profile[currentProfile][pRight], 1);
+                _printf("%s: [%s] right button released", ip, msg);
+            }
+            else if(!stricmp(msg, "/du0"))
+            {
+                doInput(INPUT_KEYBOARD, profile[currentProfile][pUp], 0);
+                _printf("%s: [%s] up button pressed", ip, msg);
+            }
+            else if(!stricmp(msg, "/du1"))
+            {
+                doInput(INPUT_KEYBOARD, profile[currentProfile][pUp], 1);
+                _printf("%s: [%s] up button released", ip, msg);
+            }
+            else if(!stricmp(msg, "/dd0"))
+            {
+                doInput(INPUT_KEYBOARD, profile[currentProfile][pDown], 0);
+                _printf("%s: [%s] down button pressed", ip, msg);
+            }
+            else if(!stricmp(msg, "/dd1"))
+            {
+                doInput(INPUT_KEYBOARD, profile[currentProfile][pDown], 1);
+                _printf("%s: [%s] down button released", ip, msg);
+            }
+            else if(!stricmp(msg, "/ba0"))
+            {
+                doInput(INPUT_KEYBOARD, profile[currentProfile][pA], 0);
+                _printf("%s: [%s] a button pressed", ip, msg);
+            }
+            else if(!stricmp(msg, "/ba1"))
+            {
+                doInput(INPUT_KEYBOARD, profile[currentProfile][pA], 1);
+                _printf("%s: [%s] a button released", ip, msg);
+            }
+            else if(!stricmp(msg, "/bb0"))
+            {
+                doInput(INPUT_KEYBOARD, profile[currentProfile][pB], 0);
+                _printf("%s: [%s] b button pressed", ip, msg);
+            }
+            else if(!stricmp(msg, "/bb1"))
+            {
+                doInput(INPUT_KEYBOARD, profile[currentProfile][pB], 1);
+                _printf("%s: [%s] b button released", ip, msg);
+            }
+            else if(!stricmp(msg, "/bx0"))
+            {
+                doInput(INPUT_KEYBOARD, profile[currentProfile][pX], 0);
+                _printf("%s: [%s] x button pressed", ip, msg);
+            }
+            else if(!stricmp(msg, "/bx1"))
+            {
+                doInput(INPUT_KEYBOARD, profile[currentProfile][pX], 1);
+                _printf("%s: [%s] x button released", ip, msg);
+            }
+            else if(!stricmp(msg, "/by0"))
+            {
+                doInput(INPUT_KEYBOARD, profile[currentProfile][pY], 0);
+                _printf("%s: [%s] y button pressed", ip, msg);
+            }
+            else if(!stricmp(msg, "/by1"))
+            {
+                doInput(INPUT_KEYBOARD, profile[currentProfile][pY], 1);
+                _printf("%s: [%s] y button released", ip, msg);
+            }
+            else if(!stricmp(msg, "/bl0"))
+            {
+                doInput(INPUT_KEYBOARD, profile[currentProfile][pL], 0);
+                _printf("%s: [%s] l button pressed", ip, msg);
+            }
+            else if(!stricmp(msg, "/bl1"))
+            {
+                doInput(INPUT_KEYBOARD, profile[currentProfile][pL], 1);
+                _printf("%s: [%s] l button released", ip, msg);
+            }
+            else if(!stricmp(msg, "/br0"))
+            {
+                doInput(INPUT_KEYBOARD, profile[currentProfile][pR], 0);
+                _printf("%s: [%s] r button pressed", ip, msg);
+            }
+            else if(!stricmp(msg, "/br1"))
+            {
+                doInput(INPUT_KEYBOARD, profile[currentProfile][pR], 1);
+                _printf("%s: [%s] r button released", ip, msg);
+            }
+            else if(!stricmp(msg, "/bt0"))
+            {
+                doInput(INPUT_KEYBOARD, profile[currentProfile][pStart], 0);
+                _printf("%s: [%s] start button pressed", ip, msg);
+            }
+            else if(!stricmp(msg, "/bt1"))
+            {
+                doInput(INPUT_KEYBOARD, profile[currentProfile][pStart], 1);
+                _printf("%s: [%s] start button released", ip, msg);
+            }
+            else if(!stricmp(msg, "/be0"))
+            {
+                doInput(INPUT_KEYBOARD, profile[currentProfile][pSelect], 0);
+                _printf("%s: [%s] select button pressed", ip, msg);
+            }
+            else if(!stricmp(msg, "/be1"))
+            {
+                doInput(INPUT_KEYBOARD, profile[currentProfile][pSelect], 1);
+                _printf("%s: [%s] select button released", ip, msg);
+            }
+            else if(!stricmp(msg, "/gb0"))
+            {
+                doInput(INPUT_KEYBOARD, profile[currentProfile][pBlue], 0);
+                _printf("%s: [%s] blue button pressed", ip, msg);
+            }
+            else if(!stricmp(msg, "/gb1"))
+            {
+                doInput(INPUT_KEYBOARD, profile[currentProfile][pBlue], 1);
+                _printf("%s: [%s] blue button released", ip, msg);
+            }
+            else if(!stricmp(msg, "/gy0"))
+            {
+                doInput(INPUT_KEYBOARD, profile[currentProfile][pYellow], 0);
+                _printf("%s: [%s] yellow button pressed", ip, msg);
+            }
+            else if(!stricmp(msg, "/gy1"))
+            {
+                doInput(INPUT_KEYBOARD, profile[currentProfile][pYellow], 1);
+                _printf("%s: [%s] yellow button released", ip, msg);
+            }
+            else if(!stricmp(msg, "/gr0"))
+            {
+                doInput(INPUT_KEYBOARD, profile[currentProfile][pRed], 0);
+                _printf("%s: [%s] red button pressed", ip, msg);
+            }
+            else if(!stricmp(msg, "/gr1"))
+            {
+                doInput(INPUT_KEYBOARD, profile[currentProfile][pRed], 1);
+                _printf("%s: [%s] red button released", ip, msg);
+            }
+            else if(!stricmp(msg, "/gg0"))
+            {
+                doInput(INPUT_KEYBOARD, profile[currentProfile][pGreen], 0);
+                _printf("%s: [%s] green button pressed", ip, msg);
+            }
+            else if(!stricmp(msg, "/gg1"))
+            {
+                doInput(INPUT_KEYBOARD, profile[currentProfile][pGreen], 1);
+                _printf("%s: [%s] green button released", ip, msg);
+            }
+            else if(!strnicmp(msg, "/m", 2))
+            {
+                char *xc = &msg[2];
+                char *yc = strchr(xc, '.');
+                char *zc = strchr(&yc[1], '.');
+                unsigned char x;
+                unsigned char y;
+                unsigned char buttonX;
+                unsigned char buttonY;
+                bool z;
+                bool commandSent = 0;
+                x = (unsigned char)atoi(xc);
+                y = (unsigned char)atoi(&yc[1]);
+                z = (bool)atoi(&zc[1]);
+                buttonX = (x / 64);
+                buttonY = (y / 64);
 
-			if(buttonX == 0)
-			{
-				if(buttonY == 0)
-				{
-					if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch0X0Y])))
+                if(buttonX == 0)
+                {
+                    if(buttonY == 0)
+                    {
+                        if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch0X0Y])))
+                        {
+                            mouseKeys[0] = 1; //doInput(INPUT_KEYBOARD, profile[currentProfile][pTouch0X0Y], 0);
+                            commandSent = 1;
+                        }
+                    }
+                    else if(buttonY == 1)
+                    {
+                        if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch0X1Y])))
+                        {
+                            mouseKeys[4] = 1;
+                            commandSent = 1;
+                        }
+                    }
+                    else if(buttonY == 2)
+                    {
+                        if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch0X2Y])))
+                        {
+                            mouseKeys[8] = 1;
+                            commandSent = 1;
+                        }
+                    }
+                }
+                else if(buttonX == 1)
+                {
+                    if(buttonY == 0)
+                    {
+                        if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch1X0Y])))
+                        {
+                            mouseKeys[1] = 1;
+                            commandSent = 1;
+                        }
+                    }
+                    else if(buttonY == 1)
+                    {
+                        if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch1X1Y])))
+                        {
+                            mouseKeys[5] = 1;
+                            commandSent = 1;
+                        }
+                    }
+                    else if(buttonY == 2)
+                    {
+                        if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch1X2Y])))
+                        {
+                            mouseKeys[9] = 1;
+                            commandSent = 1;
+                        }
+                    }
+                }
+                else if(buttonX == 2)
+                {
+                    if(buttonY == 0)
+                    {
+                        if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch2X0Y])))
+                        {
+                            mouseKeys[2] = 1;
+                            commandSent = 1;
+                        }
+                    }
+                    else if(buttonY == 1)
+                    {
+                        if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch2X1Y])))
+                        {
+                            mouseKeys[6] = 1;
+                            commandSent = 1;
+                        }
+                    }
+                    else if(buttonY == 2)
+                    {
+                        if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch2X2Y])))
+                        {
+                            mouseKeys[10] = 1;
+                            commandSent = 1;
+                        }
+                    }
+                }
+                else if(buttonX == 3)
+                {
+                    if(buttonY == 0)
+                    {
+                        if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch3X0Y])))
+                        {
+                            mouseKeys[3] = 1;
+                            commandSent = 1;
+                        }
+                    }
+                    else if(buttonY == 1)
+                    {
+                        if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch3X1Y])))
+                        {
+                            mouseKeys[7] = 1;
+                            commandSent = 1;
+                        }
+                    }
+                    else if(buttonY == 2)
+                    {
+                        if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch3X2Y])))
+                        {
+                            mouseKeys[11] = 1;
+                            commandSent = 1;
+                        }
+                    }
+                }
+
+                if(commandSent == 0)
+                {
+					bool status = 0;
+                    doInput(INPUT_MOUSE, (y << 8) | x, 0);
+					if(mouseXLast != x)
 					{
-						mouseKeys[0] = 1; //doInput(INPUT_KEYBOARD, profile[currentProfile][pTouch0X0Y], 0);
-						commandSent = 1;
-					}
-				}
-				else if(buttonY == 1)
-				{
-					if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch0X1Y])))
-					{
-						mouseKeys[4] = 1;
-						commandSent = 1;
-					}
-				}
-				else if(buttonY == 2)
-				{
-					if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch0X2Y])))
-					{
-						mouseKeys[8] = 1;
-						commandSent = 1;
-					}
-				}
-			}
-			else if(buttonX == 1)
-			{
-				if(buttonY == 0)
-				{
-					if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch1X0Y])))
-					{
-						mouseKeys[1] = 1;
-						commandSent = 1;
-					}
-				}
-				else if(buttonY == 1)
-				{
-					if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch1X1Y])))
-					{
-						mouseKeys[5] = 1;
-						commandSent = 1;
-					}
-				}
-				else if(buttonY == 2)
-				{
-					if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch1X2Y])))
-					{
-						mouseKeys[9] = 1;
-						commandSent = 1;
-					}
-				}
-			}
-			else if(buttonX == 2)
-			{
-				if(buttonY == 0)
-				{
-					if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch2X0Y])))
-					{
-						mouseKeys[2] = 1;
-						commandSent = 1;
-					}
-				}
-				else if(buttonY == 1)
-				{
-					if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch2X1Y])))
-					{
-						mouseKeys[6] = 1;
-						commandSent = 1;
-					}
-				}
-				else if(buttonY == 2)
-				{
-					if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch2X2Y])))
-					{
-						mouseKeys[10] = 1;
-						commandSent = 1;
-					}
-				}
-			}
-			else if(buttonX == 3)
-			{
-				if(buttonY == 0)
-				{
-					if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch3X0Y])))
-					{
-						mouseKeys[3] = 1;
-						commandSent = 1;
-					}
-				}
-				else if(buttonY == 1)
-				{
-					if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch3X1Y])))
-					{
-						mouseKeys[7] = 1;
-						commandSent = 1;
-					}
-				}
-				else if(buttonY == 2)
-				{
-					if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch3X2Y])))
-					{
-						mouseKeys[11] = 1;
-						commandSent = 1;
-					}
-				}
-			}
-
-			if(commandSent == 0)
-			{
-				doInput(INPUT_MOUSE, (y << 8) | x, 0);
-
-				if(z)
-				{
-					_printf("%s: [%s] touch screen pressed at %i, %i", ip, msg, x, y);
-				}
-				else
-				{
-					_printf("%s: [%s] touch screen released at %i, %i", ip, msg, x, y);
-				}
-			}
-			else
-			{
-				int key;
-				for(key = 0; key < 12; key++)
-				{
-					int status = 0;
-
-					if(mouseKeys[key] && !z)
-					{
-						mouseKeys[key] = 0;
-						doInput(INPUT_KEYBOARD, profile[currentProfile][pTouch + key], !mouseKeys[key]);
-						mouseKeysLast[key] = 0;
+						mouseXLast = x;
 						status = 1;
 					}
-					else if(mouseKeys[key] != mouseKeysLast[key])
+					if(mouseYLast == y)
 					{
-						doInput(INPUT_KEYBOARD, profile[currentProfile][pTouch + key], !mouseKeys[key]);
-						mouseKeysLast[key] = mouseKeys[key];
-						status = mouseKeys[key] + 1;
+						mouseYLast = y;
+						status = 1;
 					}
 
-					if(status == 1)
+					if(status)
 					{
-						_printf("%s: [%s] released touch screen button %i", ip, msg, key);
+		                if(z)
+		                {
+		                    _printf("%s: [%s] touch screen pressed at %i, %i", ip, msg, x, y);
+		                }
+		                else
+		                {
+		                    _printf("%s: [%s] touch screen released at %i, %i", ip, msg, x, y);
+		                }
 					}
-					else if(status == 2)
-					{
-						_printf("%s: [%s] pressed touch screen button %i", ip, msg, key);
-					}
+                }
+                else
+                {
+                    int key;
+                    for(key = 0; key < 12; key++)
+                    {
+                        int status = 0;
 
-					mouseKeys[key] = 0;
-				}
-			}
-		}
-		else
-		{
-			_printf("%s: [%s] undefined command", ip, msg);
-		}
-	}
+                        if(mouseKeys[key] && !z)
+                        {
+                            mouseKeys[key] = 0;
+                            doInput(INPUT_KEYBOARD, profile[currentProfile][pTouch + key], !mouseKeys[key]);
+                            mouseKeysLast[key] = 0;
+                            status = 1;
+                        }
+                        else if(mouseKeys[key] != mouseKeysLast[key])
+                        {
+                            doInput(INPUT_KEYBOARD, profile[currentProfile][pTouch + key], !mouseKeys[key]);
+                            mouseKeysLast[key] = mouseKeys[key];
+                            status = mouseKeys[key] + 1;
+                        }
+
+                        if(status == 1)
+                        {
+                            _printf("%s: [%s] released touch screen button %i", ip, msg, key);
+                        }
+                        else if(status == 2)
+                        {
+                            _printf("%s: [%s] pressed touch screen button %i", ip, msg, key);
+                        }
+
+                        mouseKeys[key] = 0;
+                    }
+                }
+            }
+            else
+            {
+                _printf("%s: [%s] undefined command", ip, msg);
+            }
+        }
+    }
 }
 
 #ifdef WIN32
 #ifdef GUI
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
+	hInst = hInstance;
 #else //GUI
 int main(int argc, char *argv[])
 {
-#endif //GUI
-	WSADATA wsaData;
-	unsigned long ioctlsocketCommand = 1;
-#ifdef GUI
-	hInst = hInstance;
 #endif //GUI
 #else //WIN32
 int main(int argc, char *argv[])
@@ -675,50 +758,8 @@ int main(int argc, char *argv[])
 	memset(mouseKeys, 0, 12);
 	memset(mouseKeysLast, 0, 12);
 
-	readConfig();
-	{   //setup connections
-#ifdef WIN32
-		WSAStartup(0x0202, &wsaData);   //windows socket startup
-#endif //WIN32
-
-		//socket creation
-		sd = socket(AF_INET, SOCK_DGRAM, 0);
-
-		if(sd < 0)
-		{
-			fprintf(stderr, "Cannot open socket\n");
-			exit(1);
-		}
-
-		//bind local server port
-		servAddr.sin_family = AF_INET;
-		servAddr.sin_addr.s_addr = htonl(INADDR_ANY);
-		servAddr.sin_port = htons((unsigned short)serverPort);
-
-#ifdef WIN32
-
-		if(ioctlsocket(sd, FIONBIO, &ioctlsocketCommand) == -1)
-#else //WIN32
-
-		if(fcntl(sd, F_SETFL, O_NONBLOCK) == -1)
-#endif //WIN32
-		{
-			fprintf(stderr, "Setting to non-blocking failed\n");
-			exit(1);
-		}
-
-		if(bind(sd, (struct sockaddr *)&servAddr, sizeof(servAddr)) < 0)
-		{
-			fprintf(stderr, "Cannot bind port number %d\n", serverPort);
-			exit(1);
-		}
-
-		#ifdef GUI
-		//sprintf(mlDefaultTxt, "Waiting for data on port UDP %u", serverPort);
-		#else
-		printf("Waiting for data on port UDP %u\n", serverPort);
-		#endif //GUI
-	}   //setup connections
+    readConfig();
+    connectDS2Key();
 
 	//infinite loop
 	#ifdef GUI

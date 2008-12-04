@@ -105,14 +105,14 @@ void ShowContextMenu(HWND hWnd)
 	{
 		HMENU hmenuPopup = GetSubMenu(hMenu, 0);
 		int checked;
-		//if(connected == TRUE)
-		//{
-		//  checked = IDM_CONNECT;
-		//}
-		//else
-		//{
-		checked = IDM_DISCONNECT;
-		//}
+		if(connectedDS2Key == TRUE)
+		{
+            checked = IDM_CONNECT;
+		}
+		else
+		{
+            checked = IDM_DISCONNECT;
+		}
 		CheckMenuRadioItem(hMenu, IDM_CONNECT, IDM_DISCONNECT, checked, MF_BYCOMMAND);
 		SetForegroundWindow(hWnd);
 
@@ -171,9 +171,9 @@ bool loadGUIProfile(unsigned char profileNumber)
 void applyGUIProfile()
 {
 	int i;
+	char text[256];
 	for(i = 1; i < pEND; i++)
 	{
-		char text[256];
 		char KEY_text[260];
 		unsigned int key = 0;
 		GetDlgItemText(hwndPointer[0], buttonControlLookup[i], text, 256);
@@ -189,6 +189,14 @@ void applyGUIProfile()
 			profile[currentGUIProfile][i] = 0;
 		}
 	}
+    GetDlgItemText(hwndPointer[0], IDC_EDT_PORT, text, 256);
+    serverPort = atoi(text);
+    writeConfig();
+    if(connectedDS2Key)
+    {
+        disconnectDS2Key();
+        connectDS2Key();
+    }
 }
 
 bool saveGUIProfile()
@@ -276,6 +284,21 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				if(hIcon && DestroyIcon(hIcon))
 				{
 					hIcon = (HICON)NULL;
+				}
+
+				{//check menu
+                    HMENU hMenu = GetMenu(hwndPointer[0]);
+                    int checked;
+
+                    if(connectedDS2Key == TRUE)
+                    {
+                        checked = IDM_CONNECT;
+                    }
+                    else
+                    {
+                        checked = IDM_DISCONNECT;
+                    }
+                    CheckMenuRadioItem(hMenu, IDM_CONNECT, IDM_DISCONNECT, checked, MF_BYCOMMAND);
 				}
 
 				SetTimer(hwndDlg, IDT_TIMER, 10, (TIMERPROC)NULL);
@@ -450,13 +473,37 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				}
 				case IDM_CONNECT:
 				{
-					//command
+                    HMENU hMenu = GetMenu(hwndPointer[0]);
+                    int checked;
+
+					connectDS2Key();
+                    if(connectedDS2Key == TRUE)
+                    {
+                        checked = IDM_CONNECT;
+                    }
+                    else
+                    {
+                        checked = IDM_DISCONNECT;
+                    }
+                    CheckMenuRadioItem(hMenu, IDM_CONNECT, IDM_DISCONNECT, checked, MF_BYCOMMAND);
 
 					break;
 				}
 				case IDM_DISCONNECT:
 				{
-					//command
+                    HMENU hMenu = GetMenu(hwndPointer[0]);
+                    int checked;
+
+					disconnectDS2Key();
+                    if(connectedDS2Key == TRUE)
+                    {
+                        checked = IDM_CONNECT;
+                    }
+                    else
+                    {
+                        checked = IDM_DISCONNECT;
+                    }
+                    CheckMenuRadioItem(hMenu, IDM_CONNECT, IDM_DISCONNECT, checked, MF_BYCOMMAND);
 
 					break;
 				}
