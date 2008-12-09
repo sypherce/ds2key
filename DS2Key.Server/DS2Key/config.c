@@ -16,6 +16,7 @@
 
 //Variables
 int serverPort;
+char printDebugLevel;
 unsigned int profile[256][pEND];
 
 bool writeConfig()
@@ -26,6 +27,7 @@ bool writeConfig()
 	if(file)
 	{
 		fprintf(file, "%i\n", serverPort);
+		fprintf(file, "%i\n", printDebugLevel);
 		fclose(file);
 	}
 	else
@@ -39,6 +41,7 @@ bool writeConfig()
 bool writeDefaultConfig()
 {
 	serverPort = DEFAULT_SERVER_PORT;
+	printDebugLevel = lDefault;
 
 	return writeConfig();
 }
@@ -124,35 +127,89 @@ bool readConfig()
 	file = fopen("ds2key.ini", "r");
 
 	if(file)
-	{
-		char buffer[256];
+	{   //file opened, read from it.
+		unsigned long int size;
+		char *buffer;
+		char *tmpBuffer;
+		size_t result;
+		fseek(file, 0, SEEK_END);
+		size = ftell(file);
+		rewind(file);
 
-		if(fread(buffer, 1, 255, file))
+		// allocate memory to contain the whole file:
+		buffer = (char *)malloc(sizeof(char) * size);
+
+		if(buffer == NULL)
 		{
-			fclose(file);
-			serverPort = atoi(buffer);
-
-			if(serverPort < 1 || serverPort > 65535)
-			{
-				writeDefaultConfig();
-
-				return 1;
-			}
-			else
-			{
-				writeConfig();
-			}
-		}
-		else
-		{
-			fclose(file);
-			writeDefaultConfig();
-
+			fprintf(stderr, "Memory error");
 			return 1;
 		}
+
+		result = fread(buffer, 1, size, file);
+
+		if(result != size)
+		{
+			buffer[result] = 0;
+
+			//fprintf(stderr, "Reading error");
+			//return 1;
+		}
+
+		//close the file
+		fclose(file);
+
+		//this is for the readProfileKey define
+		tmpBuffer = buffer;
+
+		//setup settings
+		{
+			int i;
+			for(i = 0; i <= 1; i++)
+			{
+				if(tmpBuffer[0] != 0)
+				{
+					int i2 = 0;
+					getLine(tmpBuffer);
+					if(i == 0)
+					{
+						serverPort = atoi(tmpBuffer);
+						if(serverPort < 1 || serverPort > 65535)
+						{
+							serverPort = DEFAULT_SERVER_PORT;
+						}
+					}
+					else if(i == 1)
+					{
+						printDebugLevel = atoi(tmpBuffer);
+						if(printDebugLevel < 0 || printDebugLevel >= lEND)
+						{
+							printDebugLevel = lDefault;
+						}
+					}
+					tmpBuffer = tmpBuffer + strlen(tmpBuffer) + 1;
+					while(tmpBuffer[i2] == (char)0xa || tmpBuffer[i2] == (char)0xd)
+					{
+						i2++;
+					}
+
+					tmpBuffer = &tmpBuffer[i2];
+				}
+				else
+				{
+					writeDefaultConfig();
+				}
+			}
+		}
+
+		//free "buffer" memory
+		free(buffer);
+
+		//write out read data
+		writeConfig();
 	}
 	else
 	{
+		//file couldn't be opened, write a default one
 		writeDefaultConfig();
 
 		return 1;

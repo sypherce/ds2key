@@ -276,6 +276,11 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					}
 				}
 				SendDlgItemMessage(hwndDlg, IDC_CBO_PROFILE, CB_SETCURSEL, (WPARAM)0, (LPARAM)0);
+				SendDlgItemMessage(hwndDlg, IDC_CBO_LOG, CB_ADDSTRING, 0, (LPARAM)"Disabled");
+				SendDlgItemMessage(hwndDlg, IDC_CBO_LOG, CB_ADDSTRING, 0, (LPARAM)"Default");
+				SendDlgItemMessage(hwndDlg, IDC_CBO_LOG, CB_ADDSTRING, 0, (LPARAM)"Warnings");
+				SendDlgItemMessage(hwndDlg, IDC_CBO_LOG, CB_ADDSTRING, 0, (LPARAM)"All Messages");
+				SendDlgItemMessage(hwndDlg, IDC_CBO_LOG, CB_SETCURSEL, (WPARAM)printDebugLevel, (LPARAM)0);
 				SetDlgItemInt(hwndDlg, IDC_EDT_PORT, serverPort, FALSE);
 				loadGUIProfile(0);
 
@@ -466,6 +471,19 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 							{
 								loadGUIProfile(selected);
 							}
+
+							break;
+						}
+					}
+				}
+				case IDC_CBO_LOG:
+				{
+					switch(HIWORD(wParam))
+					{
+						case CBN_SELCHANGE:
+						{
+							//check edited stuff!!!!
+							printDebugLevel = SendDlgItemMessage(hwndDlg, IDC_CBO_LOG, CB_GETCURSEL, 0, (LPARAM)0);
 
 							break;
 						}
