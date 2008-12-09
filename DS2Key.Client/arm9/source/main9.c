@@ -500,6 +500,8 @@ int main(int argc, char *argv[])
 					settings = false;
 					exit = true;
 					inet_aton(cIP, &sain.sin_addr);
+
+	bind(my_socket, (struct sockaddr *)&sain, sizeof(sain));
 					ip = sain.sin_addr.s_addr;
 					cIP = inet_ntoa(sain.sin_addr);
 					writeConfig();

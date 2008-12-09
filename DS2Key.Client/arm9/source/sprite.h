@@ -1,5 +1,5 @@
 /*
-DS2Key Server - An application to use your DS as a PC Gamepad
+DS2Key Client - An application to use your DS as a PC Gamepad
 Copyright (C) 2008  Derrick (sypherce) Wirth
 
 This program is free software: you can redistribute it and/or modify
