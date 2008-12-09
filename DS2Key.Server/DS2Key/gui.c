@@ -437,15 +437,15 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					}
 					else if(LOWORD(wParam) == IDC_BTN_MOUSE_LEFT_CLICK)
 					{
-						keyText = "(Mouse) Left Click"; //Get Key Input
+						keyText = "LBUTTON"; //Get Key Input
 					}
 					else if(LOWORD(wParam) == IDC_BTN_MOUSE_RIGHT_CLICK)
 					{
-						keyText = "(Mouse) Right Click"; //Get Key Input
+						keyText = "RBUTTON"; //Get Key Input
 					}
 					else if(LOWORD(wParam) == IDC_BTN_MOUSE_MIDDLE_CLICK)
 					{
-						keyText = "(Mouse) Middle Click"; //Get Key Input
+						keyText = "MBUTTON"; //Get Key Input
 					}
 
 					SetDlgItemText(hwndPointer[0], lastID, (char *)keyText);
