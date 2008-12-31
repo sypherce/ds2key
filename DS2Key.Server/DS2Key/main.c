@@ -100,7 +100,15 @@ int _printf(char debugLevel, const char *format, ...)
 		}
 
 		logTextLen += strlen(displayText) + strlen("\x0d\x0a") + 1;
-		logText = (char *)realloc(logText, logTextLen);
+		if(logText == (char*)NULL)
+		{
+		    logText = (char*)malloc(logTextLen);
+		    logText[0] = 0;
+		}
+		else
+		{
+            logText = (char *)realloc(logText, logTextLen);
+		}
 		strcat(logText, displayText);
 		strcat(logText, "\x0d\x0a");
 		hwndLog = GetDlgItem(hwndPointer[0], IDC_EDT_LOG);
