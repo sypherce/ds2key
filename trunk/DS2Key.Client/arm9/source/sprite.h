@@ -18,23 +18,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef __SPRITE_H__
 #define __SPRITE_H__
 
-//Normal Defines
-#define SPRITE_MOUSE 0
-#define SPRITE_SETTINGS	1
-#define SPRITE_HIDDEN_X	SCREEN_WIDTH
-#define SPRITE_HIDDEN_Y	SCREEN_HEIGHT
-#define SPRITE_SETTINGS_X 0
-#define SPRITE_SETTINGS_Y 0
-#define SPRITE_MOUSE_X 244
-#define SPRITE_MOUSE_Y 175
+//function defines
+#define showHideArrowSprite(a) oamSet(&oamSub, 0, 244, 175, 0, 0, SpriteSize_16x16, SpriteColorFormat_16Color, arrowSprite, -1, false, a)
+#define showHideSettingsSprite(a)  oamSet(&oamSub, 1, -8, -8, 0, 0, SpriteSize_16x16, SpriteColorFormat_16Color, settingsSprite, 0, true, a)
+#define showHideSprites(a) \
+	showHideArrowSprite(a); \
+	showHideSettingsSprite(a);
+#define showArrowSprite() showHideArrowSprite(false)
+#define hideArrowSprite() showHideArrowSprite(true)
+#define showSettingsSprite() showHideSettingsSprite(false)
+#define hideSettingsSprite() showHideSettingsSprite(true)
+#define showSprites() showHideSprites(false)
+#define hideSprites() showHideSprites(true)
 
-//Variables
-extern SpriteEntry sprites[128];
-extern pSpriteRotation spriteRotations;
-extern int spriteRotationAngle;
+//variables
+extern uint32 spriteRotation;
+extern u16* arrowSprite;
+extern u16* settingsSprite;
 
-//Functions
-extern void updateOAM();
+//functions
 extern void initSprites();
+extern void updateSprites();
 
-#endif //__SPRITE_H__
+#endif//__SPRITE_H__

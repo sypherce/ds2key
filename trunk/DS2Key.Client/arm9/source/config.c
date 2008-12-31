@@ -15,31 +15,25 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-//includes
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <netinet/in.h>
-#include <nds/jtypes.h>
+#include <nds/ndstypes.h>
 #include "config.h"
-#include "wifi.h"
+#include "ds2key.h"
 
-//Variables
-int ip = DEFAULT_IP;
-int port = DEFAULT_PORT;
-int profile = DEFAULT_PROFILE;
-
-bool writeConfig()
+//functions
+bool writeConfig(DS2Key *ds2key)
 {
 	FILE *file;
 	file = fopen(DS2KEY_INI, "w");
 
 	if(file)
 	{
-		sain.sin_addr.s_addr = ip;
-		fprintf(file, "%s\n", inet_ntoa(sain.sin_addr));
-		fprintf(file, "%i\n", port);
-		fprintf(file, "%i\n", profile);
+		fprintf(file, "%s\n", ds2key->ip);
+		fprintf(file, "%s\n", ds2key->port);
+		fprintf(file, "%s\n", ds2key->profile);
 
 		fclose(file);
 	}
@@ -51,13 +45,13 @@ bool writeConfig()
 	return 0;
 }
 
-bool writeDefaultConfig()
+bool writeDefaultConfig(DS2Key *ds2key)
 {
-	ip = DEFAULT_IP;
-	port = DEFAULT_PORT;
-	profile = DEFAULT_PROFILE;
+	strncpy(ds2key->ip, DEFAULT_IP, LENGTH_IP);
+	strncpy(ds2key->port, DEFAULT_PORT, LENGTH_PORT);
+	strncpy(ds2key->profile, DEFAULT_PROFILE, LENGTH_PROFILE);
 
-	return writeConfig();
+	return writeConfig(ds2key);
 }
 
 bool getLine(char *buffer)
@@ -74,25 +68,8 @@ bool getLine(char *buffer)
 	return 1;
 }
 
-bool readConfig()
+bool readConfig(DS2Key *ds2key)
 {
-#define readString()	\
-	{ \
-		if(tmpBuffer[0] != 0) \
-		{ \
-			int i = 0; \
-			getLine(tmpBuffer);	\
-			tmpString = tmpBuffer; \
-			tmpBuffer = tmpBuffer + strlen(tmpBuffer) + 1; \
-			while(tmpBuffer[i] == (char)0xa || tmpBuffer[i] == (char)0xd) \
-			{ \
-				i++; \
-			} \
- \
-			tmpBuffer = &tmpBuffer[i]; \
-		} \
-	}
-
 	FILE *file;
 	file = fopen(DS2KEY_INI, "r");
 
@@ -134,25 +111,24 @@ bool readConfig()
 
 		//set variables
 		readString();
-		inet_aton(tmpString, &sain.sin_addr);
-		ip = sain.sin_addr.s_addr;
+		strncpy(ds2key->ip, tmpString, LENGTH_IP);
 
 		readString();
-		port = atoi(tmpString);
+		strncpy(ds2key->port, tmpString, LENGTH_PORT);
 
 		readString();
-		profile = atoi(tmpString);
+		strncpy(ds2key->profile, tmpString, LENGTH_PROFILE);
 
 		//free "buffer" memory
 		free(buffer);
 
 		//write out read data
-		writeConfig();
+		writeConfig(ds2key);
 	}
 	else
 	{
 		//file couldn't be opened, write a default one
-		writeDefaultConfig();
+		writeDefaultConfig(ds2key);
 
 		return 1;
 	}

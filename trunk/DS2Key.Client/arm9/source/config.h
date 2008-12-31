@@ -18,18 +18,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef __CONFIG_H__
 #define __CONFIG_H__
 
-//Normal Defines
-#define DEFAULT_IP 0x00000000
-#define DEFAULT_PORT 9501
-#define DEFAULT_PROFILE 0
+//normal defines
+#define LENGTH_IP 15
+#define LENGTH_PORT 5
+#define LENGTH_PROFILE 3
+#define DEFAULT_IP "0.0.0.0"
+#define DEFAULT_PORT "9501"
+#define DEFAULT_PROFILE "0"
 #define DS2KEY_INI "ds2key.ini"
 
-//Variables
+//function defines
+#define readString() \
+    if(tmpBuffer[0] != 0) \
+    { \
+        int i = 0; \
+        getLine(tmpBuffer);	\
+        tmpString = tmpBuffer; \
+        tmpBuffer = tmpBuffer + strlen(tmpBuffer) + 1; \
+        while(tmpBuffer[i] == (char)0xa || tmpBuffer[i] == (char)0xd) \
+        { \
+            i++; \
+        } \
+    \
+        tmpBuffer = &tmpBuffer[i]; \
+    }
+
+//variables
 extern int ip;
 extern int port;
 extern int profile;
 
-//Functions
+//functions
 extern bool writeConfig();
 extern bool writeDefaultConfig();
 extern bool getLine(char *buffer);

@@ -16,31 +16,30 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <nds.h>
+#include "spritesImage.h"
+#include "sprite.h"
 
-//a global copy of sprite attribute memory
-SpriteEntry sprites[128];
+//variables
+uint32 spriteRotation = 0;
+u16* arrowSprite = (u16*)NULL;
+u16* settingsSprite = (u16*)NULL;
 
-//rotation attributes overlap so assign then to the same location
-pSpriteRotation spriteRotations = (pSpriteRotation)sprites;
-int spriteRotationAngle = 0;
-
-//copy our sprite to object attribute memory
-void updateOAM()
-{
-	DC_FlushRange(sprites, 128 * sizeof(SpriteEntry));
-	dmaCopy(sprites, OAM, 128 * sizeof(SpriteEntry));
-}
-
-//turn off all the sprites
+//functions
 void initSprites()
 {
-	int i;
-	for(i = 0; i < SPRITE_COUNT; i++)
-	{
-		sprites[i].attribute[0] = ATTR0_DISABLED;
-		sprites[i].attribute[1] = 0;
-		sprites[i].attribute[2] = 0;
-	}
+    oamInit(&oamSub, SpriteMapping_1D_32, false);
 
-	updateOAM();
+    arrowSprite = oamAllocateGfx(&oamSub, SpriteSize_16x16, SpriteColorFormat_16Color);
+    settingsSprite = oamAllocateGfx(&oamSub, SpriteSize_16x16, SpriteColorFormat_16Color);
+
+    dmaCopy(spritesImagePal, SPRITE_PALETTE_SUB, spritesImagePalLen);
+    dmaCopy(spritesImageTiles, arrowSprite, 128);
+    dmaCopy(&spritesImageTiles[32], settingsSprite, 128);
+}
+
+void updateSprites()
+{
+    spriteRotation += 128;
+    oamRotateScale(&oamSub, 0, spriteRotation, (1<<8), (1<<8));
+    oamUpdate(&oamSub);
 }
