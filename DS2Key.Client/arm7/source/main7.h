@@ -15,13 +15,14 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef __KEYBOARD_HIT_H__
-#define __KEYBOARD_HIT_H__
-#define BSP 0x8 // Backspace
-#define CAP 0x2 // Caps
-#define RET '\n' // Enter
-#define SHF 0x4 // Shift
-#define SPC ' ' // Space
-extern const unsigned char keyboard_Hit[];
-extern const unsigned char keyboard_Hit_Shift[];
-#endif //__KEYBOARD_HIT_H__
+#ifndef __MAIN7_H__
+#define __MAIN7_H__
+
+//normal defines
+enum { KEY_TOUCH = (1<<6), KEY_LID = (1<<7) };
+
+//functions
+extern void VcountHandler();
+extern void VblankHandler(void);
+
+#endif//__MAIN7_H__

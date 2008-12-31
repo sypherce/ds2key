@@ -15,23 +15,29 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef __KEYBOARD_H__
-#define __KEYBOARD_H__
+#ifndef D2K__KEYBOARD_H__
+#define D2K__KEYBOARD_H__
 
-enum keyboardState { keyboardNormal, keyboardCapsLock, keyboardShift };
+//struct defines
+typedef struct CustomKeyboard
+{
+	Keyboard *keyboard;
+	char *buffer;
+	int maxLen;
+	int position;
+	char mode;
+} CustomKeyboard;
 
-extern u8 keyboardOffset;
-extern uint16 *keyboardMapPointer;
-extern char *keyTextPos;
-extern char *keyText;
-extern char keyEnter;
-extern unsigned int keyLength;
-extern unsigned char m_Mode;
+//normal defines
+enum { mNone, mDefault, mNumber, mIP };
+enum { DVK_BACKSPACE = 8, DVK_ENTER = 10 };
 
-extern void drawKeyboard();
-extern void initKeyboardString(char *text, unsigned int length, char enter);
-extern void initKeyboardInt(int *number, unsigned int length, char enter);
-extern void deInitKeyboard();
-extern unsigned char updateKeyboard(unsigned char x, unsigned char y);
+//variables
+extern CustomKeyboard customKeyboard;
 
-#endif //__KEYBOARD_H__
+//functions
+extern void keyboardShiftState();//not defined in libnds includes
+extern void customKeyboardGetString(CustomKeyboard *keyboard, int maxLen, int mode, unsigned char x, unsigned char y);
+extern void onKeyPressed(int key);
+
+#endif //D2K__KEYBOARD_H__
