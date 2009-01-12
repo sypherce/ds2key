@@ -195,6 +195,11 @@ void doInput(unsigned int type, unsigned int key, bool state)
 			input.ki.wVk = key;
 			input.ki.dwFlags = KEYEVENTF_SCANCODE;
 
+			if(isExtended(key))
+			{
+				input.ki.dwFlags |= KEYEVENTF_EXTENDEDKEY;
+			}
+
 			if(state)
 			{
 				input.ki.dwFlags |= KEYEVENTF_KEYUP;

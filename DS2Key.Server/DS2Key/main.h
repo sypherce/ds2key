@@ -35,6 +35,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define sockaddr_in__address(sockaddr_in) sockaddr_in.sin_addr.s_addr
 #endif //WIN32
 
+//Function Defines
+#define isExtended(key) \
+((key == KEY_INSERT) || \
+(key == KEY_DELETE) || \
+(key == KEY_HOME) || \
+(key == KEY_END) || \
+(key == KEY_PRIOR) || \
+(key == KEY_NEXT) || \
+(key == KEY_NUMLOCK) || \
+(key == KEY_PAUSE) || \
+(key == KEY_PRINT) || \
+(key == KEY_DIVIDE) || \
+(key == KEY_RCONTROL) || \
+(key == KEY_UP) || \
+(key == KEY_DOWN) || \
+(key == KEY_LEFT) || \
+(key == KEY_RIGHT))
+
+//(key == KEY_NUMPADENTER) || \
+//(key == KEY_RALT) || \
+
 //Normal Defines
 #define MAX_MSG 12
 

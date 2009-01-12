@@ -228,7 +228,6 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 						}
 					}
 
-					//profile[currentGUIProfile][key] = i;
 					keyText = getKeyString(i) + 4; //(char*)malloc(3*sizeof(char));
 
 					PostMessage(hwndPointer[2], WM_CLOSE, (WPARAM)0, (LPARAM)0);
@@ -236,8 +235,6 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				}
 			}
 		}
-
-		//printf("x%i.%i\n", keys[(int)'B'], keys[(int)'A']);
 	}
 
 	switch(uMsg)
@@ -262,8 +259,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			if(dialogCounter == 0)
 			{
 				HICON hIcon = (HICON)NULL;
-				char profileComboText[255][4];
-				//char *profileComboText = "000";
+				char profileComboText[256][4];
 				hIcon = LoadIcon(hInst, MAKEINTRESOURCE(IDI_MAIN_ICON));
 				SendMessage(hwndDlg, WM_SETICON, (WPARAM)ICON_SMALL, (LPARAM)hIcon);
 				SendMessage(GetDlgItem(hwndDlg, IDC_EDT_PORT), EM_SETLIMITTEXT, (WPARAM)5, (LPARAM)NULL);
@@ -315,24 +311,6 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 			dialogCounter++;
 
-			break;
-		}
-		case WM_GETDLGCODE:
-		{
-			MSG *msgptr = (MSG *)lParam;
-
-			// we want everything apart from TAB
-			if(msgptr && msgptr->message == WM_KEYDOWN && msgptr->wParam == VK_TAB)
-			{
-				printf("x\n");
-			}
-
-			break;
-		}
-		case WM_KEYDOWN:
-		{
-			printf("hi\n");
-			//MessageBox(hwndDlg, "Keys", "Keysh", MB_ICONINFORMATION);
 			break;
 		}
 		case WM_CLOSE:
@@ -483,7 +461,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 						case CBN_SELCHANGE:
 						{
 							//check edited stuff!!!!
-							printDebugLevel = SendDlgItemMessage(hwndDlg, IDC_CBO_LOG, CB_GETCURSEL, 0, (LPARAM)0);
+							printDebugLevel = (char)SendDlgItemMessage(hwndDlg, IDC_CBO_LOG, CB_GETCURSEL, 0, (LPARAM)0);
 
 							break;
 						}
