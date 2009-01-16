@@ -23,8 +23,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 //function defines
 #define settingsPrint() iprintf("\x1b[0;0H                DS2Key 1.0 (SVN)\n\n        IP: %s \n\n\n        Port: %s \n\n\n        Profile: %s \n\n\n\n\n\n      ", ds2key.ip, ds2key.port, ds2key.profile)
-#define settingsPrintButtons() iprintf("\x1b[0;0H                DS2Key 1.0 (SVN)\n\n[Edit]  IP: %s\n\n\n[Edit]  Port: %s \n\n\n[Edit]  Profile: %s \n\n\n\n\n\n[Done]", ds2key.ip, ds2key.port, ds2key.profile)
-#define settingsPrintIP() iprintf("\x1b[0;0H                DS2Key 1.0 (SVN)\n\n        IP: %s\n\n\n                    \n\n\n                     \n\n\n\n\n\n      \n\n\n\n\n\n\n                                      ", ds2key.ip)
+#define settingsPrintButtons() iprintf("\x1b[0;0H                DS2Key 1.0 (SVN)\n\n[Edit]  IP: %s \n\n\n[Edit]  Port: %s \n\n\n[Edit]  Profile: %s \n\n\n\n\n\n[Done]", ds2key.ip, ds2key.port, ds2key.profile)
+#define settingsPrintIP() iprintf("\x1b[0;0H                DS2Key 1.0 (SVN)\n\n        IP: %s \n\n\n                    \n\n\n                     \n\n\n\n\n\n      \n\n\n\n\n\n\n                                      ", ds2key.ip)
 #define settingsPrintPort() iprintf("\x1b[0;0H                DS2Key 1.0 (SVN)\n\n                           \n\n\n        Port: %s \n\n\n                     \n\n\n\n\n\n      \n\n\n\n\n\n\n                                      ", ds2key.port)
 #define settingsPrintProfile() iprintf("\x1b[0;0H                DS2Key 1.0 (SVN)\n\n                           \n\n\n                    \n\n\n        Profile: %s \n\n\n\n\n\n      \n\n\n\n\n\n\n                                      ", ds2key.profile)
 
@@ -54,3 +54,4 @@ extern void updateInputs();
 extern void vblfunction();
 
 #endif//__MAIN9_H__
+

@@ -55,10 +55,8 @@ void updateInputs()
 	}
 }
 
-void vblfunction()
+void updateLid()
 {
-	updateInputs();
-	updateSprites();
 	if((keysUp()&KEY_LID && vblLid)|| keysHeld()&KEY_TOUCH)
 	{
 	    if(keysUp()&KEY_LID)
@@ -90,6 +88,13 @@ void vblfunction()
 	    powerOn(PM_BACKLIGHT_BOTTOM);
 	}
 	vblCount++;
+}
+
+void vblfunction()
+{
+	updateInputs();
+	updateLid();
+	updateSprites();
 }
 
 int main()
