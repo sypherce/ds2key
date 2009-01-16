@@ -180,6 +180,6 @@ void updateD2K(DS2Key *client, uint32 down, uint32 held, uint32 up, touchPositio
 {
     profileQuery(client);
 	updateD2KKeys(client, down, up);
-	updateD2KGH(client, GH_keysDown, GH_keysHeld);
+	updateD2KGH(client, GH_keysDown, GH_keysUp);
 	updateD2KStylus(client, held, up, pos, lastPos);
 }
