@@ -15,6 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+#ifdef GUI
 #define WIN32_LEAN_AND_MEAN
 #define _WIN32_IE 0x0600
 
@@ -550,3 +551,5 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	return 0;
 }
+#endif//GUI
+

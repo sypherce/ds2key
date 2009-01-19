@@ -34,7 +34,7 @@ unsigned int getKeyNumber(char *key)
 	int i;
 	for(i = 0; i <= 0xffff; i++)
 	{
-		if(!stricmp(key, keyTable[i]))
+		if(i == 0xffff || !stricmp(key, keyTable[i])) //keep in this order or will cause bugs
 		{
 			return i;
 		}
@@ -56,7 +56,7 @@ char *getKeyString(unsigned int key)
 void initKeyTable()
 {
 	int i;
-	for(i = 0; i <= 0xffff; i++)
+	for(i = 0; i < 0xffff; i++)
 	{
 		keyTable[i] = "KEY_NONE";
 	}
