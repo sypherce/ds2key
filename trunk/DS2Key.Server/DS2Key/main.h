@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #endif
 #define bool BOOL
 #define sockaddr_in__address(sockaddr_in) sockaddr_in.sin_addr.S_un.S_addr
+#define _sleep(time) Sleep(time)
 #else //WIN32
 #define INPUT_MOUSE 0
 #define INPUT_KEYBOARD 1
@@ -33,6 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define strnicmp strncasecmp
 #define bool unsigned char
 #define sockaddr_in__address(sockaddr_in) sockaddr_in.sin_addr.s_addr
+#define _sleep(time) usleep(time * 1000)
 #endif //WIN32
 
 //Function Defines
