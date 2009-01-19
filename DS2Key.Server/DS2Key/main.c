@@ -341,6 +341,9 @@ void disconnectDS2Key()
 
 void serverLoop()
 {
+	#ifndef GUI
+	_sleep(10);
+	#endif//GUI
     if(connectedDS2Key)
     {
         int n;
