@@ -55,8 +55,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 (key == KEY_LEFT) || \
 (key == KEY_RIGHT))
 
-//(key == KEY_NUMPADENTER) || \
-//(key == KEY_RALT) || \
+//(key == KEY_NUMPADENTER) ||
+//(key == KEY_RALT) ||
 
 //Normal Defines
 #define MAX_MSG 12

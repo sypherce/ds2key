@@ -164,6 +164,7 @@ void profileQuery(DS2Key *client)
     char msg[4];
 	char cProfile[6];
     int cliLen = sizeof(client->sockaddr);
+    memset(msg, 0, 4);
     int n = recvfrom(client->socket, msg, 4, 0, (struct sockaddr *)&client->sockaddr, &cliLen);
 
     if(n > 0)
