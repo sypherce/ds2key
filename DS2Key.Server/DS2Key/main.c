@@ -221,7 +221,7 @@ void doInput(unsigned int type, unsigned int key, bool state)
 		unsigned char keyY = (key >> 8) & 0xff;
 		if(keyX < 8)
 		{
-			keyX = 0;
+			keyX = 8;
 		}
 		else if(keyX > 256 - 8)
 		{
@@ -230,7 +230,7 @@ void doInput(unsigned int type, unsigned int key, bool state)
 
 		if(keyY < 8)
 		{
-			keyY = 0;
+			keyY = 8;
 		}
 		else if(keyY > 192 - 8)
 		{
