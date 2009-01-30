@@ -64,6 +64,9 @@ Display *display;
 #endif //WIN32
 bool mouseKeys[13];
 bool mouseKeysLast[13];
+bool newTouch = 0;
+int screenBorder = 8;
+bool relativeTouch = 0;
 int mouseXLast = -1;
 int mouseYLast = -1;
 struct sockaddr_in servAddr;
@@ -219,32 +222,51 @@ void doInput(unsigned int type, unsigned int key, bool state)
 	{
 		unsigned char keyX = key & 0xff;
 		unsigned char keyY = (key >> 8) & 0xff;
-		if(keyX < 8)
+		if(relativeTouch)
 		{
-			keyX = 8;
+			screenBorder = 0;
 		}
-		else if(keyX > 256 - 8)
+		else
 		{
-			keyX = 256 - 8;
+			screenBorder = 8;
+		}
+		if(keyX < screenBorder)
+		{
+			keyX = screenBorder;
+		}
+		else if(keyX > 256 - screenBorder)
+		{
+			keyX = 256 - screenBorder;
 		}
 
-		if(keyY < 8)
+		if(keyY < screenBorder)
 		{
-			keyY = 8;
+			keyY = screenBorder;
 		}
-		else if(keyY > 192 - 8)
+		else if(keyY > 192 - screenBorder)
 		{
-			keyY = 192 - 8;
+			keyY = 192 - screenBorder;
 		}
-		keyX -= 8;
-		keyY -= 8;
+		keyX -= screenBorder;
+		keyY -= screenBorder;
 		//end border stuff
 
 #ifdef WIN32
 	    input.type = type;
-		input.mi.dx = 65535 * keyX / (256 - 16);//-16 border
-		input.mi.dy = 65535 * keyY / (192 - 16);//-16 border
-		input.mi.dwFlags = MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE;
+		if(relativeTouch)
+		{
+			input.mi.dx = (keyX - mouseXLast) * 3;//-16 border
+			input.mi.dy = (keyY - mouseYLast) * 3;//-16 border
+			mouseXLast = keyX;
+			mouseYLast = keyY;
+			input.mi.dwFlags = MOUSEEVENTF_MOVE;
+		}
+		else
+		{
+			input.mi.dx = 65535 * keyX / (256 - (screenBorder * 2));//-16 border
+			input.mi.dy = 65535 * keyY / (192 - (screenBorder * 2));//-16 border
+			input.mi.dwFlags = MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE;
+		}
 		input.mi.dwExtraInfo = 0;
 		input.mi.mouseData = 0;
 		input.mi.time = 0;
@@ -258,10 +280,21 @@ void doInput(unsigned int type, unsigned int key, bool state)
 
         if(XGetGeometry(display, rootwindow, &dummyWin, &dummyX, &dummyY, &width, &height, &dummyBorder, &dummyDepth))
         {
-            int x = width * keyX / (256 - 16);//-16 border
-            int y = height * keyY / (192 - 16);//-16 border
-
-            XTestFakeMotionEvent(display, screen, x, y, 0);
+			int x, y;
+			if(relativeTouch)
+			{
+				x = (keyX - mouseXLast) * 3;//-16 border
+				y = (keyY - mouseYLast) * 3;//-16 border
+				mouseXLast = keyX;
+				mouseYLast = keyY;
+	            XTestFakeRelativeMotionEvent(display, x, y, 0);
+			}
+			else
+			{
+	            x = width * keyX / (256 - (screenBorder * 2));//-16 border
+	            y = height * keyY / (192 - (screenBorder * 2));//-16 border
+	            XTestFakeMotionEvent(display, screen, x, y, 0);
+			}
         }
 #endif//WIN32
 	}
@@ -364,7 +397,6 @@ void serverLoop()
         cliLen = sizeof(cliAddr);
         n = recvfrom(sd, msg, MAX_MSG, 0, (struct sockaddr *)&cliAddr, &cliLen);
         ip = (char *)inet_ntoa(cliAddr.sin_addr);
-
 
         if(n < 0)
         {
@@ -707,18 +739,22 @@ void serverLoop()
                 if(commandSent == 0)
                 {
 					bool status = 0;
-                    doInput(INPUT_MOUSE, (y << 8) | x, 0);
-					if(mouseXLast != x)
+					if(mouseXLast != x || mouseYLast != y)
+					{
+						status = 1;
+					}
+					if(z && newTouch)
 					{
 						mouseXLast = x;
-						status = 1;
-					}
-					if(mouseYLast == y)
-					{
 						mouseYLast = y;
-						status = 1;
+						newTouch = 0;
 					}
-
+                    doInput(INPUT_MOUSE, (y << 8) | x, z);
+					
+					if(!z && !newTouch)
+					{
+						newTouch = 1;
+					}
 					if(status)
 					{
 		                if(z)
