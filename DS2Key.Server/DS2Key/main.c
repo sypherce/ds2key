@@ -66,7 +66,6 @@ bool mouseKeys[13];
 bool mouseKeysLast[13];
 bool newTouch = 0;
 int screenBorder = 8;
-bool relativeTouch = 0;
 int mouseXLast = -1;
 int mouseYLast = -1;
 struct sockaddr_in servAddr;
@@ -139,7 +138,10 @@ int _printf(char debugLevel, const char *format, ...)
 	return returnVal;
 }
 
-void doInput(unsigned int type, unsigned int key, bool state)
+#define doKeyInput(type, key, state) doInput(type, 0, key, 0, 0, state)
+#define doStylusInput(type, mode, keyX, keyY, state) doInput(type, mode, 0, keyX, keyY, state)
+
+void doInput(unsigned int type, unsigned int relativeTouch, unsigned int key, unsigned char keyX, unsigned char keyY, bool state)
 {
 	if(type == INPUT_KEYBOARD)
 	{
@@ -220,9 +222,7 @@ void doInput(unsigned int type, unsigned int key, bool state)
 	}
 	else if(type == INPUT_MOUSE)
 	{
-		unsigned char keyX = key & 0xff;
-		unsigned char keyY = (key >> 8) & 0xff;
-		if(relativeTouch)
+		if(relativeTouch == pRelative)
 		{
 			screenBorder = 0;
 		}
@@ -253,7 +253,7 @@ void doInput(unsigned int type, unsigned int key, bool state)
 
 #ifdef WIN32
 	    input.type = type;
-		if(relativeTouch)
+		if(relativeTouch == pRelative)
 		{
 			input.mi.dx = (keyX - mouseXLast) * 3;//-16 border
 			input.mi.dy = (keyY - mouseYLast) * 3;//-16 border
@@ -281,7 +281,7 @@ void doInput(unsigned int type, unsigned int key, bool state)
         if(XGetGeometry(display, rootwindow, &dummyWin, &dummyX, &dummyY, &width, &height, &dummyBorder, &dummyDepth))
         {
 			int x, y;
-			if(relativeTouch)
+			if(relativeTouch == pRelative)
 			{
 				x = (keyX - mouseXLast) * 3;//-16 border
 				y = (keyY - mouseYLast) * 3;//-16 border
@@ -452,162 +452,162 @@ void serverLoop()
             }
             else if(!stricmp(msg, "/dl0"))
             {
-                doInput(INPUT_KEYBOARD, profile[currentProfile][pLeft], 0);
+                doKeyInput(INPUT_KEYBOARD, profile[currentProfile][pLeft], 0);
                 _printf(lCommand, "%s: [%s] left button pressed", ip, msg);
             }
             else if(!stricmp(msg, "/dl1"))
             {
-                doInput(INPUT_KEYBOARD, profile[currentProfile][pLeft], 1);
+                doKeyInput(INPUT_KEYBOARD, profile[currentProfile][pLeft], 1);
                 _printf(lCommand, "%s: [%s] left button released", ip, msg);
             }
             else if(!stricmp(msg, "/dr0"))
             {
-                doInput(INPUT_KEYBOARD, profile[currentProfile][pRight], 0);
+                doKeyInput(INPUT_KEYBOARD, profile[currentProfile][pRight], 0);
                 _printf(lCommand, "%s: [%s] right button pressed", ip, msg);
             }
             else if(!stricmp(msg, "/dr1"))
             {
-                doInput(INPUT_KEYBOARD, profile[currentProfile][pRight], 1);
+                doKeyInput(INPUT_KEYBOARD, profile[currentProfile][pRight], 1);
                 _printf(lCommand, "%s: [%s] right button released", ip, msg);
             }
             else if(!stricmp(msg, "/du0"))
             {
-                doInput(INPUT_KEYBOARD, profile[currentProfile][pUp], 0);
+                doKeyInput(INPUT_KEYBOARD, profile[currentProfile][pUp], 0);
                 _printf(lCommand, "%s: [%s] up button pressed", ip, msg);
             }
             else if(!stricmp(msg, "/du1"))
             {
-                doInput(INPUT_KEYBOARD, profile[currentProfile][pUp], 1);
+                doKeyInput(INPUT_KEYBOARD, profile[currentProfile][pUp], 1);
                 _printf(lCommand, "%s: [%s] up button released", ip, msg);
             }
             else if(!stricmp(msg, "/dd0"))
             {
-                doInput(INPUT_KEYBOARD, profile[currentProfile][pDown], 0);
+                doKeyInput(INPUT_KEYBOARD, profile[currentProfile][pDown], 0);
                 _printf(lCommand, "%s: [%s] down button pressed", ip, msg);
             }
             else if(!stricmp(msg, "/dd1"))
             {
-                doInput(INPUT_KEYBOARD, profile[currentProfile][pDown], 1);
+                doKeyInput(INPUT_KEYBOARD, profile[currentProfile][pDown], 1);
                 _printf(lCommand, "%s: [%s] down button released", ip, msg);
             }
             else if(!stricmp(msg, "/ba0"))
             {
-                doInput(INPUT_KEYBOARD, profile[currentProfile][pA], 0);
+                doKeyInput(INPUT_KEYBOARD, profile[currentProfile][pA], 0);
                 _printf(lCommand, "%s: [%s] a button pressed", ip, msg);
             }
             else if(!stricmp(msg, "/ba1"))
             {
-                doInput(INPUT_KEYBOARD, profile[currentProfile][pA], 1);
+                doKeyInput(INPUT_KEYBOARD, profile[currentProfile][pA], 1);
                 _printf(lCommand, "%s: [%s] a button released", ip, msg);
             }
             else if(!stricmp(msg, "/bb0"))
             {
-                doInput(INPUT_KEYBOARD, profile[currentProfile][pB], 0);
+                doKeyInput(INPUT_KEYBOARD, profile[currentProfile][pB], 0);
                 _printf(lCommand, "%s: [%s] b button pressed", ip, msg);
             }
             else if(!stricmp(msg, "/bb1"))
             {
-                doInput(INPUT_KEYBOARD, profile[currentProfile][pB], 1);
+                doKeyInput(INPUT_KEYBOARD, profile[currentProfile][pB], 1);
                 _printf(lCommand, "%s: [%s] b button released", ip, msg);
             }
             else if(!stricmp(msg, "/bx0"))
             {
-                doInput(INPUT_KEYBOARD, profile[currentProfile][pX], 0);
+                doKeyInput(INPUT_KEYBOARD, profile[currentProfile][pX], 0);
                 _printf(lCommand, "%s: [%s] x button pressed", ip, msg);
             }
             else if(!stricmp(msg, "/bx1"))
             {
-                doInput(INPUT_KEYBOARD, profile[currentProfile][pX], 1);
+                doKeyInput(INPUT_KEYBOARD, profile[currentProfile][pX], 1);
                 _printf(lCommand, "%s: [%s] x button released", ip, msg);
             }
             else if(!stricmp(msg, "/by0"))
             {
-                doInput(INPUT_KEYBOARD, profile[currentProfile][pY], 0);
+                doKeyInput(INPUT_KEYBOARD, profile[currentProfile][pY], 0);
                 _printf(lCommand, "%s: [%s] y button pressed", ip, msg);
             }
             else if(!stricmp(msg, "/by1"))
             {
-                doInput(INPUT_KEYBOARD, profile[currentProfile][pY], 1);
+                doKeyInput(INPUT_KEYBOARD, profile[currentProfile][pY], 1);
                 _printf(lCommand, "%s: [%s] y button released", ip, msg);
             }
             else if(!stricmp(msg, "/bl0"))
             {
-                doInput(INPUT_KEYBOARD, profile[currentProfile][pL], 0);
+                doKeyInput(INPUT_KEYBOARD, profile[currentProfile][pL], 0);
                 _printf(lCommand, "%s: [%s] l button pressed", ip, msg);
             }
             else if(!stricmp(msg, "/bl1"))
             {
-                doInput(INPUT_KEYBOARD, profile[currentProfile][pL], 1);
+                doKeyInput(INPUT_KEYBOARD, profile[currentProfile][pL], 1);
                 _printf(lCommand, "%s: [%s] l button released", ip, msg);
             }
             else if(!stricmp(msg, "/br0"))
             {
-                doInput(INPUT_KEYBOARD, profile[currentProfile][pR], 0);
+                doKeyInput(INPUT_KEYBOARD, profile[currentProfile][pR], 0);
                 _printf(lCommand, "%s: [%s] r button pressed", ip, msg);
             }
             else if(!stricmp(msg, "/br1"))
             {
-                doInput(INPUT_KEYBOARD, profile[currentProfile][pR], 1);
+                doKeyInput(INPUT_KEYBOARD, profile[currentProfile][pR], 1);
                 _printf(lCommand, "%s: [%s] r button released", ip, msg);
             }
             else if(!stricmp(msg, "/bt0"))
             {
-                doInput(INPUT_KEYBOARD, profile[currentProfile][pStart], 0);
+                doKeyInput(INPUT_KEYBOARD, profile[currentProfile][pStart], 0);
                 _printf(lCommand, "%s: [%s] start button pressed", ip, msg);
             }
             else if(!stricmp(msg, "/bt1"))
             {
-                doInput(INPUT_KEYBOARD, profile[currentProfile][pStart], 1);
+                doKeyInput(INPUT_KEYBOARD, profile[currentProfile][pStart], 1);
                 _printf(lCommand, "%s: [%s] start button released", ip, msg);
             }
             else if(!stricmp(msg, "/be0"))
             {
-                doInput(INPUT_KEYBOARD, profile[currentProfile][pSelect], 0);
+                doKeyInput(INPUT_KEYBOARD, profile[currentProfile][pSelect], 0);
                 _printf(lCommand, "%s: [%s] select button pressed", ip, msg);
             }
             else if(!stricmp(msg, "/be1"))
             {
-                doInput(INPUT_KEYBOARD, profile[currentProfile][pSelect], 1);
+                doKeyInput(INPUT_KEYBOARD, profile[currentProfile][pSelect], 1);
                 _printf(lCommand, "%s: [%s] select button released", ip, msg);
             }
             else if(!stricmp(msg, "/gb0"))
             {
-                doInput(INPUT_KEYBOARD, profile[currentProfile][pBlue], 0);
+                doKeyInput(INPUT_KEYBOARD, profile[currentProfile][pBlue], 0);
                 _printf(lCommand, "%s: [%s] blue button pressed", ip, msg);
             }
             else if(!stricmp(msg, "/gb1"))
             {
-                doInput(INPUT_KEYBOARD, profile[currentProfile][pBlue], 1);
+                doKeyInput(INPUT_KEYBOARD, profile[currentProfile][pBlue], 1);
                 _printf(lCommand, "%s: [%s] blue button released", ip, msg);
             }
             else if(!stricmp(msg, "/gy0"))
             {
-                doInput(INPUT_KEYBOARD, profile[currentProfile][pYellow], 0);
+                doKeyInput(INPUT_KEYBOARD, profile[currentProfile][pYellow], 0);
                 _printf(lCommand, "%s: [%s] yellow button pressed", ip, msg);
             }
             else if(!stricmp(msg, "/gy1"))
             {
-                doInput(INPUT_KEYBOARD, profile[currentProfile][pYellow], 1);
+                doKeyInput(INPUT_KEYBOARD, profile[currentProfile][pYellow], 1);
                 _printf(lCommand, "%s: [%s] yellow button released", ip, msg);
             }
             else if(!stricmp(msg, "/gr0"))
             {
-                doInput(INPUT_KEYBOARD, profile[currentProfile][pRed], 0);
+                doKeyInput(INPUT_KEYBOARD, profile[currentProfile][pRed], 0);
                 _printf(lCommand, "%s: [%s] red button pressed", ip, msg);
             }
             else if(!stricmp(msg, "/gr1"))
             {
-                doInput(INPUT_KEYBOARD, profile[currentProfile][pRed], 1);
+                doKeyInput(INPUT_KEYBOARD, profile[currentProfile][pRed], 1);
                 _printf(lCommand, "%s: [%s] red button released", ip, msg);
             }
             else if(!stricmp(msg, "/gg0"))
             {
-                doInput(INPUT_KEYBOARD, profile[currentProfile][pGreen], 0);
+                doKeyInput(INPUT_KEYBOARD, profile[currentProfile][pGreen], 0);
                 _printf(lCommand, "%s: [%s] green button pressed", ip, msg);
             }
             else if(!stricmp(msg, "/gg1"))
             {
-                doInput(INPUT_KEYBOARD, profile[currentProfile][pGreen], 1);
+                doKeyInput(INPUT_KEYBOARD, profile[currentProfile][pGreen], 1);
                 _printf(lCommand, "%s: [%s] green button released", ip, msg);
             }
             else if(!strnicmp(msg, "/m", 2))
@@ -624,119 +624,120 @@ void serverLoop()
                 x = (unsigned char)atoi(xc);
                 y = (unsigned char)atoi(&yc[1]);
                 z = (bool)atoi(&zc[1]);
-                buttonX = (x / 64);
-                buttonY = (y / 64);
-
-                if(buttonX == 0)
-                {
-                    if(buttonY == 0)
-                    {
-                        if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch0X0Y])))
-                        {
-                            mouseKeys[0] = 1; //doInput(INPUT_KEYBOARD, profile[currentProfile][pTouch0X0Y], 0);
-                            commandSent = 1;
-                        }
-                    }
-                    else if(buttonY == 1)
-                    {
-                        if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch0X1Y])))
-                        {
-                            mouseKeys[4] = 1;
-                            commandSent = 1;
-                        }
-                    }
-                    else if(buttonY == 2)
-                    {
-                        if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch0X2Y])))
-                        {
-                            mouseKeys[8] = 1;
-                            commandSent = 1;
-                        }
-                    }
-                }
-                else if(buttonX == 1)
-                {
-                    if(buttonY == 0)
-                    {
-                        if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch1X0Y])))
-                        {
-                            mouseKeys[1] = 1;
-                            commandSent = 1;
-                        }
-                    }
-                    else if(buttonY == 1)
-                    {
-                        if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch1X1Y])))
-                        {
-                            mouseKeys[5] = 1;
-                            commandSent = 1;
-                        }
-                    }
-                    else if(buttonY == 2)
-                    {
-                        if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch1X2Y])))
-                        {
-                            mouseKeys[9] = 1;
-                            commandSent = 1;
-                        }
-                    }
-                }
-                else if(buttonX == 2)
-                {
-                    if(buttonY == 0)
-                    {
-                        if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch2X0Y])))
-                        {
-                            mouseKeys[2] = 1;
-                            commandSent = 1;
-                        }
-                    }
-                    else if(buttonY == 1)
-                    {
-                        if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch2X1Y])))
-                        {
-                            mouseKeys[6] = 1;
-                            commandSent = 1;
-                        }
-                    }
-                    else if(buttonY == 2)
-                    {
-                        if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch2X2Y])))
-                        {
-                            mouseKeys[10] = 1;
-                            commandSent = 1;
-                        }
-                    }
-                }
-                else if(buttonX == 3)
-                {
-                    if(buttonY == 0)
-                    {
-                        if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch3X0Y])))
-                        {
-                            mouseKeys[3] = 1;
-                            commandSent = 1;
-                        }
-                    }
-                    else if(buttonY == 1)
-                    {
-                        if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch3X1Y])))
-                        {
-                            mouseKeys[7] = 1;
-                            commandSent = 1;
-                        }
-                    }
-                    else if(buttonY == 2)
-                    {
-                        if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch3X2Y])))
-                        {
-                            mouseKeys[11] = 1;
-                            commandSent = 1;
-                        }
-                    }
-                }
-
-                if(commandSent == 0)
+				if(profile[currentProfile][pTouchMode] == pButtons)
+				{
+	                buttonX = (x / 64);
+	                buttonY = (y / 64);
+	                if(buttonX == 0)
+	                {
+	                    if(buttonY == 0)
+	                    {
+	                        if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch0X0Y])))
+	                        {
+	                            mouseKeys[0] = 1;
+	                            commandSent = 1;
+	                        }
+	                    }
+	                    else if(buttonY == 1)
+	                    {
+	                        if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch0X1Y])))
+	                        {
+	                            mouseKeys[4] = 1;
+	                            commandSent = 1;
+	                        }
+	                    }
+	                    else if(buttonY == 2)
+	                    {
+	                        if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch0X2Y])))
+	                        {
+	                            mouseKeys[8] = 1;
+	                            commandSent = 1;
+	                        }
+	                    }
+	                }
+	                else if(buttonX == 1)
+	                {
+	                    if(buttonY == 0)
+	                    {
+	                        if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch1X0Y])))
+	                        {
+	                            mouseKeys[1] = 1;
+	                            commandSent = 1;
+	                        }
+	                    }
+	                    else if(buttonY == 1)
+	                    {
+	                        if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch1X1Y])))
+	                        {
+	                            mouseKeys[5] = 1;
+	                            commandSent = 1;
+	                        }
+	                    }
+	                    else if(buttonY == 2)
+	                    {
+	                        if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch1X2Y])))
+	                        {
+	                            mouseKeys[9] = 1;
+	                            commandSent = 1;
+	                        }
+	                    }
+	                }
+	                else if(buttonX == 2)
+	                {
+	                    if(buttonY == 0)
+	                    {
+	                        if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch2X0Y])))
+	                        {
+	                            mouseKeys[2] = 1;
+	                            commandSent = 1;
+	                        }
+	                    }
+	                    else if(buttonY == 1)
+	                    {
+	                        if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch2X1Y])))
+	                        {
+	                            mouseKeys[6] = 1;
+	                            commandSent = 1;
+	                        }
+	                    }
+	                    else if(buttonY == 2)
+	                    {
+	                        if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch2X2Y])))
+	                        {
+	                            mouseKeys[10] = 1;
+	                            commandSent = 1;
+	                        }
+	                    }
+	                }
+	                else if(buttonX == 3)
+	                {
+	                    if(buttonY == 0)
+	                    {
+	                        if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch3X0Y])))
+	                        {
+	                            mouseKeys[3] = 1;
+	                            commandSent = 1;
+	                        }
+	                    }
+	                    else if(buttonY == 1)
+	                    {
+	                        if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch3X1Y])))
+	                        {
+	                            mouseKeys[7] = 1;
+	                            commandSent = 1;
+	                        }
+	                    }
+	                    else if(buttonY == 2)
+	                    {
+	                        if(strcmp("KEY_NONE", getKeyString(profile[currentProfile][pTouch3X2Y])))
+	                        {
+	                            mouseKeys[11] = 1;
+	                            commandSent = 1;
+	                        }
+	                    }
+	                }
+				}
+                else
                 {
 					bool status = 0;
 					if(mouseXLast != x || mouseYLast != y)
@@ -749,8 +750,8 @@ void serverLoop()
 						mouseYLast = y;
 						newTouch = 0;
 					}
-                    doInput(INPUT_MOUSE, (y << 8) | x, z);
-					
+					doStylusInput(INPUT_MOUSE, profile[currentProfile][pTouchMode], x, y, z);
+
 					if(!z && !newTouch)
 					{
 						newTouch = 1;
@@ -767,7 +768,7 @@ void serverLoop()
 		                }
 					}
                 }
-                else
+                if((commandSent != 0) && (profile[currentProfile][pTouchMode] == pButtons))
                 {
                     int key;
                     for(key = 0; key < 12; key++)
@@ -777,13 +778,13 @@ void serverLoop()
                         if(mouseKeys[key] && !z)
                         {
                             mouseKeys[key] = 0;
-                            doInput(INPUT_KEYBOARD, profile[currentProfile][pTouch + key], !mouseKeys[key]);
+                            doKeyInput(INPUT_KEYBOARD, profile[currentProfile][pTouch + key], !mouseKeys[key]);
                             mouseKeysLast[key] = 0;
                             status = 1;
                         }
                         else if(mouseKeys[key] != mouseKeysLast[key])
                         {
-                            doInput(INPUT_KEYBOARD, profile[currentProfile][pTouch + key], !mouseKeys[key]);
+                            doKeyInput(INPUT_KEYBOARD, profile[currentProfile][pTouch + key], !mouseKeys[key]);
                             mouseKeysLast[key] = mouseKeys[key];
                             status = mouseKeys[key] + 1;
                         }
