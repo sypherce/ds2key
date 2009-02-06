@@ -28,7 +28,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //Normal Defines
 #define DEFAULT_SERVER_PORT 9501
 #define pTouch pTouch0X0Y
-enum pKeys { pIP, pUp, pDown, pLeft, pRight, pA, pB, pX, pY, pL, pR, pStart, pSelect, pBlue, pYellow, pRed, pGreen, pTouch0X0Y, pTouch1X0Y, pTouch2X0Y, pTouch3X0Y, pTouch0X1Y, pTouch1X1Y, pTouch2X1Y, pTouch3X1Y, pTouch0X2Y, pTouch1X2Y, pTouch2X2Y, pTouch3X2Y, pEND };
+enum pKeys { pIP, pUp, pDown, pLeft, pRight, pA, pB, pX, pY, pL, pR, pStart, pSelect, pBlue, pYellow, pRed, pGreen, pTouch0X0Y, pTouch1X0Y, pTouch2X0Y, pTouch3X0Y, pTouch0X1Y, pTouch1X1Y, pTouch2X1Y, pTouch3X1Y, pTouch0X2Y, pTouch1X2Y, pTouch2X2Y, pTouch3X2Y, pTouchMode, pEND };
+enum pTouchModes { pButtons, pAbsolute, pRelative };
 enum { lNone, lDefault, lMissingCommand, lCommand, lEND};
 
 //Variables
