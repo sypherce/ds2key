@@ -1,6 +1,6 @@
 /*
 DS2Key Client - An application to use your DS as a PC Gamepad
-Copyright (C) 2008  Derrick (sypherce) Wirth
+Copyright (C) 2008, 2009  Derrick (sypherce) Wirth
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -100,27 +100,27 @@ void vblfunction()
 int main()
 {
 	DS2Key ds2key;
-	CustomKeyboard *keyboard;;
+	CustomKeyboard *keyboard;
 	//screen setup
 	powerOff(PM_BACKLIGHT_TOP);
 	videoSetModeSub(MODE_0_2D);
 
+	//console setup
+	consoleDemoInit();
 	vramSetMainBanks(VRAM_A_LCD, VRAM_B_LCD, VRAM_C_SUB_BG, VRAM_D_SUB_SPRITE);
 
     initSprites();
-
-	//console setup
-	consoleInit(0,0, BgType_Text4bpp, BgSize_T_256x256, 20, 0, false);
 
 	//keyboard setup
 	keyboard = &customKeyboard;
 	keyboard->keyboard = keyboardGetDefault();
 	keyboard->keyboard->OnKeyPressed = onKeyPressed;
-	keyboardInit(keyboard->keyboard);
+	keyboardInit(keyboard->keyboard, 3, BgType_Text4bpp, BgSize_T_256x512, 20, 0, false, true);
+	keyboardHide();
 
 	consoleClear();
 
-	iprintf("DS2Key 1.0 (SVN)\n-\n");
+	iprintf("DS2Key 1.02\n-\n");
 
 	fatInitDefault();
 	readConfig(&ds2key);

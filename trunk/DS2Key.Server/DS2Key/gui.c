@@ -1,6 +1,6 @@
 /*
 DS2Key Server - An application to use your DS as a PC Gamepad
-Copyright (C) 2008  Derrick (sypherce) Wirth
+Copyright (C) 2008, 2009  Derrick (sypherce) Wirth
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -195,8 +195,8 @@ void applyGUIProfile()
     writeConfig();
     if(connectedDS2Key)
     {
-        disconnectDS2Key();
-        connectDS2Key();
+        ds2keyDisconnect();
+        ds2keyConnect(serverPort);
     }
 }
 
@@ -473,7 +473,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
                     HMENU hMenu = GetMenu(hwndPointer[0]);
                     int checked;
 
-					connectDS2Key();
+					ds2keyConnect(serverPort);
                     if(connectedDS2Key == TRUE)
                     {
                         checked = IDM_CONNECT;
@@ -491,7 +491,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
                     HMENU hMenu = GetMenu(hwndPointer[0]);
                     int checked;
 
-					disconnectDS2Key();
+					ds2keyDisconnect();
                     if(connectedDS2Key == TRUE)
                     {
                         checked = IDM_CONNECT;
@@ -513,7 +513,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				}
 				case IDM_ABOUT:
 				{
-					MessageBox(hwndDlg, "DS2Key 1.0 (SVN)\nCopyright (C) 2008 Derrick (sypherce) Wirth\nhttp://ds2key.1emulation.com/", "About DS2Key...", MB_ICONINFORMATION);
+					MessageBox(hwndDlg, "DS2Key 1.02\nCopyright (C) 2008, 2009 Derrick (sypherce) Wirth\nhttp://ds2key.1emulation.com/", "About DS2Key...", MB_ICONINFORMATION);
 
 					break;
 				}
