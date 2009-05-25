@@ -36,34 +36,6 @@ int serverPort;
 char printDebugLevel;
 unsigned int profile[256][pEND];
 
-
-char *touchModeTable[3] = { "BUTTON", "ABSOLUTE", "RELATIVE" };
-
-unsigned int getTouchMode(char *mode)
-{
-	if(!strcmp(mode, touchModeTable[1]))
-	{
-		return 1;
-	}
-	else if(!strcmp(mode, touchModeTable[2]))
-	{
-		return 2;
-	}
-	//else if (mode == "TOUCH")
-
-	return 0;
-}
-
-char *getTouchModeString(unsigned int mode)
-{
-	if(mode > 0x2)
-	{
-		mode = 0;
-	}
-
-	return touchModeTable[mode];
-}
-
 bool writeConfig()
 {
 	FILE *file;
@@ -103,14 +75,7 @@ bool writeProfileConfig(unsigned char profileNumber)
 		int i;
 		for(i = 1; i < pEND; i++)
 		{
-			if(i == pTouchMode)
-			{
-				fprintf(file, "%s\n", getTouchModeString(profile[profileNumber][i]));
-			}
-			else
-			{
-				fprintf(file, "%s\n", getKeyString(profile[profileNumber][i]));
-			}
+			fprintf(file, "%s\n", getKeyString(profile[profileNumber][i]));
 		}
 
 		fclose(file);
@@ -153,7 +118,6 @@ bool writeDefaultProfileConfig(unsigned char profileNumber)
 	profile[profileNumber][pTouch1X2Y] = KEY_NUMPAD2;
 	profile[profileNumber][pTouch2X2Y] = KEY_NUMPAD2;
 	profile[profileNumber][pTouch3X2Y] = KEY_NUMPAD3;
-	profile[profileNumber][pTouchMode] = pButtons;
 
 	return writeProfileConfig(profileNumber);
 }
@@ -323,14 +287,7 @@ bool readProfileConfig(unsigned char profileNumber)
 				{
 					int i2 = 0;
 					getLine(tmpBuffer);
-					if(i == pTouchMode)
-					{
-						profile[profileNumber][i] = getTouchMode(tmpBuffer);
-					}
-					else
-					{
-						profile[profileNumber][i] = getKeyNumber(tmpBuffer);
-					}
+					profile[profileNumber][i] = getKeyNumber(tmpBuffer);
 					tmpBuffer = tmpBuffer + strlen(tmpBuffer) + 1;
 					while(tmpBuffer[i2] == (char)0xa || tmpBuffer[i2] == (char)0xd)
 					{

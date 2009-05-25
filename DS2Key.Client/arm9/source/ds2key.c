@@ -1,6 +1,6 @@
 /*
 DS2Key Client - An application to use your DS as a PC Gamepad
-Copyright (C) 2008  Derrick (sypherce) Wirth
+Copyright (C) 2008, 2009  Derrick (sypherce) Wirth
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -86,8 +86,10 @@ void initD2K(DS2Key *client)
 	i = 1;
 	ioctl(client->socket, FIONBIO, &i);
 
+#ifdef USE_OLD_PROTOCOL
 	sprintf(command, "/p%s", client->profile);
 	sendCommandDefault(command);
+#endif//USE_OLD_PROTOCOL
 }
 
 void deinitD2K(DS2Key *client)
@@ -177,10 +179,52 @@ void profileQuery(DS2Key *client)
     }
 }
 
+#ifndef USE_OLD_PROTOCOL
+#pragma pack(1)
+typedef struct ds2keyPacket
+{
+	uint8_t type;
+	uint8_t profile;
+	uint16_t keys;
+	uint8_t ghKeys;
+	uint8_t touchX;
+	uint8_t touchY;
+} ds2keyPacket;
+#pragma pack()
+ds2keyPacket packet = {0};
+#include "main9.h"
+#endif//USE_OLD_PROTOCOL
 void updateD2K(DS2Key *client, uint32 down, uint32 held, uint32 up, touchPosition *pos, touchPosition *lastPos)
 {
+#ifdef USE_OLD_PROTOCOL
     profileQuery(client);
 	updateD2KKeys(client, down, up);
 	updateD2KGH(client, GH_keysDown, GH_keysUp);
 	updateD2KStylus(client, held, up, pos, lastPos);
+#else//USE_OLD_PROTOCOL
+	packet.type = '/' + 1;
+	packet.profile = ds2keyGetIntProfile(client);
+	packet.keys = keysHeld();
+	if(d2kMode == iDefault)
+	{
+		packet.keys &= ~KEY_TOUCH;
+	}
+	else if(d2kMode == iMouse)
+	{
+		packet.touchX = pos->px;
+		packet.touchY = pos->py;
+	}
+	packet.ghKeys = GH_keysHeld;
+	
+	client->sockaddr.sin_addr.s_addr = ds2keyGetLongIP(client);
+
+	if(sendto(client->socket, (char*)&packet, sizeof(ds2keyPacket), 0, (struct sockaddr *)&client->sockaddr, sizeof(client->sockaddr)) >= 0)
+	{
+		iprintf("\x1b[22;0HSent");
+	}
+	else
+	{
+		iprintf("\x1b[22;0HFailed to send");
+	}
+#endif//USE_OLD_PROTOCOL
 }

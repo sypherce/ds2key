@@ -78,7 +78,7 @@ extern bool connectedDS2Key;
 
 //Functions
 //extern int _printf(const char *format, ...);
-extern void doInput(unsigned int type, unsigned int relativeTouch, unsigned int key, unsigned char keyX, unsigned char keyY, bool state);
+extern void doInput(unsigned int type, unsigned int key, bool state);
 extern void connectDS2Key();
 extern void disconnectDS2Key();
 extern void serverLoop();

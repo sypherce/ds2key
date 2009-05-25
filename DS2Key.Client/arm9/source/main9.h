@@ -1,6 +1,6 @@
 /*
 DS2Key Client - An application to use your DS as a PC Gamepad
-Copyright (C) 2008  Derrick (sypherce) Wirth
+Copyright (C) 2008, 2009  Derrick (sypherce) Wirth
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -22,11 +22,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define vblCountMax (60 * 4)
 
 //function defines
-#define settingsPrint() iprintf("\x1b[0;0H                DS2Key 1.0 (SVN)\n\n        IP: %s \n\n\n        Port: %s \n\n\n        Profile: %s \n\n\n\n\n\n      ", ds2key.ip, ds2key.port, ds2key.profile)
-#define settingsPrintButtons() iprintf("\x1b[0;0H                DS2Key 1.0 (SVN)\n\n[Edit]  IP: %s \n\n\n[Edit]  Port: %s \n\n\n[Edit]  Profile: %s \n\n\n\n\n\n[Done]", ds2key.ip, ds2key.port, ds2key.profile)
-#define settingsPrintIP() iprintf("\x1b[0;0H                DS2Key 1.0 (SVN)\n\n        IP: %s \n\n\n                    \n\n\n                     \n\n\n\n\n\n      \n\n\n\n\n\n\n                                      ", ds2key.ip)
-#define settingsPrintPort() iprintf("\x1b[0;0H                DS2Key 1.0 (SVN)\n\n                           \n\n\n        Port: %s \n\n\n                     \n\n\n\n\n\n      \n\n\n\n\n\n\n                                      ", ds2key.port)
-#define settingsPrintProfile() iprintf("\x1b[0;0H                DS2Key 1.0 (SVN)\n\n                           \n\n\n                    \n\n\n        Profile: %s \n\n\n\n\n\n      \n\n\n\n\n\n\n                                      ", ds2key.profile)
+#define settingsPrint() iprintf("\x1b[0;0H                DS2Key 1.02\n\n        IP: %s \n\n\n        Port: %s \n\n\n        Profile: %s \n\n\n\n\n\n      ", ds2key.ip, ds2key.port, ds2key.profile)
+#define settingsPrintButtons() iprintf("\x1b[0;0H                DS2Key 1.02\n\n[Edit]  IP: %s \n\n\n[Edit]  Port: %s \n\n\n[Edit]  Profile: %s \n\n\n\n\n\n[Done]", ds2key.ip, ds2key.port, ds2key.profile)
+#define settingsPrintIP() iprintf("\x1b[0;0H                DS2Key 1.02\n\n        IP: %s \n\n\n                    \n\n\n                     \n\n\n\n\n\n      \n\n\n\n\n\n\n                                      ", ds2key.ip)
+#define settingsPrintPort() iprintf("\x1b[0;0H                DS2Key 1.02\n\n                           \n\n\n        Port: %s \n\n\n                     \n\n\n\n\n\n      \n\n\n\n\n\n\n                                      ", ds2key.port)
+#define settingsPrintProfile() iprintf("\x1b[0;0H                DS2Key 1.02\n\n                           \n\n\n                    \n\n\n        Profile: %s \n\n\n\n\n\n      \n\n\n\n\n\n\n                                      ", ds2key.profile)
 
 #define min(a, b) (((a) < (b)) ? (a) : (b))
 #define max(a, b) (((a) > (b)) ? (a) : (b))

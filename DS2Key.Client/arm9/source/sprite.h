@@ -1,6 +1,6 @@
 /*
 DS2Key Client - An application to use your DS as a PC Gamepad
-Copyright (C) 2008  Derrick (sypherce) Wirth
+Copyright (C) 2008, 2009  Derrick (sypherce) Wirth
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define __SPRITE_H__
 
 //function defines
-#define showHideArrowSprite(a) oamSet(&oamSub, 0, 244, 175, 0, 0, SpriteSize_16x16, SpriteColorFormat_16Color, arrowSprite, -1, false, a)
-#define showHideSettingsSprite(a)  oamSet(&oamSub, 1, -8, -8, 0, 0, SpriteSize_16x16, SpriteColorFormat_16Color, settingsSprite, 0, true, a)
+#define showHideArrowSprite(a) oamSet(&oamSub, 0, 244, 175, 0, 0, SpriteSize_16x16, SpriteColorFormat_16Color, arrowSprite, -1, false, a, 0, 0, 0)
+#define showHideSettingsSprite(a) oamSet(&oamSub, 1, -8, -8, 0, 0, SpriteSize_16x16, SpriteColorFormat_16Color, settingsSprite, 0, true, a, 0, 0, 0)
 #define showHideSprites(a) \
 	showHideArrowSprite(a); \
 	showHideSettingsSprite(a);
