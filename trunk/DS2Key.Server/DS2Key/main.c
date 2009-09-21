@@ -19,6 +19,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdlib.h>
 #include <stdarg.h>
 #ifdef WIN32
+#define bool BOOL
+#define false FALSE
+#define true TRUE
 #ifdef WINVER
 #undef WINVER
 #endif //WINVER
@@ -34,6 +37,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <winsock.h>
 #define sockaddr_in__address(sockaddr_in) sockaddr_in.sin_addr.S_un.S_addr
 #else //WIN32
+#define bool unsigned char
+#define false 0
+#define true 1
 #include <string.h>
 #include <unistd.h>
 #include <netinet/in.h>
