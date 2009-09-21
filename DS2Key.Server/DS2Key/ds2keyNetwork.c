@@ -18,20 +18,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <stdbool.h>
 #ifdef WIN32
 #include <winsock.h>
 #else//WIN32
-#ifdef NGC
-#include <gctypes.h>
-#include <network.h>
 #include <fcntl.h>
 #include <string.h>
 #include <errno.h>
+#ifdef NGC
+#include <gctypes.h>
+#include <network.h>
 #define socket net_socket
 #define bind net_bind
 #define recvfrom net_recvfrom
 #define sendto net_sendto
 #define close net_close
+#else//NGC
+#include <netinet/in.h>
 #endif//NGC
 #endif//WIN32
 #include "ds2keyNetwork.h"
