@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="DS2Key Server" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/Console/DS2Key" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/Console/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-Wmain" />
+					<Add option="-pedantic" />
+					<Add option="-std=c++11" />
+					<Add option="-Wall" />
+					<Add option="-ansi" />
+					<Add option="-pg" />
+					<Add option="-g" />
+					<Add option="-DWIN32" />
+					<Add option="-DWINVER=0x0500" />
+				</Compiler>
+				<Linker>
+					<Add option="-pg -lgmon" />
+					<Add library="gdi32" />
+					<Add library="user32" />
+					<Add library="kernel32" />
+					<Add library="comctl32" />
+					<Add library="ws2_32" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/Console/DS2Key" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/Console/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option use_console_runner="0" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-std=c++11" />
+					<Add option="-ansi" />
+					<Add option="-DWIN32" />
+					<Add option="-DWINVER=0x0500" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add option="-static" />
+					<Add option="-static-libgcc" />
+					<Add option="-static-libstdc++" />
+					<Add library="ws2_32" />
+				</Linker>
+			</Target>
+			<Target title="Debug (GUI)">
+				<Option output="bin/Debug/DS2Key" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-Wmain" />
+					<Add option="-pedantic" />
+					<Add option="-std=c++11" />
+					<Add option="-Wall" />
+					<Add option="-ansi" />
+					<Add option="-pg" />
+					<Add option="-g" />
+					<Add option="-DWIN32" />
+					<Add option="-DWINVER=0x0500" />
+					<Add option="-D_WIN32_IE=0x400" />
+					<Add option="-DWIN32GUI" />
+					<Add option="-DWM_TRAYMSG=(WM_APP+1)" />
+				</Compiler>
+				<Linker>
+					<Add option="-pg -lgmon" />
+					<Add library="gdi32" />
+					<Add library="user32" />
+					<Add library="kernel32" />
+					<Add library="comctl32" />
+					<Add library="ws2_32" />
+				</Linker>
+			</Target>
+			<Target title="Release (GUI)">
+				<Option output="bin/Release/DS2Key" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-std=c++11" />
+					<Add option="-ansi" />
+					<Add option="-DWIN32" />
+					<Add option="-DWINVER=0x0500" />
+					<Add option="-D_WIN32_IE=0x400" />
+					<Add option="-DWIN32GUI" />
+					<Add option="-DWM_TRAYMSG=(WM_APP+1)" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add option="-static" />
+					<Add option="-static-libgcc" />
+					<Add option="-static-libstdc++" />
+					<Add library="gdi32" />
+					<Add library="user32" />
+					<Add library="kernel32" />
+					<Add library="comctl32" />
+					<Add library="ws2_32" />
+				</Linker>
+			</Target>
+			<Target title="Debug (Linux)">
+				<Option output="bin/Debug/Linux/ds2key" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/Linux" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-Wmain" />
+					<Add option="-pedantic" />
+					<Add option="-Wall" />
+					<Add option="-ansi" />
+					<Add option="-pg" />
+					<Add option="-g" />
+					<Add option="-std=gnu++0x" />
+				</Compiler>
+				<Linker>
+					<Add option="-pg" />
+					<Add library="X11" />
+					<Add library="Xtst" />
+				</Linker>
+			</Target>
+			<Target title="Release (Linux)">
+				<Option output="bin/Release/Linux/ds2key" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/Linux/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option use_console_runner="0" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-ansi" />
+					<Add option="-std=gnu++0x" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="X11" />
+					<Add library="Xtst" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add directory="." />
+		</Compiler>
+		<Unit filename="core/PPJIoctl.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="core/PPJoy.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="core/PPJoy.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="core/client.cpp" />
+		<Unit filename="core/client.h" />
+		<Unit filename="core/config.cpp" />
+		<Unit filename="core/config.h" />
+		<Unit filename="core/core.cpp" />
+		<Unit filename="core/core.h" />
+		<Unit filename="core/iniParser.cpp" />
+		<Unit filename="core/iniParser.h" />
+		<Unit filename="core/input.cpp" />
+		<Unit filename="core/input.h" />
+		<Unit filename="core/key.cpp" />
+		<Unit filename="core/key.h" />
+		<Unit filename="core/udp.cpp" />
+		<Unit filename="core/udp.h" />
+		<Unit filename="gui/gui.cpp">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/gui.h">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/mainWindow.cpp">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/mainWindow.h">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/resource.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/resource.rc">
+			<Option compilerVar="WINDRES" />
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/xpmanifest.xml">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="iniparser/src/dictionary.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="iniparser/src/dictionary.h" />
+		<Unit filename="iniparser/src/iniparser.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="iniparser/src/iniparser.h" />
+		<Unit filename="main.cpp" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+			<DoxyBlocks>
+				<comment_style block="0" line="0" />
+				<doxyfile_project />
+				<doxyfile_build />
+				<doxyfile_warnings />
+				<doxyfile_output />
+				<doxyfile_dot />
+				<general />
+			</DoxyBlocks>
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
