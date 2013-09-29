@@ -1,20 +1,21 @@
 #ifndef __MAINWINDOW_H__
 #define __MAINWINDOW_H__
 
-#include "gui.h"
-#include "button.h"
-#include "label.h"
-#include "edit.h"
+#include "window.h"	//Rect
+#include "edit.h"	//Rect
+#include "button.h"	//Rect
+#include "label.h"	//Rect
 
 namespace D2K {
 	namespace GUI {
-		namespace MainWindow {
-			enum {Default, EditIP, EditPort, EditProfile};
-			extern void Setup();
-			extern void Draw();
-			extern bool Update();
-			extern void setVisible(bool Visible);
-		}
+		class MainWindow : public Window {
+			public:
+				MainWindow();
+				~MainWindow();
+				bool Update();
+		};
+		extern GUI::MainWindow *mainWindow;
 	}
 }
+
 #endif//__MAINWINDOW_H__
