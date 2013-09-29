@@ -2,8 +2,8 @@
 	main - it all begins and ends here
 */
 #include "ds2key.h"
-//#include "mainWindow.h"
-#include "mainWindow2.h"
+#include "mainWindow.h"
+#include "keypadWindow.h"
 #include "system.h"
 
 using namespace D2K;
@@ -11,9 +11,10 @@ using namespace D2K;
 int main() {
 	System::Setup();
 	DS2Key::Init();
-	GUI::MainWindow2 *window = new GUI::MainWindow2();
+	GUI::mainWindow = new GUI::MainWindow();
+	GUI::keypadWindow = new GUI::KeypadWindow();
 	//GUI::MainWindow::Setup();
-	window->setVisible(true);
+	GUI::mainWindow->setVisible(true);
 	//GUI::MainWindow::setVisible(true);
 
 	while(true) {
@@ -21,7 +22,7 @@ int main() {
 
 		DS2Key::Update(keysHeld(), guitarGripKeysHeld() * guitarGripIsInserted(), (touchPosition*)NULL);
 
-		window->Update();
+		GUI::mainWindow->Update();
 		//GUI::MainWindow::Update();
 	}
 	DS2Key::DeInit();
