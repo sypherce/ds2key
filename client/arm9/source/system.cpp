@@ -12,14 +12,13 @@
 
 namespace D2K {
 	namespace System {
-		const uint32 vblCountMax = (60 * 4);
+		const uint32_t vblCountMax = (60 * 4);
 		touchPosition stylusPos;
 		bool inputChange = false;
-		uint32 vblCount = 0;
-		uint32 vblLid = 0;
+		uint32_t vblCount = 0;
+		uint32_t vblLid = 0;
 
-		char* getTime()
-		{
+		char* getTime() {
 			static char timeChar[13];
 			time_t unixTime = time(NULL);
 			struct tm* timeStruct = gmtime((const time_t *)&unixTime);
@@ -34,75 +33,46 @@ namespace D2K {
 			return timeChar;
 		}
 
-		void resetStylus()
-		{
+		void resetStylus() {
 			stylusPos.px = 299;
 			stylusPos.py = 299;
 		}
 
-		void updateInputs()
-		{
-			if(inputChange)
-			{
+		void updateInputs() {
+			if(inputChange) {
 				inputChange = false;
 				scanKeys();
-				if(guitarGripIsInserted())
-				{
+				if(guitarGripIsInserted()) {
 					guitarGripScanKeys();
 				}
-				if(!keysUp()&&KEY_TOUCH)
-				{
+				if(!keysUp()&&KEY_TOUCH) {
 					touchRead(&System::stylusPos);
 				}
 			}
 		}
-
-		void updateLid()
-		{
-			if((keysUp()&KEY_LID && vblLid) ||	//if lid just opened OR
-				(keysHeld()&KEY_TOUCH))			//screen is being touched
-			{
-				if(keysUp()&KEY_LID)			//if lid just opened
-				{
-					vblLid = vblCount = 0;		//light on
-				}
-				else							//if just the screen is being touched
-				{
-					vblCount = 0;				//light on
-				}
+		void updateLid() {
+			if((keysUp()&KEY_LID) ||							//if lid just opened OR
+				(keysHeld()&KEY_TOUCH))	{						//screen is being touched
+				vblCount = 0;									//reset timer
+				powerOn(PM_BACKLIGHT_BOTTOM|PM_BACKLIGHT_TOP);	//lights on
 			}
-			else if((keysDown()&KEY_LID && !vblLid) || keysDown())	//if lid just closed OR a button was pressed
-			{
-				if(keysDown()&KEY_LID)								//if lid just closed
-				{
-					vblLid = vblCount = vblCountMax;
-				}
-				else												//or buttons just pressed
-				{
-					vblCount = vblCountMax;
-				}
+			else if((keysDown()&KEY_LID) ||						//if lid just closed OR
+				keysDown() ||									//a button was pressed OR
+					vblCount == vblCountMax) {					//enough time has passed
+				powerOff(PM_BACKLIGHT_BOTTOM|PM_BACKLIGHT_TOP);	//lights off
 			}
-			if(vblCount >= vblCountMax)
-			{
-				powerOff(PM_BACKLIGHT_BOTTOM|PM_BACKLIGHT_TOP);
-			}
-			else if(vblCount == 0)
-			{
-				powerOn(PM_BACKLIGHT_BOTTOM|PM_BACKLIGHT_TOP);
-			}
-			vblCount++;
+			vblCount++;											//increment timer
 		}
-		bool isScreenOn()
-		{
-			return !(vblCount >= vblCountMax);
-		}
-		void vblfunction()
-		{
+		void vblfunction() {
 			updateInputs();
 			updateLid();
 		}
-		void Setup()
-		{
+
+		/*bool isScreenOn() {
+			return !(vblCount >= vblCountMax);
+		}*/
+
+		void Setup() {
 			//screen setup
 			//powerOff(PM_BACKLIGHT_TOP);
 			videoSetModeSub(MODE_0_2D);
@@ -119,7 +89,7 @@ namespace D2K {
 
 			consoleClear();
 
-			printf("DS2Key 2.0\n-\n");
+			printf("%s\n-\n", VERSION_STRING);
 
 			if(!EMULATOR)
 			if(!fatInitDefault())
@@ -128,18 +98,17 @@ namespace D2K {
 
 			iprintf("Connecting via WFC data\n");
 			if(!EMULATOR)
-			if(!Wifi_InitDefault(WFC_CONNECT))
-			{
+			if(!Wifi_InitDefault(WFC_CONNECT)) {
 				printf("Error (Wifi_InitDefault): Failed to connect\n");
 			}
+
 			//setup vblank IRQ
 			irqSet(IRQ_VBLANK, D2K::System::vblfunction);
 
 			resetStylus();
-
 		}
-		void Update(bool change)
-		{
+
+		void Update(bool change) {
 			inputChange = change;
 			swiWaitForVBlank();
 		}

@@ -1,21 +1,23 @@
-#ifndef __KEYPADWINDOW2_H__
-#define __KEYPADWINDOW2_H__
+#ifndef __KEYPADWINDOW_H__
+#define __KEYPADWINDOW_H__
 
-#include "window.h"	//Rect
-#include "edit.h"	//Rect
-#include "button.h"	//Rect
-#include "label.h"	//Rect
+#include "window.h"
+#include "edit.h"
+#include "button.h"
+#include "label.h"
 
-			extern char *KeyPadEdit(D2K::GUI::Label *label, D2K::GUI::Edit *edit, std::string String, int maxLength);
 namespace D2K {
 	namespace GUI {
-		class KeypadWindow : public Window {
-			public:
-				KeypadWindow();
-				~KeypadWindow();
-		};
-		extern GUI::KeypadWindow *keypadWindow;
+		namespace Keypad {
+			class WindowClass : public GUI::Window {
+				public:
+					WindowClass();
+					~WindowClass();
+			};
+			extern GUI::Keypad::WindowClass *Window;
+			extern std::string Entry(GUI::Label *label, GUI::Edit *edit, std::string String, int maxLength);
+		}
 	}
 }
 
-#endif//__KEYPADWINDOW2_H__
+#endif//__KEYPADWINDOW_H__

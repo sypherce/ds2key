@@ -147,6 +147,7 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add option='-DVERSION_STRING=&quot;\&quot;DS2Key SVN Build\&quot;&quot;' />
 			<Add directory="." />
 		</Compiler>
 		<Unit filename="core/PPJIoctl.h">

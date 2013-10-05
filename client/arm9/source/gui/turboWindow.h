@@ -1,23 +1,24 @@
-#ifndef __MAINWINDOW_H__
-#define __MAINWINDOW_H__
+#ifndef __TURBOWINDOW_H__
+#define __TURBOWINDOW_H__
 
 #include "window.h"
 #include "edit.h"
 #include "button.h"
+#include "checkButton.h"
 #include "label.h"
 
 namespace D2K {
 	namespace GUI {
-		namespace Main {
+		namespace Turbo {
 			class WindowClass : public GUI::Window {
 				public:
 					WindowClass();
 					~WindowClass();
-					bool Update();
 			};
-			extern GUI::Main::WindowClass *Window;
+			extern uint16_t GetKeys();
+			extern GUI::Turbo::WindowClass *Window;
 		}
 	}
 }
 
-#endif//__MAINWINDOW_H__
+#endif//__TURBOWINDOW_H__

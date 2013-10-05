@@ -1,7 +1,7 @@
 #ifndef __GUI_H__
 #define __GUI_H__
 
-#include <nds/ndstypes.h>
+#include <stdint.h>
 #include <string>
 
 namespace D2K {
@@ -15,6 +15,7 @@ namespace D2K {
 			public:
 				Rect();
 				Rect(uint8_t X, uint8_t Y, uint8_t W, uint8_t H);
+				//Rect operator=(const Rect&) const;
 				uint8_t getX();
 				void setX(uint8_t X);
 				uint8_t getY();
@@ -30,14 +31,14 @@ namespace D2K {
 		};
 
 		extern void VoidFunction();
-		extern u16 *Screen[2];
+		extern uint16_t *Screen[2];
 		extern bool Update;
 		void setUpdate(bool value);
 		bool isUpdated();
 		void setPixel(uint8_t Screen, uint8_t X, uint8_t Y, uint16_t C);
 		void ClearScreen(uint8_t Screen, uint16_t C);
-		void DrawRect(uint8_t Screen, GUI::Rect *Rect, uint16_t C);
-		void DrawFilledRect(uint8_t Screen, GUI::Rect *Rect, uint16_t C);
+		void DrawRect(uint8_t Screen, GUI::Rect Rect, uint16_t C);
+		void DrawFilledRect(uint8_t Screen, GUI::Rect Rect, uint16_t C);
 		void DrawLine(uint8_t Screen, std::string String, uint8_t X, uint8_t Y, uint16_t C);
 		void DrawLetter(uint8_t Screen, char Letter, uint8_t X, uint8_t Y, uint16_t C);
 		void DrawString(uint8_t Screen, std::string String, uint8_t X, uint8_t Y, uint16_t C);

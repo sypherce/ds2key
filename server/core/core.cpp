@@ -23,9 +23,13 @@
 #include "core.h"
 
 #define pressAndRelease(a,b) \
-		if(Client->Down()&a) \
+		if(Client->Down(a)) \
 			input->Press(Settings[b], Settings[pJoy]); \
-		else if(Client->Up()&a) \
+		else if(Client->Up(a)) \
+			input->Release(Settings[b], Settings[pJoy]); \
+		else if(turbo && Client->Turbo(a)) \
+			input->Press(Settings[b], Settings[pJoy]); \
+		else if(Client->Turbo(a)) \
 			input->Release(Settings[b], Settings[pJoy]);
 
 #define touchBetween(x1, y1, x2, y2) ((x >= std::min((x1), (x2)) && x <= std::max((x1), (x2)) && y >= std::min((y1), (y2)) && y <= std::max((y1), (y2))) && (x1+y1+x2+y2>0))
@@ -38,6 +42,9 @@ namespace D2K {
 
 			//short pointer
 			uint16_t *Settings = Client->GetSettings();
+
+			//turbo status
+			static bool turbo = false;//true == press, false == release
 
 			//buttons
 			pressAndRelease(DS2KEY_A, pA);
@@ -54,10 +61,12 @@ namespace D2K {
 			pressAndRelease(DS2KEY_LEFT, pLeft);
 			pressAndRelease(DS2KEY_RIGHT, pRight);
 
+			turbo = !turbo;//toggle turbo status
+
 			//touch screen
 			unsigned char x = Client->GetX();
 			unsigned char y = Client->GetY();
-			bool z = Client->Held()&DS2KEY_TOUCH;
+			bool z = Client->Held(DS2KEY_TOUCH);
 			int moveType = Settings[pMouse];//absolute == true
 
 			if(z) {//if touchedll
