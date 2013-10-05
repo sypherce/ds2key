@@ -34,7 +34,9 @@ namespace D2K
 			uint8_t type;
 			uint8_t profile;
 			uint16_t keys;
+			uint16_t keysTurbo;
 			uint8_t ghKeys;
+			uint16_t ghKeysTurbo;
 			uint8_t touchX;
 			uint8_t touchY;
 		} ds2keyPacket;
@@ -50,9 +52,10 @@ namespace D2K
 				uint16_t GetButton(int Button);
 				void SetButton(int Button, uint16_t Value);
 				void SetPacket(ds2keyPacket p);
-				uint16_t Held(void);
-				uint16_t Down(void);
-				uint16_t Up(void);
+				uint16_t Held(uint16_t key);
+				uint16_t Down(uint16_t key);
+				uint16_t Up(uint16_t key);
+				uint16_t Turbo(uint16_t key);
 				uint8_t GetX();
 				uint8_t GetY();
 
@@ -64,9 +67,10 @@ namespace D2K
 
 				void GHPress(uint8_t key);
 				void GHRelease(uint8_t key);
-				uint8_t GHHeld(void);
-				uint8_t GHDown(void);
-				uint8_t GHUp(void);
+				uint8_t GHHeld(uint8_t key);
+				uint8_t GHDown(uint8_t key);
+				uint8_t GHUp(uint8_t key);
+				uint8_t GHTurbo(uint8_t key);
 
 		private:
 				ds2keyPacket packet;

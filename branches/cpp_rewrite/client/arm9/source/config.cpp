@@ -7,12 +7,12 @@
 #include "ds2key.h"
 #include "iniparser/src/iniparser.h"
 
-const char *DEFAULT_IP = "0.0.0.0";
-const char *DEFAULT_PORT = "9501";
-const char *DEFAULT_PROFILE = "0";
-const char *DS2KEY_INI = "ds2key.ini";
-
 namespace D2K {
+	const char *DEFAULT_IP = "0.0.0.0";
+	const char *DEFAULT_PORT = "9501";
+	const char *DEFAULT_PROFILE = "0";
+	const char *DS2KEY_INI = "ds2key.ini";
+
 	bool Config::Load() {
 		dictionary *ini = iniparser_load((char*)DS2KEY_INI);
 
@@ -34,7 +34,6 @@ namespace D2K {
 
 		return 0;
 	}
-
 	bool Config::Save() {
 		FILE *file = fopen(DS2KEY_INI, "w");
 

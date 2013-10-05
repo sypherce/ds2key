@@ -1,16 +1,16 @@
 #ifndef __D2K_H__
 #define __D2K_H__
 
-#include <nds.h>//types
+#include <nds.h>
 #include <string>//std::string
 
 namespace D2K {
 	namespace DS2Key {
 		unsigned long GetIP();
 		std::string GetIPString();
-		uint16 GetPort();
+		uint16_t GetPort();
 		std::string GetPortString();
-		uint8 GetProfile();
+		uint8_t GetProfile();
 		std::string GetProfileString();
 
 		void SetIP(const std::string& _ip);
@@ -23,7 +23,8 @@ namespace D2K {
 
 		void Init();
 		void DeInit();
-		void Update(uint32 keys, uint32 gripKeys, touchPosition *pos);
+		//void Update(uint32_t keys, uint32_t gripKeys, touchPosition *pos);
+		void Update(uint32_t keys, uint32_t keysTurbo, uint32_t gripKeys, uint32_t gripKeysTurbo, touchPosition *pos);
 		void ServerLookup();
 	};
 }

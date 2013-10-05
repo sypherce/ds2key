@@ -471,7 +471,7 @@ namespace D2K {
 				Label *label3;
 
 				void Setup() {
-					window.Append(label1 = new Label("DS2Key 1.1 (Beta)", 100, 10, 250, 16));
+					window.Append(label1 = new Label(VERSION_STRING, 100, 10, 250, 16));
 
 					window.Append(label2 = new Label("Copyright (c) 2006-2013 Derrick (sypherce) Wirth", 100, 30, 250, 16));
 
@@ -506,7 +506,7 @@ namespace D2K {
 
 			int Setup(HINSTANCE hThisInstance, int nCmdShow)
 			{
-				if(!window.Setup(hThisInstance, "DS2Key", "DS2Key v1.1 Beta", GUI::MainWindow::width, GUI::MainWindow::height))
+				if(!window.Setup(hThisInstance, "DS2Key", VERSION_STRING, GUI::MainWindow::width, GUI::MainWindow::height))
 					return 1;
 
 				window.Append(

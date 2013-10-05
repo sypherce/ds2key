@@ -3,18 +3,19 @@
 
 #include "object.h"
 
-const static unsigned ListMax = 50;
 namespace D2K {
 	namespace GUI {
 		class Window {
 			private:
+				const static unsigned ListMax = 50;
 			public:
 				Window();
 				~Window();
 				bool Screen;
-				D2K::GUI::Object *List[ListMax];
+				GUI::Object *List[ListMax];
 				void Draw();
 				void setVisible(bool Visible);
+				bool isVisible();
 				bool Update();
 		};
 	}

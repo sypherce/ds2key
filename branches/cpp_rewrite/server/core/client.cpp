@@ -71,19 +71,24 @@ namespace D2K
 			packet.keys &= ~key;
 		}
 
-		uint16_t Client::Held(void)
+		uint16_t Client::Held(uint16_t key)
 		{
-			return keys;
+			return keys&key;
 		}
 
-		uint16_t Client::Down(void)
+		uint16_t Client::Down(uint16_t key)
 		{
-			return (keys &~ keysOld);
+			return (keys &~ keysOld)&key;
 		}
 
-		uint16_t Client::Up(void)
+		uint16_t Client::Up(uint16_t key)
 		{
-			return (keys ^ keysOld) & (~keys);
+			return ((keys ^ keysOld) & (~keys))&key;
+		}
+
+		uint16_t Client::Turbo(uint16_t key)
+		{
+			return packet.keysTurbo&key;
 		}
 
 		void Client::GHPress(uint8_t key)
@@ -96,19 +101,24 @@ namespace D2K
 			packet.ghKeys &= ~key;
 		}
 
-		uint8_t Client::GHHeld(void)
+		uint8_t Client::GHHeld(uint8_t key)
 		{
-			return ghKeys;
+			return ghKeys&key;
 		}
 
-		uint8_t Client::GHDown(void)
+		uint8_t Client::GHDown(uint8_t key)
 		{
-			return (ghKeys &~ ghKeysOld);
+			return (ghKeys &~ ghKeysOld)&key;
 		}
 
-		uint8_t Client::GHUp(void)
+		uint8_t Client::GHUp(uint8_t key)
 		{
-			return (ghKeys ^ ghKeysOld) & (~ghKeys);
+			return ((ghKeys ^ ghKeysOld) & (~ghKeys))&key;
+		}
+
+		uint8_t Client::GHTurbo(uint8_t key)
+		{
+			return packet.ghKeysTurbo&key;
 		}
 
 		uint8_t Client::GetX()

@@ -1,34 +1,27 @@
 #include <nds.h>
 #include <dswifi7.h>
-//#include <maxmod7.h>
 
 volatile bool exitflag = false;
 
-void VblankHandler(void)
-{
+void VblankHandler(void) {
 	Wifi_Update();
 }
 
-void VcountHandler()
-{
+void VcountHandler() {
 	inputGetAndSend();
 }
 
-void powerButtonCB()
-{
+void powerButtonCB() {
 	exitflag = true;
 }
 
-int main()
-{
+int main() {
 	readUserSettings();
 
 	irqInit();
 	// Start the RTC tracking IRQ
 	initClockIRQ();
 	fifoInit();
-
-	//mmInstall(FIFO_MAXMOD);
 
 	SetYtrigger(80);
 
@@ -45,8 +38,7 @@ int main()
 	setPowerButtonCB(powerButtonCB);
 
 	// Keep the ARM7 mostly idle
-	while(!exitflag)
-	{
+	while(!exitflag) {
 		swiWaitForVBlank();
 	}
 	return 0;

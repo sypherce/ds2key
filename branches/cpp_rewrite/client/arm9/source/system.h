@@ -1,7 +1,7 @@
 #ifndef __SYSTEM_H__
 #define __SYSTEM_H__
 
-#include <nds/ndstypes.h>
+#include <stdint.h>
 
 namespace D2K {
 	namespace System {
@@ -11,15 +11,15 @@ namespace D2K {
 
 		extern touchPosition stylusPos;
 		extern bool inputChange;
-		extern uint32 vblCount;
-		extern uint32 vblLid;
+		extern uint32_t vblCount;
+		extern uint32_t vblLid;
 
 		extern char* getTime();
 		extern void updateInputs();
 		extern void updateLid();
 		extern void vblfunction();
 		extern void resetStylus();
-		extern bool isScreenOn();
+		//extern bool isScreenOn();
 		extern void Setup();
 		extern void Update(bool change);
 	}

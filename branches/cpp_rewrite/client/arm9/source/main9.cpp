@@ -4,27 +4,36 @@
 #include "ds2key.h"
 #include "mainWindow.h"
 #include "keypadWindow.h"
+#include "turboWindow.h"
 #include "system.h"
+#include "apsearch.h"
 
 using namespace D2K;
+using namespace D2K::GUI;
 
 int main() {
 	System::Setup();
-	DS2Key::Init();
-	GUI::mainWindow = new GUI::MainWindow();
-	GUI::keypadWindow = new GUI::KeypadWindow();
-	//GUI::MainWindow::Setup();
-	GUI::mainWindow->setVisible(true);
-	//GUI::MainWindow::setVisible(true);
 
+	if(false) {//AP test
+		AP::Init();
+		for(int i = 0; i < AP::count; i++)
+			AP::Print(i);
+	}
+
+	DS2Key::Init();
+	Main::Window = new Main::WindowClass();
+	Keypad::Window = new Keypad::WindowClass();
+	Turbo::Window = new Turbo::WindowClass();
+
+	Main::Window->setVisible(true);
 	while(true) {
 		System::Update(true);
 
-		DS2Key::Update(keysHeld(), guitarGripKeysHeld() * guitarGripIsInserted(), (touchPosition*)NULL);
+		DS2Key::Update(keysHeld(), Turbo::GetKeys(), guitarGripKeysHeld() * guitarGripIsInserted(), 0 * guitarGripIsInserted(), (touchPosition*)NULL);
 
-		GUI::mainWindow->Update();
-		//GUI::MainWindow::Update();
+		Main::Window->Update();
 	}
+
 	DS2Key::DeInit();
 
 	return 0;
