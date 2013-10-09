@@ -122,117 +122,68 @@ namespace D2K {
 			}
 		}
 
-		Config *config = (Config*)NULL;
-		UDP *udp = (UDP*)NULL;
-		Input *input = (Input*)NULL;
-		Client *ClientArray[256] = {(Client*)NULL};
-		bool running = false;
-		#ifdef WIN32GUI
-		bool console = false;
-		#else//LINUX || !WIN32GUI
-		bool console = true;
-		#endif//WIN32GUI
-		uint16_t port = 0;
-		bool block = false;
+		bool Running = false;
 		int debug = Core::lNone;
-		int Setup(int argc, char *argv[])
-		{
+
+		int Setup(int argc, char *argv[]) {
+			bool block = false;
 			config = new Config();
+				debug = config->GetDebugLevel();
 			udp = new UDP();
 			input = new Input();
-			running = true;
-			debug = config->GetDebugLevel();
-			//Client *ClientArray[256] = {(Client*)NULL};
+			Running = true;
 
-			uint16_t port = config->GetPort();
-			{//command arguments
-				for(int arg = 1; arg < argc; arg++)
-				{
-					if(strcmp(argv[arg], "--block") == 0)
-					{
-						block = true;
-					}
-					if(strcmp(argv[arg], "--console") == 0)
-					{
-						console = true;
-						#ifdef WINXP
-						BOOL f = AllocConsole();
-						freopen("CONIN$", "r", stdin);
-						freopen("CONOUT$", "w", stdout);
-						freopen("CONOUT$", "w", stderr);
-						#endif
-					}
-					if(strncmp(argv[arg], "--port=", 7) == 0)
-					{
-						port = atoi(&argv[arg][7]);
-						if(port == 0)
-							port = DEFAULT_SERVER_PORT;
-						printf("\nPort: %d\n", port);
-					}
+			for(int arg = 1; arg < argc; arg++) {//command arguments
+				if(strcmp(argv[arg], "--block") == 0) {
+					block = true;
 				}
-				udp->Connect(block, port);
+				else if(strcmp(argv[arg], "--console") == 0) {
+					#ifdef WINXP
+					BOOL f = AllocConsole();
+					freopen("CONIN$", "r", stdin);
+					freopen("CONOUT$", "w", stdout);
+					freopen("CONOUT$", "w", stderr);
+					#endif
+				}
+				else if(strncmp(argv[arg], "--port=", 7) == 0) {
+					config->SetPort(atoi(&argv[arg][7]));
+					printf("\nPort: %d\n", config->GetPort());
+				}
 			}
+			udp->Connect(block, config->GetPort());
+
 			return 0;
 		}
 
-		void loop()//while(running)
-		{
-			if(running)
-			{
+		void Loop() {
+			if(Running) {
 				ds2keyPacket Packet;
-				if(port != config->GetPort())
-				{
-					port = config->GetPort();
-					udp->Connect(block, port);
-				}
 				if(udp->IsConnected())
-					if(udp->RecvFrom(&Packet, sizeof(ds2keyPacket)) != -1)//if we receive something without error
-					{
-						if(Packet.type == '/' + 1)//new protocal
-						{
-							int Profile = Packet.profile;
-							if(ClientArray[Profile] == (Core::Client*)NULL)		//if profile not active, load it, then send data
-							{
-								uint8_t d2kSettingsPacket[12*5+1];//12 buttons, button active & xyhw
-								ClientArray[Profile] = new Core::Client();
-								config->ReadProfile((uint16_t*)ClientArray[Profile]->GetSettings(), Profile);
-								d2kSettingsPacket[0] = '/' + 2;//settings packet
-								for(int i = 0; i < 12*5; i++)//-1?
-								{
-									d2kSettingsPacket[i + 1] = ClientArray[Profile]->GetSettings()[i + pTouch];
-								}
-								udp->Send(&d2kSettingsPacket, sizeof(uint8_t) * 12 * 5 + 1);
-							//printf("new profile\n");
-
-							}
-							ClientArray[Profile]->SetPacket(Packet);		//set packet
-							ClientArray[Profile]->Scan();						//update
-							_processPackets(ClientArray[Profile], input);		//process
+					if(udp->RecvFrom(&Packet, sizeof(ds2keyPacket)) != -1) {//if we receive something without error
+						if(Packet.type == '/' + 1) {//new protocal
+							config->ReadProfileArray(Packet.profile);
+							ClientArray[Packet.profile]->SetPacket(Packet);				//insert packet data
+							ClientArray[Packet.profile]->Scan();						//update
+							_processPackets(ClientArray[Packet.profile], input);		//process
 						}
-						else if(Packet.type == 255)//looking for servers
-						{
-							//printf("bounce back\n");
+						else if(Packet.type == 255) {//looking for servers
 							udp->Send(&Packet, sizeof(ds2keyPacket));//bounce back
 						}
 					}
 
 				Sleep(1);//99% cpu without when using -O2
-		#ifdef WIN32
-		#ifdef WIN32GUI
-				if(!console)
-					D2K::GUI::GetMessages();//Application::processEvents();
-		#endif//GUI
-		#endif//WIN32
+				#ifdef WIN32GUI
+				D2K::GUI::GetMessages();//Application::processEvents();
+				#endif//WIN32GUI
 			}
 		}
 		void Destroy()
 		{
-
 			for(int i = 0; i < 255; i++)
-				if(ClientArray[i] != 0)
+				if(ClientArray[i] != NULL)
 				{
 					delete(ClientArray[i]);
-					ClientArray[i] = 0;
+					ClientArray[i] = NULL;
 				}
 			delete(udp);
 

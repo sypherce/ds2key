@@ -9,18 +9,10 @@
 
 namespace D2K {
 	namespace Core {
-		extern void _processPackets(Core::Client *Client, Input *input);
-		extern Config *config;
-		extern UDP *udp;
-		extern Input *input;
-		extern Client *ClientArray[256];
-		extern bool running;
-		extern bool console;
-		extern uint16_t port;
-		extern bool block;
+		extern bool Running;
 		extern int debug;
 		extern int Setup(int argc, char *argv[]);
-		extern void loop();
+		extern void Loop();
 		extern void Print(int Level, std::string Message);
 	}
 }

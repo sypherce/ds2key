@@ -5,12 +5,14 @@
 #include <sstream>//ostringstream
 #include "key.h"
 #include "config.h"
+#include "client.h"
 #include "core/iniParser.h"
 
 namespace D2K
 {
 	namespace Core
 	{
+		Config *config = (Config*)NULL;
 		Config::Config()
 		{
 			Load();
@@ -31,6 +33,7 @@ namespace D2K
 				fprintf(file, "Port=%i\n", Port);
 				fprintf(file, "Debug=%i\n", Debug);
 				fclose(file);
+				Load();
 
 				return 0;
 			}
@@ -144,6 +147,10 @@ namespace D2K
 
 			return 1;
 		}
+		bool Config::SaveProfile(uint8_t profileNumber)
+		{
+			return SaveProfile(Core::ClientArray[profileNumber]->GetSettings(), profileNumber);
+		}
 
 		bool Config::Load()
 		{
@@ -194,6 +201,7 @@ namespace D2K
 				Profile[pR] = KEY_R;
 				Profile[pStart] = KEY_RETURN;
 				Profile[pSelect] = KEY_RSHIFT;
+				Profile[pLid] = KEY_ESCAPE;
 				Profile[pBlue] = KEY_1;
 				Profile[pYellow] = KEY_2;
 				Profile[pRed] = KEY_3;
@@ -365,6 +373,20 @@ namespace D2K
 			Profile[pTouch11H] = atoi(iniParser::getstring(ini, "profile:touch11H", "0").c_str());
 			iniParser::freedict(ini);
 
+			return 0;
+		}
+
+		bool Config::ReadProfile(uint8_t profileNumber)
+		{
+			return ReadProfile(Core::ClientArray[profileNumber]->GetSettings(), profileNumber);
+		}
+
+		bool Config::ReadProfileArray(uint8_t profileNumber)
+		{
+			if(ClientArray[profileNumber] == (Core::Client*)NULL) {	//if profile not active,
+				ClientArray[profileNumber] = new Core::Client();	//create it
+				return config->ReadProfile(profileNumber);			//then load it
+			}
 			return 0;
 		}
 

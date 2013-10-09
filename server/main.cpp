@@ -29,9 +29,9 @@ int WINAPI WinMain(HINSTANCE hThisInstance,
 int main(int argc, char *argv[]) {
 		D2K::Core::Setup(argc, argv);
 #endif//WIN32GUI
-		while(D2K::Core::running)
+		while(D2K::Core::Running)
 		{
-			D2K::Core::loop();
+			D2K::Core::Loop();
 		}
 #ifdef WIN32GUI
 		D2K::GUI::MainWindow::TrayIcon->Delete();

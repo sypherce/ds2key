@@ -47,6 +47,7 @@ namespace D2K {
 				void Mouse(unsigned short type, signed long int X, signed long int Y);
 		};
 
+		extern Input *input;
 	}
 }
 #endif//__UDP_H__

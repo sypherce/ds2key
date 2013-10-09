@@ -10,9 +10,11 @@ namespace D2K
 {
 	namespace Core
 	{
+		Client *ClientArray[256] = {(Client*)NULL};
+
 		Client::Client()
 		{
-			packet = {0, 0, 0, 0, 0, 0};
+			packet = ds2keyPacket {0};
 			keys =
 			keysOld =
 			ghKeys =

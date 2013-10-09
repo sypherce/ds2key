@@ -15,6 +15,8 @@
 namespace D2K
 {
 	namespace Core {
+		UDP *udp = (UDP*)NULL;
+
 		int UDP::Send(void *buf, unsigned int len)
 		{
 			if((buf != NULL) && (len > 0))

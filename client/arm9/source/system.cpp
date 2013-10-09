@@ -12,11 +12,8 @@
 
 namespace D2K {
 	namespace System {
-		const uint32_t vblCountMax = (60 * 4);
 		touchPosition stylusPos;
 		bool inputChange = false;
-		uint32_t vblCount = 0;
-		uint32_t vblLid = 0;
 
 		char* getTime() {
 			static char timeChar[13];
@@ -51,6 +48,9 @@ namespace D2K {
 			}
 		}
 		void updateLid() {
+			static uint32_t vblCount = 0;
+			static const uint32_t vblCountMax = (60 * 4);
+
 			if((keysUp()&KEY_LID) ||							//if lid just opened OR
 				(keysHeld()&KEY_TOUCH))	{						//screen is being touched
 				vblCount = 0;									//reset timer
