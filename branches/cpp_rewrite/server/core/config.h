@@ -28,8 +28,11 @@ namespace D2K
 				~Config();
 				bool Load();
 				bool ReadProfile(uint16_t *Profile, uint8_t profileNumber);
+				bool ReadProfile(uint8_t profileNumber);
+				bool ReadProfileArray(uint8_t profileNumber);
 				bool Save();
 				bool SaveProfile(uint16_t *Profile, uint8_t profileNumber);
+				bool SaveProfile(uint8_t profileNumber);
 				uint16_t GetPort();
 				void SetPort(uint16_t port);
 				uint8_t GetDebugLevel();
@@ -38,6 +41,7 @@ namespace D2K
 				uint16_t Port;
 				uint8_t Debug;
 		};
+		extern Config *config;
 	}
 }
 

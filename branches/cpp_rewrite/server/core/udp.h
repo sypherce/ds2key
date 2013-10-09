@@ -37,6 +37,7 @@ namespace D2K {
 				struct sockaddr_in ClientAddr;
 				std::string ClientIP;
 		};
+		extern UDP *udp;
 	}
 }
 #endif//__UDP_H__

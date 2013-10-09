@@ -11,14 +11,8 @@ namespace D2K {
 
 		extern touchPosition stylusPos;
 		extern bool inputChange;
-		extern uint32_t vblCount;
-		extern uint32_t vblLid;
 
 		extern char* getTime();
-		extern void updateInputs();
-		extern void updateLid();
-		extern void vblfunction();
-		extern void resetStylus();
 		//extern bool isScreenOn();
 		extern void Setup();
 		extern void Update(bool change);

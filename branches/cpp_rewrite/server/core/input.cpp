@@ -13,6 +13,7 @@ namespace D2K
 {
 	namespace Core
 	{
+		Input *input = (Input*)NULL;
 		Input::Input()
 		{
 		#ifdef WIN32

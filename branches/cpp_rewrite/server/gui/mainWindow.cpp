@@ -74,7 +74,7 @@ namespace D2K {
 					printf("fileExitFunction()\n");
 					//delete GUI::MainWindow::TrayIcon;
 					//ExitProcess(0);
-					Core::running = false;
+					Core::Running = false;
 				}
 
 				void Setup() {
@@ -147,7 +147,7 @@ namespace D2K {
 					{
 						Core::ClientArray[Profile] = new Core::Client();
 					}
-					Core::config->ReadProfile((uint16_t*)Core::ClientArray[Profile]->GetSettings(), Profile);
+					Core::config->ReadProfile(Profile);
 					int row = 0;
 					listView1->SetText(Core::ClientArray[Profile]->GetButtonString(Core::pUp), row++, 1);
 					listView1->SetText(Core::ClientArray[Profile]->GetButtonString(Core::pDown), row++, 1);
@@ -252,8 +252,7 @@ namespace D2K {
 
 				void button1Function(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
 					Core::config->SaveProfile(
-						Core::ClientArray[
-							GUI::MainWindow::Profile::comboButton1->getSelection()]->GetSettings(), GUI::MainWindow::Profile::comboButton1->getSelection());
+							GUI::MainWindow::Profile::comboButton1->getSelection());
 					comboButton1Function(hwnd, message, wParam, lParam);
 				}
 
@@ -393,7 +392,7 @@ namespace D2K {
 						edit->setText(Port);
 					Core::config->SetPort(atoi(Port.c_str()));
 					Core::config->Save();
-					Core::config->Load();
+					Core::udp->Connect(Core::config->GetPort());
 
 					string status = "Connected on Port #" + itos(Core::config->GetPort());
 					GUI::MainWindow::StatusBar->setText(Core::udp->IsConnected() ? status : "Disconnected");

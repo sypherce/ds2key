@@ -2,7 +2,6 @@
 #define HEADER_Client
 
 #include <string>		//std::string
-//#include <stdint.h>	//included in config.h
 #include "config.h"
 
 namespace D2K
@@ -59,8 +58,8 @@ namespace D2K
 				uint8_t GetX();
 				uint8_t GetY();
 
-				uint8_t GetProfileNumber();
 		private:
+				uint8_t GetProfileNumber();
 				void SetTouchPos(uint8_t x, uint8_t y);
 				void Press(uint16_t key);
 				void Release(uint16_t key);
@@ -81,6 +80,7 @@ namespace D2K
 				uint8_t ghKeys;
 				uint8_t ghKeysOld;
 		};
+		extern Client *ClientArray[256];
 	}
 }
 
