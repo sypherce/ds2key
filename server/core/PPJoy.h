@@ -18,26 +18,28 @@ namespace D2K {
 		} JOYSTICK_STATE;
 		#pragma pack(pop)
 
-		class PPJoy {
-			public:
-				PPJoy(int device);
-				~PPJoy();
-				int Update();
-				void ResetAxes();
-				void ResetButtons();
-				void SetButton(char button, char value);
-				void SetAxisPercent(char axis, char value);
-				int GetButton(char button);
-				int GetAxisPercent(char axis);
+		namespace C {
+			class PPJoy {
+				public:
+					PPJoy(int device);
+					~PPJoy();
+					int Update();
+					void ResetAxes();
+					void ResetButtons();
+					void SetButton(char button, char value);
+					void SetAxisPercent(char axis, char value);
+					int GetButton(char button);
+					int GetAxisPercent(char axis);
 
-			private:
-				HANDLE h;
-				char ch;
-				JOYSTICK_STATE JoyState;
+				private:
+					HANDLE h;
+					char ch;
+					JOYSTICK_STATE JoyState;
 
-				DWORD RetSize;
-				DWORD rc;
-		};
+					DWORD RetSize;
+					DWORD rc;
+			};
+		}
 	}
 }
 #endif//__PPJOY_H__

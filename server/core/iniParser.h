@@ -2,8 +2,7 @@
 #define __INIPARSER_H__
 
 #include <string>
-extern "C"
-{
+extern "C" {
 	#include "iniparser/src/iniparser.h"
 }
 using std::string;

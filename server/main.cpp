@@ -10,7 +10,7 @@ main file
 
 void D2K::Core::Print(int Level, string Message)
 {
-	if(D2K::Core::debug <= Level && Level > D2K::Core::lNone)
+	if(D2K::Core::Debug <= Level && Level > D2K::Core::dNone)
 		if(D2K::GUI::MainWindow::Log::listView)
 			D2K::GUI::MainWindow::Log::listView->Append(Message);
 }

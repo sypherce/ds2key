@@ -39,32 +39,32 @@ namespace D2K {
 
 				void fileConnectFunction(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
 					printf("fileConnectFunction()\n");
-					if(!Core::udp->IsConnected())
+					if(!Core::UDP->IsConnected())
 					{
-						Core::udp->Connect();
+						Core::UDP->Connect();
 					}
 					CheckMenuRadioItem(	(HMENU)GUI::MainWindow::MainMenu::file->getParentHWND(),
 										GUI::MainWindow::MainMenu::fileConnect->getID(),
 										GUI::MainWindow::MainMenu::fileDisconnect->getID(),
-										Core::udp->IsConnected() ? GUI::MainWindow::MainMenu::fileConnect->getID() : GUI::MainWindow::MainMenu::fileDisconnect->getID(),
+										Core::UDP->IsConnected() ? GUI::MainWindow::MainMenu::fileConnect->getID() : GUI::MainWindow::MainMenu::fileDisconnect->getID(),
 										MF_BYCOMMAND);
 					//check if connected properly
-					string status = "Connected on Port #" + itos(Core::config->GetPort());
-					GUI::MainWindow::StatusBar->setText(Core::udp->IsConnected() ? status : "Disconnected");
+					string status = "Connected on Port #" + itos(Core::Config->GetPort());
+					GUI::MainWindow::StatusBar->setText(Core::UDP->IsConnected() ? status : "Disconnected");
 				}
 				void fileDisconnectFunction(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
 					printf("fileConnectFunction()\n");
-					if(Core::udp->IsConnected())
+					if(Core::UDP->IsConnected())
 					{
-						Core::udp->Disconnect();
+						Core::UDP->Disconnect();
 					}
 					CheckMenuRadioItem(	(HMENU)GUI::MainWindow::MainMenu::file->getParentHWND(),
 										GUI::MainWindow::MainMenu::fileConnect->getID(),
 										GUI::MainWindow::MainMenu::fileDisconnect->getID(),
-										Core::udp->IsConnected() ? GUI::MainWindow::MainMenu::fileConnect->getID() : GUI::MainWindow::MainMenu::fileDisconnect->getID(),
+										Core::UDP->IsConnected() ? GUI::MainWindow::MainMenu::fileConnect->getID() : GUI::MainWindow::MainMenu::fileDisconnect->getID(),
 										MF_BYCOMMAND);
-					string status = "Connected on Port #" + itos(Core::config->GetPort());
-					GUI::MainWindow::StatusBar->setText(Core::udp->IsConnected() ? status : "Disconnected");
+					string status = "Connected on Port #" + itos(Core::Config->GetPort());
+					GUI::MainWindow::StatusBar->setText(Core::UDP->IsConnected() ? status : "Disconnected");
 				}
 				void fileMinimizeFunction(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
 					printf("fileMinimizeFunction()\n");
@@ -94,7 +94,7 @@ namespace D2K {
 						CheckMenuRadioItem(	(HMENU)GUI::MainWindow::MainMenu::file->getParentHWND(),
 											GUI::MainWindow::MainMenu::fileConnect->getID(),
 											GUI::MainWindow::MainMenu::fileDisconnect->getID(),
-											Core::udp->IsConnected() ? GUI::MainWindow::MainMenu::fileConnect->getID() : GUI::MainWindow::MainMenu::fileDisconnect->getID(),
+											Core::UDP->IsConnected() ? GUI::MainWindow::MainMenu::fileConnect->getID() : GUI::MainWindow::MainMenu::fileDisconnect->getID(),
 											MF_BYCOMMAND);
 						menu->Update();
 				}
@@ -123,18 +123,18 @@ namespace D2K {
 				void radioButton1Function(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
 					printf("profileRadioButton1Function()\n");
 					checkButton1->setEnabled(true);
-					Core::ClientArray[GUI::MainWindow::Profile::comboButton1->getSelection()]->SetButton(Core::pMouse, Core::mRelative);
+					Core::Client[GUI::MainWindow::Profile::comboButton1->getSelection()]->SetButton(Core::kMouse, Core::mRelative);
 				}
 
 				void radioButton2Function(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
 					printf("profileRadioButton2Function()\n");
 					checkButton1->setEnabled(true);
-					Core::ClientArray[GUI::MainWindow::Profile::comboButton1->getSelection()]->SetButton(Core::pMouse, Core::mAbsolute);
+					Core::Client[GUI::MainWindow::Profile::comboButton1->getSelection()]->SetButton(Core::kMouse, Core::mAbsolute);
 				}
 
 				void radioButton3Function(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
 					printf("profileRadioButton3Function()\n");
-					Core::ClientArray[GUI::MainWindow::Profile::comboButton1->getSelection()]->SetButton(Core::pMouse, Core::mButtons);
+					Core::Client[GUI::MainWindow::Profile::comboButton1->getSelection()]->SetButton(Core::kMouse, Core::mButtons);
 					checkButton1->setEnabled(false);
 				}
 
@@ -143,38 +143,36 @@ namespace D2K {
 				}
 				void comboButton1Function(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
 					int Profile = comboButton1->getSelection();
-					if(Core::ClientArray[Profile] == (Core::Client*)NULL)		//if profile not active, load it, then send data
-					{
-						Core::ClientArray[Profile] = new Core::Client();
-					}
-					Core::config->ReadProfile(Profile);
+					if(Core::Client[Profile] == (Core::C::Client*)NULL)							//if profile not active,
+						Core::Client[Profile] = new Core::C::Client();							//create it
+					Core::Config->ReadProfile(Core::Client[Profile]->GetSettings(), Profile);		//then load it
 					int row = 0;
-					listView1->SetText(Core::ClientArray[Profile]->GetButtonString(Core::pUp), row++, 1);
-					listView1->SetText(Core::ClientArray[Profile]->GetButtonString(Core::pDown), row++, 1);
-					listView1->SetText(Core::ClientArray[Profile]->GetButtonString(Core::pLeft), row++, 1);
-					listView1->SetText(Core::ClientArray[Profile]->GetButtonString(Core::pRight), row++, 1);
-					listView1->SetText(Core::ClientArray[Profile]->GetButtonString(Core::pA), row++, 1);
-					listView1->SetText(Core::ClientArray[Profile]->GetButtonString(Core::pB), row++, 1);
-					listView1->SetText(Core::ClientArray[Profile]->GetButtonString(Core::pX), row++, 1);
-					listView1->SetText(Core::ClientArray[Profile]->GetButtonString(Core::pY), row++, 1);
-					listView1->SetText(Core::ClientArray[Profile]->GetButtonString(Core::pL), row++, 1);
-					listView1->SetText(Core::ClientArray[Profile]->GetButtonString(Core::pR), row++, 1);
-					listView1->SetText(Core::ClientArray[Profile]->GetButtonString(Core::pStart), row++, 1);
-					listView1->SetText(Core::ClientArray[Profile]->GetButtonString(Core::pSelect), row++, 1);
-					listView1->SetText(Core::ClientArray[Profile]->GetButtonString(Core::pLid), row++, 1);
-					listView1->SetText(Core::ClientArray[Profile]->GetButtonString(Core::pBlue), row++, 1);
-					listView1->SetText(Core::ClientArray[Profile]->GetButtonString(Core::pYellow), row++, 1);
-					listView1->SetText(Core::ClientArray[Profile]->GetButtonString(Core::pRed), row++, 1);
-					listView1->SetText(Core::ClientArray[Profile]->GetButtonString(Core::pGreen), row++, 1);
+					listView1->SetText(Core::Client[Profile]->GetButtonString(Core::kUp), row++, 1);
+					listView1->SetText(Core::Client[Profile]->GetButtonString(Core::kDown), row++, 1);
+					listView1->SetText(Core::Client[Profile]->GetButtonString(Core::kLeft), row++, 1);
+					listView1->SetText(Core::Client[Profile]->GetButtonString(Core::kRight), row++, 1);
+					listView1->SetText(Core::Client[Profile]->GetButtonString(Core::kA), row++, 1);
+					listView1->SetText(Core::Client[Profile]->GetButtonString(Core::kB), row++, 1);
+					listView1->SetText(Core::Client[Profile]->GetButtonString(Core::kX), row++, 1);
+					listView1->SetText(Core::Client[Profile]->GetButtonString(Core::kY), row++, 1);
+					listView1->SetText(Core::Client[Profile]->GetButtonString(Core::kL), row++, 1);
+					listView1->SetText(Core::Client[Profile]->GetButtonString(Core::kR), row++, 1);
+					listView1->SetText(Core::Client[Profile]->GetButtonString(Core::kStart), row++, 1);
+					listView1->SetText(Core::Client[Profile]->GetButtonString(Core::kSelect), row++, 1);
+					listView1->SetText(Core::Client[Profile]->GetButtonString(Core::kLid), row++, 1);
+					listView1->SetText(Core::Client[Profile]->GetButtonString(Core::kBlue), row++, 1);
+					listView1->SetText(Core::Client[Profile]->GetButtonString(Core::kYellow), row++, 1);
+					listView1->SetText(Core::Client[Profile]->GetButtonString(Core::kRed), row++, 1);
+					listView1->SetText(Core::Client[Profile]->GetButtonString(Core::kGreen), row++, 1);
 
 						radioButton1->setChecked(false);
 						radioButton2->setChecked(false);
 						radioButton3->setChecked(false);
 						checkButton1->setEnabled(true);
 
-					if(Core::ClientArray[Profile]->GetButton(Core::pMouse) == Core::mAbsolute)
+					if(Core::Client[Profile]->GetButton(Core::kMouse) == Core::mAbsolute)
 						radioButton2->setChecked(true);
-					else if(Core::ClientArray[Profile]->GetButton(Core::pMouse) == Core::mButtons) {
+					else if(Core::Client[Profile]->GetButton(Core::kMouse) == Core::mButtons) {
 						radioButton3->setChecked(true);
 						checkButton1->setEnabled(false);
 					}
@@ -221,7 +219,7 @@ namespace D2K {
 									if(i != VK_LBUTTON && i != VK_RBUTTON && i != VK_MBUTTON)
 									{
 										listView1->SetText(Core::Key::GetString(i), selected, 1);
-										Core::ClientArray[GUI::MainWindow::Profile::comboButton1->getSelection()]->SetButton(listView1->getSelection() + 3, i);
+										Core::Client[GUI::MainWindow::Profile::comboButton1->getSelection()]->SetButton(listView1->getSelection() + 3, i);
 
 										waiting = false;
 									}
@@ -251,7 +249,8 @@ namespace D2K {
 				}
 
 				void button1Function(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
-					Core::config->SaveProfile(
+					Core::Config->SaveProfile(
+							Core::Client[GUI::MainWindow::Profile::comboButton1->getSelection()]->GetSettings(),
 							GUI::MainWindow::Profile::comboButton1->getSelection());
 					comboButton1Function(hwnd, message, wParam, lParam);
 				}
@@ -266,19 +265,19 @@ namespace D2K {
 
 				void button4Function(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
 					listView1->SetText(Core::Key::GetString(VK_LBUTTON), listView1->getSelection(), 1);
-					Core::ClientArray[GUI::MainWindow::Profile::comboButton1->getSelection()]->SetButton(listView1->getSelection() + 3, VK_LBUTTON);
+					Core::Client[GUI::MainWindow::Profile::comboButton1->getSelection()]->SetButton(listView1->getSelection() + 3, VK_LBUTTON);
 					waiting = false;
 				}
 
 				void button5Function(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
 					listView1->SetText(Core::Key::GetString(VK_MBUTTON), listView1->getSelection(), 1);
-					Core::ClientArray[GUI::MainWindow::Profile::comboButton1->getSelection()]->SetButton(listView1->getSelection() + 3, VK_MBUTTON);
+					Core::Client[GUI::MainWindow::Profile::comboButton1->getSelection()]->SetButton(listView1->getSelection() + 3, VK_MBUTTON);
 					waiting = false;
 				}
 
 				void button6Function(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
 					listView1->SetText(Core::Key::GetString(VK_RBUTTON), listView1->getSelection(), 1);
-					Core::ClientArray[GUI::MainWindow::Profile::comboButton1->getSelection()]->SetButton(listView1->getSelection() + 3, VK_RBUTTON);
+					Core::Client[GUI::MainWindow::Profile::comboButton1->getSelection()]->SetButton(listView1->getSelection() + 3, VK_RBUTTON);
 					waiting = false;
 				}
 
@@ -286,7 +285,7 @@ namespace D2K {
 					uint32_t Value = 0x100 + atoi(edit1->getText().c_str());
 					edit1->setEnabled(true);
 					listView1->SetText(Core::Key::GetString(Value), listView1->getSelection(), 1);
-					Core::ClientArray[GUI::MainWindow::Profile::comboButton1->getSelection()]->SetButton(listView1->getSelection() + 3, Value);
+					Core::Client[GUI::MainWindow::Profile::comboButton1->getSelection()]->SetButton(listView1->getSelection() + 3, Value);
 					waiting = false;
 				}
 
@@ -390,23 +389,23 @@ namespace D2K {
 						Port = portString;
 					else
 						edit->setText(Port);
-					Core::config->SetPort(atoi(Port.c_str()));
-					Core::config->Save();
-					Core::udp->Connect(Core::config->GetPort());
+					Core::Config->SetPort(atoi(Port.c_str()));
+					Core::Config->Save();
+					Core::UDP->Connect(Core::Config->GetPort());
 
-					string status = "Connected on Port #" + itos(Core::config->GetPort());
-					GUI::MainWindow::StatusBar->setText(Core::udp->IsConnected() ? status : "Disconnected");
+					string status = "Connected on Port #" + itos(Core::Config->GetPort());
+					GUI::MainWindow::StatusBar->setText(Core::UDP->IsConnected() ? status : "Disconnected");
 					CheckMenuRadioItem(	(HMENU)GUI::MainWindow::MainMenu::file->getParentHWND(),
 										GUI::MainWindow::MainMenu::fileConnect->getID(),
 										GUI::MainWindow::MainMenu::fileDisconnect->getID(),
-										Core::udp->IsConnected() ? GUI::MainWindow::MainMenu::fileConnect->getID() : GUI::MainWindow::MainMenu::fileDisconnect->getID(),
+										Core::UDP->IsConnected() ? GUI::MainWindow::MainMenu::fileConnect->getID() : GUI::MainWindow::MainMenu::fileDisconnect->getID(),
 										MF_BYCOMMAND);
 
 					printf("%i:%s\n", portInt, Port.c_str());
 				}
 
 				void Setup() {
-					Port = itos(Core::config->GetPort());
+					Port = itos(Core::Config->GetPort());
 					window.Append(label = new Label("Port", x, 15, 20, 16));
 
 					window.Append(
@@ -450,7 +449,7 @@ namespace D2K {
 						comboButton->Append("Default");
 						comboButton->Append("Warnings");
 						comboButton->Append("All Messages");
-						comboButton->setSelection(Core::config->GetDebugLevel());
+						comboButton->setSelection(Core::Config->GetDebugLevel());
 
 					List[0] = listView;
 					List[1] = comboButton;
@@ -522,8 +521,8 @@ namespace D2K {
 				Settings::Setup();
 				Log::Setup();
 				About::Setup();
-				string status = "Connected on Port #" + itos(Core::config->GetPort());
-				window.Append(GUI::MainWindow::StatusBar = new GUI::StatusBar(Core::udp->IsConnected() ? status : "Disconnected", 0, 0, 120, 120));
+				string status = "Connected on Port #" + itos(Core::Config->GetPort());
+				window.Append(GUI::MainWindow::StatusBar = new GUI::StatusBar(Core::UDP->IsConnected() ? status : "Disconnected", 0, 0, 120, 120));
 				window.Append(GUI::MainWindow::TrayIcon = new GUI::TrayIcon("DS2Key"));
 
 				window.setVisible(nCmdShow);
