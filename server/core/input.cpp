@@ -5,6 +5,8 @@
 #ifdef WIN32
 #include <windows.h>
 #include "PPJioctl.h"
+#else
+#define NUM_DIGITAL 1
 #endif//WIN32
 
 #include "input.h"
