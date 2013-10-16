@@ -411,14 +411,10 @@
 #define KEY_OEM_CLEAR KEY_NONE //OEM_CLEAR
 #endif
 
-namespace D2K
-{
-	namespace Core
-	{
-		namespace Key
-		{
-			typedef struct keyEntry
-			{
+namespace D2K {
+	namespace Core {
+		namespace Key {
+			typedef struct keyEntry {
 				uint32_t value;
 				const char *text;
 			} keyEntry;

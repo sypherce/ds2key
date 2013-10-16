@@ -3,45 +3,45 @@
 
 #include <stdint.h>
 
-namespace D2K
-{
-	namespace Core
-	{
+namespace D2K {
+	namespace Core {
 		//Normal Defines
-		#define DEFAULT_SERVER_PORT 9501
-		#define pTouch pTouch00
-		enum mType { mRelative = 0, mAbsolute = 1, mButtons = 2 };
-		enum pKeys { pProfile, pMouse, pJoy, pUp, pDown, pLeft, pRight, pA, pB, pX, pY, pL, pR, pStart, pSelect, pLid,
-					 pBlue, pYellow, pRed, pGreen,
-					 pTouch00, pTouch01, pTouch02, pTouch03, pTouch04, pTouch05, pTouch06, pTouch07, pTouch08, pTouch09, pTouch10, pTouch11,
-					 pTouch00X, pTouch01X, pTouch02X, pTouch03X, pTouch04X, pTouch05X, pTouch06X, pTouch07X, pTouch08X, pTouch09X, pTouch10X, pTouch11X,
-					 pTouch00Y, pTouch01Y, pTouch02Y, pTouch03Y, pTouch04Y, pTouch05Y, pTouch06Y, pTouch07Y, pTouch08Y, pTouch09Y, pTouch10Y, pTouch11Y,
-					 pTouch00W, pTouch01W, pTouch02W, pTouch03W, pTouch04W, pTouch05W, pTouch06W, pTouch07W, pTouch08W, pTouch09W, pTouch10W, pTouch11W,
-					 pTouch00H, pTouch01H, pTouch02H, pTouch03H, pTouch04H, pTouch05H, pTouch06H, pTouch07H, pTouch08H, pTouch09H, pTouch10H, pTouch11H,
-					 pEND };
-		enum lLevel { lNone, lDefault, lWarnings, lAll, lEND };
+		enum Mouse{ 
+			mRelative, mAbsolute, mButtons,
+			mEND };
+		enum Keys {
+			kProfile, kMouse, kJoy, kUp, kDown, kLeft, kRight, kA, kB, kX, kY, kL, kR, kStart, kSelect, kLid,
+			kBlue, kYellow, kRed, kGreen,
+			kTouch00, kTouch01, kTouch02, kTouch03, kTouch04, kTouch05, kTouch06, kTouch07, kTouch08, kTouch09, kTouch10, kTouch11,
+			kTouch00X, kTouch01X, kTouch02X, kTouch03X, kTouch04X, kTouch05X, kTouch06X, kTouch07X, kTouch08X, kTouch09X, kTouch10X, kTouch11X,
+			kTouch00Y, kTouch01Y, kTouch02Y, kTouch03Y, kTouch04Y, kTouch05Y, kTouch06Y, kTouch07Y, kTouch08Y, kTouch09Y, kTouch10Y, kTouch11Y,
+			kTouch00W, kTouch01W, kTouch02W, kTouch03W, kTouch04W, kTouch05W, kTouch06W, kTouch07W, kTouch08W, kTouch09W, kTouch10W, kTouch11W,
+			kTouch00H, kTouch01H, kTouch02H, kTouch03H, kTouch04H, kTouch05H, kTouch06H, kTouch07H, kTouch08H, kTouch09H, kTouch10H, kTouch11H,
+			kEND };
+		enum {
+			dNone, dDefault, dWarnings, dAll,
+			dEND };
 
-		class Config
-		{
-			public:
-				Config();
-				~Config();
-				bool Load();
-				bool ReadProfile(uint16_t *Profile, uint8_t profileNumber);
-				bool ReadProfile(uint8_t profileNumber);
-				bool ReadProfileArray(uint8_t profileNumber);
-				bool Save();
-				bool SaveProfile(uint16_t *Profile, uint8_t profileNumber);
-				bool SaveProfile(uint8_t profileNumber);
-				uint16_t GetPort();
-				void SetPort(uint16_t port);
-				uint8_t GetDebugLevel();
+		namespace C {
+			class Config {
+				public:
+					Config();
+					~Config();
+					bool Load();
+					bool ReadProfile(uint16_t *Profile, uint8_t profileNumber);
+					bool Save();
+					bool SaveProfile(uint16_t *Profile, uint8_t profileNumber);
+					uint16_t GetPort();
+					void SetPort(uint16_t port);
+					uint8_t GetDebugLevel();
+					const static uint16_t DefaultPort = 9501;
 
-			private:
-				uint16_t Port;
-				uint8_t Debug;
-		};
-		extern Config *config;
+				private:
+					uint16_t Port;
+					uint8_t Debug;
+			};
+		}
+		extern C::Config *Config;
 	}
 }
 

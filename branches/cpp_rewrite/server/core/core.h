@@ -10,7 +10,8 @@
 namespace D2K {
 	namespace Core {
 		extern bool Running;
-		extern int debug;
+		extern int Debug;
+
 		extern int Setup(int argc, char *argv[]);
 		extern void Loop();
 		extern void Print(int Level, std::string Message);

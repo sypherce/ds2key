@@ -6,7 +6,7 @@
 #else//LINUX
 #include <X11/extensions/XTest.h>
 #endif//WIN32
-#include <stdint.h>
+#include <stdint.h>//uint8_t, etc
 
 //Function Defines
 #define isExtended(key) \
@@ -28,26 +28,27 @@
 
 namespace D2K {
 	namespace Core {
-		class Input {
-			public:
-				Input();
-				~Input();
-				void Press(uint16_t key, unsigned char joy);
-				void Release(uint16_t key, unsigned char joy);
-				void Move(signed long int X, signed long int Y);
-				void MoveAbsolute(signed long int X, signed long int Y);
+		namespace C {
+			class Input {
+				public:
+					Input();
+					~Input();
+					void Press(uint16_t key, unsigned char joy);
+					void Release(uint16_t key, unsigned char joy);
+					void Move(signed long int X, signed long int Y);
+					void MoveAbsolute(signed long int X, signed long int Y);
 
-			private:
-		#ifdef WIN32
-				PPJoy *ppjoy[16];
-		#else//LINUX
-				Display *display;
-		#endif//WIN32
-				void Keyboard(uint16_t key, bool state);
-				void Mouse(unsigned short type, signed long int X, signed long int Y);
-		};
-
-		extern Input *input;
+				private:
+			#ifdef WIN32
+					PPJoy *ppjoy[16];
+			#else//LINUX
+					Display *display;
+			#endif//WIN32
+					void Keyboard(uint16_t key, bool state);
+					void Mouse(unsigned short type, signed long int X, signed long int Y);
+			};
+		}
+		extern C::Input *Input;
 	}
 }
 #endif//__UDP_H__

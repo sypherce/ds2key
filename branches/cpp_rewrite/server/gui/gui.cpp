@@ -12,7 +12,7 @@ Windows GUI
 namespace D2K {
 	namespace GUI {
 		void voidFunction(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
-			D2K::Core::Print(D2K::Core::lAll, "voidFunction()");
+			D2K::Core::Print(D2K::Core::dAll, "voidFunction()");
 		}
 		HINSTANCE hThisInstance;
 		int eventCounter;
