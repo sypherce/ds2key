@@ -1,5 +1,5 @@
 /*
-Main window for DS2Key
+	Main window for DS2Key
 */
 
 #include <windows.h>
@@ -11,8 +11,7 @@ Main window for DS2Key
 #include "mainWindow.h"
 
 using std::string;
-string itos(int i) // convert int to string
-{
+string itos(int i) {// convert int to string
     std::stringstream s;
     s << i;
     return s.str();
@@ -39,8 +38,7 @@ namespace D2K {
 
 				void fileConnectFunction(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
 					printf("fileConnectFunction()\n");
-					if(!Core::UDP->IsConnected())
-					{
+					if(!Core::UDP->IsConnected()) {
 						Core::UDP->Connect();
 					}
 					CheckMenuRadioItem(	(HMENU)GUI::MainWindow::MainMenu::file->getParentHWND(),
@@ -54,8 +52,7 @@ namespace D2K {
 				}
 				void fileDisconnectFunction(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
 					printf("fileConnectFunction()\n");
-					if(Core::UDP->IsConnected())
-					{
+					if(Core::UDP->IsConnected()) {
 						Core::UDP->Disconnect();
 					}
 					CheckMenuRadioItem(	(HMENU)GUI::MainWindow::MainMenu::file->getParentHWND(),
@@ -203,49 +200,43 @@ namespace D2K {
 					GUI::MainWindow::Profile::button5->setVisible(true);
 					GUI::MainWindow::Profile::button6->setVisible(true);
 
-					{
-						BYTE keys[256];
-						int i = 0;
-						waiting = true;
-						while(waiting)
-						{
-							GetKeyboardState((PBYTE)keys);
-							for(i = 0; i < 255; i++)
-							{
-								if(!waiting)
-									break;
-								if(keys[i] > 1)
-								{
-									if(i != VK_LBUTTON && i != VK_RBUTTON && i != VK_MBUTTON)
-									{
-										listView1->SetText(Core::Key::GetString(i), selected, 1);
-										Core::Client[GUI::MainWindow::Profile::comboButton1->getSelection()]->SetButton(listView1->getSelection() + 3, i);
+					BYTE keys[256];
+					int i = 0;
+					waiting = true;
+					while(waiting) {
+						GetKeyboardState((PBYTE)keys);
+						for(i = 0; i < 255; i++) {
+							if(!waiting)
+								break;
+							if(keys[i] > 1) {
+								if(i != VK_LBUTTON && i != VK_RBUTTON && i != VK_MBUTTON) {
+									listView1->SetText(Core::Key::GetString(i), selected, 1);
+									Core::Client[GUI::MainWindow::Profile::comboButton1->getSelection()]->SetButton(listView1->getSelection() + 3, i);
 
-										waiting = false;
-									}
+									waiting = false;
 								}
 							}
-							GUI::GetMessages();//Application::processEvents();
 						}
-						GUI::MainWindow::StatusBar->setText(oldStatus);
-						//enable
-						GUI::MainWindow::categoryListView->setEnabled(true);
-						GUI::MainWindow::Profile::radioButton1->setEnabled(true);
-						GUI::MainWindow::Profile::radioButton2->setEnabled(true);
-						GUI::MainWindow::Profile::radioButton3->setEnabled(true);
-						GUI::MainWindow::Profile::checkButton1->setEnabled(true);
-						GUI::MainWindow::Profile::comboButton1->setEnabled(true);
-						GUI::MainWindow::Profile::listView1->setEnabled(true);
-						GUI::MainWindow::Profile::button1->setEnabled(true);
-						GUI::MainWindow::Profile::button2->setEnabled(true);
-						//hide
-						GUI::MainWindow::Profile::edit1->setVisible(false);
-						GUI::MainWindow::Profile::button7->setVisible(false);
-						GUI::MainWindow::Profile::button3->setVisible(false);
-						GUI::MainWindow::Profile::button4->setVisible(false);
-						GUI::MainWindow::Profile::button5->setVisible(false);
-						GUI::MainWindow::Profile::button6->setVisible(false);
+						GUI::GetMessages();//Application::processEvents();
 					}
+					GUI::MainWindow::StatusBar->setText(oldStatus);
+					//enable
+					GUI::MainWindow::categoryListView->setEnabled(true);
+					GUI::MainWindow::Profile::radioButton1->setEnabled(true);
+					GUI::MainWindow::Profile::radioButton2->setEnabled(true);
+					GUI::MainWindow::Profile::radioButton3->setEnabled(true);
+					GUI::MainWindow::Profile::checkButton1->setEnabled(true);
+					GUI::MainWindow::Profile::comboButton1->setEnabled(true);
+					GUI::MainWindow::Profile::listView1->setEnabled(true);
+					GUI::MainWindow::Profile::button1->setEnabled(true);
+					GUI::MainWindow::Profile::button2->setEnabled(true);
+					//hide
+					GUI::MainWindow::Profile::edit1->setVisible(false);
+					GUI::MainWindow::Profile::button7->setVisible(false);
+					GUI::MainWindow::Profile::button3->setVisible(false);
+					GUI::MainWindow::Profile::button4->setVisible(false);
+					GUI::MainWindow::Profile::button5->setVisible(false);
+					GUI::MainWindow::Profile::button6->setVisible(false);
 				}
 
 				void button1Function(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
@@ -496,14 +487,13 @@ namespace D2K {
 				#ifdef LOG_IMPLEMENTED
 				Log::setVisible(selection == 2);
 				About::setVisible(selection == 3);
-				#else
+				#else//log not implemented
 				Log::setVisible(false);
 				About::setVisible(selection == 2);
 				#endif//LOG_IMPLEMENTED
 			}
 
-			int Setup(HINSTANCE hThisInstance, int nCmdShow)
-			{
+			int Setup(HINSTANCE hThisInstance, int nCmdShow) {
 				if(!window.Setup(hThisInstance, "DS2Key", VERSION_STRING, GUI::MainWindow::width, GUI::MainWindow::height))
 					return 1;
 

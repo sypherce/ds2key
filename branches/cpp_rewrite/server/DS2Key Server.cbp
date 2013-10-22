@@ -19,7 +19,6 @@
 					<Add option="-ansi" />
 					<Add option="-pg" />
 					<Add option="-g" />
-					<Add option="-DWIN32" />
 					<Add option="-DWINVER=0x0500" />
 				</Compiler>
 				<Linker>
@@ -41,7 +40,6 @@
 					<Add option="-O2" />
 					<Add option="-std=c++11" />
 					<Add option="-ansi" />
-					<Add option="-DWIN32" />
 					<Add option="-DWINVER=0x0500" />
 				</Compiler>
 				<Linker>
@@ -65,7 +63,6 @@
 					<Add option="-ansi" />
 					<Add option="-pg" />
 					<Add option="-g" />
-					<Add option="-DWIN32" />
 					<Add option="-DWINVER=0x0500" />
 					<Add option="-D_WIN32_IE=0x400" />
 					<Add option="-DWIN32GUI" />
@@ -89,7 +86,6 @@
 					<Add option="-O2" />
 					<Add option="-std=c++11" />
 					<Add option="-ansi" />
-					<Add option="-DWIN32" />
 					<Add option="-DWINVER=0x0500" />
 					<Add option="-D_WIN32_IE=0x400" />
 					<Add option="-DWIN32GUI" />

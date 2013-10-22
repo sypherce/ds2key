@@ -16,6 +16,7 @@ namespace D2K {
 				void Draw();
 				void setVisible(bool Visible);
 				bool isVisible();
+				bool CheckClick(Object *thisObject);//needs relocated?
 				bool Update();
 		};
 	}

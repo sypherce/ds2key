@@ -12,6 +12,7 @@ namespace D2K {
 				Button(uint8_t Screen, GUI::Rect Rect, std::string String, void (*function)());
 				~Button();
 				bool Draw();
+				void setStatus(uint8_t Value);
 		};
 	}
 }

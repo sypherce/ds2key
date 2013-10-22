@@ -6,6 +6,7 @@ namespace D2K {
 			Object::Screen = Screen;
 			Object::Rect = Rect;
 			Object::Type = ObjectObject;
+			Object::Status = 0;
 			setVisible(false);
 			function = &GUI::VoidFunction;
 		}
@@ -28,18 +29,22 @@ namespace D2K {
 			Object::setUpdate(true);
 			Object::Visible = Visible;
 		}
+		uint8_t Object::getStatus() {
+			return Status;
+		}
+		void Object::setStatus(uint8_t Value) {
+			Status = Value;
+		}
 		bool Object::isVisible() {
 			return Visible;
 		}
 		bool Object::isClicked(uint8_t X, uint8_t Y) {
 			return Rect.PointIntersect(X, Y);
 		}
-		void Object::setUpdate(bool value)
-		{
+		void Object::setUpdate(bool value) {
 			Update = value;
 		}
-		bool Object::isUpdated()
-		{
+		bool Object::isUpdated() {
 			return Update;
 		}
 		uint8_t Object::getType() {

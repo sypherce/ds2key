@@ -16,11 +16,19 @@ namespace D2K {
 				return false;
 			if(isVisible()) {//ifChanged()
 				Clear(Color[colorButtonBackground]);
-				DrawRect(getScreen(), getRect(), Color[colorButtonOutline]);
+				if(getStatus() == 2)
+					DrawRect(getScreen(), getRect(), Color[colorButtonOutlineActive]);
+				else
+					DrawRect(getScreen(), getRect(), Color[colorButtonOutline]);
 				DrawString(getScreen(), getText(), getRect().getX()+3, getRect().getY()+3, Color[colorButtonText]);
 			}
 
 			return true;
+		}
+		void Button::setStatus(uint8_t Value) {
+			Status = Value;
+			setUpdate(true);
+			Draw();
 		}
 	}
 }

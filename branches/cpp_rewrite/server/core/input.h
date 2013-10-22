@@ -1,11 +1,11 @@
 #ifndef __INPUT_H__
 #define __INPUT_H__
 
-#ifdef WIN32
+#ifdef _WIN32
 #include "PPJoy.h"
-#else//LINUX
+#elif defined __linux__
 #include <X11/extensions/XTest.h>
-#endif//WIN32
+#endif//_WIN32
 #include <stdint.h>//uint8_t, etc
 
 //Function Defines
@@ -39,11 +39,11 @@ namespace D2K {
 					void MoveAbsolute(signed long int X, signed long int Y);
 
 				private:
-			#ifdef WIN32
+			#ifdef _WIN32
 					PPJoy *ppjoy[16];
-			#else//LINUX
+			#elif defined __linux__
 					Display *display;
-			#endif//WIN32
+			#endif//_WIN32
 					void Keyboard(uint16_t key, bool state);
 					void Mouse(unsigned short type, signed long int X, signed long int Y);
 			};

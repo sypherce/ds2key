@@ -57,9 +57,9 @@ namespace D2K {
 				checkButton9 = new CheckButton(Screen, Rect(205,80,11,11), "X", &checkButton9Function);
 				checkButton10 = new CheckButton(Screen, Rect(175,95,11,11), "Y", &checkButton10Function);
 
-				checkButton11 = new CheckButton(Screen, Rect(145,115,50,11), "Start", &checkButton11Function);
-				checkButton12 = new CheckButton(Screen, Rect(85,115,50,11), "Select", &checkButton12Function);
-				checkButton13 = new CheckButton(Screen, Rect(100,35,50,11), "Enable", &checkButton13Function);
+				checkButton11 = new CheckButton(Screen, Rect(145,115,11,11), "Start", &checkButton11Function);
+				checkButton12 = new CheckButton(Screen, Rect(85,115,11,11), "Select", &checkButton12Function);
+				checkButton13 = new CheckButton(Screen, Rect(100,35,11,11), "Enable", &checkButton13Function);
 
 				int i = 0;
 				List[i++] = label1;
@@ -81,8 +81,7 @@ namespace D2K {
 			}
 			WindowClass::~WindowClass() { }
 			uint16_t currentTurboKeys = 0;
-			void UpdateTurboKeys()
-			{
+			void UpdateTurboKeys() {
 				currentTurboKeys = 0;
 				if(checkButton1->getChecked())
 					currentTurboKeys |= KEY_L;
@@ -109,14 +108,13 @@ namespace D2K {
 				if(checkButton12->getChecked())
 					currentTurboKeys |= KEY_SELECT;
 			}
-			uint16_t CheckTurboKey(uint16_t a)
-			{
+			uint16_t CheckTurboKey(uint16_t a) {
 				if(currentTurboKeys&a)
 					if(keysHeld()&a)
 						return a;
 				return 0;
 			}
-			uint16_t GetKeys(){
+			uint16_t GetKeys() {
 				uint16_t keys = 0;
 				if(checkButton13->getChecked() == false)
 					return 0;

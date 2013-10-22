@@ -2,42 +2,41 @@
 	Virtual input, includes Keyboard, Mouse, and Joystick support
 */
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <windows.h>
 #include "PPJioctl.h"
-#else
+#elif defined __linux__
 #define NUM_DIGITAL 1
-#endif//WIN32
+#define MOUSEEVENTF_ABSOLUTE 1
+#endif//_WIN32
 
 #include "input.h"
 
 namespace D2K {
-	namespace Core 	{
+	namespace Core {
 		C::Input *Input = (C::Input*)NULL;
 		namespace C {
 			Input::Input() {
-			#ifdef WIN32
+			#ifdef _WIN32
 				for(int i = 0; i < 15; i++)
 					ppjoy[i] = 0;
-			#else//LINUX
+			#elif defined __linux__
 				display = XOpenDisplay(NULL);
-			#endif//WIN32
+			#endif//_WIN32
 			}
 
 			Input::~Input() {
-			#ifdef WIN32
+			#ifdef _WIN32
 				for(int i = 0; i < 15; i++)
-					if(ppjoy[i] != 0)
-					{
+					if(ppjoy[i] != 0) {
 						delete(ppjoy[i]);
 						ppjoy[i] = 0;
 					}
-			#else//LINUX
-			#endif//WIN32
+			#endif//_WIN32
 			}
 
 			void Input::Keyboard(uint16_t key, bool state) {
-			#ifdef WIN32
+			#ifdef _WIN32
 				INPUT input;
 				if(key == VK_LBUTTON || key == VK_RBUTTON || key == VK_MBUTTON) {
 					input.type = INPUT_MOUSE;
@@ -83,15 +82,15 @@ namespace D2K {
 				}
 
 				SendInput(1, (LPINPUT)&input, sizeof(INPUT));
-			#else//LINUX
+			#elif defined __linux__
 				int code = XKeysymToKeycode(display, key);
 				XTestFakeKeyEvent(display, code, !state, 0);
 				XFlush(display);
-			#endif//WIN32
+			#endif//_WIN32
 			}
 
 			void Input::Mouse(unsigned short type, signed long int X, signed long int Y) {
-			#ifdef WIN32
+			#ifdef _WIN32
 				INPUT input;
 
 				input.type = INPUT_MOUSE;
@@ -103,45 +102,45 @@ namespace D2K {
 				input.mi.time = 0;
 
 				SendInput(1, (LPINPUT)&input, sizeof(INPUT));
-			#else//LINUX
+			#elif defined __linux__
 				Window dummyWin;
-				int dummyX, dummyY;
-				unsigned int width, height, dummyBorder, dummyDepth;
+				int dummyInt;
+				unsigned int width, height;
 
                 int screen = DefaultScreen(display);
                 Window rootwindow = RootWindow(display, screen);
 
-				if(XGetGeometry(display, rootwindow, &dummyWin, &dummyX, &dummyY, &width, &height, &dummyBorder, &dummyDepth)) {
-				if(!type)
-                    XTestFakeRelativeMotionEvent(display, X, Y, 0);
-                else
-                    XTestFakeMotionEvent(display, screen, (X * width) / 65535, (Y * height) / 65535, 0);
-            }
-			#endif//WIN32
+				if(XGetGeometry(display, rootwindow, &dummyWin, &dummyInt, &dummyInt, &width, &height, (unsigned int*)&dummyInt, (unsigned int*)&dummyInt)) {
+					if(!type)
+						XTestFakeRelativeMotionEvent(display, X, Y, 0);
+					else
+						XTestFakeMotionEvent(display, screen, (X * width) / 65535, (Y * height) / 65535, 0);
+				}
+			#endif//_WIN32
 			}
 
 			void Input::Press(uint16_t key, unsigned char joy) {
-				if(key >= 0x100 && key < 0x100 + NUM_DIGITAL) {
-			#ifdef WIN32
+				if(key >= 0x100 && key < 0x100 + NUM_DIGITAL) {//0x100 to (0x100 + NUM_DIGITAL) are virtual gamepad buttons
+			#ifdef _WIN32
 					if(ppjoy[joy] == 0)
 						ppjoy[joy] = new PPJoy(joy);
 					ppjoy[joy]->SetButton(key - 0x100, 1);
 					ppjoy[joy]->Update();
 					//printf("pressing joy button %i\n", key - 0x100);
-			#endif//WIN32
+			#endif//_WIN32
 				}
 				else
 					Keyboard(key, 0);
 			}
 
 			void Input::Release(uint16_t key, unsigned char joy) {
-				if(key >= 0x100 && key < 0x100 + NUM_DIGITAL) {
-			#ifdef WIN32
+				if(key >= 0x100 && key < 0x100 + NUM_DIGITAL) {//0x100 to (0x100 + NUM_DIGITAL) are virtual gamepad buttons
+			#ifdef _WIN32
 					if(ppjoy[joy] == 0)
 						ppjoy[joy] = new PPJoy(joy);
 					ppjoy[joy]->SetButton(key - 0x100, 0);
 					ppjoy[joy]->Update();
-			#endif//WIN32
+			#endif//_WIN32
 				}
 				else
 					Keyboard(key, 1);

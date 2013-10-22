@@ -47,9 +47,6 @@
 		<Unit filename="arm7/source/main7.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="arm7/source/wifi.c">
-			<Option compilerVar="CC" />
-		</Unit>
 		<Unit filename="arm9/Makefile" />
 		<Unit filename="arm9/source/apsearch.cpp" />
 		<Unit filename="arm9/source/apsearch.h" />

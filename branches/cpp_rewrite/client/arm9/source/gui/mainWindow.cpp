@@ -38,10 +38,12 @@ namespace D2K {
 				Color[colorButtonText] = Color[colorLabelText];
 				Color[colorButtonBackground] = ARGB16(1, 31, 30, 15);
 				Color[colorButtonOutline] = Color[colorButtonText];
+				Color[colorButtonOutlineActive] = ARGB16(1, 31, 0, 0);
 
 				Color[colorEditText] = Color[colorLabelText];
 				Color[colorEditBackground] = ARGB16(1, 31, 31, 31);
 				Color[colorEditOutline] = Color[colorEditText];
+				Color[colorEditOutlineActive] = Color[colorButtonOutlineActive];
 
 				Screen = 0;
 
@@ -75,8 +77,7 @@ namespace D2K {
 				static char oldTime[13];
 
 				static int c = 0;c++;if(c > 30)//counter
-				if(label2->isVisible())
-				{
+				if(label2->isVisible()) {
 					c = 0;
 					char *newTime = System::getTime();
 					if(strcmp(oldTime, newTime) != 0) {//if times differ
@@ -119,7 +120,7 @@ namespace D2K {
 
 				while(true) {
 					System::Update(true);
-					if(keysDown()&KEY_TOUCH && button4->isClicked(System::stylusPos.px, System::stylusPos.py)) {
+					if(Main::Window->CheckClick(button4)) {
 						break;//if pressed again, break
 					}
 					DS2Key::Update(keysHeld(), 0, guitarGripKeysHeld() * guitarGripIsInserted(), 0 * guitarGripIsInserted(), &System::stylusPos);
@@ -140,7 +141,7 @@ namespace D2K {
 					System::Update(true);
 					DS2Key::Update(keysHeld(), Turbo::GetKeys(), guitarGripKeysHeld() * guitarGripIsInserted(), 0 * guitarGripIsInserted(), (touchPosition*)NULL);
 					Turbo::Window->Update();
-					if(keysDown()&KEY_TOUCH && button5->isClicked(System::stylusPos.px, System::stylusPos.py)) {
+					if(Main::Window->CheckClick(button5)) {
 						break;//if pressed again, break
 					}
 				}

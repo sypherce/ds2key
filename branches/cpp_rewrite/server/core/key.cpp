@@ -8,10 +8,10 @@
 	XK_Return = "KEY_RETURN"
 */
 
-#ifndef WIN32
+#ifndef _WIN32
 #include <string.h>
 #include <X11/keysym.h>
-#endif //WIN32
+#endif//_WIN32
 
 #include "key.h"
 

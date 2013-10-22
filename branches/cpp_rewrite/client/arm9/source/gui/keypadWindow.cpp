@@ -121,8 +121,7 @@ namespace D2K {
 
 			//public
 			std::string Entry(Label *label, Edit *edit, std::string String, int maxLength) {
-				if(Keypad::Window != (WindowClass*)NULL)
-				{
+				if(Keypad::Window != (WindowClass*)NULL) {
 					Keypad::label->setRect(label->getRect());
 					Keypad::label->setText(label->getText());
 

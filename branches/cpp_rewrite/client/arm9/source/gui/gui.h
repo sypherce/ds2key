@@ -44,8 +44,8 @@ namespace D2K {
 		void DrawString(uint8_t Screen, std::string String, uint8_t X, uint8_t Y, uint16_t C);
 		enum { 	colorBackground,
 				colorLabelText, colorLabelBackground,
-				colorButtonText, colorButtonBackground, colorButtonOutline,
-				colorEditText, colorEditBackground, colorEditOutline,
+				colorButtonText, colorButtonBackground, colorButtonOutline, colorButtonOutlineActive,
+				colorEditText, colorEditBackground, colorEditOutline, colorEditOutlineActive,
 				colorMax};
 		extern uint16_t Color[colorMax];
 	}

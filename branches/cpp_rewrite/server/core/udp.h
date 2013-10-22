@@ -1,12 +1,12 @@
 #ifndef __UDP_H__
 #define __UDP_H__
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <WS2tcpip.h>//socklen_t
-#else//LINUX
+#elif defined __linux__
 #include <netdb.h>
 #define SOCKET int
-#endif//WIN32
+#endif//_WIN32
 
 #include <stdint.h>//uint16_t
 #include <string>

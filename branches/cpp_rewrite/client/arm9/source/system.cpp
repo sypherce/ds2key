@@ -52,7 +52,7 @@ namespace D2K {
 			static const uint32_t vblCountMax = (60 * 4);
 
 			if((keysUp()&KEY_LID) ||							//if lid just opened OR
-				(keysHeld()&KEY_TOUCH))	{						//screen is being touched
+				(keysHeld()&KEY_TOUCH)) {						//screen is being touched
 				vblCount = 0;									//reset timer
 				powerOn(PM_BACKLIGHT_BOTTOM|PM_BACKLIGHT_TOP);	//lights on
 			}
