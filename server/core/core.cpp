@@ -4,17 +4,17 @@
 
 #include <stdio.h>		//printf
 #include <algorithm>	//std::max,std::min
-#ifdef WIN32
+#ifdef _WIN32
 #include <windows.h>
 #ifdef WIN32GUI
 #include "gui/gui.h"
 #endif//WIN32GUI
-#else//LINUX
+#elif defined __linux__
 #include <string.h>
 #include <chrono>
 #include <thread>
 #define Sleep(a) std::this_thread::sleep_for(std::chrono::milliseconds(a))
-#endif//WIN32
+#endif//_WIN32
 
 #include "udp.h"
 #include "key.h"
@@ -40,7 +40,7 @@ namespace D2K {
 			static bool turbo = false;//true == press, false == release
 
 			//buttons
-			for(int i = kUp; i < kLid; i++) {
+			for(int i = kUp; i <= kLid; i++) {
 				uint16_t Button = bit2button(i);
 				if(Client->Down(Button))
 					Input->Press(Settings[i], Settings[kJoy]);
@@ -55,10 +55,10 @@ namespace D2K {
 			turbo = !turbo;//toggle turbo status
 
 			//touch screen
-			unsigned char x = Client->GetX();
-			unsigned char y = Client->GetY();
+			uint8_t x = Client->GetX();
+			uint8_t y = Client->GetY();
 			bool z = Client->Held(DS2KEY_TOUCH);
-			int moveType = Settings[kMouse];
+			uint16_t moveType = Settings[kMouse];
 
 			if(z) {//if touched
 				if(lastZ == false) {								//if newly pressed
@@ -114,7 +114,7 @@ namespace D2K {
 		}
 
 		bool Running = false;
-		int Debug = dNone;
+		uint8_t Debug = dNone;
 
 		int Setup(int argc, char *argv[]) {
 			bool block = false;
@@ -152,8 +152,7 @@ namespace D2K {
 				if(UDP->IsConnected())
 					if(UDP->RecvFrom(&Packet, sizeof(ds2keyPacket)) != -1) {					//if we receive something without error
 						if(Packet.type == '/' + 1) {											//new protocal
-							if(Client[Packet.profile] == (C::Client*)NULL) {
-							printf("%i", Client[Packet.profile]);							//if profile not active,
+							if(Client[Packet.profile] == (C::Client*)NULL) {								//if profile not active,
 								Client[Packet.profile] = new C::Client();									//create it
 								Config->ReadProfile(Client[Packet.profile]->GetSettings(), Packet.profile);	//then load it
 							}
@@ -174,6 +173,7 @@ namespace D2K {
 			}
 		}
 		void Destroy() {
+			Running = false;
 			for(int i = 0; i < 255; i++)
 				if(Client[i] != NULL) {
 					delete(Client[i]);

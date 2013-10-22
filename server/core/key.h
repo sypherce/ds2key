@@ -2,23 +2,23 @@
 #define __KEY_H__
 
 #include <stdint.h>
-#ifdef WIN32
+#ifdef _WIN32
 #include <windows.h>
-#else//LINUX
+#elif defined __linux__
 #include <X11/keysym.h>
-#endif//WIN32
+#endif//_WIN32
 
 //Windows Defines
-#ifdef WIN32
+#ifdef _WIN32
 #ifdef _MSC_VER //less warnings from microsoft
 #define stricmp _stricmp
 #endif //_MSC_VER
-#else //WIN32
+#elif defined __linux__
 #define stricmp	strcasecmp
-#endif //WIN32
+#endif//_WIN32
 
 #define KEY_NONE 0
-#ifdef WIN32
+#ifdef _WIN32
 #define KEY_VOID KEY_NONE
 #define KEY_LBUTTON VK_LBUTTON
 #define KEY_RBUTTON VK_RBUTTON
@@ -27,10 +27,10 @@
 #if (_WIN32_WINNT >= 0x0500)
 #define KEY_XBUTTON1 VK_XBUTTON1
 #define KEY_XBUTTON2 VK_XBUTTON2
-#else
+#elif defined __linux__
 #define KEY_XBUTTON1 KEY_NONE
 #define KEY_XBUTTON2 KEY_NONE
-#endif
+#endif//(_WIN32_WINNT >= 0x0500)
 #define KEY_BACK VK_BACK
 #define KEY_TAB VK_TAB
 #define KEY_CLEAR VK_CLEAR
@@ -175,7 +175,7 @@
 #define KEY_LAUNCH_MEDIA_SELECT VK_LAUNCH_MEDIA_SELECT
 #define KEY_LAUNCH_APP1 VK_LAUNCH_APP1
 #define KEY_LAUNCH_APP2 VK_LAUNCH_APP2
-#else
+#elif defined __linux__
 #define KEY_BROWSER_BACK KEY_NONE
 #define KEY_BROWSER_FORWARD KEY_NONE
 #define KEY_BROWSER_REFRESH KEY_NONE
@@ -194,19 +194,19 @@
 #define KEY_LAUNCH_MEDIA_SELECT KEY_NONE
 #define KEY_LAUNCH_APP1 KEY_NONE
 #define KEY_LAUNCH_APP2 KEY_NONE
-#endif
+#endif//(_WIN32_WINNT >= 0x0500)
 #define KEY_OEM_1 VK_OEM_1
 #if (_WIN32_WINNT >= 0x0500)
 #define KEY_OEM_PLUS VK_OEM_PLUS
 #define KEY_OEM_COMMA VK_OEM_COMMA
 #define KEY_OEM_MINUS VK_OEM_MINUS
 #define KEY_OEM_PERIOD VK_OEM_PERIOD
-#else
+#elif defined __linux__
 #define KEY_OEM_PLUS KEY_NONE
 #define KEY_OEM_COMMA KEY_NONE
 #define KEY_OEM_MINUS KEY_NONE
 #define KEY_OEM_PERIOD KEY_NONE
-#endif
+#endif//(_WIN32_WINNT >= 0x0500)
 #define KEY_OEM_2 VK_OEM_2
 #define KEY_OEM_3 VK_OEM_3
 #define KEY_OEM_4 VK_OEM_4
@@ -216,15 +216,15 @@
 #define KEY_OEM_8 VK_OEM_8
 #if (_WIN32_WINNT >= 0x0500)
 #define KEY_OEM_102 VK_OEM_102
-#else
+#elif defined __linux__
 #define KEY_OEM_102 KEY_NONE
-#endif
+#endif//(_WIN32_WINNT >= 0x0500)
 #define KEY_PROCESSKEY VK_PROCESSKEY
 #if (_WIN32_WINNT >= 0x0500)
 #define KEY_PACKET VK_PACKET
-#else
+#elif defined __linux__
 #define KEY_PACKET KEY_NONE
-#endif
+#endif//(_WIN32_WINNT >= 0x0500)
 #define KEY_ATTN VK_ATTN
 #define KEY_CRSEL VK_CRSEL
 #define KEY_EXSEL VK_EXSEL
@@ -234,7 +234,7 @@
 #define KEY_NONAME VK_NONAME
 #define KEY_PA1 VK_PA1
 #define KEY_OEM_CLEAR VK_OEM_CLEAR
-#else //WIN32
+#elif defined __linux__
 #define KEY_VOID XK_VoidSymbol
 #define KEY_LBUTTON 0x8000 //LBUTTON
 #define KEY_RBUTTON 0x8002 //RBUTTON
@@ -409,7 +409,7 @@
 #define KEY_NONAME KEY_NONE //NONAME
 #define KEY_PA1 KEY_NONE //PA1
 #define KEY_OEM_CLEAR KEY_NONE //OEM_CLEAR
-#endif
+#endif//_WIN32
 
 namespace D2K {
 	namespace Core {
@@ -428,4 +428,4 @@ namespace D2K {
 	}
 }
 
-#endif //__KEY_H__
+#endif//__KEY_H__

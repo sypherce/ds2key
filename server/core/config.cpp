@@ -260,16 +260,14 @@ namespace D2K {
 				}
 				iniParser::dump(ini, stderr);
 
-				{
-					std::string mouse = iniParser::getstring(ini, "profile:mouse", "Relative");
+				std::string mouse = iniParser::getstring(ini, "profile:mouse", "Relative");
 
-					if(strcmp(mouse.c_str(), "Absolute") == 0)
-						Profile[kMouse] = mAbsolute;
-					else if(strcmp(mouse.c_str(), "Buttons") == 0)
-						Profile[kMouse] = mButtons;
-					else
-						Profile[kMouse] = mRelative;
-				}
+				if(strcmp(mouse.c_str(), "Absolute") == 0)
+					Profile[kMouse] = mAbsolute;
+				else if(strcmp(mouse.c_str(), "Buttons") == 0)
+					Profile[kMouse] = mButtons;
+				else
+					Profile[kMouse] = mRelative;
 
 				Profile[kJoy] = atoi(iniParser::getstring(ini, "profile:joy", "0").c_str());
 				Profile[kUp] = Key::GetNumber(iniParser::getstring(ini, "profile:up", "Key_None").c_str());

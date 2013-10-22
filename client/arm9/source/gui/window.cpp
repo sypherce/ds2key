@@ -71,19 +71,64 @@ namespace D2K {
 
 			return false;
 		}
-		bool Window::Update() {
-			Draw();
-			for(unsigned int i = 0; i < ListMax; i++) {
-				if(keysDown()&KEY_TOUCH)
-					if(List[i])
-						if(List[i]->isVisible())
-							if(List[i]->isClicked((uint8_t)System::stylusPos.px, (uint8_t)System::stylusPos.py)) {
-								List[i]->function();
-								return 1;
+		bool Window::CheckClick(Object *thisObject) {
+			bool retVal = false;
+			int status = -1;
+			if(thisObject) {
+				if(thisObject->isVisible()) {
+					if(keysDown()&KEY_TOUCH) {
+						if(thisObject->isClicked((uint8_t)System::stylusPos.px, (uint8_t)System::stylusPos.py)) {
+							status = 1;//Pressed
+						}
+					}
+					else if(keysHeld()&KEY_TOUCH) {
+						if(thisObject->getStatus() > 0) {
+							if(thisObject->isClicked((uint8_t)System::stylusPos.px, (uint8_t)System::stylusPos.py)) {
+								status = 2;//if we pressed and we're still hovering set to Held
 							}
+							else {
+								status = 1;//if we held but we're not hovering set to Pressed
+							}
+						}
+					}
+					else if(keysUp()&KEY_TOUCH) {
+						if(thisObject->isClicked((uint8_t)System::stylusPos.px, (uint8_t)System::stylusPos.py)) {
+							if(thisObject->getStatus() == 2) {//if we pressed and we're still hovering
+								retVal = true;
+							}
+						}
+						status = 0;//reset status
+					}
+					if(status >= 0) {
+						if(thisObject->getType() == ObjectLabel) {
+							static_cast<GUI::Label*>(thisObject)->setStatus(status);
+						}
+						else if(thisObject->getType() == ObjectButton) {
+							static_cast<GUI::Button*>(thisObject)->setStatus(status);
+						}
+						else if(thisObject->getType() == ObjectCheckButton) {
+							static_cast<GUI::CheckButton*>(thisObject)->setStatus(status);
+						}
+						else if(thisObject->getType() == ObjectEdit) {
+							static_cast<GUI::Edit*>(thisObject)->setStatus(status);
+						}
+					}
+				}
 			}
 
-			return 0;
+			return retVal;
+		}
+		bool Window::Update() {
+			bool retVal = false;
+			Draw();
+			for(unsigned int i = 0; i < ListMax; i++) {
+				if(CheckClick(List[i])) {
+					List[i]->function();//execute the function
+					retVal = true;
+				}
+			}
+
+			return retVal;
 		}
 	}
 }

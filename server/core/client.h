@@ -60,7 +60,7 @@ namespace D2K {
 					uint8_t GetX();
 					uint8_t GetY();
 
-			private:
+				private:
 					uint8_t GetProfileNumber();
 					void SetTouchPos(uint8_t x, uint8_t y);
 					void Press(uint16_t key);
@@ -73,10 +73,9 @@ namespace D2K {
 					uint8_t GHUp(uint8_t key);
 					uint8_t GHTurbo(uint8_t key);
 
-			private:
 					ds2keyPacket packet;
 					uint16_t Profile[kEND];
-				private:
+
 					uint16_t keys;
 					uint16_t keysOld;
 					uint8_t ghKeys;

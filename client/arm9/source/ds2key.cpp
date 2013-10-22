@@ -21,8 +21,7 @@ namespace D2K {
 		struct sockaddr_in sockaddr;
 
 		#pragma pack(1)
-		typedef struct ds2keyPacket
-		{
+		typedef struct ds2keyPacket {
 			uint8_t type;
 			uint8_t profile;
 			uint16_t keys;
@@ -165,6 +164,7 @@ namespace D2K {
 			printf("Error (sendto): #%d\n", errno);
 	}
 
+	//this is unused right now and very dirty looking
 	void DS2Key::ServerLookup() {
 		if(EMULATOR) return;
 		char host[128];

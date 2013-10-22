@@ -1,5 +1,5 @@
 /*
-main file
+	main file
 */
 
 #ifdef WIN32GUI
@@ -7,9 +7,7 @@ main file
 #include "gui/mainWindow.h"
 #include "core/core.h"
 
-
-void D2K::Core::Print(int Level, string Message)
-{
+void D2K::Core::Print(int Level, string Message) {
 	if(D2K::Core::Debug <= Level && Level > D2K::Core::dNone)
 		if(D2K::GUI::MainWindow::Log::listView)
 			D2K::GUI::MainWindow::Log::listView->Append(Message);
@@ -23,14 +21,13 @@ int WINAPI WinMain(HINSTANCE hThisInstance,
 	D2K::GUI::Setup();
 	if(D2K::GUI::MainWindow::Setup(hThisInstance, nCmdShow) == 0) {
 		D2K::GUI::MainWindow::Profile::checkButton1->setVisible(false);//disabled until implemented
-#else
+#else//console mode
 #include "core/core.h"
 
 int main(int argc, char *argv[]) {
 		D2K::Core::Setup(argc, argv);
 #endif//WIN32GUI
-		while(D2K::Core::Running)
-		{
+		while(D2K::Core::Running) {
 			D2K::Core::Loop();
 		}
 #ifdef WIN32GUI

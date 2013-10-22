@@ -41,21 +41,17 @@ namespace D2K {
 			parent = parentObject;
 			return true;
 		}
-		int Object::getID()
-		{
+		int Object::getID() {
 			return ID;
 		}
-		HWND Object::getParentHWND()
-		{
+		HWND Object::getParentHWND() {
 			//printf("this:%x parent:%x\n", (unsigned int)this, (unsigned int)parent->hwnd);
 			return parent->hwnd;
 		}
-		Object *Object::getParent()
-		{
+		Object *Object::getParent() {
 			return parent;
 		}
-		void Object::setVisible(bool visible)
-		{
+		void Object::setVisible(bool visible) {
 			if(hwnd)
 				ShowWindow(hwnd, visible);
 		}
@@ -65,8 +61,7 @@ namespace D2K {
 		}
 		Label::~Label() {}
 		bool Label::Attach(Object *parentObject) {
-			if(Object::Attach(parentObject))
-			{
+			if(Object::Attach(parentObject)) {
 				hwnd = CreateWindow (
 						   "STATIC", Text.c_str(),
 						   WS_CHILD | WS_VISIBLE | BS_TEXT,
@@ -80,8 +75,7 @@ namespace D2K {
 			}
 			return false;
 		}
-		string Label::getText()
-		{
+		string Label::getText() {
 			int length = GetWindowTextLength(hwnd);
 			char *windowText = new char[length+1];
 			GetWindowText(hwnd, windowText, length+1);
@@ -108,8 +102,7 @@ namespace D2K {
 		Button::Button(string text, int x, int y, int width, int height) : Label(text, x, y, width, height) {}
 		Button::~Button() {}
 		bool Button::Attach(Object *parentObject) {
-			if(Object::Attach(parentObject))
-			{
+			if(Object::Attach(parentObject)) {
 				hwnd = CreateWindow (
 						   "BUTTON", Text.c_str(),
 						   WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
@@ -126,8 +119,7 @@ namespace D2K {
 		StatusBar::StatusBar(string text, int x, int y, int width, int height) : Label(text, x, y, width, height) {}
 		StatusBar::~StatusBar() {}
 		bool StatusBar::Attach(Object *parentObject) {
-			if(Object::Attach(parentObject))
-			{
+			if(Object::Attach(parentObject)) {
 				hwnd = CreateWindow (
 						   STATUSCLASSNAME, "",
 						   WS_CHILD | WS_VISIBLE | SBARS_SIZEGRIP,
@@ -160,8 +152,7 @@ namespace D2K {
 			Delete();
 		}
 		bool TrayIcon::Attach(Object *parentObject) {
-			if(Object::Attach(parentObject))
-			{
+			if(Object::Attach(parentObject)) {
 				niData.hWnd = getParentHWND();
 				Shell_NotifyIcon(NIM_ADD, &niData);
 				return true;
@@ -175,24 +166,20 @@ namespace D2K {
 
 			return;
 		}
-		void TrayIcon::Delete()
-		{
+		void TrayIcon::Delete() {
 			Shell_NotifyIcon(NIM_DELETE, &niData);
 		}
 		Menu::Menu() : Label("", 0, 0, 0, 0) {
 				hwnd = (HWND)CreateMenu();}
 		Menu::~Menu() {}
-		void Menu::Append(Object *object, void (*function)(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam))
-		{
-			if(this && object->Attach(this))
-			{
+		void Menu::Append(Object *object, void (*function)(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)) {
+			if(this && object->Attach(this)) {
 				events[object->getID()].object = object;
 				events[object->getID()].function = function;
 				events[object->getID()].function2 = &GUI::voidFunction;
 			}
 		}
-		void Menu::Append(Object *object)
-		{
+		void Menu::Append(Object *object) {
 			Menu::Append(object, &voidFunction);
 		}
 		bool Menu::Attach(Object *parentObject) {
@@ -211,17 +198,14 @@ namespace D2K {
 		MenuPopUp::MenuPopUp(string text) : Label(text, 0, 0, 0, 0) {
 				hwnd = (HWND)CreatePopupMenu();}
 		MenuPopUp::~MenuPopUp() {}
-		void MenuPopUp::Append(Object *object, void (*function)(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam))
-		{
-			if(this && object->Attach(this))
-			{
+		void MenuPopUp::Append(Object *object, void (*function)(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)) {
+			if(this && object->Attach(this)) {
 				events[object->getID()].object = object;
 				events[object->getID()].function = function;
 				events[object->getID()].function2 = &GUI::voidFunction;
 			}
 		}
-		void MenuPopUp::Append(Object *object)
-		{
+		void MenuPopUp::Append(Object *object) {
 			MenuPopUp::Append(object, &voidFunction);
 		}
 		bool MenuPopUp::Attach(Object *parentObject) {
@@ -243,8 +227,7 @@ namespace D2K {
 				events[object->getID()].function2 = &GUI::voidFunction;
 			}
 		}
-		void MenuItem::Append(Object *object)
-		{
+		void MenuItem::Append(Object *object) {
 			MenuItem::Append(object, &voidFunction);
 		}
 		bool MenuItem::Attach(Object *parentObject) {
@@ -340,10 +323,10 @@ namespace D2K {
 			SendMessage(hwnd, CB_SETCURSEL, row, 0);
 		}
 		int ComboButton::getSelection() {
-			int returnVal = SendMessage(hwnd, CB_GETCURSEL, 0, 0);
-			if(returnVal == CB_ERR)
+			int retVal = SendMessage(hwnd, CB_GETCURSEL, 0, 0);
+			if(retVal == CB_ERR)
 				return 0;
-			return returnVal;
+			return retVal;
 		}
 		ListView::ListView(string text, int x, int y, int width, int height) : Label(text, x, y, width, height) {}
 		ListView::~ListView() {}
@@ -391,8 +374,7 @@ namespace D2K {
 			while(ListView_GetColumn(hwnd, count++, &column));
 			return --count;
 		}
-		unsigned ListView::getSelection()
-		{
+		unsigned ListView::getSelection() {
 			return SendMessage(hwnd, LVM_GETNEXTITEM, -1, LVNI_SELECTED);
 		}
 		void ListView::setSelection(unsigned row) {
@@ -417,8 +399,7 @@ namespace D2K {
 			}
 			return false;
 		}
-		void ListView::Append(string text)
-		{
+		void ListView::Append(string text) {
 			unsigned row = ListView_GetItemCount(hwnd);
 			LVITEM item;
 			item.mask = LVIF_TEXT;
@@ -430,8 +411,7 @@ namespace D2K {
 			ListView_InsertItem(hwnd, &item);//set item text
 			locked = false;
 		}
-		void ListView::Append(string text, string text2)
-		{
+		void ListView::Append(string text, string text2) {
 			unsigned row = ListView_GetItemCount(hwnd);
 			LVITEM item;
 			item.mask = LVIF_TEXT;
@@ -453,9 +433,7 @@ namespace D2K {
 
 			/* Run the message loop. It will run until GetMessage() returns 0 */
 			WPARAM message = PeekMessage(&messages, NULL, 0, 0, PM_REMOVE);
-			if(message == TRUE)
-			{
-
+			if(message == TRUE) {
 				/* Translate virtual-key messages into character messages */
 				TranslateMessage(&messages);
 				/* Send message to WindowProcedure */
@@ -501,16 +479,10 @@ namespace D2K {
 					if(events[event].object == NULL)
 						break;
 					switch(((LPNMHDR) lParam)->code) {
-						case LVN_ITEMACTIVATE:
-						{
+						case LVN_ITEMACTIVATE: {
 							events[event].function2(hwnd, message, wParam, lParam);	//perform the event's function2
 							break;
 						}
-						/*case NM_CLICK:
-						{
-									printf("click\n");
-							break;
-						}*/
 						case LVN_ITEMCHANGED: {
 							if(((LPNMLISTVIEW)lParam)->uChanged & LVIF_STATE)
 								if(((LPNMLISTVIEW)lParam)->uNewState & LVIS_SELECTED)
@@ -524,7 +496,7 @@ namespace D2K {
 					int event = LOWORD(wParam);
 					if(events[event].object == NULL)
 						break;
-					if(event >= 0 && event <= eventMax)	{//if it's an event
+					if(event >= 0 && event <= eventMax) {//if it's an event
 						if(HIWORD(wParam) == BN_CLICKED) {//and if a button is clicked
 							events[event].function(hwnd, message, wParam, lParam);	//perform the event's function
 						}
@@ -572,8 +544,7 @@ namespace D2K {
 				events[object->getID()].function2 = function;
 			}
 		}
-		void Window::Append(Object *object)
-		{
+		void Window::Append(Object *object) {
 			Window::Append(object, &voidFunction);
 		}
 		HWND hwnd;               /* This is the handle for our window */

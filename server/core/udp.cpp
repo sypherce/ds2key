@@ -2,53 +2,59 @@
 	UDP Communication
 */
 
-#include <stdio.h>//stderr, fprintf
-#ifndef WIN32
+#include <stdio.h>		//stderr, fprintf
+#ifdef __linux__
 #include <unistd.h>		//close
 #include <arpa/inet.h>	//inet_ntoa
 #include <sys/ioctl.h>	//ioctl
-#include <string.h>	//memset
+#include <string.h>		//memset
 #define closesocket close
 #define INVALID_SOCKET -1
-#define SOCKET_ERRORSOCKET_ERROR -1
+#define SOCKET_ERROR -1
 #define WSAGetLastError() errno
 #define LPSOCKADDR struct sockaddr*
 #define WSAEADDRINUSE EADDRINUSE
 #define WSAEWOULDBLOCK EWOULDBLOCK
 #define ioctlsocket ioctl
-#endif//WIN32
+#endif//__linux__
 #include "udp.h"
 
-namespace D2K
-{
+namespace D2K {
 	namespace Core {
 		C::UDP *UDP = (C::UDP*)NULL;
 		namespace C {
 			int UDP::Send(void *buf, unsigned int len) {
+				int retVal = 0;
 				if((buf != NULL) && (len > 0))
-					return sendto(Sock, (char*)buf, len, 0, (sockaddr*)&ClientAddr, sizeof(ClientAddr));
+					retVal = sendto(Sock, (char*)buf, len, 0, (sockaddr*)&ClientAddr, sizeof(ClientAddr));
+				else
+					retVal = 2;//(void *buf) is an invalid pointer or len == 0
+				if(retVal == SOCKET_ERROR) {
+					int err = WSAGetLastError();
+							fprintf(stderr, "socket failed with error %d\n", err);
+				}
 
-				return -2;//(void *buf) is an invalid pointer or len == 0
+				return retVal;
 			}
 
 			int UDP::RecvFrom(void *buf, unsigned int len) {
 				int sockaddrLen = sizeof(struct sockaddr_in);
-				int returnVal;
+				int retVal;
 
 				if((buf != NULL) && (len > 0)) {
 					memset(buf, 0, len);
-					returnVal = recvfrom(Sock, (char*)buf, len, 0, (LPSOCKADDR)&ClientAddr, (socklen_t*)&sockaddrLen);
+					retVal = recvfrom(Sock, (char*)buf, len, 0, (LPSOCKADDR)&ClientAddr, (socklen_t*)&sockaddrLen);
 
-					if(returnVal == SOCKET_ERROR) {
+					if(retVal == SOCKET_ERROR) {
 						int err = WSAGetLastError();
 						if(err != WSAEWOULDBLOCK)
 							fprintf(stderr, "socket failed with error %d\n", err);
 					}
 				}
 				else
-					returnVal = -2;//(void *buf) is an invalid pointer or len == 0
+					retVal = -2;//(void *buf) is an invalid pointer or len == 0
 
-				return returnVal;
+				return retVal;
 			}
 
 			char *UDP::GetServerIP() {
@@ -64,10 +70,10 @@ namespace D2K
 			}
 
 			UDP::UDP() {
-			#ifdef WIN32
+			#ifdef _WIN32
 				WSADATA wsaData;
 				WSAStartup(0x0202, &wsaData); //windows socket startup
-			#endif//WIN32
+			#endif//_WIN32
 				Connected = false;
 				Block = false;
 				Port = 9501;
@@ -125,11 +131,9 @@ namespace D2K
 			}
 
 			int UDP::Disconnect() {
-				Connected = false;
-				if(IsConnected())
-				{
-					if(closesocket(Sock) == SOCKET_ERROR)//needs checked
-					{
+				if(IsConnected()) {
+					Connected = false;
+					if(closesocket(Sock) == SOCKET_ERROR) {//needs checked
 						int err = WSAGetLastError();
 						fprintf(stderr, "closesocket failed with error %d\n", err);
 
@@ -146,9 +150,9 @@ namespace D2K
 
 			UDP::~UDP() {
 				Disconnect();//needs checked
-			#ifdef WIN32
+			#ifdef _WIN32
 				WSACleanup();
-			#endif//WIN32
+			#endif//_WIN32
 			}
 		}
 	}
