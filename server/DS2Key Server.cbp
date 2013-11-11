@@ -130,6 +130,7 @@
 				<Option compiler="gcc" />
 				<Option use_console_runner="0" />
 				<Compiler>
+					<Add option="-O2" />
 					<Add option="-ansi" />
 					<Add option="-std=gnu++0x" />
 				</Compiler>
