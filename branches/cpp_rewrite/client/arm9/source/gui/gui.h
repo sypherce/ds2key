@@ -33,7 +33,7 @@ namespace D2K {
 		extern void VoidFunction();
 		extern uint16_t *Screen[2];
 		extern bool Update;
-		void setUpdate(bool value);
+		void setUpdate(bool Value);
 		bool isUpdated();
 		void setPixel(uint8_t Screen, uint8_t X, uint8_t Y, uint16_t C);
 		void ClearScreen(uint8_t Screen, uint16_t C);

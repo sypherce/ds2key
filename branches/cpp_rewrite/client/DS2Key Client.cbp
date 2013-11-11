@@ -23,7 +23,7 @@
 				<Option additional_output="arm7/client.elf;arm7/build/main7.o;arm7/build/wifi.o;DS2Key Client.cbp;" />
 				<Option type="0" />
 				<Option compiler="devkitpro_gnu_arm_gcc_compiler" />
-				<Option parameters="C:\Users\Derrick\projects\ds2key\cpp_rewrite\client\client.nds" />
+				<Option parameters="C:\Users\Derrick\projects\ds2key\cpp_rewrite\client\DS2Key.nds" />
 				<Option host_application="C:/nocashgba/NOcashGBA.EXE" />
 				<Option run_host_application_in_terminal="0" />
 				<Compiler>
@@ -58,6 +58,8 @@
 		<Unit filename="arm9/source/gui/button.h" />
 		<Unit filename="arm9/source/gui/checkButton.cpp" />
 		<Unit filename="arm9/source/gui/checkButton.h" />
+		<Unit filename="arm9/source/gui/commandWindow.cpp" />
+		<Unit filename="arm9/source/gui/commandWindow.h" />
 		<Unit filename="arm9/source/gui/edit.cpp" />
 		<Unit filename="arm9/source/gui/edit.h" />
 		<Unit filename="arm9/source/gui/gui.cpp" />

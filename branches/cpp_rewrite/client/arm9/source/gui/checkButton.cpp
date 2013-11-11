@@ -3,14 +3,13 @@
 
 namespace D2K {
 	namespace GUI {
-		CheckButton::CheckButton(uint8_t Screen, GUI::Rect Rect, std::string String, void (*function)()) : Label(Screen, Rect, String) {
+		CheckButton::CheckButton(uint8_t Screen, GUI::Rect Rect, std::string String, void (*Function)()) : Label(Screen, Rect, String) {
 			GUI::Rect thisRect = getRect();
 			int width = String.length() * 6 + 4;
 			if(thisRect.getW() < width)
-				thisRect.setW(String.length() * 6 + 4);
+				thisRect.setW(width);
 			setRect(thisRect);
-			CheckButton::function = function;
-			Object::Type = ObjectCheckButton;
+			CheckButton::Function = Function;
 			setVisible(true);
 			setChecked(false);
 		}
@@ -32,11 +31,6 @@ namespace D2K {
 			}
 
 			return true;
-		}
-		void CheckButton::setStatus(uint8_t Value) {
-			Status = Value;
-			setUpdate(true);
-			Draw();
 		}
 		bool CheckButton::getChecked() {
 			return Checked;

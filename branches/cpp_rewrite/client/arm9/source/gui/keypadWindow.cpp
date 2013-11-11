@@ -50,43 +50,26 @@ namespace D2K {
 				int h = 15;
 				int gap = 6;
 
-				label			= new Label(Screen, Rect(64,24,40,11), "");
-				edit			= new Edit(Screen, Rect(96,24,95,11), "", &VoidFunction);
+				AppendObject(label = new Label(Screen, Rect(64,24+3,40,10), ""));
+				AppendObject(edit = new Edit(Screen, Rect(96,24,95,10), "", &VoidFunction));
 
-				button1 		= new Button(Screen, Rect(x + 0, y, w, h), "1", &button1Function);
-				button2 		= new Button(Screen, Rect(x + w + gap, y, w, h), "2", &button2Function);
-				button3 		= new Button(Screen, Rect(x + (w * 2) + (gap * 2), y, w, h), "3", &button3Function);
+				AppendObject(button1 = new Button(Screen, Rect(x + 0, y, w, h), "1", &button1Function));
+				AppendObject(button2 = new Button(Screen, Rect(x + w + gap, y, w, h), "2", &button2Function));
+				AppendObject(button3 = new Button(Screen, Rect(x + (w * 2) + (gap * 2), y, w, h), "3", &button3Function));
 				y += h + gap;
-				button4 		= new Button(Screen, Rect(x + 0, y, w, h), "4", &button4Function);
-				button5 		= new Button(Screen, Rect(x + w + gap, y, w, h), "5", &button5Function);
-				button6 		= new Button(Screen, Rect(x + (w * 2) + (gap * 2), y, w, h), "6", &button6Function);
+				AppendObject(button4 = new Button(Screen, Rect(x + 0, y, w, h), "4", &button4Function));
+				AppendObject(button5 = new Button(Screen, Rect(x + w + gap, y, w, h), "5", &button5Function));
+				AppendObject(button6 = new Button(Screen, Rect(x + (w * 2) + (gap * 2), y, w, h), "6", &button6Function));
 				y += h + gap;
-				button7 		= new Button(Screen, Rect(x + 0, y, w, h), "7", &button7Function);
-				button8 		= new Button(Screen, Rect(x + w + gap, y, w, h), "8", &button8Function);
-				button9 		= new Button(Screen, Rect(x + (w * 2) + (gap * 2), y, w, h), "9", &button9Function);
+				AppendObject(button7 = new Button(Screen, Rect(x + 0, y, w, h), "7", &button7Function));
+				AppendObject(button8 = new Button(Screen, Rect(x + w + gap, y, w, h), "8", &button8Function));
+				AppendObject(button9 = new Button(Screen, Rect(x + (w * 2) + (gap * 2), y, w, h), "9", &button9Function));
 				y += h + gap;
-				buttonPeriod 	= new Button(Screen, Rect(x + 0, y, w, h), ".", &buttonPeriodFunction);
-				button0 		= new Button(Screen, Rect(x + w + gap, y, w, h), "0", &button0Function);
-				buttonBackspace	= new Button(Screen, Rect(x + (w * 2) + (gap * 2), y, w, h), "<", &buttonBackspaceFunction);
+				AppendObject(buttonPeriod = new Button(Screen, Rect(x + 0, y, w, h), ".", &buttonPeriodFunction));
+				AppendObject(button0 = new Button(Screen, Rect(x + w + gap, y, w, h), "0", &button0Function));
+				AppendObject(buttonBackspace = new Button(Screen, Rect(x + (w * 2) + (gap * 2), y, w, h), "<", &buttonBackspaceFunction));
 				y += h + gap;
-				buttonEnter 	= new Button(Screen, Rect(x + 0, y, 42, h), "Enter", &buttonEnterFunction);
-
-				int i = 0;
-				List[i++] = label;
-				List[i++] = edit;
-				List[i++] = button1;
-				List[i++] = button2;
-				List[i++] = button3;
-				List[i++] = button4;
-				List[i++] = button5;
-				List[i++] = button6;
-				List[i++] = button7;
-				List[i++] = button8;
-				List[i++] = button9;
-				List[i++] = buttonPeriod;
-				List[i++] = button0;
-				List[i++] = buttonBackspace;
-				List[i++] = buttonEnter;
+				AppendObject(buttonEnter = new Button(Screen, Rect(x + 0, y, 42, h), "Enter", &buttonEnterFunction));
 			}
 			WindowClass::~WindowClass() { }
 

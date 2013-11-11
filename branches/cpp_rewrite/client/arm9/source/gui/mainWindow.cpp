@@ -2,6 +2,7 @@
 #include "mainWindow.h"
 #include "keypadWindow.h"
 #include "turboWindow.h"
+#include "commandWindow.h"
 #include "../ds2key.h"
 #include "../config.h"
 #include "../system.h"
@@ -15,6 +16,8 @@ namespace D2K {
 			extern void edit3Function();
 			extern void button4Function();
 			extern void button5Function();
+			extern void button6Function();
+			extern void button7Function();
 
 			//public
 			WindowClass *Window;
@@ -28,6 +31,8 @@ namespace D2K {
 			Edit *edit3;
 			Button *button4;
 			Button *button5;
+			Button *button6;
+			Button *button7;
 
 			WindowClass::WindowClass() : Window() {
 				Color[colorBackground] = ARGB16(1, 19, 22, 25);
@@ -47,42 +52,31 @@ namespace D2K {
 
 				Screen = 0;
 
-				label1	= new Label(Screen, Rect(24,0,128,11), VERSION_STRING);
-				label2	= new Label(Screen, Rect(160,0,70,11), System::getTime());
-				label3	= new Label(Screen, Rect(64,24,40,11), "IP:");
-				label4	= new Label(Screen, Rect(64,48,40,11), "Port:");
-				label5	= new Label(Screen, Rect(64,72,40,11), "Profile:");
+				AppendObject(label1	= new Label(Screen, Rect(24,0+3,128,10), VERSION_STRING));
+				AppendObject(label2	= new Label(Screen, Rect(160,0+3,70,10), System::getTime()));
+				AppendObject(label3	= new Label(Screen, Rect(64,24+3,10,10), "IP:"));
+				AppendObject(label4	= new Label(Screen, Rect(64,48+3,10,10), "Port:"));
+				AppendObject(label5	= new Label(Screen, Rect(64,72+3,10,10), "Profile:"));
 
-				edit1 = new Edit(Screen, Rect(96,24,95,11), DS2Key::GetIPString(), &edit1Function);
-				edit2 = new Edit(Screen, Rect(112,48,79,11), DS2Key::GetPortString(), &edit2Function);
-				edit3 = new Edit(Screen, Rect(136,72,55,11), DS2Key::GetProfileString(), &edit3Function);
-				button5 = new Button(Screen, Rect(0,177,35,11), "Turbo", &button5Function);
-				button4 = new Button(Screen, Rect(217,177,35,11), "Touch", &button4Function);
-
-				int i = 0;
-				List[i++] = label1;
-				List[i++] = label2;
-				List[i++] = label3;
-				List[i++] = label4;
-				List[i++] = label5;
-
-				List[i++] = edit1;
-				List[i++] = edit2;
-				List[i++] = edit3;
-				List[i++] = button4;
-				List[i++] = button5;
+				AppendObject(edit1 = new Edit(Screen, Rect(96,24,95,10), DS2Key::GetIPString(), &edit1Function));
+				AppendObject(button6 = new Button(Screen, Rect(204,24,35,10), "Find IP", &button6Function));
+				AppendObject(edit2 = new Edit(Screen, Rect(112,48,79,10), DS2Key::GetPortString(), &edit2Function));
+				AppendObject(edit3 = new Edit(Screen, Rect(136,72,55,10), DS2Key::GetProfileString(), &edit3Function));
+				AppendObject(button5 = new Button(Screen, Rect(0,177,35,10), "Turbo", &button5Function));
+				AppendObject(button7 = new Button(Screen, Rect(95,177,35,10), "Commands", &button7Function));
+				AppendObject(button4 = new Button(Screen, Rect(217,177,35,10), "Touch", &button4Function));
 			}
 			WindowClass::~WindowClass() { }
 			bool WindowClass::Update() {
-				static char oldTime[13];
+				static char seconds = 0;
 
 				static int c = 0;c++;if(c > 30)//counter
 				if(label2->isVisible()) {
 					c = 0;
-					char *newTime = System::getTime();
-					if(strcmp(oldTime, newTime) != 0) {//if times differ
-						strcpy(oldTime, newTime);
-						label2->setText(oldTime);
+					char *timePointer = System::getTime();
+					if(seconds != timePointer[7]) {//if seconds differ
+						seconds = timePointer[7];
+						label2->setText(timePointer);
 					}
 				}
 				return Window::Update();
@@ -142,6 +136,28 @@ namespace D2K {
 					DS2Key::Update(keysHeld(), Turbo::GetKeys(), guitarGripKeysHeld() * guitarGripIsInserted(), 0 * guitarGripIsInserted(), (touchPosition*)NULL);
 					Turbo::Window->Update();
 					if(Main::Window->CheckClick(button5)) {
+						break;//if pressed again, break
+					}
+				}
+
+				Main::Window->Draw();
+				Main::Window->setVisible(true);
+			}
+			void button6Function() {
+				DS2Key::ServerLookup();
+				edit1->setText(DS2Key::GetIPString());
+			}
+			void button7Function() {
+				Main::Window->setVisible(false);
+				button7->setVisible(true);
+				Command::Window->setVisible(true);
+				Command::Window->Draw();
+				button7->Draw();
+
+				while(true) {
+					System::Update(true);
+					Command::Window->Update();
+					if(Main::Window->CheckClick(button7)) {
 						break;//if pressed again, break
 					}
 				}

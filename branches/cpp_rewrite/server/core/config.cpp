@@ -27,6 +27,12 @@ namespace D2K {
 					fprintf(file, "[Settings]\n");
 					fprintf(file, "Port=%i\n", Port);
 					fprintf(file, "Debug=%i\n", Debug);
+
+					for(int i = 0; i < 256; i++) {
+						if(Commands[i])
+							fprintf(file, "Command%i=\"%s\"\n", i, Commands[i]);
+					}
+
 					fclose(file);
 					Load();
 
@@ -156,6 +162,20 @@ namespace D2K {
 
 				SetPort(iniParser::getint(ini, "settings:port", Config::DefaultPort));
 				Debug = iniParser::getint(ini, "settings:debug", dDefault);
+				for(int i = 0; i < 256; i++) {
+					std::ostringstream commandString;
+					commandString << "settings:command" << i;
+					string commandPointer = iniParser::getstring(ini, commandString.str(), "");
+					int commandLength = strlen(commandPointer.c_str());
+					if(commandLength > 0) {
+						Commands[i] = new char(commandLength + 1);
+						strncpy(Commands[i], commandPointer.c_str(), commandLength);
+						Commands[i][commandLength] = 0;
+					}
+					else {
+						Commands[i] = 0;
+					}
+				}
 				iniParser::freedict(ini);
 
 				return 0;
@@ -369,6 +389,10 @@ namespace D2K {
 
 			uint8_t Config::GetDebugLevel() {
 				return Debug;
+			}
+
+			char *Config::GetCommand(uint8_t Command) {
+				return Commands[Command];
 			}
 		}
 	}

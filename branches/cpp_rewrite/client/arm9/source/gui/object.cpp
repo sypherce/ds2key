@@ -5,10 +5,9 @@ namespace D2K {
 		Object::Object(uint8_t Screen, GUI::Rect Rect) {
 			Object::Screen = Screen;
 			Object::Rect = Rect;
-			Object::Type = ObjectObject;
 			Object::Status = 0;
 			setVisible(false);
-			function = &GUI::VoidFunction;
+			Function = &GUI::VoidFunction;
 		}
 		Object::~Object() {
 
@@ -21,6 +20,12 @@ namespace D2K {
 			Object::setUpdate(false);
 			return true;
 		}
+		void Object::setText(std::string Text) {
+
+		};
+		std::string Object::getText() {
+			return "";
+		};
 		void Object::Clear(uint16_t C) {
 			GUI::DrawFilledRect(Screen, Rect, C);
 		}
@@ -29,11 +34,15 @@ namespace D2K {
 			Object::setUpdate(true);
 			Object::Visible = Visible;
 		}
+		void Object::setStatus(uint8_t Value) {
+			if(getStatus() != Value) {
+				Status = Value;
+				setUpdate(true);
+				Draw();
+			}
+		}
 		uint8_t Object::getStatus() {
 			return Status;
-		}
-		void Object::setStatus(uint8_t Value) {
-			Status = Value;
 		}
 		bool Object::isVisible() {
 			return Visible;
@@ -46,9 +55,6 @@ namespace D2K {
 		}
 		bool Object::isUpdated() {
 			return Update;
-		}
-		uint8_t Object::getType() {
-			return Type;
 		}
 		bool Object::getScreen() {
 			return Screen;

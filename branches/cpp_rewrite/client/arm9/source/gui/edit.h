@@ -9,10 +9,9 @@ namespace D2K {
 	namespace GUI {
 		class Edit : public Button {
 			public:
-				Edit(uint8_t Screen, GUI::Rect Rect, std::string String, void (*function)());
+				Edit(uint8_t Screen, GUI::Rect Rect, std::string String, void (*Function)());
 				~Edit();
 				bool Draw();
-				void setStatus(uint8_t Value);
 		};
 	}
 }

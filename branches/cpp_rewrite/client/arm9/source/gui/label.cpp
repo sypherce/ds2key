@@ -4,8 +4,12 @@
 namespace D2K {
 	namespace GUI {
 		Label::Label(uint8_t Screen, GUI::Rect Rect, std::string String) : Object(Screen, Rect) {
+			GUI::Rect thisRect = getRect();
+			int width = String.length() * 6;
+			if(thisRect.getW() < width)
+				thisRect.setW(width);
+			setRect(thisRect);
 			setText(String);
-			Object::Type = ObjectLabel;
 			setVisible(true);
 		}
 		Label::~Label() {
@@ -18,7 +22,7 @@ namespace D2K {
 			if(isVisible()) {
 				Clear(Color[colorBackground]);
 
-				DrawString(getScreen(), getText(), getRect().getX()+3, getRect().getY()+3, Color[colorLabelText]);
+				DrawString(getScreen(), getText(), getRect().getX(), getRect().getY(), Color[colorLabelText]);
 			}
 
 			return true;

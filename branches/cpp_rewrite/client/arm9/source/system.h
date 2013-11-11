@@ -13,7 +13,6 @@ namespace D2K {
 		extern bool inputChange;
 
 		extern char* getTime();
-		//extern bool isScreenOn();
 		extern void Setup();
 		extern void Update(bool change);
 	}

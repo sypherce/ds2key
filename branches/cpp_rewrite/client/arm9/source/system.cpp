@@ -16,7 +16,7 @@ namespace D2K {
 		bool inputChange = false;
 
 		char* getTime() {
-			static char timeChar[13];
+			static char timeChar[12];
 			time_t unixTime = time(NULL);
 			struct tm* timeStruct = gmtime((const time_t *)&unixTime);
 			int hour = timeStruct->tm_hour;
@@ -26,6 +26,7 @@ namespace D2K {
 				sprintf(timeChar, "%02i:%02i:%02i PM", hour - 12, timeStruct->tm_min, timeStruct->tm_sec);
 			else
 				sprintf(timeChar, "%02i:%02i:%02i AM", hour, timeStruct->tm_min, timeStruct->tm_sec);
+				timeChar[11]=0;
 
 			return timeChar;
 		}
@@ -52,13 +53,13 @@ namespace D2K {
 			static const uint32_t vblCountMax = (60 * 4);
 
 			if((keysUp()&KEY_LID) ||							//if lid just opened OR
-				(keysHeld()&KEY_TOUCH)) {						//screen is being touched
+				(keysHeld()&KEY_TOUCH)) {						//screen is touched
 				vblCount = 0;									//reset timer
 				powerOn(PM_BACKLIGHT_BOTTOM|PM_BACKLIGHT_TOP);	//lights on
 			}
 			else if((keysDown()&KEY_LID) ||						//if lid just closed OR
-				keysDown() ||									//a button was pressed OR
-					vblCount == vblCountMax) {					//enough time has passed
+				keysDown() ||									//a button pressed OR
+					vblCount == vblCountMax) {					//enough time passed
 				powerOff(PM_BACKLIGHT_BOTTOM|PM_BACKLIGHT_TOP);	//lights off
 			}
 			vblCount++;											//increment timer
@@ -67,10 +68,6 @@ namespace D2K {
 			updateInputs();
 			updateLid();
 		}
-
-		/*bool isScreenOn() {
-			return !(vblCount >= vblCountMax);
-		}*/
 
 		void Setup() {
 			//screen setup
@@ -98,7 +95,7 @@ namespace D2K {
 
 			iprintf("Connecting via WFC data\n");
 			if(!EMULATOR)
-			if(!Wifi_InitDefault(WFC_CONNECT)) {
+			if(!Wifi_InitDefault(WFC_CONNECT)) {//this needs replaced
 				printf("Error (Wifi_InitDefault): Failed to connect\n");
 			}
 

@@ -11,10 +11,9 @@ namespace D2K {
 			private:
 				bool Checked;
 			public:
-				CheckButton(uint8_t Screen, GUI::Rect Rect, std::string String, void (*function)());
+				CheckButton(uint8_t Screen, GUI::Rect Rect, std::string String, void (*Function)());
 				~CheckButton();
 				bool Draw();
-				void setStatus(uint8_t Value);
 				bool getChecked();
 				void setChecked(bool Checked);
 		};
