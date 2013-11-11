@@ -42,42 +42,24 @@ namespace D2K {
 			WindowClass::WindowClass() : Window() {
 				Screen = 0;
 
-				label1	= new Label(Screen, Rect(24,0,128,11), "Turbo Settings");
+				AppendObject(label1	= new Label(Screen, Rect(24,0+3,128,10), "Turbo Settings"));
 
-				checkButton1 = new CheckButton(Screen, Rect(39,39,11,11), "L", &checkButton1Function);
-				checkButton2 = new CheckButton(Screen, Rect(205,40,11,11), "R", &checkButton2Function);
+				AppendObject(checkButton1 = new CheckButton(Screen, Rect(39,39,10,10), "L", &checkButton1Function));
+				AppendObject(checkButton2 = new CheckButton(Screen, Rect(205,40,10,10), "R", &checkButton2Function));
 
-				checkButton3 = new CheckButton(Screen, Rect(9,95,11,11), "Left", &checkButton3Function);
-				checkButton4 = new CheckButton(Screen, Rect(69,95,11,11), "Right", &checkButton4Function);
-				checkButton5 = new CheckButton(Screen, Rect(39,80,11,11), "Up", &checkButton5Function);
-				checkButton6 = new CheckButton(Screen, Rect(39,110,11,11), "Down", &checkButton6Function);
+				AppendObject(checkButton3 = new CheckButton(Screen, Rect(9,95,10,10), "Left", &checkButton3Function));
+				AppendObject(checkButton4 = new CheckButton(Screen, Rect(69,95,10,10), "Right", &checkButton4Function));
+				AppendObject(checkButton5 = new CheckButton(Screen, Rect(39,80,10,10), "Up", &checkButton5Function));
+				AppendObject(checkButton6 = new CheckButton(Screen, Rect(39,110,10,10), "Down", &checkButton6Function));
 
-				checkButton7 = new CheckButton(Screen, Rect(235,95,11,11), "A", &checkButton7Function);
-				checkButton8 = new CheckButton(Screen, Rect(205,110,11,11), "B", &checkButton8Function);
-				checkButton9 = new CheckButton(Screen, Rect(205,80,11,11), "X", &checkButton9Function);
-				checkButton10 = new CheckButton(Screen, Rect(175,95,11,11), "Y", &checkButton10Function);
+				AppendObject(checkButton7 = new CheckButton(Screen, Rect(235,95,10,10), "A", &checkButton7Function));
+				AppendObject(checkButton8 = new CheckButton(Screen, Rect(205,110,10,10), "B", &checkButton8Function));
+				AppendObject(checkButton9 = new CheckButton(Screen, Rect(205,80,10,10), "X", &checkButton9Function));
+				AppendObject(checkButton10 = new CheckButton(Screen, Rect(175,95,10,10), "Y", &checkButton10Function));
 
-				checkButton11 = new CheckButton(Screen, Rect(145,115,11,11), "Start", &checkButton11Function);
-				checkButton12 = new CheckButton(Screen, Rect(85,115,11,11), "Select", &checkButton12Function);
-				checkButton13 = new CheckButton(Screen, Rect(100,35,11,11), "Enable", &checkButton13Function);
-
-				int i = 0;
-				List[i++] = label1;
-
-				List[i++] = checkButton1;
-				List[i++] = checkButton2;
-				List[i++] = checkButton3;
-				List[i++] = checkButton4;
-				List[i++] = checkButton5;
-				List[i++] = checkButton6;
-				List[i++] = checkButton7;
-				List[i++] = checkButton8;
-				List[i++] = checkButton9;
-				List[i++] = checkButton10;
-				List[i++] = checkButton11;
-				List[i++] = checkButton12;
-				List[i++] = checkButton13;
-
+				AppendObject(checkButton11 = new CheckButton(Screen, Rect(145,115,10,10), "Start", &checkButton11Function));
+				AppendObject(checkButton12 = new CheckButton(Screen, Rect(85,115,10,10), "Select", &checkButton12Function));
+				AppendObject(checkButton13 = new CheckButton(Screen, Rect(100,35,10,10), "Enable", &checkButton13Function));
 			}
 			WindowClass::~WindowClass() { }
 			uint16_t currentTurboKeys = 0;

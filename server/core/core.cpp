@@ -13,6 +13,7 @@
 #include <string.h>
 #include <chrono>
 #include <thread>
+#include <sstream>//ostringstream
 #define Sleep(a) std::this_thread::sleep_for(std::chrono::milliseconds(a))
 #endif//_WIN32
 
@@ -161,7 +162,19 @@ namespace D2K {
 							Client[Packet.profile]->Scan();													//update
 							ProcessPacket(Client[Packet.profile]);											//process
 						}
-						else if(Packet.type == 255) {											//looking for servers
+						else if(Packet.type == '/' + 2) {										//sending command
+							printf("Command #%i \"%s\"\n", Packet.profile, Config->GetCommand(Packet.profile));
+							if(Config->GetCommand(Packet.profile)) {
+								#ifdef _WIN32
+								ShellExecute(NULL, "open", Config->GetCommand(Packet.profile), NULL, NULL, SW_SHOWNORMAL);
+								#elif defined __linux__
+								std::ostringstream command;
+								command << Config->GetCommand(Packet.profile) << " &";
+								system(command.str().c_str());
+								#endif//_WIN32
+							}
+						}
+						else if(Packet.type == 0xFF) {											//looking for servers
 							UDP->Send(&Packet, sizeof(ds2keyPacket));							//bounce back
 						}
 					}

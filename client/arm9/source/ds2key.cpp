@@ -125,14 +125,6 @@ namespace D2K {
 	}
 	void DS2Key::DeInit() {
 		if(EMULATOR) return;
-		/*shutdown always fails with errno 22**
-		**and the code seems to work without **
-		**it so I'm commenting it out for	 **
-		**now								 **
-		if(shutdown(sock, SHUT_RDWR) == -1) {**
-			printf("Error (shutdown): #%d\n", errno);
-		}									 */
-
 		if(closesocket(sock) == -1) {
 			printf("Error (closesocket): #%d\n", errno);
 		}
@@ -141,6 +133,26 @@ namespace D2K {
 		sockaddr.sin_family = 0;
 		sockaddr.sin_port = 0;
 		sockaddr.sin_addr.s_addr = 0;
+	}
+
+	int DS2Key::Send(const void *data, int length) {
+		if(sendto(sock, data, length, 0, (struct sockaddr *)&sockaddr, sizeof(sockaddr)) == -1) {
+			int retVal = errno;
+			printf("Error (sendto): #%d\n", retVal);
+			return retVal;
+		}
+		return 0;
+	}
+
+	int DS2Key::Recv(void *data, int length) {
+		memset(&data, 0, length);
+		int sockaddrLen = sizeof(struct sockaddr_in);
+		if(recvfrom(sock, data, length, 0, (struct sockaddr *)&sockaddr, &sockaddrLen) == -1) {
+			int retVal = errno;
+			printf("Error (recvfrom): #%d\n", retVal);
+			return retVal;
+		}
+		return 0;
 	}
 
 	void DS2Key::Update(uint32_t keys, uint32_t keysTurbo, uint32_t gripKeys, uint32_t gripKeysTurbo, touchPosition *pos) {
@@ -160,17 +172,28 @@ namespace D2K {
 
 		sockaddr.sin_addr.s_addr = GetIP();
 
-		if(sendto(sock, (char*)&packet, sizeof(ds2keyPacket), 0, (struct sockaddr *)&sockaddr, sizeof(sockaddr)) == -1)
-			printf("Error (sendto): #%d\n", errno);
+		Send((char*)&packet, sizeof(ds2keyPacket));
+	}
+
+	void DS2Key::SendCommand(uint8_t command) {
+		packet.type = '/' + 2;
+		packet.profile = command;
+
+		sockaddr.sin_addr.s_addr = GetIP();
+
+		Send((char*)&packet, sizeof(ds2keyPacket));
 	}
 
 	//this is unused right now and very dirty looking
 	void DS2Key::ServerLookup() {
 		if(EMULATOR) return;
-		char host[128];
 		struct hostent *hostEnt;
 		struct in_addr addr;
-		gethostname(host, 128);
+		char *host = new char[128];
+		if(gethostname(host, 128) == -1) {
+			printf("Error (gethostname): #%d\n", errno);
+			return;
+		}
 		hostEnt = gethostbyname(host);
 		if(hostEnt == NULL) {
 			printf("Error (gethostbyname): #%d\n", errno);
@@ -180,34 +203,30 @@ namespace D2K {
 		int i = 0;
 		//while(hostEnt->h_addr_list[i] != 0)
 		{
-			addr.s_addr = *(u_long *) hostEnt->h_addr_list[i++];
+			addr.s_addr = *(u_long *) hostEnt->h_addr_list[i++];//i = 0 here
 			u32 ip = Wifi_GetIP();
 			sprintf(host, "%i.%i.%i.%i", (ip ) & 0xFF, (ip >> 8) & 0xFF, (ip >> 16) & 0xFF, 0xFF);
 			inet_aton(host, &addr);
 			sockaddr.sin_addr = addr;
 
-			printf("\tIP Address %d: %s\n", addr.s_addr, inet_ntoa(addr));
+			printf("\tIP Address %li: %s\n", addr.s_addr, inet_ntoa(addr));
 		}
 		memset(&packet, 0, sizeof(ds2keyPacket));
-		packet.type = 255;
+		packet.type = 0xFF;
 
 
-		if(sendto(sock, (char*)&packet, sizeof(ds2keyPacket), 0, (struct sockaddr *)&sockaddr, sizeof(sockaddr)) == -1)
-			printf("Error (sendto): #%d\n", errno);
+		Send((char*)&packet, sizeof(ds2keyPacket));
 		sockaddr.sin_addr = originalAddr;
-		int sockaddrLen = sizeof(struct sockaddr_in);
 
-		memset(&packet, 0, sizeof(ds2keyPacket));
-		if(recvfrom(sock, (char*)&packet, sizeof(ds2keyPacket), 0, (struct sockaddr *)&sockaddr, &sockaddrLen) == -1) {
-			printf("Error (recvfrom): #%d\n", errno);
+		if(Recv((char*)&packet, sizeof(ds2keyPacket)) != 0) {
 			return;
 		}
 		if(packet.type == 0xFF) {
-			char host[128];
 			u32 ip = sockaddr.sin_addr.s_addr;
 			sprintf(host, "%i.%i.%i.%i", (ip ) & 0xFF, (ip >> 8) & 0xFF, (ip >> 16) & 0xFF, (ip >> 24) & 0xFF);
 			inet_aton(host, &addr);
 			SetIP(host);
 		}
+		delete host;
 	}
 }

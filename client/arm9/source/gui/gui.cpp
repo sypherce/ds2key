@@ -60,8 +60,8 @@ namespace D2K {
 
 		void VoidFunction() { }
 
-		void setUpdate(bool value) {
-			Update = value;
+		void setUpdate(bool Value) {
+			Update = Value;
 		}
 		bool isUpdated() {
 			return Update;

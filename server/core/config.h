@@ -6,7 +6,7 @@
 namespace D2K {
 	namespace Core {
 		//Normal Defines
-		enum Mouse{ 
+		enum Mouse {
 			mRelative, mAbsolute, mButtons,
 			mEND };
 		enum Keys {
@@ -34,11 +34,13 @@ namespace D2K {
 					uint16_t GetPort();
 					void SetPort(uint16_t port);
 					uint8_t GetDebugLevel();
+					char* GetCommand(uint8_t Command);
 					const static uint16_t DefaultPort = 9501;
 
 				private:
 					uint16_t Port;
 					uint8_t Debug;
+					char* Commands[256];
 			};
 		}
 		extern C::Config *Config;

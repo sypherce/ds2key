@@ -4,6 +4,7 @@
 #include "ds2key.h"
 #include "mainWindow.h"
 #include "keypadWindow.h"
+#include "commandWindow.h"
 #include "turboWindow.h"
 #include "system.h"
 #include "apsearch.h"
@@ -23,6 +24,7 @@ int main() {
 	DS2Key::Init();
 	Main::Window = new Main::WindowClass();
 	Keypad::Window = new Keypad::WindowClass();
+	Command::Window = new Command::WindowClass();
 	Turbo::Window = new Turbo::WindowClass();
 
 	Main::Window->setVisible(true);

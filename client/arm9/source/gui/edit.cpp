@@ -3,9 +3,7 @@
 
 namespace D2K {
 	namespace GUI {
-		Edit::Edit(uint8_t Screen, GUI::Rect Rect, std::string String, void (*function)()) : Button(Screen, Rect, String, function) {
-
-			Object::Type = ObjectEdit;
+		Edit::Edit(uint8_t Screen, GUI::Rect Rect, std::string String, void (*Function)()) : Button(Screen, Rect, String, Function) {
 			setVisible(true);
 		}
 
@@ -24,14 +22,6 @@ namespace D2K {
 			}
 
 			return true;
-		}
-		void Edit::setStatus(uint8_t Value) {
-			if(getStatus() != Value)
-			{
-				Object::setStatus(Value);
-				setUpdate(true);
-				Draw();
-			}
 		}
 	}
 }

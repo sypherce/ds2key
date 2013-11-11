@@ -1,18 +1,21 @@
 #ifndef __WINDOW_H__
 #define __WINDOW_H__
 
+#include <vector>
 #include "object.h"
 
 namespace D2K {
 	namespace GUI {
 		class Window {
 			private:
-				const static unsigned ListMax = 50;
+				std::vector<GUI::Object*> Objects;
+				bool Visible;
 			public:
 				Window();
 				~Window();
+				void AppendObject(Object *Object);
+				void RemoveObject(Object *Object);
 				bool Screen;
-				GUI::Object *List[ListMax];
 				void Draw();
 				void setVisible(bool Visible);
 				bool isVisible();

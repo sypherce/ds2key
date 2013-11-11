@@ -3,8 +3,17 @@
 
 volatile bool exitflag = false;
 
+void updateTime() {//this fixes a bug in libnds for 3DS
+	//static int frame60 = 0;
+	//if(frame60++ == 60) {
+	//	frame60 = 0;
+		resyncClock();
+	//}
+}
+
 void VblankHandler(void) {
 	Wifi_Update();
+	updateTime();
 }
 
 void VcountHandler() {

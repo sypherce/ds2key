@@ -3,9 +3,13 @@
 
 namespace D2K {
 	namespace GUI {
-		Button::Button(uint8_t Screen, GUI::Rect Rect, std::string String, void (*function)()) : Label(Screen, Rect, String) {
-			Button::function = function;
-			Object::Type = ObjectButton;
+		Button::Button(uint8_t Screen, GUI::Rect Rect, std::string String, void (*Function)()) : Label(Screen, Rect, String) {
+			GUI::Rect thisRect = getRect();
+			int width = String.length() * 6 + 4;
+			if(thisRect.getW() < width)
+				thisRect.setW(width);
+			setRect(thisRect);
+			Button::Function = Function;
 			setVisible(true);
 		}
 
@@ -14,6 +18,7 @@ namespace D2K {
 		bool Button::Draw() {
 			if(!Object::Draw())
 				return false;
+
 			if(isVisible()) {//ifChanged()
 				Clear(Color[colorButtonBackground]);
 				if(getStatus() == 2)
@@ -24,11 +29,6 @@ namespace D2K {
 			}
 
 			return true;
-		}
-		void Button::setStatus(uint8_t Value) {
-			Status = Value;
-			setUpdate(true);
-			Draw();
 		}
 	}
 }
