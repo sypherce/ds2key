@@ -13,6 +13,9 @@ namespace D2K {
 		namespace C {
 			char *iniFilename = (char*)"ds2key.ini";
 			Config::Config() {
+				for(int i = 0; i < 256; i++) {
+					Commands[i] = (char*)NULL;
+				}
 				Load();
 			}
 
@@ -149,6 +152,12 @@ namespace D2K {
 			bool Config::Load() {
 				dictionary *ini = D2K::Core::iniParser::load(iniFilename);
 
+				for(int i = 0; i < 256; i++) {
+					if(Commands[i])
+						delete Commands[i];
+					Commands[i] = (char*)NULL;
+				}
+
 				if(ini == NULL) {
 					fprintf(stderr, "cannot parse file: %s\n", iniFilename);
 					SetPort(Config::DefaultPort);
@@ -166,14 +175,14 @@ namespace D2K {
 					std::ostringstream commandString;
 					commandString << "settings:command" << i;
 					string commandPointer = iniParser::getstring(ini, commandString.str(), "");
-					int commandLength = strlen(commandPointer.c_str());
+					unsigned int commandLength = commandPointer.size();
 					if(commandLength > 0) {
-						Commands[i] = new char(commandLength + 1);
+						Commands[i] = new char[commandLength + 1];
 						strncpy(Commands[i], commandPointer.c_str(), commandLength);
 						Commands[i][commandLength] = 0;
 					}
 					else {
-						Commands[i] = 0;
+						Commands[i] = (char*)NULL;
 					}
 				}
 				iniParser::freedict(ini);
