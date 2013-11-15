@@ -1,16 +1,16 @@
 #ifndef __APSEARCH_H__
 #define __APSEARCH_H__
 
-#include <dswifi9.h>
+#include <dswifi9.h>//Wifi_AccessPoint
 
 namespace D2K {
 	namespace AP {
-		extern int count;
-		static Wifi_AccessPoint ap;
-		extern bool searching;
+		extern int Count;
+		static Wifi_AccessPoint AP;
+		extern bool Searching;
 		int Update();
 		void Init();
-		Wifi_AccessPoint* getAP(int i);
+		Wifi_AccessPoint* GetAP(int i);
 		void Print(int i);
 	}
 }

@@ -25,7 +25,7 @@
 #include "core.h"
 
 //used only once in code so far
-#define touchBetween(x1, y1, x2, y2) ((x >= std::min((x1), (x2)) && x <= std::max((x1), (x2)) && y >= std::min((y1), (y2)) && y <= std::max((y1), (y2))) && (x1+y1+x2+y2>0))
+#define touchBetween(x1, y1, x2, y2) ((x >= std::min((x1), (x2)) && x <= std::max((x1), (x2)) && y >= std::min((y1), (y2)) && y <= std::max((y1), (y2))) && (x1 + y1 + x2 + y2 > 0))
 
 namespace D2K {
 	namespace Core {
@@ -61,37 +61,37 @@ namespace D2K {
 			bool z = Client->Held(DS2KEY_TOUCH);
 			uint16_t moveType = Settings[kMouse];
 
-			if(z) {//if touched
-				if(lastZ == false) {								//if newly pressed
+			if(z) {																	//if touched
+				if(lastZ == false) {												//if newly pressed
 					//Input->Press(KEY_LBUTTON);
 					lastX = x;
 					lastY = y;
 					lastZ = true;
 				}
-				int i = 25;//ignore
-				int s = 3;//sensitivity
+				int i = 25;															//ignore
+				int s = 3;															//sensitivity
 				int border = 5;
-				if(moveType == mButtons) {							//touch buttons
-					bool retVal = false;
-					for(int c = 0; c <= 11; c++) {					//check all 12 buttons
+				if(moveType == mButtons) {											//touch buttons
+					bool touchedButton = false;
+					for(int c = 0; c <= 11; c++) {									//check all 12 buttons
 						int _x = Settings[kTouch00X + c];
 						int _y = Settings[kTouch00Y + c];
 						int w = _x + Settings[kTouch00W + c];
 						int h = _y + Settings[kTouch00H + c];
-						if(touchBetween(_x, _y, w, h)) {			//if button pressed
+						if(touchBetween(_x, _y, w, h)) {							//if button pressed
 							Input->Press(Settings[kTouch00 + c], Settings[kJoy]);
 							Input->Release(Settings[kTouch00 + c], Settings[kJoy]);
-							retVal = true;							//don't return till we've checked every button
+							touchedButton = true;									//don't return till we've checked every button
 						}
 					}
-					if(retVal)
+					if(touchedButton)
 						return;
 				}
 				else if(!((x - lastX < -i) || (x - lastX > i) || (y - lastY < -i) || (y - lastY > i))) {	//check that we've moved
-					if(moveType == mRelative) {													//relative movement
+					if(moveType == mRelative) {																//relative movement
 						Input->Move((x - lastX) * s, (y - lastY) * s);
 					}
-					else if(moveType == mAbsolute) {												//absolute movement
+					else if(moveType == mAbsolute) {														//absolute movement
 						int tempX = x;
 						int tempY = y;
 						if(tempX < border) tempX = border;
@@ -151,18 +151,18 @@ namespace D2K {
 			if(Running) {
 				ds2keyPacket Packet;
 				if(UDP->IsConnected())
-					if(UDP->RecvFrom(&Packet, sizeof(ds2keyPacket)) != -1) {					//if we receive something without error
-						if(Packet.type == '/' + 1) {											//new protocal
+					if(UDP->Recv(&Packet, sizeof(ds2keyPacket)) == 0) {										//if we receive something without error
+						if(Packet.type == '/' + 1) {														//new protocal
 							if(Client[Packet.profile] == (C::Client*)NULL) {								//if profile not active,
 								Client[Packet.profile] = new C::Client();									//create it
-								Config->ReadProfile(Client[Packet.profile]->GetSettings(), Packet.profile);	//then load it
+								Config->LoadProfile(Client[Packet.profile]->GetSettings(), Packet.profile);	//then load it
 							}
 
 							Client[Packet.profile]->SetPacket(Packet);										//insert packet data
 							Client[Packet.profile]->Scan();													//update
 							ProcessPacket(Client[Packet.profile]);											//process
 						}
-						else if(Packet.type == '/' + 2) {										//sending command
+						else if(Packet.type == '/' + 2) {													//sending command
 							printf("Command #%i \"%s\"\n", Packet.profile, Config->GetCommand(Packet.profile));
 							if(Config->GetCommand(Packet.profile)) {
 								#ifdef _WIN32

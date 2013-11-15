@@ -2,46 +2,23 @@
 #define __GUI_H__
 
 #include <stdint.h>
-#include <string>
+#include <string>//std::string
+#include "rect.h"
 
 namespace D2K {
 	namespace GUI {
-		class Rect {
-			private:
-				uint8_t X;
-				uint8_t Y;
-				uint8_t W;
-				uint8_t H;
-			public:
-				Rect();
-				Rect(uint8_t X, uint8_t Y, uint8_t W, uint8_t H);
-				//Rect operator=(const Rect&) const;
-				uint8_t getX();
-				void setX(uint8_t X);
-				uint8_t getY();
-				void setY(uint8_t Y);
-				uint8_t getW();
-				void setW(uint8_t W);
-				uint8_t getH();
-				void setH(uint8_t H);
-				uint16_t getX2();
-				uint16_t getY2();
-				bool PointIntersect(uint8_t X, uint8_t Y);
-				~Rect();
-		};
-
 		extern void VoidFunction();
 		extern uint16_t *Screen[2];
 		extern bool Update;
-		void setUpdate(bool Value);
-		bool isUpdated();
-		void setPixel(uint8_t Screen, uint8_t X, uint8_t Y, uint16_t C);
-		void ClearScreen(uint8_t Screen, uint16_t C);
-		void DrawRect(uint8_t Screen, GUI::Rect Rect, uint16_t C);
-		void DrawFilledRect(uint8_t Screen, GUI::Rect Rect, uint16_t C);
-		void DrawLine(uint8_t Screen, std::string String, uint8_t X, uint8_t Y, uint16_t C);
-		void DrawLetter(uint8_t Screen, char Letter, uint8_t X, uint8_t Y, uint16_t C);
-		void DrawString(uint8_t Screen, std::string String, uint8_t X, uint8_t Y, uint16_t C);
+		void SetUpdate(bool value);
+		bool IsUpdated();
+		void SetPixel(uint8_t screen, uint8_t x, uint8_t y, uint16_t c);
+		void ClearScreen(uint8_t screen, uint16_t c);
+		void DrawRect(uint8_t screen, GUI::Rect rect, uint16_t c);
+		void DrawFilledRect(uint8_t screen, GUI::Rect rect, uint16_t c);
+		void DrawLine(uint8_t screen, std::string text, uint8_t x, uint8_t y, uint16_t c);
+		void DrawLetter(uint8_t screen, char letter, uint8_t x, uint8_t y, uint16_t c);
+		void DrawString(uint8_t screen, std::string text, uint8_t x, uint8_t y, uint16_t c);
 		enum { 	colorBackground,
 				colorLabelText, colorLabelBackground,
 				colorButtonText, colorButtonBackground, colorButtonOutline, colorButtonOutlineActive,

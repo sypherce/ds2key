@@ -1,16 +1,17 @@
 #include <string>	//std::string
 #include "button.h"
+#include "gui.h"
 
 namespace D2K {
 	namespace GUI {
-		Button::Button(uint8_t Screen, GUI::Rect Rect, std::string String, void (*Function)()) : Label(Screen, Rect, String) {
-			GUI::Rect thisRect = getRect();
-			int width = String.length() * 6 + 4;
-			if(thisRect.getW() < width)
-				thisRect.setW(width);
-			setRect(thisRect);
-			Button::Function = Function;
-			setVisible(true);
+		Button::Button(uint8_t screen, GUI::Rect rect, std::string text, void (*function)()) : Label(screen, rect, text) {
+			GUI::Rect thisRect = GetRect();
+			int width = text.length() * 6 + 4;
+			if(thisRect.GetW() < width)
+				thisRect.SetW(width);
+			SetRect(thisRect);
+			Button::Function = function;
+			SetVisible(true);
 		}
 
 		Button::~Button() { }
@@ -19,13 +20,13 @@ namespace D2K {
 			if(!Object::Draw())
 				return false;
 
-			if(isVisible()) {//ifChanged()
+			if(IsVisible()) {//ifChanged()
 				Clear(Color[colorButtonBackground]);
-				if(getStatus() == 2)
-					DrawRect(getScreen(), getRect(), Color[colorButtonOutlineActive]);
+				if(GetStatus() == 2)
+					DrawRect(GetScreen(), GetRect(), Color[colorButtonOutlineActive]);
 				else
-					DrawRect(getScreen(), getRect(), Color[colorButtonOutline]);
-				DrawString(getScreen(), getText(), getRect().getX()+3, getRect().getY()+3, Color[colorButtonText]);
+					DrawRect(GetScreen(), GetRect(), Color[colorButtonOutline]);
+				DrawString(GetScreen(), GetText(), GetRect().GetX()+3, GetRect().GetY()+3, Color[colorButtonText]);
 			}
 
 			return true;

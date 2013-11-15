@@ -2,20 +2,20 @@
 #define __CHECKBUTTON_H__
 
 #include <string>	//std::string
-#include "gui.h"	//Rect
-#include "label.h"
+#include "rect.h"
+#include "button.h"
 
 namespace D2K {
 	namespace GUI {
-		class CheckButton : public Label {
+		class CheckButton : public Button {
 			private:
 				bool Checked;
 			public:
-				CheckButton(uint8_t Screen, GUI::Rect Rect, std::string String, void (*Function)());
+				CheckButton(uint8_t screen, GUI::Rect rect, std::string text, void (*function)());
 				~CheckButton();
 				bool Draw();
-				bool getChecked();
-				void setChecked(bool Checked);
+				bool GetChecked();
+				void SetChecked(bool checked);
 		};
 	}
 }

@@ -2,47 +2,47 @@
 	UDP Communication
 */
 
-#include <stdio.h>		//stderr, fprintf
-#include <sstream>//std::stringstream
+#include <nds/ndstypes.h>//dswifi9.h
+#include <dswifi9.h>
+#include <netinet/in.h>
+#include <netdb.h>
 
-#ifdef _WIN32
-#define NETerrno WSAGetLastError()
-#define NETEADDRINUSE WSAEADDRINUSE
-#define NETEWOULDBLOCK WSAEWOULDBLOCK
-#define NETclosesocket closesocket
-#define NETioctlsocket ioctlsocket
-#elif defined __linux__
-#include <unistd.h>		//close
-#include <arpa/inet.h>	//inet_ntoa
-#include <sys/ioctl.h>	//ioctl
-#include <string.h>		//memset
-#define NETclosesocket close
-#define NETioctlsocket ioctl
-#define INVALID_SOCKET -1
-#define SOCKET_ERROR -1
+#include <stdio.h>//stderr, fprintf
+#include <sstream>//std::stringstream
+#include <errno.h>
+
+#include "udp.h"
+
 #define NETerrno errno
 #define NETEADDRINUSE EADDRINUSE
 #define NETEWOULDBLOCK EWOULDBLOCK
-#endif//__linux__
-#include "udp.h"
+#define NETclosesocket closesocket
+#define NETioctlsocket ioctl
+#define INVALID_SOCKET -1
 
+#pragma pack(1)
+typedef struct DS2KeyPacket {
+	uint8_t Type;
+	uint8_t Profile;
+	uint16_t Keys;
+	uint16_t KeysTurbo;
+	uint8_t GHKeys;
+	uint16_t GHKeysTurbo;
+	uint8_t TouchX;
+	uint8_t TouchY;
+} DS2KeyPacket;
+#pragma pack()
+DS2KeyPacket Packet = {0};
 namespace D2K {
 	namespace Core {
 		namespace C {
 
 			UDP::UDP() {
-			#ifdef _WIN32
-				WSADATA wsaData;
-				WSAStartup(0x0202, &wsaData); //windows socket startup
-			#endif//_WIN32
 				Connected = false;
 				Block = false;
 			}
 			UDP::~UDP() {
 				Disconnect();//needs checked
-			#ifdef _WIN32
-				WSACleanup();
-			#endif//_WIN32
 			}
 
 			bool UDP::IsConnected() {
@@ -58,6 +58,7 @@ namespace D2K {
 			}
 
 			int UDP::Connect(bool block, uint16_t port) {
+				if(EMULATOR) return 0;
 				if(IsConnected())
 					Disconnect();
 				if(port != 0)
@@ -66,13 +67,8 @@ namespace D2K {
 					SetPort(9501);
 
 				UDP::Block = block;
-
-				int sockaddrLen = sizeof(struct sockaddr_in);
-				memset((char*)&LocalAddr, 0, sockaddrLen);
-				LocalAddr.sin_family = AF_INET; //set local address protocol family
-				LocalAddr.sin_addr.s_addr = INADDR_ANY;
-
-				LocalAddr.sin_port = htons(GetPort());//set port
+				RemoteAddr.sin_family = AF_INET;
+				RemoteAddr.sin_port = htons(GetPort());
 
 				Sock = socket(PF_INET, SOCK_DGRAM, 0);//create a socket
 				if(Sock == INVALID_SOCKET) {
@@ -80,16 +76,6 @@ namespace D2K {
 					fprintf(stderr, "Error (socket): #%d\n", err);
 					Disconnect();
 
-					return err;
-				}
-
-				if(bind(Sock, (struct sockaddr*)&LocalAddr, sockaddrLen) == SOCKET_ERROR) {//bind a local address and port
-					int err = NETerrno;
-					if(err == NETEADDRINUSE)
-						fprintf(stderr, "Error (bind)\nPort #%d already in use\n", GetPort());
-					else
-						fprintf(stderr, "Error (bind): #%d\n", err);
-					Disconnect();
 					return err;
 				}
 
@@ -105,6 +91,7 @@ namespace D2K {
 			}
 
 			int UDP::Disconnect() {
+				if(EMULATOR) return 0;
 				if(IsConnected()) {
 					Connected = false;
 					if(NETclosesocket(Sock) == SOCKET_ERROR) {
@@ -158,7 +145,7 @@ namespace D2K {
 				}
 				else {//successful
 					int sockaddrLen = sizeof(RemoteAddr);
-					memset(buf, 0, len);//this needed erased on the ds just to function.
+					//memset(buf, 0, len);//this needed erased on the ds just to function.
 					if(recvfrom(Sock, (char*)buf, len, 0, (struct sockaddr*)&RemoteAddr, &sockaddrLen) == SOCKET_ERROR) {
 						int err = NETerrno;
 						if(err != NETEWOULDBLOCK)
@@ -168,6 +155,56 @@ namespace D2K {
 				}
 
 				return 0;
+			}
+
+			void UDP::SendCommand(uint8_t command) {
+				memset(&Packet, 0, sizeof(DS2KeyPacket));				//clear the packet
+				Packet.Type = '/' + 2;
+				Packet.Profile = command;
+
+				Send((char*)&Packet, sizeof(DS2KeyPacket));
+			}
+
+			void UDP::Update(uint32_t keys, uint32_t keysTurbo, uint32_t gripKeys, uint32_t gripKeysTurbo, touchPosition *pos) {
+				if(EMULATOR) return;
+				memset(&Packet, 0, sizeof(DS2KeyPacket));				//clear the packet
+				Packet.Type = '/' + 1;
+				Packet.Profile = GetProfile();
+				Packet.Keys = keys;
+				Packet.KeysTurbo = keysTurbo;
+				if(pos == (touchPosition*)NULL)
+					Packet.Keys &= ~KEY_TOUCH;
+				else {//if(d2kMode == iMouse)
+					Packet.TouchX = pos->px;
+					Packet.TouchY = pos->py;
+				}
+				Packet.GHKeys = gripKeys;
+				Packet.GHKeysTurbo = gripKeysTurbo;
+
+				Send((char*)&Packet, sizeof(DS2KeyPacket));
+			}
+
+			void UDP::ServerLookup() {
+				if(EMULATOR) return;									//skip if emulating
+				unsigned long SavedRemoteIP = GetRemoteIP();			//save the remote IP
+				unsigned long LocalIP = GetLocalIP();					//get the local IP
+				SetRemoteIP(((LocalIP ) & 0xFF) |						//setup the broadcast IP
+							(((LocalIP >> 8) & 0xFF) << 8 ) |
+							(((LocalIP >> 16) & 0xFF) << 16) |
+							(0xFF << 24));
+
+				memset(&Packet, 0, sizeof(DS2KeyPacket));				//clear the packet
+				Packet.Type = 0xFF;										//set as a lookup packet
+
+				Send((char*)&Packet, sizeof(DS2KeyPacket));				//send the packet out
+
+				if(Recv((char*)&Packet, sizeof(DS2KeyPacket)) != 0) {	//didn't receive anything
+					SetRemoteIP(SavedRemoteIP);							//reset the remote IP
+				}
+				else if(Packet.Type == 0xFF) {							//received a lookup packet
+					if(GetLocalIP() == GetRemoteIP())					//if it's from the local IP
+						SetRemoteIP(SavedRemoteIP);						//reset the remote IP
+				}
 			}
 
 			//private
@@ -187,16 +224,22 @@ namespace D2K {
 			}
 			//end
 
-			char *UDP::GetLocalIP() {
-				std::string IP = inet_ntoa(LocalAddr.sin_addr);
-
-				return (char*)IP.c_str();
+			unsigned long UDP::GetLocalIP() {
+				return Wifi_GetIP();
+			}
+			std::string UDP::GetLocalIPString() {
+				struct in_addr sin_addr;
+				sin_addr.s_addr = GetLocalIP();
+				std::string IP = inet_ntoa(sin_addr);
+				return IP;
 			}
 
-			char *UDP::GetRemoteIP() {
+			unsigned long UDP::GetRemoteIP() {
+				return RemoteAddr.sin_addr.s_addr;
+			}
+			std::string UDP::GetRemoteIPString() {
 				std::string IP = inet_ntoa(RemoteAddr.sin_addr);
-
-				return (char*)IP.c_str();
+				return IP;
 			}
 
 			uint16_t UDP::GetPort() {
@@ -204,6 +247,20 @@ namespace D2K {
 			}
 			std::string UDP::GetPortString() {
 				return itos(Port);
+			}
+
+			uint8_t UDP::GetProfile() {
+				return Profile;
+			}
+			std::string UDP::GetProfileString() {
+				return itos((uint16_t)Profile);
+			}
+
+			void UDP::SetRemoteIP(const std::string& text) {
+				inet_aton(text.c_str(), &RemoteAddr.sin_addr);
+			}
+			void UDP::SetRemoteIP(unsigned long ip) {
+				RemoteAddr.sin_addr.s_addr = ip;
 			}
 
 			void UDP::SetPort(const std::string& port) {
@@ -214,6 +271,16 @@ namespace D2K {
 			}
 			void UDP::SetPort(unsigned int port) {
 				Port = port;
+			}
+
+			void UDP::SetProfile(const std::string& profile) {
+				Profile = stoi(profile);
+			}
+			void UDP::SetProfile(char *profile) {
+				Profile = atoi(profile);
+			}
+			void UDP::SetProfile(unsigned int profile) {
+				Profile = profile;
 			}
 		}
 		C::UDP *UDP = (C::UDP*)NULL;

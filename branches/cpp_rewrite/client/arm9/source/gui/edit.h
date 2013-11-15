@@ -2,14 +2,14 @@
 #define __EDIT_H__
 
 #include <string>	//std::string
-#include "gui.h"	//Rect
+#include "rect.h"
 #include "button.h"
 
 namespace D2K {
 	namespace GUI {
 		class Edit : public Button {
 			public:
-				Edit(uint8_t Screen, GUI::Rect Rect, std::string String, void (*Function)());
+				Edit(uint8_t screen, GUI::Rect rect, std::string text, void (*function)());
 				~Edit();
 				bool Draw();
 		};

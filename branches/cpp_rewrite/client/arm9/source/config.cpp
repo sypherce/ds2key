@@ -4,51 +4,72 @@
 #include <stdio.h>
 #include <errno.h>
 #include "config.h"
-#include "ds2key.h"
+#include "udp.h"
 #include "iniparser/src/iniparser.h"
 
 namespace D2K {
-	const char *DEFAULT_IP = "0.0.0.0";
-	const char *DEFAULT_PORT = "9501";
-	const char *DEFAULT_PROFILE = "0";
-	const char *DS2KEY_INI = "ds2key.ini";
+	namespace Core {
+		C::Config *Config = (C::Config*)NULL;
+		namespace C {
 
-	bool Config::Load() {
-		dictionary *ini = iniparser_load((char*)DS2KEY_INI);
+			const char *DefaultIP = "0.0.0.0";
+			const char *DefaultPort = "9501";
+			const char *DefaultProfile = "0";
+			const char *iniFilename = "ds2key.ini";
 
-		if(ini == NULL) {
-			printf("Error (fopen): #%d\n", errno);
-			printf("Failed to open file: %s\n", DS2KEY_INI);
-			DS2Key::SetIP(DEFAULT_IP);
-			DS2Key::SetPort((char*)DEFAULT_PORT);
-			DS2Key::SetProfile((char*)DEFAULT_PROFILE);
-			Save();
+			Config::Config() {
+				Load();
+			}
 
-			return 1;
+			Config::~Config() {
+				Save();
+			}
+
+			int Config::Load() {
+				if(Core::UDP == NULL) return 1;
+				dictionary *ini = iniparser_load(iniFilename);
+
+				if(ini == NULL) {
+					int err = errno;
+					fprintf(stderr, "Error (iniparser_load): #%d\nFailed to open file: %s\n", err, iniFilename);
+					Core::UDP->SetRemoteIP(DefaultIP);
+					Core::UDP->SetPort(DefaultPort);
+					Core::UDP->SetProfile(DefaultProfile);
+					Save();
+
+					return err;
+				}
+
+				iniparser_dump(ini, stderr);
+
+				Core::UDP->SetRemoteIP(iniparser_getstring(ini, (char*)"settings:ip", (char*)DefaultIP));
+				Core::UDP->SetPort(iniparser_getstring(ini, (char*)"settings:port", (char*)DefaultPort));
+				Core::UDP->SetProfile(iniparser_getstring(ini, (char*)"settings:profile", (char*)DefaultProfile));
+
+				iniparser_freedict(ini);
+
+				return 0;
+			}
+			int Config::Save() {
+				if(Core::UDP == NULL) return 1;
+				FILE *file = fopen(iniFilename, "w");
+
+				if(file == NULL) {
+					int err = errno;
+					fprintf(stderr, "Error (fopen): #%d\nFailed to save file: %s\n", errno, iniFilename);
+
+					return err;
+				}
+
+				fprintf(file, "[Settings]\n");
+				fprintf(file, "IP=%s\n", Core::UDP->GetRemoteIPString().c_str());
+				fprintf(file, "Port=%u\n", Core::UDP->GetPort());
+				fprintf(file, "Profile=%u\n", Core::UDP->GetProfile());
+				fclose(file);
+				Load();
+
+				return 0;
+			}
 		}
-		iniparser_dump(ini, stderr);
-
-		DS2Key::SetIP(iniparser_getstring(ini, (char*)"settings:ip", (char*)DEFAULT_IP));
-		DS2Key::SetPort(iniparser_getstring(ini, (char*)"settings:port", (char*)DEFAULT_PORT));
-		DS2Key::SetProfile(iniparser_getstring(ini, (char*)"settings:profile", (char*)DEFAULT_PROFILE));
-
-		return 0;
-	}
-	bool Config::Save() {
-		FILE *file = fopen(DS2KEY_INI, "w");
-
-		if(file) {
-			fprintf(file, "[Settings]\n");
-			fprintf(file, "IP=%s\n", DS2Key::GetIPString().c_str());
-			fprintf(file, "Port=%d\n", DS2Key::GetPort());
-			fprintf(file, "Profile=%d\n", DS2Key::GetProfile());
-			fclose(file);
-		}
-		else {
-			printf("Error (fopen): #%d\nFailed to save file: %s\n", errno, DS2KEY_INI);
-			return 1;
-		}
-
-		return 0;
 	}
 }

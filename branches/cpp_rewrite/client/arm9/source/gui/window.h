@@ -13,13 +13,13 @@ namespace D2K {
 			public:
 				Window();
 				~Window();
-				void AppendObject(Object *Object);
-				void RemoveObject(Object *Object);
+				void AppendObject(Object *object);
+				void RemoveObject(Object *object);
 				bool Screen;
 				void Draw();
-				void setVisible(bool Visible);
-				bool isVisible();
-				bool CheckClick(Object *thisObject);//needs relocated?
+				void SetVisible(bool visible);
+				bool IsVisible();
+				bool CheckClick(Object *object);//needs relocated?
 				bool Update();
 		};
 	}
