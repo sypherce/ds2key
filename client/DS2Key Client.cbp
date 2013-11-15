@@ -52,28 +52,20 @@
 		<Unit filename="arm9/source/apsearch.h" />
 		<Unit filename="arm9/source/config.cpp" />
 		<Unit filename="arm9/source/config.h" />
-		<Unit filename="arm9/source/ds2key.cpp" />
-		<Unit filename="arm9/source/ds2key.h" />
+		<Unit filename="arm9/source/core.cpp" />
+		<Unit filename="arm9/source/core.h" />
 		<Unit filename="arm9/source/gui/button.cpp" />
 		<Unit filename="arm9/source/gui/button.h" />
 		<Unit filename="arm9/source/gui/checkButton.cpp" />
 		<Unit filename="arm9/source/gui/checkButton.h" />
-		<Unit filename="arm9/source/gui/commandWindow.cpp" />
-		<Unit filename="arm9/source/gui/commandWindow.h" />
 		<Unit filename="arm9/source/gui/edit.cpp" />
 		<Unit filename="arm9/source/gui/edit.h" />
 		<Unit filename="arm9/source/gui/gui.cpp" />
 		<Unit filename="arm9/source/gui/gui.h" />
-		<Unit filename="arm9/source/gui/keypadWindow.cpp" />
-		<Unit filename="arm9/source/gui/keypadWindow.h" />
 		<Unit filename="arm9/source/gui/label.cpp" />
 		<Unit filename="arm9/source/gui/label.h" />
-		<Unit filename="arm9/source/gui/mainWindow.cpp" />
-		<Unit filename="arm9/source/gui/mainWindow.h" />
 		<Unit filename="arm9/source/gui/object.cpp" />
 		<Unit filename="arm9/source/gui/object.h" />
-		<Unit filename="arm9/source/gui/turboWindow.cpp" />
-		<Unit filename="arm9/source/gui/turboWindow.h" />
 		<Unit filename="arm9/source/gui/window.cpp" />
 		<Unit filename="arm9/source/gui/window.h" />
 		<Unit filename="arm9/source/iniparser/src/dictionary.cpp" />
@@ -81,8 +73,18 @@
 		<Unit filename="arm9/source/iniparser/src/iniparser.cpp" />
 		<Unit filename="arm9/source/iniparser/src/iniparser.h" />
 		<Unit filename="arm9/source/main9.cpp" />
-		<Unit filename="arm9/source/system.cpp" />
-		<Unit filename="arm9/source/system.h" />
+		<Unit filename="arm9/source/udp.cpp" />
+		<Unit filename="arm9/source/udp.h" />
+		<Unit filename="arm9/source/windows/commandWindow.cpp" />
+		<Unit filename="arm9/source/windows/commandWindow.h" />
+		<Unit filename="arm9/source/windows/ipWindow.cpp" />
+		<Unit filename="arm9/source/windows/ipWindow.h" />
+		<Unit filename="arm9/source/windows/keypadWindow.cpp" />
+		<Unit filename="arm9/source/windows/keypadWindow.h" />
+		<Unit filename="arm9/source/windows/mainWindow.cpp" />
+		<Unit filename="arm9/source/windows/mainWindow.h" />
+		<Unit filename="arm9/source/windows/turboWindow.cpp" />
+		<Unit filename="arm9/source/windows/turboWindow.h" />
 		<Extensions>
 			<code_completion />
 			<debugger />

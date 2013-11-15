@@ -10,10 +10,10 @@ namespace D2K {
 			protected:
 				std::string Text;
 			public:
-				Label(uint8_t Screen, GUI::Rect Rect, std::string String);
+				Label(uint8_t screen, GUI::Rect rect, std::string text);
 				~Label();
-				void setText(std::string Text);
-				std::string getText();
+				void SetText(std::string text);
+				std::string GetText();
 				bool Draw();
 		};
 	}

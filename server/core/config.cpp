@@ -11,7 +11,9 @@ namespace D2K {
 	namespace Core {
 		C::Config *Config = (C::Config*)NULL;
 		namespace C {
+			const static uint16_t defaultPort = 9501;
 			char *iniFilename = (char*)"ds2key.ini";
+
 			Config::Config() {
 				for(int i = 0; i < 256; i++) {
 					Commands[i] = (char*)NULL;
@@ -23,133 +25,7 @@ namespace D2K {
 				Save();
 			}
 
-			bool Config::Save() {
-				FILE *file = fopen(iniFilename, "w");
-
-				if(file) {
-					fprintf(file, "[Settings]\n");
-					fprintf(file, "Port=%i\n", Port);
-					fprintf(file, "Debug=%i\n", Debug);
-
-					for(int i = 0; i < 256; i++) {
-						if(Commands[i])
-							fprintf(file, "Command%i=\"%s\"\n", i, Commands[i]);
-					}
-
-					fclose(file);
-					Load();
-
-					return 0;
-				}
-
-				return 1;
-			}
-
-			bool Config::SaveProfile(uint16_t *Profile, uint8_t profileNumber) {
-				std::ostringstream ssfilename;
-				ssfilename << "ds2key.p" << (int)profileNumber << ".ini";
-
-				FILE *file = fopen(ssfilename.str().c_str(), "w");
-				if(file) {
-					fprintf(file, "[Profile]\n");
-					if(Profile[kMouse] == mAbsolute)
-						fprintf(file, "Mouse=Absolute\n");
-					else if(Profile[kMouse] == mButtons)
-						fprintf(file, "Mouse=Buttons\n");
-					else
-						fprintf(file, "Mouse=Relative\n");
-					fprintf(file, "Joy=%i\n", Profile[kJoy]);
-					fprintf(file, "Up=%s\n", Key::GetString(Profile[kUp]));
-					fprintf(file, "Down=%s\n", Key::GetString(Profile[kDown]));
-					fprintf(file, "Left=%s\n", Key::GetString(Profile[kLeft]));
-					fprintf(file, "Right=%s\n", Key::GetString(Profile[kRight]));
-					fprintf(file, "A=%s\n", Key::GetString(Profile[kA]));
-					fprintf(file, "B=%s\n", Key::GetString(Profile[kB]));
-					fprintf(file, "X=%s\n", Key::GetString(Profile[kX]));
-					fprintf(file, "Y=%s\n", Key::GetString(Profile[kY]));
-					fprintf(file, "L=%s\n", Key::GetString(Profile[kL]));
-					fprintf(file, "R=%s\n", Key::GetString(Profile[kR]));
-					fprintf(file, "Start=%s\n", Key::GetString(Profile[kStart]));
-					fprintf(file, "Select=%s\n", Key::GetString(Profile[kSelect]));
-					fprintf(file, "Lid=%s\n", Key::GetString(Profile[kLid]));
-					fprintf(file, "Blue=%s\n", Key::GetString(Profile[kBlue]));
-					fprintf(file, "Yellow=%s\n", Key::GetString(Profile[kYellow]));
-					fprintf(file, "Red=%s\n", Key::GetString(Profile[kRed]));
-					fprintf(file, "Green=%s\n", Key::GetString(Profile[kGreen]));
-					fprintf(file, "Touch00=%s\n", Key::GetString(Profile[kTouch00]));
-					fprintf(file, "Touch01=%s\n", Key::GetString(Profile[kTouch01]));
-					fprintf(file, "Touch02=%s\n", Key::GetString(Profile[kTouch02]));
-					fprintf(file, "Touch03=%s\n", Key::GetString(Profile[kTouch03]));
-					fprintf(file, "Touch04=%s\n", Key::GetString(Profile[kTouch04]));
-					fprintf(file, "Touch05=%s\n", Key::GetString(Profile[kTouch05]));
-					fprintf(file, "Touch06=%s\n", Key::GetString(Profile[kTouch06]));
-					fprintf(file, "Touch07=%s\n", Key::GetString(Profile[kTouch07]));
-					fprintf(file, "Touch08=%s\n", Key::GetString(Profile[kTouch08]));
-					fprintf(file, "Touch09=%s\n", Key::GetString(Profile[kTouch09]));
-					fprintf(file, "Touch10=%s\n", Key::GetString(Profile[kTouch10]));
-					fprintf(file, "Touch11=%s\n", Key::GetString(Profile[kTouch11]));
-
-					fprintf(file, "Touch00X=%i\n", Profile[kTouch00X]);
-					fprintf(file, "Touch01X=%i\n", Profile[kTouch01X]);
-					fprintf(file, "Touch02X=%i\n", Profile[kTouch02X]);
-					fprintf(file, "Touch03X=%i\n", Profile[kTouch03X]);
-					fprintf(file, "Touch04X=%i\n", Profile[kTouch04X]);
-					fprintf(file, "Touch05X=%i\n", Profile[kTouch05X]);
-					fprintf(file, "Touch06X=%i\n", Profile[kTouch06X]);
-					fprintf(file, "Touch07X=%i\n", Profile[kTouch07X]);
-					fprintf(file, "Touch08X=%i\n", Profile[kTouch08X]);
-					fprintf(file, "Touch09X=%i\n", Profile[kTouch09X]);
-					fprintf(file, "Touch10X=%i\n", Profile[kTouch10X]);
-					fprintf(file, "Touch11X=%i\n", Profile[kTouch11X]);
-
-					fprintf(file, "Touch00Y=%i\n", Profile[kTouch00Y]);
-					fprintf(file, "Touch01Y=%i\n", Profile[kTouch01Y]);
-					fprintf(file, "Touch02Y=%i\n", Profile[kTouch02Y]);
-					fprintf(file, "Touch03Y=%i\n", Profile[kTouch03Y]);
-					fprintf(file, "Touch04Y=%i\n", Profile[kTouch04Y]);
-					fprintf(file, "Touch05Y=%i\n", Profile[kTouch05Y]);
-					fprintf(file, "Touch06Y=%i\n", Profile[kTouch06Y]);
-					fprintf(file, "Touch07Y=%i\n", Profile[kTouch07Y]);
-					fprintf(file, "Touch08Y=%i\n", Profile[kTouch08Y]);
-					fprintf(file, "Touch09Y=%i\n", Profile[kTouch09Y]);
-					fprintf(file, "Touch10Y=%i\n", Profile[kTouch10Y]);
-					fprintf(file, "Touch11Y=%i\n", Profile[kTouch11Y]);
-
-					fprintf(file, "Touch00W=%i\n", Profile[kTouch00W]);
-					fprintf(file, "Touch01W=%i\n", Profile[kTouch01W]);
-					fprintf(file, "Touch02W=%i\n", Profile[kTouch02W]);
-					fprintf(file, "Touch03W=%i\n", Profile[kTouch03W]);
-					fprintf(file, "Touch04W=%i\n", Profile[kTouch04W]);
-					fprintf(file, "Touch05W=%i\n", Profile[kTouch05W]);
-					fprintf(file, "Touch06W=%i\n", Profile[kTouch06W]);
-					fprintf(file, "Touch07W=%i\n", Profile[kTouch07W]);
-					fprintf(file, "Touch08W=%i\n", Profile[kTouch08W]);
-					fprintf(file, "Touch09W=%i\n", Profile[kTouch09W]);
-					fprintf(file, "Touch10W=%i\n", Profile[kTouch10W]);
-					fprintf(file, "Touch11W=%i\n", Profile[kTouch11W]);
-
-					fprintf(file, "Touch00H=%i\n", Profile[kTouch00H]);
-					fprintf(file, "Touch01H=%i\n", Profile[kTouch01H]);
-					fprintf(file, "Touch02H=%i\n", Profile[kTouch02H]);
-					fprintf(file, "Touch03H=%i\n", Profile[kTouch03H]);
-					fprintf(file, "Touch04H=%i\n", Profile[kTouch04H]);
-					fprintf(file, "Touch05H=%i\n", Profile[kTouch05H]);
-					fprintf(file, "Touch06H=%i\n", Profile[kTouch06H]);
-					fprintf(file, "Touch07H=%i\n", Profile[kTouch07H]);
-					fprintf(file, "Touch08H=%i\n", Profile[kTouch08H]);
-					fprintf(file, "Touch09H=%i\n", Profile[kTouch09H]);
-					fprintf(file, "Touch10H=%i\n", Profile[kTouch10H]);
-					fprintf(file, "Touch11H=%i\n", Profile[kTouch11H]);
-
-					fclose(file);
-
-					return 0;
-				}
-
-				return 1;
-			}
-
-			bool Config::Load() {
+			int Config::Load() {
 				dictionary *ini = D2K::Core::iniParser::load(iniFilename);
 
 				for(int i = 0; i < 256; i++) {
@@ -159,17 +35,18 @@ namespace D2K {
 				}
 
 				if(ini == NULL) {
-					fprintf(stderr, "cannot parse file: %s\n", iniFilename);
-					SetPort(Config::DefaultPort);
+					int err = errno;
+					fprintf(stderr, "Error (iniParser::load): #%d\nFailed to open file: %s\n", err, iniFilename);
+					SetPort(defaultPort);
 					Debug = dDefault;
 					Save();
 
-					return 1;
+					return err;
 				}
 
 				iniParser::dump(ini, stderr);
 
-				SetPort(iniParser::getint(ini, "settings:port", Config::DefaultPort));
+				SetPort(iniParser::getint(ini, "settings:port", defaultPort));
 				Debug = iniParser::getint(ini, "settings:debug", dDefault);
 				for(int i = 0; i < 256; i++) {
 					std::ostringstream commandString;
@@ -190,14 +67,15 @@ namespace D2K {
 				return 0;
 			}
 
-			bool Config::ReadProfile(uint16_t *Profile, uint8_t profileNumber) {
+			int Config::LoadProfile(uint16_t *Profile, uint8_t profileNumber) {
 				std::ostringstream ssfilename;
 				ssfilename << "ds2key.p" << (int)profileNumber << ".ini";
 
 				dictionary *ini = iniParser::load(ssfilename.str().c_str());
 				iniParser::dump(ini, stderr);
 				if(ini == NULL) {
-					fprintf(stderr, "cannot parse file: %s\n", ssfilename.str().c_str());
+					int err = errno;
+					fprintf(stderr, "Error (iniParser::load): #%d\nFailed to open file: %s\n", err, iniFilename);
 					Profile[kMouse] = mRelative;
 					Profile[kJoy] = 0;
 					Profile[kUp] = KEY_UP;
@@ -287,6 +165,7 @@ namespace D2K {
 
 					return 1;
 				}
+
 				iniParser::dump(ini, stderr);
 
 				std::string mouse = iniParser::getstring(ini, "profile:mouse", "Relative");
@@ -385,13 +264,145 @@ namespace D2K {
 				return 0;
 			}
 
+			int Config::Save() {
+				FILE *file = fopen(iniFilename, "w");
+
+				if(file == NULL) {
+					int err = errno;
+					fprintf(stderr, "Error (fopen): #%d\nFailed to save file: %s\n", errno, iniFilename);
+
+					return err;
+				}
+
+				fprintf(file, "[Settings]\n");
+				fprintf(file, "Port=%u\n", Port);
+				fprintf(file, "Debug=%u\n", Debug);
+
+				for(int i = 0; i < 256; i++) {
+					if(Commands[i])
+						fprintf(file, "Command%i=\"%s\"\n", i, Commands[i]);
+				}
+
+				fclose(file);
+				Load();
+
+				return 0;
+			}
+
+			int Config::SaveProfile(uint16_t *Profile, uint8_t profileNumber) {
+				std::ostringstream ssfilename;
+				ssfilename << "ds2key.p" << (int)profileNumber << ".ini";
+
+				FILE *file = fopen(ssfilename.str().c_str(), "w");
+				if(file == NULL) {
+					int err = errno;
+					fprintf(stderr, "Error (fopen): #%d\nFailed to save file: %s\n", errno, ssfilename.str().c_str());
+
+					return err;
+				}
+
+				fprintf(file, "[Profile]\n");
+				if(Profile[kMouse] == mAbsolute)
+					fprintf(file, "Mouse=Absolute\n");
+				else if(Profile[kMouse] == mButtons)
+					fprintf(file, "Mouse=Buttons\n");
+				else
+					fprintf(file, "Mouse=Relative\n");
+				fprintf(file, "Joy=%i\n", Profile[kJoy]);
+				fprintf(file, "Up=%s\n", Key::GetString(Profile[kUp]));
+				fprintf(file, "Down=%s\n", Key::GetString(Profile[kDown]));
+				fprintf(file, "Left=%s\n", Key::GetString(Profile[kLeft]));
+				fprintf(file, "Right=%s\n", Key::GetString(Profile[kRight]));
+				fprintf(file, "A=%s\n", Key::GetString(Profile[kA]));
+				fprintf(file, "B=%s\n", Key::GetString(Profile[kB]));
+				fprintf(file, "X=%s\n", Key::GetString(Profile[kX]));
+				fprintf(file, "Y=%s\n", Key::GetString(Profile[kY]));
+				fprintf(file, "L=%s\n", Key::GetString(Profile[kL]));
+				fprintf(file, "R=%s\n", Key::GetString(Profile[kR]));
+				fprintf(file, "Start=%s\n", Key::GetString(Profile[kStart]));
+				fprintf(file, "Select=%s\n", Key::GetString(Profile[kSelect]));
+				fprintf(file, "Lid=%s\n", Key::GetString(Profile[kLid]));
+				fprintf(file, "Blue=%s\n", Key::GetString(Profile[kBlue]));
+				fprintf(file, "Yellow=%s\n", Key::GetString(Profile[kYellow]));
+				fprintf(file, "Red=%s\n", Key::GetString(Profile[kRed]));
+				fprintf(file, "Green=%s\n", Key::GetString(Profile[kGreen]));
+				fprintf(file, "Touch00=%s\n", Key::GetString(Profile[kTouch00]));
+				fprintf(file, "Touch01=%s\n", Key::GetString(Profile[kTouch01]));
+				fprintf(file, "Touch02=%s\n", Key::GetString(Profile[kTouch02]));
+				fprintf(file, "Touch03=%s\n", Key::GetString(Profile[kTouch03]));
+				fprintf(file, "Touch04=%s\n", Key::GetString(Profile[kTouch04]));
+				fprintf(file, "Touch05=%s\n", Key::GetString(Profile[kTouch05]));
+				fprintf(file, "Touch06=%s\n", Key::GetString(Profile[kTouch06]));
+				fprintf(file, "Touch07=%s\n", Key::GetString(Profile[kTouch07]));
+				fprintf(file, "Touch08=%s\n", Key::GetString(Profile[kTouch08]));
+				fprintf(file, "Touch09=%s\n", Key::GetString(Profile[kTouch09]));
+				fprintf(file, "Touch10=%s\n", Key::GetString(Profile[kTouch10]));
+				fprintf(file, "Touch11=%s\n", Key::GetString(Profile[kTouch11]));
+
+				fprintf(file, "Touch00X=%i\n", Profile[kTouch00X]);
+				fprintf(file, "Touch01X=%i\n", Profile[kTouch01X]);
+				fprintf(file, "Touch02X=%i\n", Profile[kTouch02X]);
+				fprintf(file, "Touch03X=%i\n", Profile[kTouch03X]);
+				fprintf(file, "Touch04X=%i\n", Profile[kTouch04X]);
+				fprintf(file, "Touch05X=%i\n", Profile[kTouch05X]);
+				fprintf(file, "Touch06X=%i\n", Profile[kTouch06X]);
+				fprintf(file, "Touch07X=%i\n", Profile[kTouch07X]);
+				fprintf(file, "Touch08X=%i\n", Profile[kTouch08X]);
+				fprintf(file, "Touch09X=%i\n", Profile[kTouch09X]);
+				fprintf(file, "Touch10X=%i\n", Profile[kTouch10X]);
+				fprintf(file, "Touch11X=%i\n", Profile[kTouch11X]);
+
+				fprintf(file, "Touch00Y=%i\n", Profile[kTouch00Y]);
+				fprintf(file, "Touch01Y=%i\n", Profile[kTouch01Y]);
+				fprintf(file, "Touch02Y=%i\n", Profile[kTouch02Y]);
+				fprintf(file, "Touch03Y=%i\n", Profile[kTouch03Y]);
+				fprintf(file, "Touch04Y=%i\n", Profile[kTouch04Y]);
+				fprintf(file, "Touch05Y=%i\n", Profile[kTouch05Y]);
+				fprintf(file, "Touch06Y=%i\n", Profile[kTouch06Y]);
+				fprintf(file, "Touch07Y=%i\n", Profile[kTouch07Y]);
+				fprintf(file, "Touch08Y=%i\n", Profile[kTouch08Y]);
+				fprintf(file, "Touch09Y=%i\n", Profile[kTouch09Y]);
+				fprintf(file, "Touch10Y=%i\n", Profile[kTouch10Y]);
+				fprintf(file, "Touch11Y=%i\n", Profile[kTouch11Y]);
+
+				fprintf(file, "Touch00W=%i\n", Profile[kTouch00W]);
+				fprintf(file, "Touch01W=%i\n", Profile[kTouch01W]);
+				fprintf(file, "Touch02W=%i\n", Profile[kTouch02W]);
+				fprintf(file, "Touch03W=%i\n", Profile[kTouch03W]);
+				fprintf(file, "Touch04W=%i\n", Profile[kTouch04W]);
+				fprintf(file, "Touch05W=%i\n", Profile[kTouch05W]);
+				fprintf(file, "Touch06W=%i\n", Profile[kTouch06W]);
+				fprintf(file, "Touch07W=%i\n", Profile[kTouch07W]);
+				fprintf(file, "Touch08W=%i\n", Profile[kTouch08W]);
+				fprintf(file, "Touch09W=%i\n", Profile[kTouch09W]);
+				fprintf(file, "Touch10W=%i\n", Profile[kTouch10W]);
+				fprintf(file, "Touch11W=%i\n", Profile[kTouch11W]);
+
+				fprintf(file, "Touch00H=%i\n", Profile[kTouch00H]);
+				fprintf(file, "Touch01H=%i\n", Profile[kTouch01H]);
+				fprintf(file, "Touch02H=%i\n", Profile[kTouch02H]);
+				fprintf(file, "Touch03H=%i\n", Profile[kTouch03H]);
+				fprintf(file, "Touch04H=%i\n", Profile[kTouch04H]);
+				fprintf(file, "Touch05H=%i\n", Profile[kTouch05H]);
+				fprintf(file, "Touch06H=%i\n", Profile[kTouch06H]);
+				fprintf(file, "Touch07H=%i\n", Profile[kTouch07H]);
+				fprintf(file, "Touch08H=%i\n", Profile[kTouch08H]);
+				fprintf(file, "Touch09H=%i\n", Profile[kTouch09H]);
+				fprintf(file, "Touch10H=%i\n", Profile[kTouch10H]);
+				fprintf(file, "Touch11H=%i\n", Profile[kTouch11H]);
+
+				fclose(file);
+
+				return 0;
+			}
+
 			uint16_t Config::GetPort() {
 				return Port;
 			}
 
 			void Config::SetPort(uint16_t Port) {
 				if(Port == 0)
-					Config::Port = Config::DefaultPort;
+					Config::Port = defaultPort;
 				else
 					Config::Port = Port;
 			}

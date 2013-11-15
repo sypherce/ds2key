@@ -14,16 +14,16 @@ namespace D2K {
 		const int eventMax = 200;
 		extern bool locked;
 
-		void setFont(HWND hwnd);
+		void SetFont(HWND hwnd);
 		class Object {
 			public:
 				Object(int x, int y, int width, int height);
 				~Object();
 				virtual bool Attach(Object *parentObject);
-				int getID();
-				HWND getParentHWND();
-				Object *getParent();
-				void setVisible(bool visible = true);
+				int GetID();
+				HWND GetParentHWND();
+				Object *GetParent();
+				void SetVisible(bool visible = true);
 			protected:
 				HWND hwnd;               /* This is the handle for our window */
 				Object *parent;
@@ -39,11 +39,11 @@ namespace D2K {
 				Label(string text, int x, int y, int width, int height);
 				virtual ~Label();
 				bool Attach(Object *parentObject);
-				string getText();
-				void setText(string text);
-				void setEnabled(bool enabled);
-				long getStyle();
-				long setStyle(long style);
+				string GetText();
+				void SetText(string text);
+				void SetEnabled(bool enabled);
+				long GetStyle();
+				long SetStyle(long style);
 			protected:
 				string Text;
 		};
@@ -107,7 +107,7 @@ namespace D2K {
 				CheckButton(string text, int x, int y, int width, int height);
 				~CheckButton();
 				bool Attach(Object *parentObject);
-				void setChecked(bool checked);
+				void SetChecked(bool checked);
 		};
 
 		class RadioButton : public CheckButton {
@@ -130,23 +130,23 @@ namespace D2K {
 				~ComboButton();
 				bool Attach(Object *parentObject);
 				void Append(string text);
-				void setSelection(unsigned row);
-				int getSelection();
+				void SetSelection(unsigned row);
+				int GetSelection();
 		};
 
 		class ListView : public Label {
 			public:
 				ListView(string text, int x, int y, int width, int height);
 				~ListView();
-				unsigned getColumnCount();
-				void setHeaderVisible(bool visible);
+				unsigned GetColumnCount();
+				void SetHeaderVisible(bool visible);
 				void InsertColumn(string Text, int i);
 				string GetText(int row, int column);
 				void SetText(string Text, int row, int column);
 				void SetDoubleClick(void (*function)(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam));
 				void AutoSizeColumns();
-				unsigned getSelection();
-				void setSelection(unsigned row);
+				unsigned GetSelection();
+				void SetSelection(unsigned row);
 				void Append(string text);
 				void Append(string text, string text2);
 				bool Attach(Object *parentObject);
@@ -180,10 +180,10 @@ namespace D2K {
 				void Append(Object *object, void (*function)(HWND, UINT, WPARAM, LPARAM));
 				void Append(Object *object);
 				bool Setup(HINSTANCE hThisInstance, string ClassName, string Title, int Width, int Height);
-				void setVisible(int visible);
-				void setVisible(bool visible = true);
+				void SetVisible(int visible);
+				void SetVisible(bool visible = true);
 				void CreateMainMenu();
-				void setText(string text);
+				void SetText(string text);
 			private:
 				string Text;
 		};

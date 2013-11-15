@@ -27,15 +27,14 @@ namespace D2K {
 				public:
 					Config();
 					~Config();
-					bool Load();
-					bool ReadProfile(uint16_t *Profile, uint8_t profileNumber);
-					bool Save();
-					bool SaveProfile(uint16_t *Profile, uint8_t profileNumber);
+					int Load();
+					int LoadProfile(uint16_t *Profile, uint8_t profileNumber);
+					int Save();
+					int SaveProfile(uint16_t *Profile, uint8_t profileNumber);
 					uint16_t GetPort();
 					void SetPort(uint16_t port);
 					uint8_t GetDebugLevel();
 					char* GetCommand(uint8_t Command);
-					const static uint16_t DefaultPort = 9501;
 
 				private:
 					uint16_t Port;

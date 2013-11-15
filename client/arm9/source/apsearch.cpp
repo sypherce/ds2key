@@ -5,38 +5,38 @@
 
 namespace D2K {
 	namespace AP {
-		int count = -1;
-		bool searching = false;
+		int Count = -1;
+		bool Searching = false;
 		int Update() {
-			if(searching) {
-				count = Wifi_GetNumAP();
+			if(Searching) {
+				Count = Wifi_GetNumAP();
 			}
 			else {
-				count = -1;
+				Count = -1;
 			}
-			return count;
+			return Count;
 		}
 		void Init() {
 			Wifi_ScanMode();
-			searching = true;
+			Searching = true;
 			Update();
 		}
-		Wifi_AccessPoint* getAP(int i) {
+		Wifi_AccessPoint* GetAP(int i) {
 			Update();
-			if(i <= count)
+			if(i <= Count)
 			{
-				Wifi_GetAPData(i, &ap);
-				return &ap;
+				Wifi_GetAPData(i, &AP);
+				return &AP;
 			}
 			return (Wifi_AccessPoint*)NULL;
 		}
 		void Print(int i) {
-			getAP(i);
+			GetAP(i);
 			// display the name of the AP
 			iprintf("%.29s\n  Wep:%s Sig:%i\n",
-				ap.ssid,
-				ap.flags & WFLAG_APDATA_WEP ? "Yes " : "No ",
-				ap.rssi * 100 / 0xD0);
+				AP.ssid,
+				AP.flags & WFLAG_APDATA_WEP ? "Yes " : "No ",
+				AP.rssi * 100 / 0xD0);
 		}
 	}
 }

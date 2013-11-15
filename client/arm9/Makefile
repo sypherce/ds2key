@@ -15,9 +15,9 @@ include $(DEVKITARM)/ds_rules
 # all directories are relative to this makefile
 #---------------------------------------------------------------------------------
 BUILD		:=	build
-SOURCES		:=	source source/iniparser/src source/gui
+SOURCES		:=	source source/iniparser/src source/gui source/windows
 DATA		:=
-INCLUDES	:=	include source/iniparser/src source/gui
+INCLUDES	:=	include source/iniparser/src source/gui source/windows
 GRAPHICS	:=	gfx
 
 

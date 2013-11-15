@@ -52,7 +52,7 @@ namespace D2K {
 					if(rc == 2) {
 						printf("Underlying joystick device deleted. Exiting read loop\n");
 					}
-					printf("DeviceIoControl error %d\n", (int)rc);
+					printf("DeviceIoControl error #%d\n", (int)rc);
 
 					return rc;
 				}

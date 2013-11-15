@@ -1,12 +1,13 @@
 #include "object.h"
+#include "gui.h"
 
 namespace D2K {
 	namespace GUI {
-		Object::Object(uint8_t Screen, GUI::Rect Rect) {
-			Object::Screen = Screen;
-			Object::Rect = Rect;
+		Object::Object(uint8_t screen, GUI::Rect rect) {
+			Object::Screen = screen;
+			Object::Rect = rect;
 			Object::Status = 0;
-			setVisible(false);
+			SetVisible(false);
 			Function = &GUI::VoidFunction;
 		}
 		Object::~Object() {
@@ -14,56 +15,56 @@ namespace D2K {
 		}
 
 		bool Object::Draw() {
-			if(!Object::isUpdated() && !GUI::isUpdated())
+			if(!Object::IsUpdated() && !GUI::IsUpdated())
 				return false;
 
-			Object::setUpdate(false);
+			Object::SetUpdate(false);
 			return true;
 		}
-		void Object::setText(std::string Text) {
+		void Object::SetText(std::string text) {
 
 		};
-		std::string Object::getText() {
+		std::string Object::GetText() {
 			return "";
 		};
-		void Object::Clear(uint16_t C) {
-			GUI::DrawFilledRect(Screen, Rect, C);
+		void Object::Clear(uint16_t c) {
+			GUI::DrawFilledRect(Screen, Rect, c);
 		}
-		void Object::setVisible(bool Visible) {
-			GUI::setUpdate(true);
-			Object::setUpdate(true);
-			Object::Visible = Visible;
+		void Object::SetVisible(bool visible) {
+			GUI::SetUpdate(true);
+			Object::SetUpdate(true);
+			Object::Visible = visible;
 		}
-		void Object::setStatus(uint8_t Value) {
-			if(getStatus() != Value) {
-				Status = Value;
-				setUpdate(true);
+		void Object::SetStatus(uint8_t value) {
+			if(GetStatus() != value) {
+				Status = value;
+				SetUpdate(true);
 				Draw();
 			}
 		}
-		uint8_t Object::getStatus() {
+		uint8_t Object::GetStatus() {
 			return Status;
 		}
-		bool Object::isVisible() {
+		bool Object::IsVisible() {
 			return Visible;
 		}
-		bool Object::isClicked(uint8_t X, uint8_t Y) {
-			return Rect.PointIntersect(X, Y);
+		bool Object::IsClicked(uint8_t x, uint8_t y) {
+			return Rect.PointIntersect(x, y);
 		}
-		void Object::setUpdate(bool value) {
+		void Object::SetUpdate(bool value) {
 			Update = value;
 		}
-		bool Object::isUpdated() {
+		bool Object::IsUpdated() {
 			return Update;
 		}
-		bool Object::getScreen() {
+		bool Object::GetScreen() {
 			return Screen;
 		}
-		D2K::GUI::Rect Object::getRect() {
+		D2K::GUI::Rect Object::GetRect() {
 			return Object::Rect;
 		}
-		void Object::setRect(GUI::Rect Rect) {
-			Object::Rect = Rect;
+		void Object::SetRect(GUI::Rect rect) {
+			Object::Rect = rect;
 		}
 	}
 }

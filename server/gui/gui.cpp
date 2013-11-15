@@ -41,17 +41,17 @@ namespace D2K {
 			parent = parentObject;
 			return true;
 		}
-		int Object::getID() {
+		int Object::GetID() {
 			return ID;
 		}
-		HWND Object::getParentHWND() {
+		HWND Object::GetParentHWND() {
 			//printf("this:%x parent:%x\n", (unsigned int)this, (unsigned int)parent->hwnd);
 			return parent->hwnd;
 		}
-		Object *Object::getParent() {
+		Object *Object::GetParent() {
 			return parent;
 		}
-		void Object::setVisible(bool visible) {
+		void Object::SetVisible(bool visible) {
 			if(hwnd)
 				ShowWindow(hwnd, visible);
 		}
@@ -66,7 +66,7 @@ namespace D2K {
 						   "STATIC", Text.c_str(),
 						   WS_CHILD | WS_VISIBLE | BS_TEXT,
 						   X, Y, Width, Height,
-						   getParentHWND(),
+						   GetParentHWND(),
 						   (HMENU)ID,
 						   GetModuleHandle(NULL),
 						   0);
@@ -75,7 +75,7 @@ namespace D2K {
 			}
 			return false;
 		}
-		string Label::getText() {
+		string Label::GetText() {
 			int length = GetWindowTextLength(hwnd);
 			char *windowText = new char[length+1];
 			GetWindowText(hwnd, windowText, length+1);
@@ -84,19 +84,19 @@ namespace D2K {
 			delete windowText;
 			return Text;
 		}
-		void Label::setText(string text) {
+		void Label::SetText(string text) {
 			Text = text;
 			locked = true;
 			SetWindowText(hwnd, Text.c_str());
 			locked = false;
 		}
-		void Label::setEnabled(bool enabled) {
+		void Label::SetEnabled(bool enabled) {
 			EnableWindow(hwnd, enabled);
 		}
-		long Label::getStyle() {
+		long Label::GetStyle() {
 			return GetWindowLong(hwnd, GWL_STYLE);
 		}
-		long Label::setStyle(long style) {
+		long Label::SetStyle(long style) {
 			return SetWindowLong(hwnd, GWL_STYLE, style);
 		}
 		Button::Button(string text, int x, int y, int width, int height) : Label(text, x, y, width, height) {}
@@ -107,7 +107,7 @@ namespace D2K {
 						   "BUTTON", Text.c_str(),
 						   WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
 						   X, Y, Width, Height,
-						   getParentHWND(),
+						   GetParentHWND(),
 						   (HMENU)ID,
 						   GetModuleHandle(NULL),
 						   0);
@@ -124,7 +124,7 @@ namespace D2K {
 						   STATUSCLASSNAME, "",
 						   WS_CHILD | WS_VISIBLE | SBARS_SIZEGRIP,
 						   X, Y, Width, Height,
-						   getParentHWND(),
+						   GetParentHWND(),
 						   (HMENU)ID,
 						   GetModuleHandle(NULL),
 						   0);
@@ -153,7 +153,7 @@ namespace D2K {
 		}
 		bool TrayIcon::Attach(Object *parentObject) {
 			if(Object::Attach(parentObject)) {
-				niData.hWnd = getParentHWND();
+				niData.hWnd = GetParentHWND();
 				Shell_NotifyIcon(NIM_ADD, &niData);
 				return true;
 			}
@@ -174,9 +174,9 @@ namespace D2K {
 		Menu::~Menu() {}
 		void Menu::Append(Object *object, void (*function)(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)) {
 			if(this && object->Attach(this)) {
-				events[object->getID()].object = object;
-				events[object->getID()].function = function;
-				events[object->getID()].function2 = &GUI::voidFunction;
+				events[object->GetID()].object = object;
+				events[object->GetID()].function = function;
+				events[object->GetID()].function2 = &GUI::voidFunction;
 			}
 		}
 		void Menu::Append(Object *object) {
@@ -184,25 +184,25 @@ namespace D2K {
 		}
 		bool Menu::Attach(Object *parentObject) {
 			if(Object::Attach(parentObject)) {
-				printf("Parent:%x\n", (unsigned int)getParentHWND());
+				printf("Parent:%x\n", (unsigned int)GetParentHWND());
 				printf("menu:%x\n", (unsigned int)hwnd);
 				return Update();
 			}
 			return false;
 		}
 		bool Menu::Update() {
-				printf("Parent:%x\n", (unsigned int)getParentHWND());
+				printf("Parent:%x\n", (unsigned int)GetParentHWND());
 				printf("menu:%x\n", (unsigned int)hwnd);
-			return SetMenu(getParentHWND(), (HMENU)hwnd);
+			return SetMenu(GetParentHWND(), (HMENU)hwnd);
 		}
 		MenuPopUp::MenuPopUp(string text) : Label(text, 0, 0, 0, 0) {
 				hwnd = (HWND)CreatePopupMenu();}
 		MenuPopUp::~MenuPopUp() {}
 		void MenuPopUp::Append(Object *object, void (*function)(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)) {
 			if(this && object->Attach(this)) {
-				events[object->getID()].object = object;
-				events[object->getID()].function = function;
-				events[object->getID()].function2 = &GUI::voidFunction;
+				events[object->GetID()].object = object;
+				events[object->GetID()].function = function;
+				events[object->GetID()].function2 = &GUI::voidFunction;
 			}
 		}
 		void MenuPopUp::Append(Object *object) {
@@ -210,10 +210,10 @@ namespace D2K {
 		}
 		bool MenuPopUp::Attach(Object *parentObject) {
 			if(Object::Attach(parentObject)) {
-				printf("Parent:%x\n", (unsigned int)getParentHWND());
+				printf("Parent:%x\n", (unsigned int)GetParentHWND());
 				printf("menupopup:%x\n", (unsigned int)hwnd);
 				printf("text:%s\n", Text.c_str());
-				return AppendMenu((HMENU)getParentHWND(), MF_STRING | MF_POPUP, (UINT)hwnd, Text.c_str());
+				return AppendMenu((HMENU)GetParentHWND(), MF_STRING | MF_POPUP, (UINT)hwnd, Text.c_str());
 			}
 			return false;
 		}
@@ -222,9 +222,9 @@ namespace D2K {
 		MenuItem::~MenuItem() {}
 		void MenuItem::Append(Object *object, void (*function)(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)) {
 			if(this && object->Attach(this)) {
-				events[object->getID()].object = object;
-				events[object->getID()].function = function;
-				events[object->getID()].function2 = &GUI::voidFunction;
+				events[object->GetID()].object = object;
+				events[object->GetID()].function = function;
+				events[object->GetID()].function2 = &GUI::voidFunction;
 			}
 		}
 		void MenuItem::Append(Object *object) {
@@ -232,13 +232,13 @@ namespace D2K {
 		}
 		bool MenuItem::Attach(Object *parentObject) {
 			if(Object::Attach(parentObject)) {
-				printf("Parent:%x\n", (unsigned int)getParentHWND());
+				printf("Parent:%x\n", (unsigned int)GetParentHWND());
 				printf("menuitem:%x\n", (unsigned int)hwnd);
 				printf("text:%s\n", Text.c_str());
 				if(Text == "-")//if it's a seperator
-					return AppendMenu((HMENU)getParentHWND(), MF_SEPARATOR, ID, Text.c_str());
+					return AppendMenu((HMENU)GetParentHWND(), MF_SEPARATOR, ID, Text.c_str());
 
-				return AppendMenu((HMENU)getParentHWND(), MF_STRING, ID, Text.c_str());
+				return AppendMenu((HMENU)GetParentHWND(), MF_STRING, ID, Text.c_str());
 			}
 			return false;
 		}
@@ -250,7 +250,7 @@ namespace D2K {
 						   "BUTTON", Text.c_str(),
 						   WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX,
 						   X, Y, Width, Height,
-						   getParentHWND(),
+						   GetParentHWND(),
 						   (HMENU)ID,
 						   GetModuleHandle(NULL),
 						   0);
@@ -259,7 +259,7 @@ namespace D2K {
 			}
 			return false;
 		}
-		void CheckButton::setChecked(bool checked) {
+		void CheckButton::SetChecked(bool checked) {
 			SendMessage(hwnd, BM_SETCHECK, (WPARAM)checked, 0);
 		}
 		RadioButton::RadioButton(string text, int x, int y, int width, int height) : CheckButton(text, x, y, width, height) {}
@@ -270,7 +270,7 @@ namespace D2K {
 						   "BUTTON", Text.c_str(),
 						   WS_CHILD | WS_VISIBLE | BS_AUTORADIOBUTTON,
 						   X, Y, Width, Height,
-						   getParentHWND(),
+						   GetParentHWND(),
 						   (HMENU)ID,
 						   GetModuleHandle(NULL),
 						   0);
@@ -288,7 +288,7 @@ namespace D2K {
 						   "EDIT", Text.c_str(),
 						   WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT,
 						   X, Y, Width, Height,
-						   getParentHWND(),
+						   GetParentHWND(),
 						   (HMENU)ID,
 						   GetModuleHandle(NULL),
 						   0);
@@ -306,7 +306,7 @@ namespace D2K {
 						   "COMBOBOX", "",
 						   WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_VSCROLL | CBS_DROPDOWNLIST | CBS_HASSTRINGS,
 						   X, Y, Width, Height,
-						   getParentHWND(),
+						   GetParentHWND(),
 						   (HMENU)ID,
 						   GetModuleHandle(NULL),
 						   0);
@@ -317,20 +317,20 @@ namespace D2K {
 		}
 		void ComboButton::Append(string text) {
 			SendMessage(hwnd, CB_ADDSTRING, 0, (LPARAM)text.c_str());
-			if(SendMessage(hwnd, CB_GETCOUNT, 0, 0) == 1) setSelection(0);
+			if(SendMessage(hwnd, CB_GETCOUNT, 0, 0) == 1) SetSelection(0);
 		}
-		void ComboButton::setSelection(unsigned row) {
+		void ComboButton::SetSelection(unsigned row) {
 			SendMessage(hwnd, CB_SETCURSEL, row, 0);
 		}
-		int ComboButton::getSelection() {
-			int retVal = SendMessage(hwnd, CB_GETCURSEL, 0, 0);
-			if(retVal == CB_ERR)
+		int ComboButton::GetSelection() {
+			int message = SendMessage(hwnd, CB_GETCURSEL, 0, 0);
+			if(message == CB_ERR)//why is CB_ERR different?
 				return 0;
-			return retVal;
+			return message;
 		}
 		ListView::ListView(string text, int x, int y, int width, int height) : Label(text, x, y, width, height) {}
 		ListView::~ListView() {}
-		void ListView::setHeaderVisible(bool visible) {
+		void ListView::SetHeaderVisible(bool visible) {
 			SetWindowLong(hwnd, GWL_STYLE,
 						  (GetWindowLong(hwnd, GWL_STYLE) & ~LVS_NOCOLUMNHEADER) |
 						  (visible ? 0 : LVS_NOCOLUMNHEADER));
@@ -358,26 +358,26 @@ namespace D2K {
 			return;
 		}
 		void ListView::SetDoubleClick(void (*function)(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)) {
-			events[getID()].function2 = function;
+			events[GetID()].function2 = function;
 		}
 
 		void ListView::AutoSizeColumns() {
-			unsigned columns = getColumnCount();
+			unsigned columns = GetColumnCount();
 			for(unsigned n = 0; n < columns; n++) {
 				ListView_SetColumnWidth(hwnd, n, LVSCW_AUTOSIZE_USEHEADER);
 			}
 		}
-		unsigned ListView::getColumnCount() {
+		unsigned ListView::GetColumnCount() {
 			unsigned count = 0;
 			LVCOLUMN column;
 			column.mask = LVCF_WIDTH;
 			while(ListView_GetColumn(hwnd, count++, &column));
 			return --count;
 		}
-		unsigned ListView::getSelection() {
+		unsigned ListView::GetSelection() {
 			return SendMessage(hwnd, LVM_GETNEXTITEM, -1, LVNI_SELECTED);
 		}
-		void ListView::setSelection(unsigned row) {
+		void ListView::SetSelection(unsigned row) {
 			ListView_SetItemState(hwnd, row, LVIS_FOCUSED | LVIS_SELECTED, LVIS_FOCUSED | LVIS_SELECTED);
 		}
 
@@ -388,7 +388,7 @@ namespace D2K {
 						   WC_LISTVIEW, Text.c_str(),
 						   WS_CHILD | WS_VISIBLE | WS_TABSTOP | LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_NOSORTHEADER | LVS_NOCOLUMNHEADER,
 						   X, Y, Width, Height,
-						   getParentHWND(),
+						   GetParentHWND(),
 						   (HMENU)ID,
 						   GetModuleHandle(NULL),
 						   0);
@@ -539,9 +539,9 @@ namespace D2K {
 		}
 		void Window::Append(Object *object, void (*function)(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)) {
 			if(this && object->Attach(this)) {
-				events[object->getID()].object = object;
-				events[object->getID()].function = function;
-				events[object->getID()].function2 = function;
+				events[object->GetID()].object = object;
+				events[object->GetID()].function = function;
+				events[object->GetID()].function2 = function;
 			}
 		}
 		void Window::Append(Object *object) {
@@ -607,16 +607,16 @@ namespace D2K {
 			SetMenu(hwnd, mainMenu);
 		}
 
-		void Window::setVisible(int visible) {
+		void Window::SetVisible(int visible) {
 			if(hwnd)
 				ShowWindow(hwnd, visible);
 		}
 
-		void Window::setVisible(bool visible) {
+		void Window::SetVisible(bool visible) {
 			if(hwnd)
 				ShowWindow(hwnd, visible);
 		}
-		void Window::setText(string text) {
+		void Window::SetText(string text) {
 			Text = text;
 			locked = true;
 			SetWindowText(hwnd, Text.c_str());

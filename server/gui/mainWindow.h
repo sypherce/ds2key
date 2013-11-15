@@ -54,7 +54,7 @@ namespace D2K {
 				void comboButton1Function(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 				void Setup();
-				void setVisible(bool visible);
+				void SetVisible(bool visible);
 			}
 			namespace Settings {
 				extern Label *List[listMax];
@@ -67,7 +67,7 @@ namespace D2K {
 				void editFunction(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 				void Setup();
-				void setVisible(bool visible);
+				void SetVisible(bool visible);
 			}
 			namespace Log {
 				extern Label *List[listMax];
@@ -80,7 +80,7 @@ namespace D2K {
 				extern ComboButton * comboButton;
 
 				void Setup();
-				void setVisible(bool visible);
+				void SetVisible(bool visible);
 			}
 			namespace About {
 				extern Label *List[listMax];
@@ -90,7 +90,7 @@ namespace D2K {
 				extern Label *label3;
 
 				void Setup();
-				void setVisible(bool visible);
+				void SetVisible(bool visible);
 			}
 
 			void categoryListViewFunction(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);

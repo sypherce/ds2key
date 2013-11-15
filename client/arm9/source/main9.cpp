@@ -1,42 +1,48 @@
 /*
 	main - it all begins and ends here
 */
-#include "ds2key.h"
+#include "udp.h"
 #include "mainWindow.h"
 #include "keypadWindow.h"
 #include "commandWindow.h"
 #include "turboWindow.h"
-#include "system.h"
+#include "core.h"
 #include "apsearch.h"
+#include "config.h"
 
 using namespace D2K;
 using namespace D2K::GUI;
 
 int main() {
-	System::Setup();
+	Core::Setup();									//DS hardware setup
 
-	if(false) {//AP test
-		AP::Init();
-		for(int i = 0; i < AP::count; i++)
-			AP::Print(i);
-	}
-
-	DS2Key::Init();
-	Main::Window = new Main::WindowClass();
+	//setup our windows
 	Keypad::Window = new Keypad::WindowClass();
 	Command::Window = new Command::WindowClass();
 	Turbo::Window = new Turbo::WindowClass();
+	Main::Window = new Main::WindowClass();
+		Main::Window->SetVisible(true);				//show main window
 
-	Main::Window->setVisible(true);
 	while(true) {
-		System::Update(true);
+		Core::Loop();								//DS hardware loop
 
-		DS2Key::Update(keysHeld(), Turbo::GetKeys(), guitarGripKeysHeld() * guitarGripIsInserted(), 0 * guitarGripIsInserted(), (touchPosition*)NULL);
+		Core::UDP->Update(keysHeld(),				//update ds2key network
+			Turbo::GetKeys(),
+			guitarGripKeysHeld() * guitarGripIsInserted(),
+			0 * guitarGripIsInserted(),				//guitar grip is disabled
+			(touchPosition*)NULL);
 
-		Main::Window->Update();
+		Main::Window->Update();						//update the window
 	}
 
-	DS2Key::DeInit();
+	//delete windows
+	delete Turbo::Window;
+	delete Command::Window;
+	delete Keypad::Window;
+	delete Main::Window;
+
+	delete Core::UDP;		//disconnect network
+	delete Core::Config;	//save settings
 
 	return 0;
 }

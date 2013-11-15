@@ -20,7 +20,7 @@ int WINAPI WinMain(HINSTANCE hThisInstance,
 	D2K::Core::Setup(0, (char**)"");
 	D2K::GUI::Setup();
 	if(D2K::GUI::MainWindow::Setup(hThisInstance, nCmdShow) == 0) {
-		D2K::GUI::MainWindow::Profile::checkButton1->setVisible(false);//disabled until implemented
+		D2K::GUI::MainWindow::Profile::checkButton1->SetVisible(false);//disabled until implemented
 #else//console mode
 #include "core/core.h"
 
