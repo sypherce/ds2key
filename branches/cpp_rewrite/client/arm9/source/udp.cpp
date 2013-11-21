@@ -36,7 +36,6 @@ DS2KeyPacket Packet = {0};
 namespace D2K {
 	namespace Core {
 		namespace C {
-
 			UDP::UDP() {
 				Connected = false;
 				Block = false;
@@ -45,6 +44,7 @@ namespace D2K {
 				Disconnect();//needs checked
 			}
 
+			///return (true) if connected, else (false)
 			bool UDP::IsConnected() {
 				return Connected;
 			}
@@ -57,20 +57,23 @@ namespace D2K {
 				return Connect(Block, port);
 			}
 
+			///connect udp system
+			///return (0) if connected, else (errno)
 			int UDP::Connect(bool block, uint16_t port) {
-				if(EMULATOR) return 0;
-				if(IsConnected())
-					Disconnect();
-				if(port != 0)
-					SetPort(port);
+				if(EMULATOR) return 0;					//skip if emulating
+				if(IsConnected())						//if already connected
+					Disconnect();						//disconnect first
+				if(port == 0)							//if port 0
+					SetPort(9501);						//use default port
 				else
-					SetPort(9501);
+					SetPort(port);
 
 				UDP::Block = block;
 				RemoteAddr.sin_family = AF_INET;
 				RemoteAddr.sin_port = htons(GetPort());
 
-				Sock = socket(PF_INET, SOCK_DGRAM, 0);//create a socket
+				//create a socket
+				Sock = socket(PF_INET, SOCK_DGRAM, 0);
 				if(Sock == INVALID_SOCKET) {
 					int err = NETerrno;
 					fprintf(stderr, "Error (socket): #%d\n", err);
@@ -79,10 +82,12 @@ namespace D2K {
 					return err;
 				}
 
+				//set blocking mode
 				if(NETioctlsocket(Sock, FIONBIO, (unsigned long*)&Block) == SOCKET_ERROR) {
 					int err = NETerrno;
 					fprintf(stderr, "Error (NETioctlsocket): #%d\n", err);
 					Disconnect();
+
 					return err;
 				}
 				Connected = true;
@@ -90,10 +95,12 @@ namespace D2K {
 				return 0;
 			}
 
+			///disconnect udp system
+			///return (0) without error, else (errno)
 			int UDP::Disconnect() {
-				if(EMULATOR) return 0;
+				if(EMULATOR) return 0;	//skip if emulating
 				if(IsConnected()) {
-					Connected = false;
+					Connected = false;	//udp system disconnects even if socket doesn't close
 					if(NETclosesocket(Sock) == SOCKET_ERROR) {
 						int err = NETerrno;
 						fprintf(stderr, "Error (NETclosesocket): #%d\n", err);
@@ -105,6 +112,9 @@ namespace D2K {
 				return 0;
 			}
 
+			///sends data
+			///sends raw contents of (buf) up to (len) in size
+			///return (0) without error, (-1) not connected, (-2) invalid length, (-3) invalid pointer, else (errno)
 			int UDP::Send(const void *buf, unsigned int len) {
 				if(!IsConnected()) {
 					fprintf(stderr, "Error (UDP::Recv): not connected\n");
@@ -130,6 +140,11 @@ namespace D2K {
 				return 0;
 			}
 
+			///receives data
+			///receives raw contents into (buf) up to (len) in size
+			///buf must be allocated before calling
+		///note: (buf) is not cleared on DS but is on PC. there is probably a bug
+			///return (0) without error, (-1) not connected, (-2) invalid length, (-3) invalid pointer, else (errno)
 			int UDP::Recv(void *buf, unsigned int len) {
 				if(!IsConnected()) {
 					fprintf(stderr, "Error (UDP::Recv): not connected\n");
@@ -157,33 +172,41 @@ namespace D2K {
 				return 0;
 			}
 
+			///sends a command packet
 			void UDP::SendCommand(uint8_t command) {
+				if(command > 11)										//valid range is 0 - 11
+					return;
+
 				memset(&Packet, 0, sizeof(DS2KeyPacket));				//clear the packet
 				Packet.Type = '/' + 2;
 				Packet.Profile = command;
 
-				Send((char*)&Packet, sizeof(DS2KeyPacket));
+				Send((char*)&Packet, sizeof(DS2KeyPacket));				//send packet
 			}
 
+			///updates current button & touchscreen status
 			void UDP::Update(uint32_t keys, uint32_t keysTurbo, uint32_t gripKeys, uint32_t gripKeysTurbo, touchPosition *pos) {
-				if(EMULATOR) return;
+				if(EMULATOR) return;									//skip if emulating
 				memset(&Packet, 0, sizeof(DS2KeyPacket));				//clear the packet
 				Packet.Type = '/' + 1;
 				Packet.Profile = GetProfile();
 				Packet.Keys = keys;
 				Packet.KeysTurbo = keysTurbo;
-				if(pos == (touchPosition*)NULL)
-					Packet.Keys &= ~KEY_TOUCH;
-				else {//if(d2kMode == iMouse)
-					Packet.TouchX = pos->px;
-					Packet.TouchY = pos->py;
+				if(pos != (touchPosition*)NULL) {						//touch status active
+					Packet.TouchX = pos->px;							//update x
+					Packet.TouchY = pos->py;							//update y
+				}
+				else {													//touch status inactive
+					Packet.Keys &= ~KEY_TOUCH;							//clear touch status
 				}
 				Packet.GHKeys = gripKeys;
 				Packet.GHKeysTurbo = gripKeysTurbo;
 
-				Send((char*)&Packet, sizeof(DS2KeyPacket));
+				Send((char*)&Packet, sizeof(DS2KeyPacket));				//send packet
 			}
 
+			///searches for running servers on current (port)
+		///note: this should actually just return any found ip and not change our currently connected IP
 			void UDP::ServerLookup() {
 				if(EMULATOR) return;									//skip if emulating
 				unsigned long SavedRemoteIP = GetRemoteIP();			//save the remote IP
@@ -205,9 +228,11 @@ namespace D2K {
 					if(GetLocalIP() == GetRemoteIP())					//if it's from the local IP
 						SetRemoteIP(SavedRemoteIP);						//reset the remote IP
 				}
+
 			}
 
 			//private
+			///converts long into std::string
 			template <class T>
 			inline std::string itos (const T& t) {
 				std::stringstream ss;
@@ -216,6 +241,7 @@ namespace D2K {
 				return ss.str();
 			}
 
+			///converts std::string into long
 			template <typename T>
 			long stoi(const std::basic_string<T> &str) {
 				std::basic_stringstream<T> stream(str);
@@ -223,6 +249,7 @@ namespace D2K {
 				return !(stream >>res)?0:res;
 			}
 			//end
+
 
 			unsigned long UDP::GetLocalIP() {
 				return Wifi_GetIP();

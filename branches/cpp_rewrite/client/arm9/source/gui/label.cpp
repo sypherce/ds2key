@@ -1,4 +1,3 @@
-#include <string>	//std::string
 #include "label.h"
 #include "gui.h"
 

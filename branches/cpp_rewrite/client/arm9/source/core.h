@@ -9,7 +9,7 @@ namespace D2K {
 		extern bool InputChange;
 
 		extern char* GetTime();
-		extern void Setup();
+		extern bool Setup();
 		extern void Loop();
 	}
 }

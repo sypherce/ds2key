@@ -3,6 +3,20 @@
 
 #include <windows.h>
 #include <string>//std::string
+#include "controls/button.h"
+#include "controls/checkButton.h"
+#include "controls/comboButton.h"
+#include "controls/edit.h"
+#include "controls/label.h"
+#include "controls/listView.h"
+#include "controls/menu.h"
+#include "controls/menuItem.h"
+#include "controls/menuPopUp.h"
+#include "controls/object.h"
+#include "controls/radioButton.h"
+#include "controls/statusBar.h"
+#include "controls/trayIcon.h"
+#include "controls/window.h"
 using std::string;
 
 namespace D2K {
@@ -15,142 +29,6 @@ namespace D2K {
 		extern bool locked;
 
 		void SetFont(HWND hwnd);
-		class Object {
-			public:
-				Object(int x, int y, int width, int height);
-				~Object();
-				virtual bool Attach(Object *parentObject);
-				int GetID();
-				HWND GetParentHWND();
-				Object *GetParent();
-				void SetVisible(bool visible = true);
-			protected:
-				HWND hwnd;               /* This is the handle for our window */
-				Object *parent;
-				int X;
-				int Y;
-				int Width;
-				int Height;
-				int ID;
-		};
-
-		class Label : public Object {
-			public:
-				Label(string text, int x, int y, int width, int height);
-				virtual ~Label();
-				bool Attach(Object *parentObject);
-				string GetText();
-				void SetText(string text);
-				void SetEnabled(bool enabled);
-				long GetStyle();
-				long SetStyle(long style);
-			protected:
-				string Text;
-		};
-
-		class Button : public Label {
-			public:
-				Button(string text, int x, int y, int width, int height);
-				~Button();
-				bool Attach(Object *parentObject);
-		};
-
-		class StatusBar : public Label {
-			public:
-				StatusBar(string text, int x, int y, int width, int height);
-				~StatusBar();
-				bool Attach(Object *parentObject);
-				void SetText(string Text);
-		};
-
-		class TrayIcon : public Label {
-			public:
-				TrayIcon(string text);
-				~TrayIcon();
-				bool Attach(Object *parentObject);
-				void SetText(string Text);
-				void Delete();
-			private:
-				NOTIFYICONDATA niData;
-		};
-
-		class Menu : public Label {
-			public:
-				Menu();
-				~Menu();
-				void Append(Object *object, void (*function)(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam));
-				void Append(Object *object);
-				bool Attach(Object *parentObject);
-				bool Update();
-		};
-
-		class MenuPopUp : public Label {
-			public:
-				MenuPopUp(string text);
-				~MenuPopUp();
-				void Append(Object *object, void (*function)(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam));
-				void Append(Object *object);
-				bool Attach(Object *parentObject);
-		};
-
-		class MenuItem : public Label {
-			public:
-				MenuItem(string text);
-				~MenuItem();
-				void Append(Object *object, void (*function)(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam));
-				void Append(Object *object);
-				bool Attach(Object *parentObject);
-		};
-
-		class CheckButton : public Label {
-			public:
-				CheckButton(string text, int x, int y, int width, int height);
-				~CheckButton();
-				bool Attach(Object *parentObject);
-				void SetChecked(bool checked);
-		};
-
-		class RadioButton : public CheckButton {
-			public:
-				RadioButton(string text, int x, int y, int width, int height);
-				~RadioButton();
-				bool Attach(Object *parentObject);
-		};
-
-		class Edit : public Label {
-			public:
-				Edit(string text, int x, int y, int width, int height);
-				~Edit();
-				bool Attach(Object *parentObject);
-		};
-
-		class ComboButton : public Label {
-			public:
-				ComboButton(int x, int y, int width, int height);
-				~ComboButton();
-				bool Attach(Object *parentObject);
-				void Append(string text);
-				void SetSelection(unsigned row);
-				int GetSelection();
-		};
-
-		class ListView : public Label {
-			public:
-				ListView(string text, int x, int y, int width, int height);
-				~ListView();
-				unsigned GetColumnCount();
-				void SetHeaderVisible(bool visible);
-				void InsertColumn(string Text, int i);
-				string GetText(int row, int column);
-				void SetText(string Text, int row, int column);
-				void SetDoubleClick(void (*function)(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam));
-				void AutoSizeColumns();
-				unsigned GetSelection();
-				void SetSelection(unsigned row);
-				void Append(string text);
-				void Append(string text, string text2);
-				bool Attach(Object *parentObject);
-		};
 
 		struct Event {
 			D2K::GUI::Object *object;
@@ -172,21 +50,6 @@ namespace D2K {
 		WPARAM GetMessages();
 
 		LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
-
-		class Window : public Object {
-			public:
-				Window();
-				~Window();
-				void Append(Object *object, void (*function)(HWND, UINT, WPARAM, LPARAM));
-				void Append(Object *object);
-				bool Setup(HINSTANCE hThisInstance, string ClassName, string Title, int Width, int Height);
-				void SetVisible(int visible);
-				void SetVisible(bool visible = true);
-				void CreateMainMenu();
-				void SetText(string text);
-			private:
-				string Text;
-		};
 	}
 }
-#endif // __GUI_H__
+#endif//__GUI_H__

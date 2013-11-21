@@ -178,6 +178,118 @@
 		<Unit filename="core/key.h" />
 		<Unit filename="core/udp.cpp" />
 		<Unit filename="core/udp.h" />
+		<Unit filename="gui/controls/button.cpp">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/button.h">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/checkButton.cpp">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/checkButton.h">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/comboButton.cpp">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/comboButton.h">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/edit.cpp">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/edit.h">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/label.cpp">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/label.h">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/listView.cpp">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/listView.h">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/menu.cpp">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/menu.h">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/menuItem.cpp">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/menuItem.h">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/menuPopUp.cpp">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/menuPopUp.h">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/object.cpp">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/object.h">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/radioButton.cpp">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/radioButton.h">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/statusBar.cpp">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/statusBar.h">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/trayIcon.cpp">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/trayIcon.h">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/window.cpp">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/window.h">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
 		<Unit filename="gui/gui.cpp">
 			<Option target="Debug (GUI)" />
 			<Option target="Release (GUI)" />

@@ -11,7 +11,6 @@ namespace D2K {
 	namespace Core {
 		C::Config *Config = (C::Config*)NULL;
 		namespace C {
-
 			const char *DefaultIP = "0.0.0.0";
 			const char *DefaultPort = "9501";
 			const char *DefaultProfile = "0";
@@ -25,6 +24,8 @@ namespace D2K {
 				Save();
 			}
 
+			///loads settings from disk
+			///return (0) upon success, else (errno)
 			int Config::Load() {
 				if(Core::UDP == NULL) return 1;
 				dictionary *ini = iniparser_load(iniFilename);
@@ -50,6 +51,8 @@ namespace D2K {
 
 				return 0;
 			}
+			///saves settings to disk
+			///return (0) upon success, else (errno)
 			int Config::Save() {
 				if(Core::UDP == NULL) return 1;
 				FILE *file = fopen(iniFilename, "w");

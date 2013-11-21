@@ -16,6 +16,7 @@ namespace D2K {
 		touchPosition StylusPos;
 		bool InputChange = false;
 
+		///return (char*) containing the current time
 		char* GetTime() {
 			static char timeChar[12];
 			time_t unixTime = time(NULL);
@@ -32,11 +33,13 @@ namespace D2K {
 			return timeChar;
 		}
 
+		///resets stylus x/y. probably garbage
 		void ResetStylus() {
 			StylusPos.px =
 			StylusPos.py = 299;
 		}
 
+		///updates input values
 		void UpdateInputs() {
 			if(InputChange) {
 				InputChange = false;
@@ -49,6 +52,7 @@ namespace D2K {
 				}
 			}
 		}
+		///updates backlights depending on touch and lid status
 		void UpdateLid() {
 			static uint32_t vblCount = 0;
 			static const uint32_t vblCountMax = (60 * 4);		//4 seconds
@@ -65,12 +69,14 @@ namespace D2K {
 			}
 			vblCount++;											//increment timer
 		}
+		///vblank function we assign in Setup()
 		void VBLFunction() {
 			UpdateInputs();
 			UpdateLid();
 		}
 
-		void Setup() {
+		///setup the nds system. start fat, wifi, and our udp system
+		bool Setup() {
 			//screen setup
 			//powerOff(PM_BACKLIGHT_TOP);
 			videoSetModeSub(MODE_0_2D);
@@ -95,20 +101,23 @@ namespace D2K {
 
 			iprintf("Connecting via WFC data\n");
 			if(!EMULATOR)
-			if(!Wifi_InitDefault(WFC_CONNECT)) {//this needs replaced
+			if(!Wifi_InitDefault(WFC_CONNECT)) {			///this needs replaced
 				printf("Error (Wifi_InitDefault): Failed to connect\n");
+				return 1;									//return with error
 			}
 
-			//setup vblank IRQ
-			irqSet(IRQ_VBLANK, VBLFunction);
+			irqSet(IRQ_VBLANK, VBLFunction);				//setup vblank function
 
-			ResetStylus();
+			ResetStylus();									///is this relavent anymore?
 
 			Core::UDP = new Core::C::UDP();					//initilize udp
 			Core::Config = new Core::C::Config();			//load udp settings
 			Core::UDP->Connect();							//connect with settings
+
+			return 0;										//return without error
 		}
 
+		///loop function that calls VBLFunction()
 		void Loop() {
 			InputChange = true;
 			swiWaitForVBlank();
