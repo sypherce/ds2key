@@ -14,7 +14,8 @@ using namespace D2K;
 using namespace D2K::GUI;
 
 int main() {
-	Core::Setup();									//DS hardware setup
+	if(Core::Setup())								//DS hardware setup
+		return 1;
 
 	//setup our windows
 	Keypad::Window = new Keypad::WindowClass();
