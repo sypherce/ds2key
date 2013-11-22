@@ -17,7 +17,7 @@
 #define Sleep(a) std::this_thread::sleep_for(std::chrono::milliseconds(a))
 #endif//_WIN32
 
-#include "udp.h"
+#include "common/udp.h"
 #include "key.h"
 #include "input.h"
 #include "config.h"

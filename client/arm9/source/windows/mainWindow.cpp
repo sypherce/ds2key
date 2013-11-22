@@ -13,7 +13,7 @@
 #include "gui/label.h"
 
 //core
-#include "udp.h"
+#include "common/udp.h"
 #include "config.h"
 #include "core.h"
 

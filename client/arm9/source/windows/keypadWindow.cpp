@@ -2,7 +2,7 @@
 #include "keypadWindow.h"
 #include "mainWindow.h"
 #include "gui/gui.h"
-#include "udp.h"
+#include "common/udp.h"
 #include "config.h"
 #include "core.h"
 

@@ -2,7 +2,7 @@
 #include "ipWindow.h"
 #include "gui/button.h"
 #include "gui/label.h"
-#include "udp.h"
+#include "common/udp.h"
 
 namespace D2K {
 	namespace GUI {

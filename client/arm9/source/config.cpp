@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include "config.h"
-#include "udp.h"
+#include "common/udp.h"
 #include "common/iniParserWrapper.h"
 
 namespace D2K {
@@ -14,7 +14,7 @@ namespace D2K {
 			const char *DefaultIP = "0.0.0.0";
 			const char *DefaultPort = "9501";
 			const char *DefaultProfile = "0";
-			const char *iniFilename = "ds2key.ini";
+			const char *iniFilename = "/ds2key.ini";
 
 			Config::Config() {
 				Load();

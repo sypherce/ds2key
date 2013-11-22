@@ -52,6 +52,8 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../common/iniparser/src/iniparser.h" />
+		<Unit filename="../common/udp.cpp" />
+		<Unit filename="../common/udp.h" />
 		<Unit filename="Makefile" />
 		<Unit filename="arm7/Makefile" />
 		<Unit filename="arm7/source/main7.c">
@@ -79,8 +81,6 @@
 		<Unit filename="arm9/source/gui/window.cpp" />
 		<Unit filename="arm9/source/gui/window.h" />
 		<Unit filename="arm9/source/main9.cpp" />
-		<Unit filename="arm9/source/udp.cpp" />
-		<Unit filename="arm9/source/udp.h" />
 		<Unit filename="arm9/source/windows/commandWindow.cpp" />
 		<Unit filename="arm9/source/windows/commandWindow.h" />
 		<Unit filename="arm9/source/windows/ipWindow.cpp" />
