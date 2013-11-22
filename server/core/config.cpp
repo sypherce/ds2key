@@ -5,7 +5,7 @@
 #include <sstream>//ostringstream
 #include "config.h"
 #include "key.h"
-#include "core/iniParser.h"
+#include "common/iniParser.h"
 
 namespace D2K {
 	namespace Core {
@@ -25,6 +25,8 @@ namespace D2K {
 				Save();
 			}
 
+			///loads settings from disk
+			///return (0) upon success, else (errno)
 			int Config::Load() {
 				dictionary *ini = D2K::Core::iniParser::load(iniFilename);
 
@@ -51,7 +53,7 @@ namespace D2K {
 				for(int i = 0; i < 256; i++) {
 					std::ostringstream commandString;
 					commandString << "settings:command" << i;
-					string commandPointer = iniParser::getstring(ini, commandString.str(), "");
+					std::string commandPointer = iniParser::getstring(ini, commandString.str(), "");
 					unsigned int commandLength = commandPointer.size();
 					if(commandLength > 0) {
 						Commands[i] = new char[commandLength + 1];
@@ -264,6 +266,8 @@ namespace D2K {
 				return 0;
 			}
 
+			///saves settings to disk
+			///return (0) upon success, else (errno)
 			int Config::Save() {
 				FILE *file = fopen(iniFilename, "w");
 

@@ -5,13 +5,12 @@
 #include <string>//std::string
 #include "object.h"
 #include "label.h"
-using std::string;
 
 namespace D2K {
 	namespace GUI {
 		class MenuItem : public Label {
 			public:
-				MenuItem(string text);
+				MenuItem(std::string text);
 				~MenuItem();
 				void Append(Object *object, void (*function)(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam));
 				void Append(Object *object);

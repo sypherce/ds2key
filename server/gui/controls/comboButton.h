@@ -5,7 +5,6 @@
 #include <string>//std::string
 #include "object.h"
 #include "label.h"
-using std::string;
 
 namespace D2K {
 	namespace GUI {
@@ -14,7 +13,7 @@ namespace D2K {
 				ComboButton(int x, int y, int width, int height);
 				~ComboButton();
 				bool Attach(Object *parentObject);
-				void Append(string text);
+				void Append(std::string text);
 				void SetSelection(unsigned row);
 				int GetSelection();
 		};

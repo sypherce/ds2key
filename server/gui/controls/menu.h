@@ -5,7 +5,6 @@
 #include <string>//std::string
 #include "object.h"
 #include "label.h"
-using std::string;
 
 namespace D2K {
 	namespace GUI {

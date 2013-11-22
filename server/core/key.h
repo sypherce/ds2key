@@ -12,7 +12,7 @@
 #ifdef _WIN32
 #ifdef _MSC_VER //less warnings from microsoft
 #define stricmp _stricmp
-#endif //_MSC_VER
+#endif//_MSC_VER
 #elif defined __linux__
 #define stricmp	strcasecmp
 #endif//_WIN32

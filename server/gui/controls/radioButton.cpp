@@ -12,7 +12,7 @@ Windows GUI
 
 namespace D2K {
 	namespace GUI {
-		RadioButton::RadioButton(string text, int x, int y, int width, int height) : CheckButton(text, x, y, width, height) {}
+		RadioButton::RadioButton(std::string text, int x, int y, int width, int height) : CheckButton(text, x, y, width, height) {}
 		RadioButton::~RadioButton() {}
 		bool RadioButton::Attach(Object *parentObject) {
 			if(Object::Attach(parentObject)) {

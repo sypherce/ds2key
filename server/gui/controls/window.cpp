@@ -31,7 +31,7 @@ namespace D2K {
 		void Window::Append(Object *object) {
 			Window::Append(object, &voidFunction);
 		}
-		bool Window::Setup(HINSTANCE hThisInstance, string ClassName, string Title, int Width, int Height) {
+		bool Window::Setup(HINSTANCE hThisInstance, std::string ClassName, std::string Title, int Width, int Height) {
 			if(!hwnd) {
 				GUI::hThisInstance = hThisInstance;
 				WNDCLASSEX wincl;        /* Data structure for the windowclass */
@@ -99,7 +99,7 @@ namespace D2K {
 			if(hwnd)
 				ShowWindow(hwnd, visible);
 		}
-		void Window::SetText(string text) {
+		void Window::SetText(std::string text) {
 			Text = text;
 			locked = true;
 			SetWindowText(hwnd, Text.c_str());

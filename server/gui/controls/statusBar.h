@@ -5,16 +5,15 @@
 #include <string>//std::string
 #include "object.h"
 #include "label.h"
-using std::string;
 
 namespace D2K {
 	namespace GUI {
 		class StatusBar : public Label {
 			public:
-				StatusBar(string text, int x, int y, int width, int height);
+				StatusBar(std::string text, int x, int y, int width, int height);
 				~StatusBar();
 				bool Attach(Object *parentObject);
-				void SetText(string Text);
+				void SetText(std::string Text);
 		};
 	}
 }

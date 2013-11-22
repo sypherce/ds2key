@@ -4,22 +4,21 @@
 #include <windows.h>
 #include <string>//std::string
 #include "object.h"
-using std::string;
 
 namespace D2K {
 	namespace GUI {
 		class Label : public Object {
 			public:
-				Label(string text, int x, int y, int width, int height);
+				Label(std::string text, int x, int y, int width, int height);
 				virtual ~Label();
 				bool Attach(Object *parentObject);
-				string GetText();
-				void SetText(string text);
+				std::string GetText();
+				void SetText(std::string text);
 				void SetEnabled(bool enabled);
 				long GetStyle();
 				long SetStyle(long style);
 			protected:
-				string Text;
+				std::string Text;
 		};
 	}
 }

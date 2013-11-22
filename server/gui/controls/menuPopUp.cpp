@@ -12,7 +12,7 @@ Windows GUI
 
 namespace D2K {
 	namespace GUI {
-		MenuPopUp::MenuPopUp(string text) : Label(text, 0, 0, 0, 0) {
+		MenuPopUp::MenuPopUp(std::string text) : Label(text, 0, 0, 0, 0) {
 				hwnd = (HWND)CreatePopupMenu();}
 		MenuPopUp::~MenuPopUp() {}
 		void MenuPopUp::Append(Object *object, void (*function)(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)) {

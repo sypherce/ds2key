@@ -3,7 +3,7 @@
 
 namespace D2K {
 	namespace GUI {
-		CheckButton::CheckButton(string text, int x, int y, int width, int height) : Label(text, x, y, width, height) {}
+		CheckButton::CheckButton(std::string text, int x, int y, int width, int height) : Label(text, x, y, width, height) {}
 		CheckButton::~CheckButton() {}
 		bool CheckButton::Attach(Object *parentObject) {
 			if(Object::Attach(parentObject)) {
