@@ -12,14 +12,14 @@ Windows GUI
 
 namespace D2K {
 	namespace GUI {
-		ListView::ListView(string text, int x, int y, int width, int height) : Label(text, x, y, width, height) {}
+		ListView::ListView(std::string text, int x, int y, int width, int height) : Label(text, x, y, width, height) {}
 		ListView::~ListView() {}
 		void ListView::SetHeaderVisible(bool visible) {
 			SetWindowLong(hwnd, GWL_STYLE,
 						  (GetWindowLong(hwnd, GWL_STYLE) & ~LVS_NOCOLUMNHEADER) |
 						  (visible ? 0 : LVS_NOCOLUMNHEADER));
 		}
-		void ListView::InsertColumn(string Text, int i) {
+		void ListView::InsertColumn(std::string Text, int i) {
 			LVCOLUMN column;
 			column.mask = LVCF_FMT | LVCF_TEXT | LVCF_SUBITEM;
 			column.fmt = LVCFMT_LEFT;
@@ -28,15 +28,15 @@ namespace D2K {
 			ListView_InsertColumn(hwnd, i, &column);
 			AutoSizeColumns();
 		}
-		string ListView::GetText(int row, int column) {
+		std::string ListView::GetText(int row, int column) {
 			char *buffer = new char[256]; // Create temp buffer
 			ListView_GetItemText(hwnd, row, column, buffer, 256);
-			string text = buffer;
+			std::string text = buffer;
 			delete buffer;
 
 			return text;
 		}
-		void ListView::SetText(string Text, int row, int column) {
+		void ListView::SetText(std::string Text, int row, int column) {
 			ListView_SetItemText(hwnd, row, column, (LPSTR)Text.c_str());//set second item text
 
 			return;
@@ -83,7 +83,7 @@ namespace D2K {
 			}
 			return false;
 		}
-		void ListView::Append(string text) {
+		void ListView::Append(std::string text) {
 			unsigned row = ListView_GetItemCount(hwnd);
 			LVITEM item;
 			item.mask = LVIF_TEXT;
@@ -95,7 +95,7 @@ namespace D2K {
 			ListView_InsertItem(hwnd, &item);//set item text
 			locked = false;
 		}
-		void ListView::Append(string text, string text2) {
+		void ListView::Append(std::string text, std::string text2) {
 			unsigned row = ListView_GetItemCount(hwnd);
 			LVITEM item;
 			item.mask = LVIF_TEXT;

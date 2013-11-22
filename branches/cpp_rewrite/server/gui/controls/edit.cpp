@@ -12,7 +12,7 @@ Windows GUI
 
 namespace D2K {
 	namespace GUI {
-		Edit::Edit(string text, int x, int y, int width, int height) : Label(text, x, y, width, height) {}
+		Edit::Edit(std::string text, int x, int y, int width, int height) : Label(text, x, y, width, height) {}
 		Edit::~Edit() {}
 		bool Edit::Attach(Object *parentObject) {
 			if(Object::Attach(parentObject)) {

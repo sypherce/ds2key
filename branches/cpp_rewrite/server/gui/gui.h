@@ -17,7 +17,6 @@
 #include "controls/statusBar.h"
 #include "controls/trayIcon.h"
 #include "controls/window.h"
-using std::string;
 
 namespace D2K {
 	namespace GUI {

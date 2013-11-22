@@ -12,7 +12,7 @@ Windows GUI
 
 namespace D2K {
 	namespace GUI {
-		TrayIcon::TrayIcon(string text) : Label(text, 0, 0, 0, 0) {
+		TrayIcon::TrayIcon(std::string text) : Label(text, 0, 0, 0, 0) {
 			ZeroMemory(&niData, sizeof(NOTIFYICONDATA));
 			niData.cbSize = NOTIFYICONDATA_V1_SIZE;
 			niData.uID = ID;//tray icon identifier
@@ -32,7 +32,7 @@ namespace D2K {
 			}
 			return false;
 		}
-		void TrayIcon::SetText(string Text) {
+		void TrayIcon::SetText(std::string Text) {
 			this->Text = Text;
 			ZeroMemory(&niData.szTip, 64);
 			strncpy(niData.szTip, this->Text.c_str(), 63);

@@ -30,7 +30,7 @@ namespace D2K {
 			}
 			return false;
 		}
-		void ComboButton::Append(string text) {
+		void ComboButton::Append(std::string text) {
 			SendMessage(hwnd, CB_ADDSTRING, 0, (LPARAM)text.c_str());
 			if(SendMessage(hwnd, CB_GETCOUNT, 0, 0) == 1) SetSelection(0);
 		}

@@ -12,7 +12,7 @@ Windows GUI
 
 namespace D2K {
 	namespace GUI {
-		MenuItem::MenuItem(string text) : Label(text, 0, 0, 0, 0) {
+		MenuItem::MenuItem(std::string text) : Label(text, 0, 0, 0, 0) {
 				hwnd = (HWND)NULL;}
 		MenuItem::~MenuItem() {}
 		void MenuItem::Append(Object *object, void (*function)(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)) {

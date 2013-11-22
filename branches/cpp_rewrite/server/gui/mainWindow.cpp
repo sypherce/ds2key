@@ -10,7 +10,6 @@
 #include "core/key.h"
 #include "mainWindow.h"
 
-using std::string;
 template <class T>
 inline std::string itos (const T& t) {
 	std::stringstream ss;
@@ -56,7 +55,7 @@ namespace D2K {
 										Core::UDP->IsConnected() ? GUI::MainWindow::MainMenu::fileConnect->GetID() : GUI::MainWindow::MainMenu::fileDisconnect->GetID(),
 										MF_BYCOMMAND);
 					//check if connected properly
-					string status = "Connected on Port #" + itos(Core::Config->GetPort());
+					std::string status = "Connected on Port #" + itos(Core::Config->GetPort());
 					GUI::MainWindow::StatusBar->SetText(Core::UDP->IsConnected() ? status : "Disconnected");
 				}
 				void fileDisconnectFunction(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
@@ -69,7 +68,7 @@ namespace D2K {
 										GUI::MainWindow::MainMenu::fileDisconnect->GetID(),
 										Core::UDP->IsConnected() ? GUI::MainWindow::MainMenu::fileConnect->GetID() : GUI::MainWindow::MainMenu::fileDisconnect->GetID(),
 										MF_BYCOMMAND);
-					string status = "Connected on Port #" + itos(Core::Config->GetPort());
+					std::string status = "Connected on Port #" + itos(Core::Config->GetPort());
 					GUI::MainWindow::StatusBar->SetText(Core::UDP->IsConnected() ? status : "Disconnected");
 				}
 				void fileMinimizeFunction(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
@@ -188,7 +187,7 @@ namespace D2K {
 
 				void listView1Function(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
 					int selected = listView1->GetSelection();
-					string oldStatus = GUI::MainWindow::StatusBar->GetText();
+					std::string oldStatus = GUI::MainWindow::StatusBar->GetText();
 					GUI::MainWindow::StatusBar->SetText("Assign a Key [" + listView1->GetText(selected, 0) + "]");
 					//disable
 					GUI::MainWindow::categoryListView->SetEnabled(false);
@@ -380,10 +379,10 @@ namespace D2K {
 				Label *label;
 				Edit *edit;
 
-				string Port = "9501";
+				std::string Port = "9501";
 
 				void editFunction(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
-					string portString = edit->GetText();
+					std::string portString = edit->GetText();
 					int portInt = atoi(portString.c_str());
 					if(portInt > 0 && portInt < 0xFFFF)
 						Port = portString;
@@ -393,7 +392,7 @@ namespace D2K {
 					Core::Config->Save();
 					Core::UDP->Connect(Core::Config->GetPort());
 
-					string status = "Connected on Port #" + itos(Core::Config->GetPort());
+					std::string status = "Connected on Port #" + itos(Core::Config->GetPort());
 					GUI::MainWindow::StatusBar->SetText(Core::UDP->IsConnected() ? status : "Disconnected");
 					CheckMenuRadioItem(	(HMENU)GUI::MainWindow::MainMenu::file->GetParentHWND(),
 										GUI::MainWindow::MainMenu::fileConnect->GetID(),
@@ -520,7 +519,7 @@ namespace D2K {
 				Settings::Setup();
 				Log::Setup();
 				About::Setup();
-				string status = "Connected on Port #" + itos(Core::Config->GetPort());
+				std::string status = "Connected on Port #" + itos(Core::Config->GetPort());
 				window.Append(GUI::MainWindow::StatusBar = new GUI::StatusBar(Core::UDP->IsConnected() ? status : "Disconnected", 0, 0, 120, 120));
 				window.Append(GUI::MainWindow::TrayIcon = new GUI::TrayIcon("DS2Key"));
 

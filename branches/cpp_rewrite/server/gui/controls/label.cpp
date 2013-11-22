@@ -12,7 +12,7 @@ Windows GUI label control
 
 namespace D2K {
 	namespace GUI {
-		Label::Label(string text, int x, int y, int width, int height) : Object(x, y, width, height) {
+		Label::Label(std::string text, int x, int y, int width, int height) : Object(x, y, width, height) {
 			Text = text;
 		}
 		Label::~Label() {}
@@ -31,7 +31,7 @@ namespace D2K {
 			}
 			return false;
 		}
-		string Label::GetText() {
+		std::string Label::GetText() {
 			int length = GetWindowTextLength(hwnd);
 			char *windowText = new char[length+1];
 			GetWindowText(hwnd, windowText, length+1);
@@ -40,7 +40,7 @@ namespace D2K {
 			delete windowText;
 			return Text;
 		}
-		void Label::SetText(string text) {
+		void Label::SetText(std::string text) {
 			Text = text;
 			locked = true;
 			SetWindowText(hwnd, Text.c_str());

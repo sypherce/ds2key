@@ -3,7 +3,7 @@
 
 namespace D2K {
 	namespace GUI {
-		Button::Button(string text, int x, int y, int width, int height) : Label(text, x, y, width, height) {}
+		Button::Button(std::string text, int x, int y, int width, int height) : Label(text, x, y, width, height) {}
 		Button::~Button() {}
 		bool Button::Attach(Object *parentObject) {
 			if(Object::Attach(parentObject)) {

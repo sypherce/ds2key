@@ -5,8 +5,6 @@
 #include <string>//std::string
 #include "gui/gui.h"
 
-using std::string;
-
 namespace D2K {
 	namespace GUI {
 		namespace MainWindow {
@@ -62,7 +60,7 @@ namespace D2K {
 				extern Label *label;
 				extern Edit *edit;
 
-				extern string Port;
+				extern std::string Port;
 
 				void editFunction(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 

@@ -12,7 +12,7 @@ Windows GUI
 
 namespace D2K {
 	namespace GUI {
-		StatusBar::StatusBar(string text, int x, int y, int width, int height) : Label(text, x, y, width, height) {}
+		StatusBar::StatusBar(std::string text, int x, int y, int width, int height) : Label(text, x, y, width, height) {}
 		StatusBar::~StatusBar() {}
 		bool StatusBar::Attach(Object *parentObject) {
 			if(Object::Attach(parentObject)) {
@@ -30,7 +30,7 @@ namespace D2K {
 			}
 			return false;
 		}
-		void StatusBar::SetText(string Text) {
+		void StatusBar::SetText(std::string Text) {
 			SendMessage(hwnd, SB_SETTEXT, 0, (LPARAM)Text.c_str());
 
 			return;
