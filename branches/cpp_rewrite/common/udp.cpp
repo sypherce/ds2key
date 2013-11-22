@@ -2,17 +2,33 @@
 	UDP Communication
 */
 
+#include <stdio.h>//stderr, fprintf
+#include <sstream>//std::stringstream
+
+#ifdef _WIN32
+#define NETerrno WSAGetLastError()
+#define NETEADDRINUSE WSAEADDRINUSE
+#define NETEWOULDBLOCK WSAEWOULDBLOCK
+#define NETclosesocket closesocket
+#define NETioctlsocket ioctlsocket
+#elif defined __linux__
+#include <unistd.h>		//close
+#include <arpa/inet.h>	//inet_ntoa
+#include <sys/ioctl.h>	//ioctl
+#include <string.h>		//memset
+#define NETerrno errno
+#define NETEADDRINUSE EADDRINUSE
+#define NETEWOULDBLOCK EWOULDBLOCK
+#define NETclosesocket close
+#define NETioctlsocket ioctl
+#define INVALID_SOCKET -1
+#define SOCKET_ERROR -1
+#elif defined ARM9
 #include <nds/ndstypes.h>//dswifi9.h
 #include <dswifi9.h>
 #include <netinet/in.h>
 #include <netdb.h>
-
-#include <stdio.h>//stderr, fprintf
-#include <sstream>//std::stringstream
 #include <errno.h>
-
-#include "udp.h"
-
 #define NETerrno errno
 #define NETEADDRINUSE EADDRINUSE
 #define NETEWOULDBLOCK EWOULDBLOCK
@@ -20,7 +36,10 @@
 #define NETioctlsocket ioctl
 #define INVALID_SOCKET -1
 typedef int socklen_t;
+#endif//_WIN32
+#include "udp.h"
 
+#ifdef D2KCLIENT
 #pragma pack(1)
 typedef struct DS2KeyPacket {
 	uint8_t Type;
@@ -34,15 +53,23 @@ typedef struct DS2KeyPacket {
 } DS2KeyPacket;
 #pragma pack()
 DS2KeyPacket Packet = {0};
+#endif//D2KCLIENT
 namespace D2K {
 	namespace Core {
 		namespace C {
 			UDP::UDP() {
+			#ifdef _WIN32
+				WSADATA wsaData;
+				WSAStartup(0x0202, &wsaData); //windows socket startup
+			#endif//_WIN32
 				Connected = false;
 				Block = false;
 			}
 			UDP::~UDP() {
 				Disconnect();//needs checked
+			#ifdef _WIN32
+				WSACleanup();
+			#endif//_WIN32
 			}
 
 			///return (true) if connected, else (false)
@@ -70,9 +97,17 @@ namespace D2K {
 					SetPort(port);
 
 				UDP::Block = block;
+#ifdef D2KCLIENT
 				RemoteAddr.sin_family = AF_INET;
 				RemoteAddr.sin_port = htons(GetPort());
+#elif defined D2KSERVER
+				int sockaddrLen = sizeof(struct sockaddr_in);
+				memset((char*)&LocalAddr, 0, sockaddrLen);
+				LocalAddr.sin_family = AF_INET;
+				LocalAddr.sin_addr.s_addr = INADDR_ANY;
 
+				LocalAddr.sin_port = htons(GetPort());
+#endif//D2KCLIENT
 				//create a socket
 				Sock = socket(PF_INET, SOCK_DGRAM, 0);
 				if(Sock == INVALID_SOCKET) {
@@ -82,6 +117,18 @@ namespace D2K {
 
 					return err;
 				}
+
+#ifdef D2KSERVER
+				if(bind(Sock, (struct sockaddr*)&LocalAddr, sockaddrLen) == SOCKET_ERROR) {//bind a local address and port
+					int err = NETerrno;
+					if(err == NETEADDRINUSE)
+						fprintf(stderr, "Error (bind)\nPort #%d already in use\n", GetPort());
+					else
+						fprintf(stderr, "Error (bind): #%d\n", err);
+					Disconnect();
+					return err;
+				}
+#endif//D2KSERVER
 
 				//set blocking mode
 				if(NETioctlsocket(Sock, FIONBIO, (unsigned long*)&Block) == SOCKET_ERROR) {
@@ -143,8 +190,8 @@ namespace D2K {
 
 			///receives data
 			///receives raw contents into (buf) up to (len) in size
-			///buf must be allocated before calling
-		///note: (buf) is not cleared on DS but is on PC. there is probably a bug
+			///(buf) must be allocated before calling
+			///(buf) is cleared with 0x00 before receiving
 			///return (0) without error, (-1) not connected, (-2) invalid length, (-3) invalid pointer, else (errno)
 			int UDP::Recv(void *buf, unsigned int len) {
 				if(!IsConnected()) {
@@ -161,7 +208,7 @@ namespace D2K {
 				}
 				else {//successful
 					socklen_t sockaddrLen = sizeof(RemoteAddr);
-					//memset(buf, 0, len);//this needed erased on the ds just to function.
+					memset(buf, 0, len);//this needed erased on the ds just to function.
 					if(recvfrom(Sock, (char*)buf, len, 0, (struct sockaddr*)&RemoteAddr, &sockaddrLen) == SOCKET_ERROR) {
 						int err = NETerrno;
 						if(err != NETEWOULDBLOCK)
@@ -173,6 +220,78 @@ namespace D2K {
 				return 0;
 			}
 
+			//private
+			///converts long into std::string
+			template <class T>
+			inline std::string itos (const T& t) {
+				std::stringstream ss;
+				ss << t;
+
+				return ss.str();
+			}
+
+			///converts std::string into long
+			template <typename T>
+			long stoi(const std::basic_string<T> &str) {
+				std::basic_stringstream<T> stream(str);
+				long res;
+				return !(stream >>res)?0:res;
+			}
+			//end
+
+
+			unsigned long UDP::GetLocalIP() {
+#ifdef ARM9
+				return Wifi_GetIP();
+#elif defined(_WIN32) || defined(__linux__)
+				return LocalAddr.sin_addr.s_addr;
+#endif//ARM9
+			}
+			std::string UDP::GetLocalIPString() {
+#ifdef ARM9
+				struct in_addr sin_addr;
+				sin_addr.s_addr = GetLocalIP();
+				std::string IP = inet_ntoa(sin_addr);
+#elif defined(_WIN32) || defined(__linux__)
+				std::string IP = inet_ntoa(LocalAddr.sin_addr);
+#endif//ARM9
+
+				return IP;
+			}
+
+			unsigned long UDP::GetRemoteIP() {
+				return RemoteAddr.sin_addr.s_addr;
+			}
+			std::string UDP::GetRemoteIPString() {
+				std::string IP = inet_ntoa(RemoteAddr.sin_addr);
+				return IP;
+			}
+
+			uint16_t UDP::GetPort() {
+				return Port;
+			}
+			std::string UDP::GetPortString() {
+				return itos(Port);
+			}
+
+			void UDP::SetRemoteIP(const std::string& text) {
+				RemoteAddr.sin_addr.s_addr = inet_addr(text.c_str());
+			}
+			void UDP::SetRemoteIP(unsigned long ip) {
+				RemoteAddr.sin_addr.s_addr = ip;
+			}
+
+			void UDP::SetPort(const std::string& port) {
+				Port = stoi(port);
+			}
+			void UDP::SetPort(char *port) {
+				Port = atoi(port);
+			}
+			void UDP::SetPort(unsigned int port) {
+				Port = port;
+			}
+
+#ifdef D2KCLIENT
 			///sends a command packet
 			void UDP::SendCommand(uint8_t command) {
 				if(command > 11)										//valid range is 0 - 11
@@ -232,73 +351,11 @@ namespace D2K {
 
 			}
 
-			//private
-			///converts long into std::string
-			template <class T>
-			inline std::string itos (const T& t) {
-				std::stringstream ss;
-				ss << t;
-
-				return ss.str();
-			}
-
-			///converts std::string into long
-			template <typename T>
-			long stoi(const std::basic_string<T> &str) {
-				std::basic_stringstream<T> stream(str);
-				long res;
-				return !(stream >>res)?0:res;
-			}
-			//end
-
-
-			unsigned long UDP::GetLocalIP() {
-				return Wifi_GetIP();
-			}
-			std::string UDP::GetLocalIPString() {
-				struct in_addr sin_addr;
-				sin_addr.s_addr = GetLocalIP();
-				std::string IP = inet_ntoa(sin_addr);
-				return IP;
-			}
-
-			unsigned long UDP::GetRemoteIP() {
-				return RemoteAddr.sin_addr.s_addr;
-			}
-			std::string UDP::GetRemoteIPString() {
-				std::string IP = inet_ntoa(RemoteAddr.sin_addr);
-				return IP;
-			}
-
-			uint16_t UDP::GetPort() {
-				return Port;
-			}
-			std::string UDP::GetPortString() {
-				return itos(Port);
-			}
-
 			uint8_t UDP::GetProfile() {
 				return Profile;
 			}
 			std::string UDP::GetProfileString() {
 				return itos((uint16_t)Profile);
-			}
-
-			void UDP::SetRemoteIP(const std::string& text) {
-				inet_aton(text.c_str(), &RemoteAddr.sin_addr);
-			}
-			void UDP::SetRemoteIP(unsigned long ip) {
-				RemoteAddr.sin_addr.s_addr = ip;
-			}
-
-			void UDP::SetPort(const std::string& port) {
-				Port = stoi(port);
-			}
-			void UDP::SetPort(char *port) {
-				Port = atoi(port);
-			}
-			void UDP::SetPort(unsigned int port) {
-				Port = port;
 			}
 
 			void UDP::SetProfile(const std::string& profile) {
@@ -310,6 +367,7 @@ namespace D2K {
 			void UDP::SetProfile(unsigned int profile) {
 				Profile = profile;
 			}
+#endif//D2KCLIENT
 		}
 		C::UDP *UDP = (C::UDP*)NULL;
 	}

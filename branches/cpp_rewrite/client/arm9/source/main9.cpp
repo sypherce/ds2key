@@ -1,7 +1,7 @@
 /*
 	main - it all begins and ends here
 */
-#include "udp.h"
+#include "common/udp.h"
 #include "windows/mainWindow.h"
 #include "windows/keypadWindow.h"
 #include "windows/commandWindow.h"

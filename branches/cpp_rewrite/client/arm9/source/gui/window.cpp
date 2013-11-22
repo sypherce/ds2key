@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "window.h"
 #include "gui.h"
-#include "../udp.h"
+#include "common/udp.h"
 #include "../core.h"
 
 namespace D2K {

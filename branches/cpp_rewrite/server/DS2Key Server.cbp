@@ -150,6 +150,8 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add option="-DD2KSERVER" />
+			<Add option="-DEMULATOR=0" />
 			<Add directory="." />
 			<Add directory=".." />
 		</Compiler>
@@ -163,6 +165,8 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../common/iniparser/src/iniparser.h" />
+		<Unit filename="../common/udp.cpp" />
+		<Unit filename="../common/udp.h" />
 		<Unit filename="core/PPJIoctl.h">
 			<Option target="Debug" />
 			<Option target="Release" />
@@ -191,8 +195,6 @@
 		<Unit filename="core/input.h" />
 		<Unit filename="core/key.cpp" />
 		<Unit filename="core/key.h" />
-		<Unit filename="core/udp.cpp" />
-		<Unit filename="core/udp.h" />
 		<Unit filename="gui/controls/button.cpp">
 			<Option target="Debug (GUI)" />
 			<Option target="Release (GUI)" />

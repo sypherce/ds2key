@@ -12,7 +12,7 @@ namespace D2K {
 		C::Config *Config = (C::Config*)NULL;
 		namespace C {
 			const static uint16_t defaultPort = 9501;
-			char *iniFilename = (char*)"ds2key.ini";
+			const char *iniFilename = "ds2key.ini";
 
 			Config::Config() {
 				for(int i = 0; i < 256; i++) {

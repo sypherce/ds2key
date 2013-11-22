@@ -8,7 +8,7 @@
 #include <dswifi9.h>
 
 #include "gui/gui.h"//D2K::GUI::Screen
-#include "udp.h"
+#include "common/udp.h"
 #include "config.h"
 
 namespace D2K {
