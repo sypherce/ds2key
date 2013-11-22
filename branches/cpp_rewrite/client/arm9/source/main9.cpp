@@ -2,10 +2,10 @@
 	main - it all begins and ends here
 */
 #include "udp.h"
-#include "mainWindow.h"
-#include "keypadWindow.h"
-#include "commandWindow.h"
-#include "turboWindow.h"
+#include "windows/mainWindow.h"
+#include "windows/keypadWindow.h"
+#include "windows/commandWindow.h"
+#include "windows/turboWindow.h"
 #include "core.h"
 #include "apsearch.h"
 #include "config.h"

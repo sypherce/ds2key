@@ -2,10 +2,10 @@
 	ini file parser C++ wrapper
 */
 
+#include <string>//std::string
 extern "C" {
 	#include "iniparser/src/iniparser.h"
 }
-#include "iniParser.h"
 
 namespace D2K {
 	namespace Core {

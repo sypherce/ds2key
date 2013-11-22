@@ -7,7 +7,7 @@
 #include <fat.h>
 #include <dswifi9.h>
 
-#include "gui.h"//D2K::GUI::Screen
+#include "gui/gui.h"//D2K::GUI::Screen
 #include "udp.h"
 #include "config.h"
 

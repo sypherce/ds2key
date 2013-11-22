@@ -1,8 +1,8 @@
 #include <string>	//std::string
 #include "turboWindow.h"
-#include "checkButton.h"
-#include "label.h"
-#include "../core.h"
+#include "gui/checkButton.h"
+#include "gui/label.h"
+#include "core.h"
 
 namespace D2K {
 	namespace GUI {

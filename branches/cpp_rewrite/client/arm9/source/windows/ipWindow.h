@@ -1,7 +1,7 @@
 #ifndef __IPINDOW_H__
 #define __IPWINDOW_H__
 
-#include "window.h"
+#include "gui/window.h"
 
 namespace D2K {
 	namespace GUI {

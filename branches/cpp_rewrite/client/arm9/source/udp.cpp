@@ -19,6 +19,7 @@
 #define NETclosesocket closesocket
 #define NETioctlsocket ioctl
 #define INVALID_SOCKET -1
+typedef int socklen_t;
 
 #pragma pack(1)
 typedef struct DS2KeyPacket {
@@ -159,7 +160,7 @@ namespace D2K {
 					return -3;
 				}
 				else {//successful
-					int sockaddrLen = sizeof(RemoteAddr);
+					socklen_t sockaddrLen = sizeof(RemoteAddr);
 					//memset(buf, 0, len);//this needed erased on the ds just to function.
 					if(recvfrom(Sock, (char*)buf, len, 0, (struct sockaddr*)&RemoteAddr, &sockaddrLen) == SOCKET_ERROR) {
 						int err = NETerrno;

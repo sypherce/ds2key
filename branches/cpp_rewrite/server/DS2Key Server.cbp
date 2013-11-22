@@ -153,8 +153,8 @@
 			<Add directory="." />
 			<Add directory=".." />
 		</Compiler>
-		<Unit filename="../common/iniParser.cpp" />
-		<Unit filename="../common/iniParser.h" />
+		<Unit filename="../common/iniParserWrapper.cpp" />
+		<Unit filename="../common/iniParserWrapper.h" />
 		<Unit filename="../common/iniparser/src/dictionary.c">
 			<Option compilerVar="CC" />
 		</Unit>
