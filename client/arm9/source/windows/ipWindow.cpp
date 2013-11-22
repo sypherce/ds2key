@@ -1,8 +1,8 @@
 #include <string>	//std::string
 #include "ipWindow.h"
-#include "button.h"
-#include "label.h"
-#include "../udp.h"
+#include "gui/button.h"
+#include "gui/label.h"
+#include "udp.h"
 
 namespace D2K {
 	namespace GUI {

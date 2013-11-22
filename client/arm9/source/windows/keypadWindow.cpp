@@ -1,10 +1,10 @@
 #include <string>//std::string
 #include "keypadWindow.h"
 #include "mainWindow.h"
-#include "gui.h"
-#include "../udp.h"
-#include "../config.h"
-#include "../core.h"
+#include "gui/gui.h"
+#include "udp.h"
+#include "config.h"
+#include "core.h"
 
 namespace D2K {
 	namespace GUI {

@@ -1,7 +1,7 @@
 #include <string>	//std::string
 #include "commandWindow.h"
-#include "button.h"
-#include "../udp.h"
+#include "gui/button.h"
+#include "udp.h"
 
 namespace D2K {
 	namespace GUI {

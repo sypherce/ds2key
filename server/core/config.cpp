@@ -5,7 +5,7 @@
 #include <sstream>//ostringstream
 #include "config.h"
 #include "key.h"
-#include "common/iniParser.h"
+#include "common/iniParserWrapper.h"
 
 namespace D2K {
 	namespace Core {

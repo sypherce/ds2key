@@ -5,7 +5,7 @@
 #include <errno.h>
 #include "config.h"
 #include "udp.h"
-#include "iniparser/src/iniparser.h"
+#include "common/iniParserWrapper.h"
 
 namespace D2K {
 	namespace Core {
@@ -28,11 +28,11 @@ namespace D2K {
 			///return (0) upon success, else (errno)
 			int Config::Load() {
 				if(Core::UDP == NULL) return 1;
-				dictionary *ini = iniparser_load(iniFilename);
+				dictionary *ini = iniParser::load(iniFilename);
 
 				if(ini == NULL) {
 					int err = errno;
-					fprintf(stderr, "Error (iniparser_load): #%d\nFailed to open file: %s\n", err, iniFilename);
+					fprintf(stderr, "Error (iniParser::load): #%d\nFailed to open file: %s\n", err, iniFilename);
 					Core::UDP->SetRemoteIP(DefaultIP);
 					Core::UDP->SetPort(DefaultPort);
 					Core::UDP->SetProfile(DefaultProfile);
@@ -41,13 +41,13 @@ namespace D2K {
 					return err;
 				}
 
-				iniparser_dump(ini, stderr);
+				iniParser::dump(ini, stderr);
 
-				Core::UDP->SetRemoteIP(iniparser_getstring(ini, (char*)"settings:ip", (char*)DefaultIP));
-				Core::UDP->SetPort(iniparser_getstring(ini, (char*)"settings:port", (char*)DefaultPort));
-				Core::UDP->SetProfile(iniparser_getstring(ini, (char*)"settings:profile", (char*)DefaultProfile));
+				Core::UDP->SetRemoteIP(iniParser::getstring(ini, (char*)"settings:ip", (char*)DefaultIP));
+				Core::UDP->SetPort(iniParser::getstring(ini, (char*)"settings:port", (char*)DefaultPort));
+				Core::UDP->SetProfile(iniParser::getstring(ini, (char*)"settings:profile", (char*)DefaultProfile));
 
-				iniparser_freedict(ini);
+				iniParser::freedict(ini);
 
 				return 0;
 			}

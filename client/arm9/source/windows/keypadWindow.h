@@ -2,9 +2,9 @@
 #define __KEYPADWINDOW_H__
 
 #include <string>//std::string
-#include "window.h"
-#include "edit.h"
-#include "label.h"
+#include "gui/window.h"
+#include "gui/edit.h"
+#include "gui/label.h"
 
 namespace D2K {
 	namespace GUI {

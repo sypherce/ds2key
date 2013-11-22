@@ -7,15 +7,15 @@
 #include "commandWindow.h"
 
 //controls
-#include "gui.h"
-#include "edit.h"
-#include "button.h"
-#include "label.h"
+#include "gui/gui.h"
+#include "gui/edit.h"
+#include "gui/button.h"
+#include "gui/label.h"
 
 //core
-#include "../udp.h"
-#include "../config.h"
-#include "../core.h"
+#include "udp.h"
+#include "config.h"
+#include "core.h"
 
 const int LENGTH_IP = 15;
 const int LENGTH_PORT = 5;

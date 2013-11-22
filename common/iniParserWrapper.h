@@ -1,7 +1,7 @@
 #ifndef __INIPARSER_H__
 #define __INIPARSER_H__
 
-#include <string>
+#include <string>//std::string
 extern "C" {
 	#include "iniparser/src/dictionary.h"
 }
