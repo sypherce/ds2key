@@ -2,8 +2,13 @@
 	UDP Communication
 */
 
-#include <stdio.h>//stderr, fprintf
+#include <cstdlib>//atoi
+#include <iostream>//std::cout, std::clog
 #include <sstream>//std::stringstream
+
+#if !defined(D2KCLIENT) && !defined(D2KSERVER)
+#error "Must define D2KCLIENT or D2KSERVER"
+#endif//D2KCLIENT || D2KSERVER
 
 #ifdef _WIN32
 #define NETerrno WSAGetLastError()
@@ -15,7 +20,6 @@
 #include <unistd.h>		//close
 #include <arpa/inet.h>	//inet_ntoa
 #include <sys/ioctl.h>	//ioctl
-#include <string.h>		//memset
 #define NETerrno errno
 #define NETEADDRINUSE EADDRINUSE
 #define NETEWOULDBLOCK EWOULDBLOCK
@@ -35,27 +39,18 @@
 #define NETclosesocket closesocket
 #define NETioctlsocket ioctl
 #define INVALID_SOCKET -1
-typedef int socklen_t;
 #endif//_WIN32
 #include "udp.h"
+#include "misc.h"
 
 #ifdef D2KCLIENT
-#pragma pack(1)
-typedef struct DS2KeyPacket {
-	uint8_t Type;
-	uint8_t Profile;
-	uint16_t Keys;
-	uint16_t KeysTurbo;
-	uint8_t GHKeys;
-	uint16_t GHKeysTurbo;
-	uint8_t TouchX;
-	uint8_t TouchY;
-} DS2KeyPacket;
-#pragma pack()
-DS2KeyPacket Packet = {0};
+#include "common/ds2keyPacket.h"
 #endif//D2KCLIENT
 namespace D2K {
 	namespace Core {
+		#ifdef D2KCLIENT
+		DS2KeyPacket Packet = {0};
+		#endif//D2KCLIENT
 		namespace C {
 			UDP::UDP() {
 			#ifdef _WIN32
@@ -64,6 +59,8 @@ namespace D2K {
 			#endif//_WIN32
 				Connected = false;
 				Block = false;
+				Sock = INVALID_SOCKET;
+				Port = 0;
 			}
 			UDP::~UDP() {
 				Disconnect();//needs checked
@@ -72,7 +69,6 @@ namespace D2K {
 			#endif//_WIN32
 			}
 
-			///return (true) if connected, else (false)
 			bool UDP::IsConnected() {
 				return Connected;
 			}
@@ -85,14 +81,12 @@ namespace D2K {
 				return Connect(Block, port);
 			}
 
-			///connect udp system
-			///return (0) if connected, else (errno)
 			int UDP::Connect(bool block, uint16_t port) {
 				if(EMULATOR) return 0;					//skip if emulating
 				if(IsConnected())						//if already connected
 					Disconnect();						//disconnect first
 				if(port == 0)							//if port 0
-					SetPort(9501);						//use default port
+					SetPort(DefaultPort);				//use default port
 				else
 					SetPort(port);
 
@@ -102,7 +96,7 @@ namespace D2K {
 				RemoteAddr.sin_port = htons(GetPort());
 #elif defined D2KSERVER
 				int sockaddrLen = sizeof(struct sockaddr_in);
-				memset((char*)&LocalAddr, 0, sockaddrLen);
+				LocalAddr = sockaddr_in{0};
 				LocalAddr.sin_family = AF_INET;
 				LocalAddr.sin_addr.s_addr = INADDR_ANY;
 
@@ -112,7 +106,7 @@ namespace D2K {
 				Sock = socket(PF_INET, SOCK_DGRAM, 0);
 				if(Sock == INVALID_SOCKET) {
 					int err = NETerrno;
-					fprintf(stderr, "Error (socket): #%d\n", err);
+					std::clog << "Error (socket): #" << err << "\n";
 					Disconnect();
 
 					return err;
@@ -122,9 +116,9 @@ namespace D2K {
 				if(bind(Sock, (struct sockaddr*)&LocalAddr, sockaddrLen) == SOCKET_ERROR) {//bind a local address and port
 					int err = NETerrno;
 					if(err == NETEADDRINUSE)
-						fprintf(stderr, "Error (bind)\nPort #%d already in use\n", GetPort());
+						std::clog << "Error (bind) Port #" << GetPort() << " currently in use\n";
 					else
-						fprintf(stderr, "Error (bind): #%d\n", err);
+						std::clog << "Error (bind): #" << err << "\n";
 					Disconnect();
 					return err;
 				}
@@ -133,7 +127,7 @@ namespace D2K {
 				//set blocking mode
 				if(NETioctlsocket(Sock, FIONBIO, (unsigned long*)&Block) == SOCKET_ERROR) {
 					int err = NETerrno;
-					fprintf(stderr, "Error (NETioctlsocket): #%d\n", err);
+					std::clog << "Error (NETioctlsocket): #" << err << "\n";
 					Disconnect();
 
 					return err;
@@ -143,15 +137,13 @@ namespace D2K {
 				return 0;
 			}
 
-			///disconnect udp system
-			///return (0) without error, else (errno)
 			int UDP::Disconnect() {
 				if(EMULATOR) return 0;	//skip if emulating
 				if(IsConnected()) {
 					Connected = false;	//udp system disconnects even if socket doesn't close
 					if(NETclosesocket(Sock) == SOCKET_ERROR) {
 						int err = NETerrno;
-						fprintf(stderr, "Error (NETclosesocket): #%d\n", err);
+						std::clog << "Error (NETclosesocket): #" << err << "\n";
 
 						return err;
 					}
@@ -160,27 +152,24 @@ namespace D2K {
 				return 0;
 			}
 
-			///sends data
-			///sends raw contents of (buf) up to (len) in size
-			///return (0) without error, (-1) not connected, (-2) invalid length, (-3) invalid pointer, else (errno)
 			int UDP::Send(const void *buf, unsigned int len) {
 				if(!IsConnected()) {
-					fprintf(stderr, "Error (UDP::Recv): not connected\n");
+					std::clog << "Error (UDP::Send): Not connected\n";
 					return -1;
 				}
 				else if(len <= 0) {
-					fprintf(stderr, "Error (UDP::Recv) length: #%d\n", len);
+					std::clog << "Error (UDP::Send) Length: #" << len << "\n";
 					return -2;
 				}
 				else if(buf == NULL) {
-					fprintf(stderr, "Error (UDP::Recv) invalid pointer\n");
+					std::clog << "Error (UDP::Send) Invalid pointer\n";
 					return -3;
 				}
 				else {//successful
 					int sockaddrLen = sizeof(RemoteAddr);
 					if(sendto(Sock, (char*)buf, len, 0, (struct sockaddr*)&RemoteAddr, sockaddrLen) == SOCKET_ERROR) {
 						int err = NETerrno;
-						fprintf(stderr, "Error (sendto): #%d\n", err);
+						std::clog << "Error (sendto): #" << err << "\n";
 						return err;
 					}
 				}
@@ -188,57 +177,31 @@ namespace D2K {
 				return 0;
 			}
 
-			///receives data
-			///receives raw contents into (buf) up to (len) in size
-			///(buf) must be allocated before calling
-			///(buf) is cleared with 0x00 before receiving
-			///return (0) without error, (-1) not connected, (-2) invalid length, (-3) invalid pointer, else (errno)
 			int UDP::Recv(void *buf, unsigned int len) {
 				if(!IsConnected()) {
-					fprintf(stderr, "Error (UDP::Recv): not connected\n");
+					std::clog << "Error (UDP::Recv): Not connected\n";
 					return -1;
 				}
 				else if(len <= 0) {
-					fprintf(stderr, "Error (UDP::Recv) length: #%d\n", len);
+					std::clog << "Error (UDP::Recv) Length: #" << len << "\n";
 					return -2;
 				}
 				else if(buf == NULL) {
-					fprintf(stderr, "Error (UDP::Recv) invalid pointer\n");
+					std::clog << "Error (UDP::Recv) Invalid pointer\n";
 					return -3;
 				}
 				else {//successful
 					socklen_t sockaddrLen = sizeof(RemoteAddr);
-					memset(buf, 0, len);//this needed erased on the ds just to function.
 					if(recvfrom(Sock, (char*)buf, len, 0, (struct sockaddr*)&RemoteAddr, &sockaddrLen) == SOCKET_ERROR) {
 						int err = NETerrno;
 						if(err != NETEWOULDBLOCK)
-							fprintf(stderr, "Error (recvfrom): #%d\n", err);
+							std::clog << "Error (recvfrom): #" << err << "\n";
 						return err;
 					}
 				}
 
 				return 0;
 			}
-
-			//private
-			///converts long into std::string
-			template <class T>
-			inline std::string itos (const T& t) {
-				std::stringstream ss;
-				ss << t;
-
-				return ss.str();
-			}
-
-			///converts std::string into long
-			template <typename T>
-			long stoi(const std::basic_string<T> &str) {
-				std::basic_stringstream<T> stream(str);
-				long res;
-				return !(stream >>res)?0:res;
-			}
-			//end
-
 
 			unsigned long UDP::GetLocalIP() {
 #ifdef ARM9
@@ -282,7 +245,7 @@ namespace D2K {
 			}
 
 			void UDP::SetPort(const std::string& port) {
-				Port = stoi(port);
+				Port = Core::stoi(port);
 			}
 			void UDP::SetPort(char *port) {
 				Port = atoi(port);
@@ -292,22 +255,20 @@ namespace D2K {
 			}
 
 #ifdef D2KCLIENT
-			///sends a command packet
 			void UDP::SendCommand(uint8_t command) {
 				if(command > 11)										//valid range is 0 - 11
 					return;
 
-				memset(&Packet, 0, sizeof(DS2KeyPacket));				//clear the packet
+				Packet = (DS2KeyPacket){0};								//clear the packet
 				Packet.Type = '/' + 2;
 				Packet.Profile = command;
 
 				Send((char*)&Packet, sizeof(DS2KeyPacket));				//send packet
 			}
 
-			///updates current button & touchscreen status
 			void UDP::Update(uint32_t keys, uint32_t keysTurbo, uint32_t gripKeys, uint32_t gripKeysTurbo, touchPosition *pos) {
 				if(EMULATOR) return;									//skip if emulating
-				memset(&Packet, 0, sizeof(DS2KeyPacket));				//clear the packet
+				Packet = (DS2KeyPacket){0};								//clear the packet
 				Packet.Type = '/' + 1;
 				Packet.Profile = GetProfile();
 				Packet.Keys = keys;
@@ -325,8 +286,6 @@ namespace D2K {
 				Send((char*)&Packet, sizeof(DS2KeyPacket));				//send packet
 			}
 
-			///searches for running servers on current (port)
-		///note: this should actually just return any found ip and not change our currently connected IP
 			void UDP::ServerLookup() {
 				if(EMULATOR) return;									//skip if emulating
 				unsigned long SavedRemoteIP = GetRemoteIP();			//save the remote IP
@@ -336,7 +295,7 @@ namespace D2K {
 							(((LocalIP >> 16) & 0xFF) << 16) |
 							(0xFF << 24));
 
-				memset(&Packet, 0, sizeof(DS2KeyPacket));				//clear the packet
+				Packet = (DS2KeyPacket){0};								//clear the packet
 				Packet.Type = 0xFF;										//set as a lookup packet
 
 				Send((char*)&Packet, sizeof(DS2KeyPacket));				//send the packet out

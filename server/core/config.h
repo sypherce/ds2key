@@ -1,14 +1,16 @@
 #ifndef __CONFIG_H__
 #define __CONFIG_H__
 
-#include <stdint.h>
+#include <cstdint>
+#undef SetPort
 
 namespace D2K {
 	namespace Core {
-		//Normal Defines
+		//this represents each value of Profile[kMouse]. 0 = mRelative and so on
 		enum Mouse {
 			mRelative, mAbsolute, mButtons,
 			mEND };
+		//this represents each value in a Keys Profile array. Example: Profile[kUp] is defined as KEY_UP by default
 		enum Keys {
 			kProfile, kMouse, kJoy, kUp, kDown, kLeft, kRight, kA, kB, kX, kY, kL, kR, kStart, kSelect, kLid,
 			kBlue, kYellow, kRed, kGreen,
@@ -18,28 +20,50 @@ namespace D2K {
 			kTouch00W, kTouch01W, kTouch02W, kTouch03W, kTouch04W, kTouch05W, kTouch06W, kTouch07W, kTouch08W, kTouch09W, kTouch10W, kTouch11W,
 			kTouch00H, kTouch01H, kTouch02H, kTouch03H, kTouch04H, kTouch05H, kTouch06H, kTouch07H, kTouch08H, kTouch09H, kTouch10H, kTouch11H,
 			kEND };
-		enum {
-			dNone, dDefault, dWarnings, dAll,
-			dEND };
 
 		namespace C {
 			class Config {
 				public:
+					//Assigns each Command pointer to NULL, then calls Load()
 					Config();
+					
+					//Calls Save()
 					~Config();
+					
+					//loads settings from disk
+					//@return (0) upon success, else (errno)
 					int Load();
+					
+					//Saves Profile settings to disk
+					//@param Profile Pointer to actual data
+					//@param profileNumber Fills in # in ds2key.p#.ini. Example: ds2key.p1.ini
+					//@return (0) upon success, else (errno)
 					int LoadProfile(uint16_t *Profile, uint8_t profileNumber);
+					
+					//Saves settings to disk
+					//@return (0) upon success, else (errno)
 					int Save();
+					
+					//Saves Profile settings to disk
+					//@param Profile Pointer to actual data
+					//@param profileNumber Fills in # in ds2key.p#.ini. Example: ds2key.p1.ini
+					//@return (0) upon success, else (errno)
 					int SaveProfile(uint16_t *Profile, uint8_t profileNumber);
+					
+					//@return Currently assigned port number, values range from 1 - 65535
 					uint16_t GetPort();
+					
+					//Assigns new port number
+					//@param Port Values range 1 - 65535, setting 0 defaults to DefaultPort
 					void SetPort(uint16_t port);
-					uint8_t GetDebugLevel();
+					
+					//@param Command Values range 0 - 255
+					//@return (NULL) if unassigned, otherwise a NULL terminated string
 					char* GetCommand(uint8_t Command);
 
 				private:
-					uint16_t Port;
-					uint8_t Debug;
-					char* Commands[256];
+					uint16_t Port;//Currently assigned port
+					char* Commands[256];//NULL terminated command pointers
 			};
 		}
 		extern C::Config *Config;

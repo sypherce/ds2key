@@ -2,12 +2,11 @@
 Windows GUI
 */
 
+#include <iostream>//std::cout, std::clog
 #include <windows.h>
 #include <commctrl.h>
-#include <stdio.h>//printf
 #include "gui/gui.h"
 #include "gui/resource.h"
-#include "core/core.h"//Print
 #include "menu.h"
 
 namespace D2K {
@@ -27,15 +26,15 @@ namespace D2K {
 		}
 		bool Menu::Attach(Object *parentObject) {
 			if(Object::Attach(parentObject)) {
-				printf("Parent:%x\n", (unsigned int)GetParentHWND());
-				printf("menu:%x\n", (unsigned int)hwnd);
+				std::cout << "Parent:#" << (unsigned int)GetParentHWND() << "\n";
+				std::cout << "Menu:#" << (unsigned int)hwnd << "\n";
 				return Update();
 			}
 			return false;
 		}
 		bool Menu::Update() {
-				printf("Parent:%x\n", (unsigned int)GetParentHWND());
-				printf("menu:%x\n", (unsigned int)hwnd);
+			std::cout << "Parent:#" << (unsigned int)GetParentHWND() << "\n";
+			std::cout << "Menu:#" << (unsigned int)hwnd << "\n";
 			return SetMenu(GetParentHWND(), (HMENU)hwnd);
 		}
 	}

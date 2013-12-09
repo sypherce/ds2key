@@ -2,6 +2,7 @@
 #define __TRAYICON_H__
 
 #include <windows.h>
+#include <shellapi.h>
 #include <string>//std::string
 #include "object.h"
 #include "label.h"

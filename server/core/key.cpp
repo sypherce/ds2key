@@ -8,11 +8,6 @@
 	XK_Return = "KEY_RETURN"
 */
 
-#ifndef _WIN32
-#include <string.h>
-#include <X11/keysym.h>
-#endif//_WIN32
-
 #include "key.h"
 
 namespace D2K {
@@ -209,6 +204,9 @@ namespace D2K {
 				{0x10e, "JOY_14"},
 				{0x10f, "JOY_15"},
 				{0x110, "JOY_16"},
+				{0x111, "JOY_17"},
+				{0x112, "JOY_18"},
+				{0x113, "JOY_19"},
 
 				{KEY_NONE, "KEY_NONE"},
 				{KEY_VOID, "KEY_VOID"}

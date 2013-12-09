@@ -4,11 +4,9 @@ Windows GUI label control
 
 #include <windows.h>
 #include <commctrl.h>
-#include <stdio.h>//printf
 #include "label.h"
 #include "gui/gui.h"
 #include "gui/resource.h"
-#include "core/core.h"//Print
 
 namespace D2K {
 	namespace GUI {

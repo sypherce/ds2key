@@ -21,7 +21,6 @@ namespace D2K {
 			extern void button11Function();
 			extern void button12Function();
 
-			//public
 			WindowClass *Window;
 			Label *label1;
 			Button *Button1;
@@ -37,6 +36,7 @@ namespace D2K {
 			Button *Button11;
 			Button *Button12;
 
+			//public
 			WindowClass::WindowClass() : Window() {
 				Screen = 0;
 				int x = 16;

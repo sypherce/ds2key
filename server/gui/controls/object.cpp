@@ -4,10 +4,9 @@ Windows GUI Object base control
 
 #include <windows.h>
 #include <commctrl.h>
-#include <stdio.h>//printf
+#include <iostream>//std::cout, std::clog
 #include "gui/gui.h"
 #include "gui/resource.h"
-#include "core/core.h"//Print
 
 namespace D2K {
 	namespace GUI {
@@ -17,21 +16,38 @@ namespace D2K {
 			Width = width;
 			Height = height;
 			ID = -1;
+			parent = NULL;
+			hwnd = NULL;
 		}
 		Object::~Object() {}
 		bool Object::Attach(Object *parentObject) {
-			if(D2K::GUI::eventCounter >= eventMax)
+			if(D2K::GUI::eventCounter >= eventMax) {
+				std::clog << "Error (Object::Attach): eventCounter maxed out\n";
 				return false;
+			}
+			if(parentObject == NULL) {
+				std::clog << "Error (Object::Attach): parentObject does not exist\n";
+				return NULL;
+			}
 			ID = eventCounter++;
 			parent = parentObject;
 			return true;
 		}
-		int Object::GetID() {
+
+		int Object::GetID() {					
 			return ID;
 		}
 		HWND Object::GetParentHWND() {
-			//printf("this:%x parent:%x\n", (unsigned int)this, (unsigned int)parent->hwnd);
-			return parent->hwnd;
+			if(GetParent() == NULL) {			//object not attached
+				std::clog << "Error (GetParentHWND): Object #" << GetID() << " not attached to parent\n";
+				return NULL;
+			}
+			else if(GetParent()->hwnd == NULL) {//parent not initialized
+				std::clog << "Error (GetParentHWND): Parent #" << GetID() << " not attached to parent\n";
+				return NULL;
+			}
+
+			return GetParent()->hwnd;
 		}
 		Object *Object::GetParent() {
 			return parent;

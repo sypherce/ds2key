@@ -35,11 +35,20 @@ namespace D2K {
 					return DS2KEY_SELECT;
 				case kLid:
 					return DS2KEY_LID;
+				case kBlue:
+					return DS2KEY_BLUE;
+				case kYellow:
+					return DS2KEY_YELLOW;
+				case kRed:
+					return DS2KEY_RED;
+				case kGreen:
+					return DS2KEY_GREEN;
 				default:
 					return 0;
 			}
 		}
-		uint16_t button2bit(uint16_t Button) {
+		//currently unused and broken with GH functions
+		/*uint16_t button2bit(uint16_t Button) {
 			switch(Button) {
 				case DS2KEY_UP:
 					return kUp;
@@ -67,15 +76,23 @@ namespace D2K {
 					return kSelect;
 				case DS2KEY_LID:
 					return kLid;
+				case DS2KEY_BLUE:
+					return kBlue;
+				case DS2KEY_YELLOW:
+					return kYellow;
+				case DS2KEY_RED:
+					return kRed;
+				case DS2KEY_GREEN:
+					return kGreen;
 				default:
 					return kEND;
 			}
-		}
+		}*/
 		C::Client *Client[256] = {(C::Client*)NULL};
 
 		namespace C {
 			Client::Client() {
-				packet = ds2keyPacket {0};
+				packet = DS2KeyPacket{0};
 				keys =
 				keysOld =
 				ghKeys =
@@ -86,10 +103,10 @@ namespace D2K {
 
 			void Client::Scan(void) {
 				keysOld = keys;
-				keys = packet.keys;
+				keys = packet.Keys;
 
 				ghKeysOld = ghKeys;
-				ghKeys = packet.ghKeys;
+				ghKeys = packet.GHKeys;
 			}
 
 			uint16_t *Client::GetSettings() {
@@ -108,73 +125,73 @@ namespace D2K {
 				GetSettings()[Button] = Value;
 			}
 
-			void Client::SetPacket(ds2keyPacket p) {
+			void Client::SetPacket(DS2KeyPacket p) {
 				packet = p;
 			}
 
 			void Client::SetTouchPos(uint8_t x, uint8_t y) {
-				packet.touchX = x;
-				packet.touchY = y;
+				packet.TouchX = x;
+				packet.TouchY = y;
 			}
 
 			void Client::Press(uint16_t key) {
-				packet.keys |= key;
+				packet.Keys |= key;
 			}
 
 			void Client::Release(uint16_t key) {
-				packet.keys &= ~key;
+				packet.Keys &= ~key;
 			}
 
-			uint16_t Client::Held(uint16_t key) {
+			bool Client::Held(uint16_t key) {
 				return keys&key;
 			}
 
-			uint16_t Client::Down(uint16_t key) {
+			bool Client::Down(uint16_t key) {
 				return (keys &~ keysOld)&key;
 			}
 
-			uint16_t Client::Up(uint16_t key) {
+			bool Client::Up(uint16_t key) {
 				return ((keys ^ keysOld) & (~keys))&key;
 			}
 
-			uint16_t Client::Turbo(uint16_t key) {
-				return packet.keysTurbo&key;
+			bool Client::Turbo(uint16_t key) {
+				return packet.KeysTurbo&key;
 			}
 
 			void Client::GHPress(uint8_t key) {
-				packet.ghKeys |= key;
+				packet.GHKeys |= key;
 			}
 
 			void Client::GHRelease(uint8_t key) {
-				packet.ghKeys &= ~key;
+				packet.GHKeys &= ~key;
 			}
 
-			uint8_t Client::GHHeld(uint8_t key) {
+			bool Client::GHHeld(uint8_t key) {
 				return ghKeys&key;
 			}
 
-			uint8_t Client::GHDown(uint8_t key) {
+			bool Client::GHDown(uint8_t key) {
 				return (ghKeys &~ ghKeysOld)&key;
 			}
 
-			uint8_t Client::GHUp(uint8_t key) {
+			bool Client::GHUp(uint8_t key) {
 				return ((ghKeys ^ ghKeysOld) & (~ghKeys))&key;
 			}
 
-			uint8_t Client::GHTurbo(uint8_t key) {
-				return packet.ghKeysTurbo&key;
+			bool Client::GHTurbo(uint8_t key) {
+				return packet.GHKeysTurbo&key;
 			}
 
 			uint8_t Client::GetX() {
-				return packet.touchX;
+				return packet.TouchX;
 			}
 
 			uint8_t Client::GetY() {
-				return packet.touchY;
+				return packet.TouchY;
 			}
 
 			uint8_t Client::GetProfileNumber() {
-				return packet.profile;
+				return packet.Profile;
 			}
 		}
 	}

@@ -21,7 +21,7 @@ namespace D2K {
 			GUI::Screen[screen][x + (y * SCREEN_WIDTH)] = c;
 		}
 		void ClearScreen(uint8_t screen, uint16_t c) {
-			dmaFillHalfWords(c, GUI::Screen[screen], 256 * 192 * 2);
+			dmaFillHalfWords(c, GUI::Screen[screen], SCREEN_WIDTH * SCREEN_HEIGHT * 2);
 		}
 		void DrawRect(uint8_t screen, GUI::Rect rect, uint16_t c) {
 			for(int y = rect.GetY(); y <= rect.GetY2(); y++) {
