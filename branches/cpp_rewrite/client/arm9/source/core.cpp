@@ -2,13 +2,15 @@
 	NDS Setup() and Update()
 */
 #include <time.h>
-#include <stdio.h>
+#include <cstdio>
+#include <iostream>
 #include <nds.h>
 #include <fat.h>
 #include <dswifi9.h>
 
 #include "gui/gui.h"//D2K::GUI::Screen
 #include "common/udp.h"
+#include "common/misc.h"
 #include "config.h"
 
 namespace D2K {
@@ -16,7 +18,6 @@ namespace D2K {
 		touchPosition StylusPos;
 		bool InputChange = false;
 
-		///return (char*) containing the current time
 		char* GetTime() {
 			static char timeChar[12];
 			time_t unixTime = time(NULL);
@@ -33,12 +34,6 @@ namespace D2K {
 			return timeChar;
 		}
 
-		///resets stylus x/y. probably garbage
-		void ResetStylus() {
-			StylusPos.px =
-			StylusPos.py = 299;
-		}
-
 		///updates input values
 		void UpdateInputs() {
 			if(InputChange) {
@@ -52,6 +47,7 @@ namespace D2K {
 				}
 			}
 		}
+
 		///updates backlights depending on touch and lid status
 		void UpdateLid() {
 			static uint32_t vblCount = 0;
@@ -69,13 +65,13 @@ namespace D2K {
 			}
 			vblCount++;											//increment timer
 		}
+
 		///vblank function we assign in Setup()
 		void VBLFunction() {
 			UpdateInputs();
 			UpdateLid();
 		}
 
-		///setup the nds system. start fat, wifi, and our udp system
 		bool Setup() {
 			//screen setup
 			//powerOff(PM_BACKLIGHT_TOP);
@@ -93,31 +89,28 @@ namespace D2K {
 
 			consoleClear();
 
-			printf("%s\n-\n", VERSION_STRING);
+			std::cout << Core::VERSION_STRING << "\n-\n";
 
 			if(!EMULATOR)
 			if(!fatInitDefault())
-				printf("Error (fatInitDefault): Failed to access storage\n");
+				std::clog << "Error (fatInitDefault): Failed to access storage\n";
 
-			iprintf("Connecting via WFC data\n");
+			std::cout << "Connecting via WFC data\n";
 			if(!EMULATOR)
-			if(!Wifi_InitDefault(WFC_CONNECT)) {			///this needs replaced
-				printf("Error (Wifi_InitDefault): Failed to connect\n");
-				return 1;									//return with error
+			if(!Wifi_InitDefault(WFC_CONNECT)) {				///this needs replaced
+				std::clog << "Error (Wifi_InitDefault): Failed to connect\n";
+				return true;									//return with error
 			}
 
-			irqSet(IRQ_VBLANK, VBLFunction);				//setup vblank function
+			irqSet(IRQ_VBLANK, VBLFunction);					//setup vblank function
 
-			ResetStylus();									///is this relavent anymore?
+			Core::UDP = new Core::C::UDP();						//initilize udp
+			Core::Config = new Core::C::Config();				//load udp settings
+			Core::UDP->Connect();								//connect with settings
 
-			Core::UDP = new Core::C::UDP();					//initilize udp
-			Core::Config = new Core::C::Config();			//load udp settings
-			Core::UDP->Connect();							//connect with settings
-
-			return 0;										//return without error
+			return false;										//return without error
 		}
 
-		///loop function that calls VBLFunction()
 		void Loop() {
 			InputChange = true;
 			swiWaitForVBlank();

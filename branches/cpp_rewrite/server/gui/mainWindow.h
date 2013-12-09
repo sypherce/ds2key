@@ -11,9 +11,7 @@ namespace D2K {
 			const int listMax = 8;
 			extern int width;
 			extern int height;
-			extern int x;
 			extern int border;
-			extern int debug;
 			extern GUI::Window window;
 			extern GUI::ListView *categoryListView;
 			extern GUI::TrayIcon *TrayIcon;
@@ -63,19 +61,6 @@ namespace D2K {
 				extern std::string Port;
 
 				void editFunction(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
-
-				void Setup();
-				void SetVisible(bool visible);
-			}
-			namespace Log {
-				extern Label *List[listMax];
-
-				void listViewFunction(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
-
-				void comboButtonFunction(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
-
-				extern ListView *listView;
-				extern ComboButton * comboButton;
 
 				void Setup();
 				void SetVisible(bool visible);

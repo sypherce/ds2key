@@ -4,10 +4,9 @@ Windows GUI
 
 #include <windows.h>
 #include <commctrl.h>
-#include <stdio.h>//printf
+#include <iostream>//std::cout, std::clog
 #include "gui/gui.h"
 #include "gui/resource.h"
-#include "core/core.h"//Print
 #include "menuPopUp.h"
 
 namespace D2K {
@@ -27,9 +26,9 @@ namespace D2K {
 		}
 		bool MenuPopUp::Attach(Object *parentObject) {
 			if(Object::Attach(parentObject)) {
-				printf("Parent:%x\n", (unsigned int)GetParentHWND());
-				printf("menupopup:%x\n", (unsigned int)hwnd);
-				printf("text:%s\n", Text.c_str());
+				std::cout << "Parent:" << (unsigned int)GetParentHWND() << "\n";
+				std::cout << "MenuItem:" << (unsigned int)hwnd << "\n";
+				std::cout << "Text:" << Text << "\n";
 				return AppendMenu((HMENU)GetParentHWND(), MF_STRING | MF_POPUP, (UINT)hwnd, Text.c_str());
 			}
 			return false;

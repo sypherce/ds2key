@@ -15,7 +15,7 @@ using namespace D2K::GUI;
 
 int main() {
 	if(Core::Setup())								//DS hardware setup
-		return 1;
+		return 1;									//halt on error
 
 	//setup our windows
 	Keypad::Window = new Keypad::WindowClass();
@@ -30,7 +30,7 @@ int main() {
 		Core::UDP->Update(keysHeld(),				//update ds2key network
 			Turbo::GetKeys(),
 			guitarGripKeysHeld() * guitarGripIsInserted(),
-			0 * guitarGripIsInserted(),				//guitar grip is disabled
+			Turbo::GHGetKeys() * guitarGripIsInserted(),				
 			(touchPosition*)NULL);
 
 		Main::Window->Update();						//update the window

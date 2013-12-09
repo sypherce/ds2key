@@ -4,10 +4,8 @@ Windows GUI
 
 #include <windows.h>
 #include <commctrl.h>
-#include <stdio.h>//printf
 #include "gui/gui.h"
 #include "gui/resource.h"
-#include "core/core.h"//Print
 #include "listView.h"
 
 namespace D2K {

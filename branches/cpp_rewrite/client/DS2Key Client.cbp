@@ -42,6 +42,7 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="../common/ds2keyPacket.h" />
 		<Unit filename="../common/iniParserWrapper.cpp" />
 		<Unit filename="../common/iniParserWrapper.h" />
 		<Unit filename="../common/iniparser/src/dictionary.c">
@@ -52,6 +53,8 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../common/iniparser/src/iniparser.h" />
+		<Unit filename="../common/misc.cpp" />
+		<Unit filename="../common/misc.h" />
 		<Unit filename="../common/udp.cpp" />
 		<Unit filename="../common/udp.h" />
 		<Unit filename="Makefile" />

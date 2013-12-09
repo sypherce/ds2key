@@ -33,8 +33,6 @@ namespace D2K {
 			D2K::GUI::Object *object;
 			void (*function)(HWND, UINT, WPARAM, LPARAM);
 			void (*function2)(HWND, UINT, WPARAM, LPARAM);
-			//void (*function3)(HWND, UINT, WPARAM, LPARAM);
-			//void (*function4)(HWND, UINT, WPARAM, LPARAM);
 		};
 		extern Event events[D2K::GUI::eventMax];
 
@@ -45,7 +43,6 @@ namespace D2K {
 		extern MSG messages;            /* Here messages to the application are saved */
 
 		/*  This function is called by the Windows function DispatchMessage()  */
-
 		WPARAM GetMessages();
 
 		LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);

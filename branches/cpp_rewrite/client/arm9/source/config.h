@@ -8,7 +8,13 @@ namespace D2K {
 				public:
 					Config();
 					~Config();
+					
+					//Loads settings from disk
+					//@return (0) upon success, else (errno)
 					int Load();
+
+					//Saves settings to disk
+					//@return (0) upon success, else (errno)
 					int Save();
 			};
 		}

@@ -1,5 +1,5 @@
 #include <nds.h>
-#include <stdio.h>
+#include <cstdio>
 #include <dswifi9.h>
 #include "apsearch.h"
 

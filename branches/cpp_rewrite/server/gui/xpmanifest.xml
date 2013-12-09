@@ -2,11 +2,11 @@
 <assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
 <assemblyIdentity
 	version="1.0.0.0"
-	processorArchitecture="X86"
-	name="Company.Product.Name"
+	processorArchitecture="*"
+	name="sypherce.ds2key"
 	type="win32"
 />
-<description></description>
+<description>DS2Key - An emulated gamepad from your DS to your PC.</description>
 <dependency>
 	<dependentAssembly>
 		<assemblyIdentity

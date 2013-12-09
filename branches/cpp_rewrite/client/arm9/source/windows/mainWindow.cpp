@@ -14,6 +14,7 @@
 
 //core
 #include "common/udp.h"
+#include "common/misc.h"
 #include "config.h"
 #include "core.h"
 
@@ -66,7 +67,7 @@ namespace D2K {
 
 				Screen = 0;
 
-				AppendObject(LabelTitle		= new Label(Screen, Rect(24,0+3,128,10), VERSION_STRING));
+				AppendObject(LabelTitle		= new Label(Screen, Rect(24,0+3,128,10), Core::VERSION_STRING));
 				AppendObject(LabelClock		= new Label(Screen, Rect(160,0+3,70,10), Core::GetTime()));
 				AppendObject(LabelIP		= new Label(Screen, Rect(64,24+3,10,10), "IP:"));
 				AppendObject(LabelPort		= new Label(Screen, Rect(64,48+3,10,10), "Port:"));
@@ -130,10 +131,10 @@ namespace D2K {
 					if(Main::Window->CheckClick(ButtonTouch)) {
 						break;						//if pressed again, break
 					}
-					Core::UDP->Update(keysHeld(), 0, guitarGripKeysHeld() * guitarGripIsInserted(), 0 * guitarGripIsInserted(), &Core::StylusPos);
+					Core::UDP->Update(keysHeld(), 0, guitarGripKeysHeld() * guitarGripIsInserted(), Turbo::GHGetKeys() * guitarGripIsInserted(), &Core::StylusPos);
 				}
 
-				LabelTitle->SetText(VERSION_STRING);
+				LabelTitle->SetText(Core::VERSION_STRING);
 				Main::Window->SetVisible(true);
 			}
 
@@ -144,7 +145,7 @@ namespace D2K {
 
 				while(true) {
 					Core::Loop();
-					Core::UDP->Update(keysHeld(), Turbo::GetKeys(), guitarGripKeysHeld() * guitarGripIsInserted(), 0 * guitarGripIsInserted(), (touchPosition*)NULL);
+					Core::UDP->Update(keysHeld(), Turbo::GetKeys(), guitarGripKeysHeld() * guitarGripIsInserted(), Turbo::GHGetKeys() * guitarGripIsInserted(), (touchPosition*)NULL);
 					Turbo::Window->Update();
 					ButtonTurbo->Draw();
 					if(Main::Window->CheckClick(ButtonTurbo)) {

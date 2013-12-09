@@ -4,10 +4,9 @@ Windows GUI
 
 #include <windows.h>
 #include <commctrl.h>
-#include <stdio.h>//printf
+#include <iostream>//std::cout, std::clog
 #include "gui/gui.h"
 #include "gui/resource.h"
-#include "core/core.h"//Print
 #include "window.h"
 
 namespace D2K {
@@ -71,7 +70,7 @@ namespace D2K {
 						   hThisInstance,       /* Program Instance handler */
 						   NULL                 /* No Window Creation data */
 					   );
-					   printf("window hwnd:%x\n", (unsigned int)hwnd);
+				std::cout << "Window hwnd:" << (unsigned int)hwnd << "\n";
 				SetFont(hwnd);
 				//CreateMainMenu();
 				return true;

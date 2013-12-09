@@ -2,16 +2,18 @@
 	configuration loading/saving
 */
 
+#include <iostream>//std::cout, std::clog
 #include <sstream>//ostringstream
 #include "config.h"
 #include "key.h"
 #include "common/iniParserWrapper.h"
+#include "common/misc.h"
+#undef SetPort
 
 namespace D2K {
 	namespace Core {
 		C::Config *Config = (C::Config*)NULL;
 		namespace C {
-			const static uint16_t defaultPort = 9501;
 			const char *iniFilename = "ds2key.ini";
 
 			Config::Config() {
@@ -25,8 +27,6 @@ namespace D2K {
 				Save();
 			}
 
-			///loads settings from disk
-			///return (0) upon success, else (errno)
 			int Config::Load() {
 				dictionary *ini = D2K::Core::iniParser::load(iniFilename);
 
@@ -38,9 +38,8 @@ namespace D2K {
 
 				if(ini == NULL) {
 					int err = errno;
-					fprintf(stderr, "Error (iniParser::load): #%d\nFailed to open file: %s\n", err, iniFilename);
-					SetPort(defaultPort);
-					Debug = dDefault;
+					std::clog << "Error (iniParser::load): #" << err << "\nFailed to open file: " << iniFilename << "\n";
+					SetPort(DefaultPort);
 					Save();
 
 					return err;
@@ -48,8 +47,7 @@ namespace D2K {
 
 				iniParser::dump(ini, stderr);
 
-				SetPort(iniParser::getint(ini, "settings:port", defaultPort));
-				Debug = iniParser::getint(ini, "settings:debug", dDefault);
+				SetPort(iniParser::getint(ini, "settings:port", DefaultPort));
 				for(int i = 0; i < 256; i++) {
 					std::ostringstream commandString;
 					commandString << "settings:command" << i;
@@ -77,7 +75,7 @@ namespace D2K {
 				iniParser::dump(ini, stderr);
 				if(ini == NULL) {
 					int err = errno;
-					fprintf(stderr, "Error (iniParser::load): #%d\nFailed to open file: %s\n", err, iniFilename);
+					std::clog << "Error (iniParser::load): #" << err << "\nFailed to open file: " << iniFilename << "\n";
 					Profile[kMouse] = mRelative;
 					Profile[kJoy] = 0;
 					Profile[kUp] = KEY_UP;
@@ -266,21 +264,18 @@ namespace D2K {
 				return 0;
 			}
 
-			///saves settings to disk
-			///return (0) upon success, else (errno)
 			int Config::Save() {
 				FILE *file = fopen(iniFilename, "w");
 
 				if(file == NULL) {
 					int err = errno;
-					fprintf(stderr, "Error (fopen): #%d\nFailed to save file: %s\n", errno, iniFilename);
+					std::clog << "Error (fopen): #" << err << "\nFailed to open file: " << iniFilename << "\n";
 
 					return err;
 				}
 
 				fprintf(file, "[Settings]\n");
 				fprintf(file, "Port=%u\n", Port);
-				fprintf(file, "Debug=%u\n", Debug);
 
 				for(int i = 0; i < 256; i++) {
 					if(Commands[i])
@@ -300,7 +295,7 @@ namespace D2K {
 				FILE *file = fopen(ssfilename.str().c_str(), "w");
 				if(file == NULL) {
 					int err = errno;
-					fprintf(stderr, "Error (fopen): #%d\nFailed to save file: %s\n", errno, ssfilename.str().c_str());
+					std::clog << "Error (fopen): #" << err << "\nFailed to save file: " << iniFilename << "\n";
 
 					return err;
 				}
@@ -406,13 +401,9 @@ namespace D2K {
 
 			void Config::SetPort(uint16_t Port) {
 				if(Port == 0)
-					Config::Port = defaultPort;
+					Config::Port = DefaultPort;
 				else
 					Config::Port = Port;
-			}
-
-			uint8_t Config::GetDebugLevel() {
-				return Debug;
 			}
 
 			char *Config::GetCommand(uint8_t Command) {

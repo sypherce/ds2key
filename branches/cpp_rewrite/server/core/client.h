@@ -2,62 +2,78 @@
 #define __CLIENT_H__
 
 #include <string>		//std::string
-#include <stdint.h>		//uint8_t, etc
+#include <cstdint>		//uint8_t, etc
 #include "config.h"		//pEND
+#include "common/ds2keyPacket.h"
 
 namespace D2K {
 	namespace Core {
-		#define BIT(n) (1 << (n))
-		#define DS2KEY_A BIT(0)
-		#define DS2KEY_B BIT(1)
-		#define DS2KEY_SELECT BIT(2)
-		#define DS2KEY_START BIT(3)
-		#define DS2KEY_RIGHT BIT(4)
-		#define DS2KEY_LEFT BIT(5)
-		#define DS2KEY_UP BIT(6)
-		#define DS2KEY_DOWN BIT(7)
-		#define DS2KEY_R BIT(8)
-		#define DS2KEY_L BIT(9)
-		#define DS2KEY_X BIT(10)
-		#define DS2KEY_Y BIT(11)
-		#define DS2KEY_TOUCH BIT(12)
-		#define DS2KEY_LID BIT(13)
-		#define GH_BLUE	0x08
-		#define GH_YELLOW 0x10
-		#define GH_RED 0x20
-		#define GH_GREEN 0x40
+		static const uint16_t DS2KEY_A = (1 << (0));
+		static const uint16_t DS2KEY_B = (1 << (1));
+		static const uint16_t DS2KEY_SELECT = (1 << (2));
+		static const uint16_t DS2KEY_START = (1 << (3));
+		static const uint16_t DS2KEY_RIGHT = (1 << (4));
+		static const uint16_t DS2KEY_LEFT = (1 << (5));
+		static const uint16_t DS2KEY_UP = (1 << (6));
+		static const uint16_t DS2KEY_DOWN = (1 << (7));
+		static const uint16_t DS2KEY_R = (1 << (8));
+		static const uint16_t DS2KEY_L = (1 << (9));
+		static const uint16_t DS2KEY_X = (1 << (10));
+		static const uint16_t DS2KEY_Y = (1 << (11));
+		static const uint16_t DS2KEY_TOUCH = (1 << (12));
+		static const uint16_t DS2KEY_LID = (1 << (13));
+		static const uint8_t DS2KEY_BLUE = (1 << (3));
+		static const uint8_t DS2KEY_YELLOW = (1 << (4));
+		static const uint8_t DS2KEY_RED = (1 << (5));
+		static const uint8_t DS2KEY_GREEN = (1 << (6));
 		//probably not the best place for button2bit
 		extern uint16_t button2bit(uint16_t Button);
 		extern uint16_t bit2button(uint16_t Bit);
 
-		#pragma pack(1)
-		typedef struct ds2keyPacket {
-			uint8_t type;
-			uint8_t profile;
-			uint16_t keys;
-			uint16_t keysTurbo;
-			uint8_t ghKeys;
-			uint16_t ghKeysTurbo;
-			uint8_t touchX;
-			uint8_t touchY;
-		} ds2keyPacket;
-		#pragma pack()
 		namespace C {
+			//Contains a client's current state
 			class Client {
 				public:
 					Client();
 					~Client();
+
+					//Updates current button state after calls made to Press, Release, GHPress, and GHRelease
 					void Scan(void);
+
+					//@return Pointer to Profile array
 					uint16_t *GetSettings();
+
+					//@param Button (enum Keys) value. Example: kA, kUp, kGreen
+					//@return Human readable version of (Button)'s current setting. Example: KEY_A, KEY_UP
 					std::string GetButtonString(int Button);
+
+					//@param Button (enum Keys) value. Example: kA, kUp, kGreen
+					//@return Platform specific virtual key value
 					uint16_t GetButton(int Button);
+
+					//@param Button (enum Keys) value. Example: kA, kUp, kGreen
+					//@param Value Platform specific virtual key value 
 					void SetButton(int Button, uint16_t Value);
-					void SetPacket(ds2keyPacket p);
-					uint16_t Held(uint16_t key);
-					uint16_t Down(uint16_t key);
-					uint16_t Up(uint16_t key);
-					uint16_t Turbo(uint16_t key);
+
+					void SetPacket(DS2KeyPacket p);
+					bool Held(uint16_t key);
+					bool Down(uint16_t key);
+					bool Up(uint16_t key);
+
+					//@return true if (key) has Turbo mode enabled
+					bool Turbo(uint16_t key);
+					
+					bool GHHeld(uint8_t key);
+					bool GHDown(uint8_t key);
+					bool GHUp(uint8_t key);
+
+					//@return true if (key) has Turbo mode enabled
+					bool GHTurbo(uint8_t key);
+					
+					//@return Stylus current X Position. Values range 0-255
 					uint8_t GetX();
+
+					//@return Stylus current X Position. Values range 0-191
 					uint8_t GetY();
 
 				private:
@@ -68,12 +84,8 @@ namespace D2K {
 
 					void GHPress(uint8_t key);
 					void GHRelease(uint8_t key);
-					uint8_t GHHeld(uint8_t key);
-					uint8_t GHDown(uint8_t key);
-					uint8_t GHUp(uint8_t key);
-					uint8_t GHTurbo(uint8_t key);
 
-					ds2keyPacket packet;
+					DS2KeyPacket packet;
 					uint16_t Profile[kEND];
 
 					uint16_t keys;

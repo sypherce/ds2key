@@ -12,6 +12,7 @@ namespace D2K {
 					~WindowClass();
 			};
 			extern uint16_t GetKeys();
+			extern uint8_t GHGetKeys();
 			extern GUI::Turbo::WindowClass *Window;
 		}
 	}

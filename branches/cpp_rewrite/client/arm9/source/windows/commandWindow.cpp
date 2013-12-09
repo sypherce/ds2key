@@ -20,9 +20,8 @@ namespace D2K {
 			extern void button11Function();
 			extern void button12Function();
 
-			//public
 			WindowClass *Window;
-			Label *label1;
+			Label *LabelTitle;
 			Button *Button1;
 			Button *Button2;
 			Button *Button3;
@@ -36,6 +35,7 @@ namespace D2K {
 			Button *Button11;
 			Button *Button12;
 
+			//public
 			WindowClass::WindowClass() : Window() {
 				Screen = 0;
 				int x = 16;
@@ -44,7 +44,7 @@ namespace D2K {
 				int h = 24;
 				int gap = 12;
 
-				AppendObject(label1	= new Label(Screen, Rect(24,0+3,128,10), "Commands"));
+				AppendObject(LabelTitle	= new Label(Screen, Rect(24,0+3,128,10), "Commands"));
 
 				AppendObject(Button1 = new Button(Screen, Rect(x,y,w,h), "Command 1", &button1Function));
 				y += h + gap;

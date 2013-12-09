@@ -31,8 +31,8 @@ CFLAGS	:=	-g -Wall -O2\
 			-ffast-math \
 			$(ARCH)
 
-CFLAGS	+=	$(INCLUDE) -DARM9 -DD2KCLIENT -DEMULATOR="0x6F6F6258 == (*((uint32_t*)0x23FEE00))" -DVERSION_STRING="\"DS2Key SVN Build\""
-CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions
+CFLAGS	+=	$(INCLUDE) -DARM9 -DD2KCLIENT -DEMULATOR="0x6F6F6258 == (*((uint32_t*)0x23FEE00))"
+CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++11
 
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=ds_arm9.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
