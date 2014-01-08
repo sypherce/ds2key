@@ -9,6 +9,7 @@
 #include <sstream>//std::stringstream
 #include <cstdlib>//atoi
 #include "core/core.h"
+#include "core/config.h"
 #include "core/key.h"
 #include "mainWindow.h"
 #include "common/misc.h"
@@ -112,18 +113,21 @@ namespace D2K {
 				void radioButton1Function(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
 					std::cout << "profileRadioButton1Function()\n";
 					checkButton1->SetEnabled(true);
-					Core::Client[GUI::MainWindow::Profile::comboButton1->GetSelection()]->SetButton(Core::kMouse, Core::mRelative);
+					Core::C::ProfileData *Profile = Core::Client[comboButton1->GetSelection()]->GetProfileDataPointer();
+					Profile->Mouse = "Relative";
 				}
 
 				void radioButton2Function(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
 					std::cout << "profileRadioButton2Function()\n";
 					checkButton1->SetEnabled(true);
-					Core::Client[GUI::MainWindow::Profile::comboButton1->GetSelection()]->SetButton(Core::kMouse, Core::mAbsolute);
+					Core::C::ProfileData *Profile = Core::Client[comboButton1->GetSelection()]->GetProfileDataPointer();
+					Profile->Mouse = "Absolute";
 				}
 
 				void radioButton3Function(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
 					std::cout << "profileRadioButton3Function()\n";
-					Core::Client[GUI::MainWindow::Profile::comboButton1->GetSelection()]->SetButton(Core::kMouse, Core::mButtons);
+					Core::C::ProfileData *Profile = Core::Client[comboButton1->GetSelection()]->GetProfileDataPointer();
+					Profile->Mouse = "Buttons";
 					checkButton1->SetEnabled(false);
 				}
 
@@ -134,34 +138,25 @@ namespace D2K {
 					int Profile = comboButton1->GetSelection();
 					if(Core::Client[Profile] == (Core::C::Client*)NULL)							//if profile not active,
 						Core::Client[Profile] = new Core::C::Client();							//create it
-					Core::Config->LoadProfile(Core::Client[Profile]->GetSettings(), Profile);	//then load it
-					int row = 0;
-					listView1->SetText(Core::Client[Profile]->GetButtonString(Core::kUp), row++, 1);
-					listView1->SetText(Core::Client[Profile]->GetButtonString(Core::kDown), row++, 1);
-					listView1->SetText(Core::Client[Profile]->GetButtonString(Core::kLeft), row++, 1);
-					listView1->SetText(Core::Client[Profile]->GetButtonString(Core::kRight), row++, 1);
-					listView1->SetText(Core::Client[Profile]->GetButtonString(Core::kA), row++, 1);
-					listView1->SetText(Core::Client[Profile]->GetButtonString(Core::kB), row++, 1);
-					listView1->SetText(Core::Client[Profile]->GetButtonString(Core::kX), row++, 1);
-					listView1->SetText(Core::Client[Profile]->GetButtonString(Core::kY), row++, 1);
-					listView1->SetText(Core::Client[Profile]->GetButtonString(Core::kL), row++, 1);
-					listView1->SetText(Core::Client[Profile]->GetButtonString(Core::kR), row++, 1);
-					listView1->SetText(Core::Client[Profile]->GetButtonString(Core::kStart), row++, 1);
-					listView1->SetText(Core::Client[Profile]->GetButtonString(Core::kSelect), row++, 1);
-					listView1->SetText(Core::Client[Profile]->GetButtonString(Core::kLid), row++, 1);
-					listView1->SetText(Core::Client[Profile]->GetButtonString(Core::kBlue), row++, 1);
-					listView1->SetText(Core::Client[Profile]->GetButtonString(Core::kYellow), row++, 1);
-					listView1->SetText(Core::Client[Profile]->GetButtonString(Core::kRed), row++, 1);
-					listView1->SetText(Core::Client[Profile]->GetButtonString(Core::kGreen), row++, 1);
+					Core::C::ProfileData *pData = Core::Client[Profile]->GetProfileDataPointer();
+					Core::Config->LoadProfile(pData, Profile);									//then load it
+					int rowBase = Core::kUp;//this offsets the difference between our list, and the "kUp" enums
+					for(int row = 0; row <= Core::kTouch11 - rowBase; row++) {
+						std::string ButtonString = pData->GetButtonString(rowBase + row);
+						if(ButtonString != "")
+							if(ButtonString.substr(0, D2K_COMMAND_LENGTH) == D2K_COMMAND)
+								ButtonString = ButtonString.substr(D2K_COMMAND_LENGTH);
+						listView1->SetText(ButtonString, row, 1);
+					}
 
 					radioButton1->SetChecked(false);
 					radioButton2->SetChecked(false);
 					radioButton3->SetChecked(false);
 					checkButton1->SetEnabled(true);
 
-					if(Core::Client[Profile]->GetButton(Core::kMouse) == Core::mAbsolute)
+					if(pData->Mouse == "Absolute")
 						radioButton2->SetChecked(true);
-					else if(Core::Client[Profile]->GetButton(Core::kMouse) == Core::mButtons) {
+					else if(pData->Mouse == "Buttons") {
 						radioButton3->SetChecked(true);
 						checkButton1->SetEnabled(false);
 					}
@@ -203,7 +198,7 @@ namespace D2K {
 							if(keys[i] > 1) {
 								if(i != VK_LBUTTON && i != VK_RBUTTON && i != VK_MBUTTON) {
 									listView1->SetText(Core::Key::GetString(i), selected, 1);
-									Core::Client[GUI::MainWindow::Profile::comboButton1->GetSelection()]->SetButton(listView1->GetSelection() + 3, i);
+									Core::Client[GUI::MainWindow::Profile::comboButton1->GetSelection()]->GetProfileDataPointer()->SetVirtualKey(listView1->GetSelection() + 3, i);
 
 									waiting = false;
 								}
@@ -233,7 +228,7 @@ namespace D2K {
 
 				void button1Function(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
 					Core::Config->SaveProfile(
-							Core::Client[GUI::MainWindow::Profile::comboButton1->GetSelection()]->GetSettings(),
+							Core::Client[GUI::MainWindow::Profile::comboButton1->GetSelection()]->GetProfileDataPointer(),
 							GUI::MainWindow::Profile::comboButton1->GetSelection());
 					comboButton1Function(hwnd, message, wParam, lParam);
 				}
@@ -250,7 +245,7 @@ namespace D2K {
 					//update listview text
 					listView1->SetText(Core::Key::GetString(VK_LBUTTON), listView1->GetSelection(), 1);
 					//update client setting
-					Core::Client[GUI::MainWindow::Profile::comboButton1->GetSelection()]->SetButton(listView1->GetSelection() + 3, VK_LBUTTON);
+					Core::Client[GUI::MainWindow::Profile::comboButton1->GetSelection()]->GetProfileDataPointer()->SetVirtualKey(listView1->GetSelection() + 3, VK_LBUTTON);
 					waiting = false;
 				}
 
@@ -258,7 +253,7 @@ namespace D2K {
 					//update listview text
 					listView1->SetText(Core::Key::GetString(VK_MBUTTON), listView1->GetSelection(), 1);
 					//update client setting
-					Core::Client[GUI::MainWindow::Profile::comboButton1->GetSelection()]->SetButton(listView1->GetSelection() + 3, VK_MBUTTON);
+					Core::Client[GUI::MainWindow::Profile::comboButton1->GetSelection()]->GetProfileDataPointer()->SetVirtualKey(listView1->GetSelection() + 3, VK_MBUTTON);
 					waiting = false;
 				}
 
@@ -266,15 +261,15 @@ namespace D2K {
 					//update listview text
 					listView1->SetText(Core::Key::GetString(VK_RBUTTON), listView1->GetSelection(), 1);
 					//update client setting
-					Core::Client[GUI::MainWindow::Profile::comboButton1->GetSelection()]->SetButton(listView1->GetSelection() + 3, VK_RBUTTON);
+					Core::Client[GUI::MainWindow::Profile::comboButton1->GetSelection()]->GetProfileDataPointer()->SetVirtualKey(listView1->GetSelection() + 3, VK_RBUTTON);
 					waiting = false;
 				}
 
 				void button7Function(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
-					uint32_t Value = 0x100 + atoi(edit1->GetText().c_str());
+					uint32_t Value = 0x100 + Core::stoi(edit1->GetText());
 					edit1->SetEnabled(true);
 					listView1->SetText(Core::Key::GetString(Value), listView1->GetSelection(), 1);
-					Core::Client[GUI::MainWindow::Profile::comboButton1->GetSelection()]->SetButton(listView1->GetSelection() + 3, Value);
+					Core::Client[GUI::MainWindow::Profile::comboButton1->GetSelection()]->GetProfileDataPointer()->SetVirtualKey(listView1->GetSelection() + 3, Value);
 					waiting = false;
 				}
 
@@ -318,6 +313,18 @@ namespace D2K {
 						listView1->Append("Yellow");
 						listView1->Append("Red");
 						listView1->Append("Green");
+						listView1->Append("Touch00");
+						listView1->Append("Touch01");
+						listView1->Append("Touch02");
+						listView1->Append("Touch03");
+						listView1->Append("Touch04");
+						listView1->Append("Touch05");
+						listView1->Append("Touch06");
+						listView1->Append("Touch07");
+						listView1->Append("Touch08");
+						listView1->Append("Touch09");
+						listView1->Append("Touch10");
+						listView1->Append("Touch11");
 						listView1->SetHeaderVisible(true);
 						comboButton1Function((HWND)NULL, 0, (WPARAM)NULL, (LPARAM)NULL);
 
@@ -374,12 +381,12 @@ namespace D2K {
 
 				void editFunction(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
 					std::string portString = edit->GetText();
-					int portInt = atoi(portString.c_str());
+					int portInt = Core::stoi(portString);
 					if(portInt > 0 && portInt < 0xFFFF)
 						Port = portString;
 					else
 						edit->SetText(Port);
-					Core::Config->SetPort(atoi(Port.c_str()));
+					Core::Config->SetPort(Core::stoi(Port));
 					Core::Config->Save();
 					Core::UDP->Connect(Core::Config->GetPort());
 

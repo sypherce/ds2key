@@ -261,7 +261,8 @@ namespace D2K {
 
 				Packet = (DS2KeyPacket){0};								//clear the packet
 				Packet.Type = '/' + 2;
-				Packet.Profile = command;
+				Packet.Profile = GetProfile();
+				Packet.Keys = command;
 
 				Send((char*)&Packet, sizeof(DS2KeyPacket));				//send packet
 			}

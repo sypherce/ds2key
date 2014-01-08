@@ -79,7 +79,7 @@ namespace D2K {
 
 			void PPJoy::ResetAxes() {
 				for(int i = 0; i < JoyState.NumAnalog; i++)
-					JoyState.Digital[i] = (PPJOY_AXIS_MIN + PPJOY_AXIS_MAX) / 2;
+					JoyState.Analog[i] = (PPJOY_AXIS_MIN + PPJOY_AXIS_MAX) / 2;
 			}
 
 			void PPJoy::ResetButtons() {
