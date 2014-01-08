@@ -4,6 +4,8 @@
 
 #include "client.h"
 #include "key.h"
+#include "common/misc.h"
+#include <sstream>	//std::stringstream
 
 namespace D2K {
 	namespace Core {
@@ -47,50 +49,158 @@ namespace D2K {
 					return 0;
 			}
 		}
-		//currently unused and broken with GH functions
-		/*uint16_t button2bit(uint16_t Button) {
-			switch(Button) {
-				case DS2KEY_UP:
-					return kUp;
-				case DS2KEY_DOWN:
-					return kDown;
-				case DS2KEY_LEFT:
-					return kLeft;
-				case DS2KEY_RIGHT:
-					return kRight;
-				case DS2KEY_A:
-					return kA;
-				case DS2KEY_B:
-					return kB;
-				case DS2KEY_X:
-					return kX;
-				case DS2KEY_Y:
-					return kY;
-				case DS2KEY_L:
-					return kL;
-				case DS2KEY_R:
-					return kR;
-				case DS2KEY_START:
-					return kStart;
-				case DS2KEY_SELECT:
-					return kSelect;
-				case DS2KEY_LID:
-					return kLid;
-				case DS2KEY_BLUE:
-					return kBlue;
-				case DS2KEY_YELLOW:
-					return kYellow;
-				case DS2KEY_RED:
-					return kRed;
-				case DS2KEY_GREEN:
-					return kGreen;
-				default:
-					return kEND;
-			}
-		}*/
 		C::Client *Client[256] = {(C::Client*)NULL};
 
 		namespace C {
+			bool ProfileData::isVirtualKey(std::string Button) {
+				if(Button.substr(0, D2K_COMMAND_LENGTH) != D2K_COMMAND)	//if button
+					return true;
+				//if command
+					return false;
+			}
+			uint16_t ProfileData::StringToVirtualKey(std::string Button) {
+				if(isVirtualKey(Button))
+					return Core::stoi(Button);
+				else
+					return 0;
+			}
+			//this currently is the same as Core::itos
+			std::string ProfileData::VirtualKeyToString(uint16_t Button) {
+				std::stringstream stream;
+				stream << Core::itos(Button);
+
+				return stream.str();
+			}
+			ProfileData::ProfileData() {
+				Empty = "";
+			}
+			ProfileData::~ProfileData() {
+
+			}
+			std::string &ProfileData::GetStringReference(int Button) {
+				switch(Button) {
+					case kMouse:
+						return Mouse;
+					case kJoy:
+						return Joy;
+					case kA:
+						return A;
+					case kB:
+						return B;
+					case kX:
+						return X;
+					case kY:
+						return Y;
+					case kL:
+						return L;
+					case kR:
+						return R;
+					case kUp:
+						return Up;
+					case kDown:
+						return Down;
+					case kLeft:
+						return Left;
+					case kRight:
+						return Right;
+					case kStart:
+						return Start;
+					case kSelect:
+						return Select;
+					case kLid:
+						return Lid;
+					case kBlue:
+						return Blue;
+					case kYellow:
+						return Yellow;
+					case kRed:
+						return Red;
+					case kGreen:
+						return Green;
+					case kTouch00:
+						return Touch[0];
+					case kTouch01:
+						return Touch[1];
+					case kTouch02:
+						return Touch[2];
+					case kTouch03:
+						return Touch[3];
+					case kTouch04:
+						return Touch[4];
+					case kTouch05:
+						return Touch[5];
+					case kTouch06:
+						return Touch[6];
+					case kTouch07:
+						return Touch[7];
+					case kTouch08:
+						return Touch[8];
+					case kTouch09:
+						return Touch[9];
+					case kTouch10:
+						return Touch[10];
+					case kTouch11:
+						return Touch[11];
+					default:
+						return Empty;
+				}
+			}
+
+			std::string ProfileData::GetButtonString(int Button) {
+				if(isVirtualKey(GetStringReference(Button)))
+					return Key::GetString(GetVirtualKey(Button));
+				else
+					return GetCommand(Button);
+			}
+			uint16_t ProfileData::GetValue(int Button) {
+				std::string &Pointer = GetStringReference(Button);
+				if(Pointer == "") {
+					return 0;
+				}
+				else {
+					return Core::stoi(Pointer);
+				}
+			}
+			uint16_t ProfileData::GetVirtualKey(int Button) {
+				std::string &Pointer = GetStringReference(Button);
+				if(Pointer == "" || Pointer == "0") {
+					return 0;
+				}
+				else {
+					return StringToVirtualKey(Pointer);
+				}
+			}
+			
+			void ProfileData::SetVirtualKey(int Button, uint16_t Value) {
+				std::string &Pointer = GetStringReference(Button);
+				Pointer = VirtualKeyToString(Value);
+			}
+
+			void ProfileData::SetCommand(int Button, std::string Value) {
+				std::string &Pointer = GetStringReference(Button);
+				if(isVirtualKey(Value)) {
+					SetVirtualKey(Button, Key::GetNumber(Value.c_str()));
+				}
+				else {
+					Pointer = Value;
+				}
+			}
+			void ProfileData::SetTouchPos(uint8_t I, uint8_t X, uint8_t Y, uint8_t W, uint8_t H) {
+				if(I <= 11) {
+					TouchX[I] = X;
+					TouchY[I] = Y;
+					TouchW[I] = W;
+					TouchH[I] = H;
+				}
+			}
+			const std::string &ProfileData::GetCommand(int Button) {
+				std::string &Pointer = GetStringReference(Button);
+				if(!isVirtualKey(Pointer)) {
+					return Pointer;
+				}
+				return Empty;
+			}
+			
 			Client::Client() {
 				packet = DS2KeyPacket{0};
 				keys =
@@ -109,20 +219,8 @@ namespace D2K {
 				ghKeys = packet.GHKeys;
 			}
 
-			uint16_t *Client::GetSettings() {
-				return Profile;
-			}
-
-			std::string Client::GetButtonString(int Button) {
-				return Key::GetString(GetButton(Button));
-			}
-
-			uint16_t Client::GetButton(int Button) {
-				return GetSettings()[Button];
-			}
-
-			void Client::SetButton(int Button, uint16_t Value) {
-				GetSettings()[Button] = Value;
+			ProfileData *Client::GetProfileDataPointer() {
+				return &Profile;
 			}
 
 			void Client::SetPacket(DS2KeyPacket p) {

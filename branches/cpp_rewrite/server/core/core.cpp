@@ -4,6 +4,7 @@
 
 #include <iostream>//std::cout, std::clog
 #include <algorithm>	//std::max,std::min
+#include <sstream>//ostringstream
 #ifdef _WIN32
 #include <windows.h>
 #include <shellapi.h>
@@ -14,7 +15,6 @@
 #include <cstring>
 #include <chrono>
 #include <thread>
-#include <sstream>//ostringstream
 #define Sleep(a) std::this_thread::sleep_for(std::chrono::milliseconds(a))
 #endif//_WIN32
 
@@ -26,44 +26,84 @@
 #include "core.h"
 
 //used only once in code so far
-#define touchBetween(x1, y1, x2, y2) ((x >= std::min((x1), (x2)) && x <= std::max((x1), (x2)) && y >= std::min((y1), (y2)) && y <= std::max((y1), (y2))) && (x1 + y1 + x2 + y2 > 0))
+inline bool touchBetween(int x, int y, int x1, int y1, int x2, int y2)
+{
+	return ((x >= std::min((x1), (x2)) &&
+			 x <= std::max((x1), (x2)) &&
+			 y >= std::min((y1), (y2)) &&
+			 y <= std::max((y1), (y2))) &&
+			(x1 + y1 + x2 + y2 > 0));
+}
 
 namespace D2K {
 	namespace Core {
+		void ExecuteCommand(std::string Command) {
+			if(Command != "") {
+				if(Command.substr(0, D2K_COMMAND_LENGTH) == D2K_COMMAND) {	
+					Command = Command.substr(D2K_COMMAND_LENGTH);
+				}
+				#ifdef _WIN32
+				WinExec(Command.c_str(), SW_SHOWNORMAL);
+				#elif defined __linux__
+				std::ostringstream stringStream;
+				stringStream << Command << " &";
+				system(stringStream.str().c_str());
+				#endif//_WIN32
+			}
+		}
 		void ProcessPacket(C::Client *Client) {
 			//static values
 			static uint16_t lastX = 0, lastY = 0;
 			static bool lastZ = false;
 
-			//settings pointer
-			uint16_t *Settings = Client->GetSettings();
-
 			//turbo status, true == press, false == release
 			static bool turbo = false;
 
+			C::ProfileData *Profile = Client->GetProfileDataPointer();
+
 			//buttons
 			for(int i = kUp; i <= kLid; i++) {
-				uint16_t Button = bit2button(i);
-				if(Client->Down(Button))						//pressed
-					Input->Press(Settings[i], Settings[kJoy]);
-				else if(Client->Up(Button))						//released, even in turbo mode
-					Input->Release(Settings[i], Settings[kJoy]);
-				else if(turbo && Client->Turbo(Button))			//turbo set, button enabled for turbo and pressed
-					Input->Press(Settings[i], Settings[kJoy]);
-				else if(Client->Turbo(Button))					//turbo UNSET, button enabled for turbo and pressed
-					Input->Release(Settings[i], Settings[kJoy]);//we release because turbo is UNSET
+				uint16_t DSButton = bit2button(i);
+				uint16_t Joystick = Profile->GetValue(kJoy);
+				uint16_t PCButton = Profile->GetVirtualKey(i);
+
+				if(PCButton) {
+					if(Client->Down(DSButton))						//pressed
+						Input->Press(PCButton, Joystick);
+					else if(Client->Up(DSButton))					//released, even in turbo mode
+						Input->Release(PCButton, Joystick);
+					else if(turbo && Client->Turbo(DSButton))		//turbo set, button enabled for turbo and pressed
+						Input->Press(PCButton, Joystick);
+					else if(Client->Turbo(DSButton))				//turbo UNSET, button enabled for turbo and pressed
+						Input->Release(PCButton, Joystick);			//we release because turbo is UNSET
+				}
+				else {
+					if(Client->Down(DSButton)) {					//pressed
+						std::string Command = Profile->GetCommand(i);
+						ExecuteCommand(Command);
+					}
+				}
 			}
 			//gh buttons
 			for(int i = kBlue; i <= kGreen; i++) {
-				uint16_t Button = bit2button(i);
-				if(Client->GHDown(Button))						//pressed
-					Input->Press(Settings[i], Settings[kJoy]);
-				else if(Client->GHUp(Button))					//released, even in turbo mode
-					Input->Release(Settings[i], Settings[kJoy]);
-				else if(turbo && Client->GHTurbo(Button))		//turbo set, button enabled for turbo and pressed
-					Input->Press(Settings[i], Settings[kJoy]);
-				else if(Client->GHTurbo(Button))				//turbo UNSET, button enabled for turbo and pressed
-					Input->Release(Settings[i], Settings[kJoy]);//we release because turbo is UNSET
+				uint16_t DSButton = bit2button(i);
+				uint16_t Joystick = Profile->GetValue(kJoy);
+				uint16_t PCButton = Profile->GetVirtualKey(i);
+
+				if(PCButton) {
+					if(Client->GHDown(DSButton))						//pressed
+						Input->Press(PCButton, Joystick);
+					else if(Client->GHUp(DSButton))					//released, even in turbo mode
+						Input->Release(PCButton, Joystick);
+					else if(turbo && Client->GHTurbo(DSButton))		//turbo set, button enabled for turbo and pressed
+						Input->Press(PCButton, Joystick);
+					else if(Client->GHTurbo(DSButton))				//turbo UNSET, button enabled for turbo and pressed
+						Input->Release(PCButton, Joystick);//we release because turbo is UNSET
+				}
+				else {
+					std::string Command = Profile->GetCommand(i);
+					ExecuteCommand(Command);
+				}
 			}
 
 			turbo = !turbo;//toggle turbo status
@@ -72,7 +112,7 @@ namespace D2K {
 			uint8_t x = Client->GetX();
 			uint8_t y = Client->GetY();
 			bool z = Client->Held(DS2KEY_TOUCH);
-			uint16_t moveType = Settings[kMouse];
+			std::string moveType = Profile->Mouse;
 
 			if(z) {																	//if touched
 				if(lastZ == false) {												//if newly pressed
@@ -84,16 +124,16 @@ namespace D2K {
 				static const int i = 25;											//ignore
 				static const int s = 3;												//sensitivity
 				static const int border = 5;
-				if(moveType == mButtons) {											//touch buttons
+				if(moveType == "Buttons") {											//touch buttons
 					bool touchedButton = false;
 					for(int c = 0; c <= 11; c++) {									//check all 12 buttons
-						int _x = Settings[kTouch00X + c];
-						int _y = Settings[kTouch00Y + c];
-						int w = _x + Settings[kTouch00W + c];
-						int h = _y + Settings[kTouch00H + c];
-						if(touchBetween(_x, _y, w, h)) {							//if button pressed
-							Input->Press(Settings[kTouch00 + c], Settings[kJoy]);
-							Input->Release(Settings[kTouch00 + c], Settings[kJoy]);
+						int _x = Profile->TouchX[c];
+						int _y = Profile->TouchY[c];
+						int w = _x + Profile->TouchW[c];
+						int h = _y + Profile->TouchH[c];
+						if(touchBetween(x, y, _x, _y, w, h)) {							//if button pressed
+							Input->Press(Profile->GetVirtualKey(kTouch00 + c), Profile->GetValue(kJoy));
+							Input->Release(Profile->GetVirtualKey(kTouch00 + c), Profile->GetValue(kJoy));
 							touchedButton = true;									//don't return till we've checked every button
 						}
 					}
@@ -102,10 +142,10 @@ namespace D2K {
 				}
 				else if(!((x - lastX < -i) || (x - lastX > i) || (y - lastY < -i)
 					   || (y - lastY > i))) {										//check that we've moved
-					if(moveType == mRelative) {										//relative movement
+					if(moveType == "Relative") {										//relative movement
 						Input->Move((x - lastX) * s, (y - lastY) * s);
 					}
-					else if(moveType == mAbsolute) {								//absolute movement
+					else if(moveType == "Absolute") {								//absolute movement
 						//the next 8 lines apply our border to X and Y values
 						int tempX = x;
 						int tempY = y;
@@ -162,32 +202,37 @@ namespace D2K {
 		void Loop() {
 			if(Running && UDP->IsConnected()) {
 				DS2KeyPacket Packet;
-				if(UDP->Recv(&Packet, sizeof(DS2KeyPacket)) == 0) {						//if we receive something without error
-					C::Client *pClient = Client[Packet.Profile];//pointer to client
-					if(Packet.Type == '/' + 1) {										//new protocal
-						if(pClient == (C::Client*)NULL) {								//if profile not active,
-							pClient = new C::Client();									//create it
-							Config->LoadProfile(pClient->GetSettings(), Packet.Profile);//then load it
+				if(UDP->Recv(&Packet, sizeof(DS2KeyPacket)) == 0) {									//if we receive something without error
+					if(Packet.Type == 0xFF) {														//looking for servers
+						UDP->Send(&Packet, sizeof(DS2KeyPacket));									//bounce back
+					}
+					else if(Packet.Type >= '/' + 1 && Packet.Type <= '/' + 2) {						//make sure this is a packet we accept
+						C::Client *pClient = Client[Packet.Profile];								//pointer to client
+						if(pClient == (C::Client*)NULL) {											//if profile not active,
+							pClient = new C::Client();												//create it
+							Config->LoadProfile(pClient->GetProfileDataPointer(), Packet.Profile);	//then load it
 						}
 
-						pClient->SetPacket(Packet);										//insert packet data
-						pClient->Scan();												//update
-						ProcessPacket(pClient);											//process
-					}
-					else if(Packet.Type == '/' + 2) {									//sending command
-						std::cout << "Command #" << Packet.Profile << "\\" << Config->GetCommand(Packet.Profile) << "\\\n";
-						if(Config->GetCommand(Packet.Profile)) {
-							#ifdef _WIN32
-							ShellExecute(NULL, "open", Config->GetCommand(Packet.Profile), NULL, NULL, SW_SHOWNORMAL);
-							#elif defined __linux__
-							std::ostringstream command;
-							command << Config->GetCommand(Packet.Profile) << " &";
-							system(command.str().c_str());
-							#endif//_WIN32
+						if(Packet.Type == '/' + 1) {												//normal update
+							pClient->SetPacket(Packet);												//insert packet data
+							pClient->Scan();														//update
+							ProcessPacket(pClient);													//process
 						}
-					}
-					else if(Packet.Type == 0xFF) {											//looking for servers
-						UDP->Send(&Packet, sizeof(DS2KeyPacket));							//bounce back
+						else if(Packet.Type == '/' + 2) {											//command update
+							int TouchButton = kTouch00 + Packet.Keys;
+							C::ProfileData *Data = pClient->GetProfileDataPointer();				//pointer to profile data
+							uint16_t Joystick = Data->GetValue(kJoy);
+							uint16_t PCButton = Data->GetVirtualKey(TouchButton);
+
+							if(PCButton) {
+								Input->Press(PCButton, Joystick);
+								Input->Release(PCButton, Joystick);
+							}
+							else {
+								std::string Command = Data->GetCommand(TouchButton);
+								ExecuteCommand(Command);
+							}
+						}
 					}
 				}
 			}

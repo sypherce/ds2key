@@ -167,6 +167,7 @@ namespace D2K {
 
 				while(true) {
 					Core::Loop();
+					Core::UDP->Update(keysHeld(), Turbo::GetKeys(), guitarGripKeysHeld() * guitarGripIsInserted(), Turbo::GHGetKeys() * guitarGripIsInserted(), (touchPosition*)NULL);
 					Command::Window->Update();		//update and draw command window
 					ButtonCommands->Draw();			//draw [Commands] button
 					if(Main::Window->CheckClick(ButtonCommands)) {
