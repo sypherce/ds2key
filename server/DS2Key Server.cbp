@@ -7,7 +7,7 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="bin/Debug/Console/DS2Key" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/DS2Key_console_debug.exe" prefix_auto="0" extension_auto="0" />
 				<Option object_output="obj/Debug/Console/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -25,7 +25,7 @@
 				</Linker>
 			</Target>
 			<Target title="Release">
-				<Option output="bin/Release/Console/DS2Key" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/DS2Key_console.exe" prefix_auto="0" extension_auto="0" />
 				<Option object_output="obj/Release/Console/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -44,7 +44,7 @@
 				</Linker>
 			</Target>
 			<Target title="Debug (GUI)">
-				<Option output="bin/Debug/DS2Key" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/DS2Key_debug.exe" prefix_auto="0" extension_auto="0" />
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -69,7 +69,7 @@
 				</Linker>
 			</Target>
 			<Target title="Release (GUI)">
-				<Option output="bin/Release/DS2Key" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/DS2Key.exe" prefix_auto="0" extension_auto="0" />
 				<Option object_output="obj/Release/" />
 				<Option type="0" />
 				<Option compiler="gcc" />
@@ -94,7 +94,7 @@
 				</Linker>
 			</Target>
 			<Target title="Debug (Linux)">
-				<Option output="bin/Debug/Linux/ds2key" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/ds2key_debug" prefix_auto="0" extension_auto="0" />
 				<Option object_output="obj/Debug/Linux" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -111,7 +111,7 @@
 				</Linker>
 			</Target>
 			<Target title="Release (Linux)">
-				<Option output="bin/Release/Linux/ds2key" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/ds2key" prefix_auto="0" extension_auto="0" />
 				<Option object_output="obj/Release/Linux/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
