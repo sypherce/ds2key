@@ -13,20 +13,14 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-Wmain" />
-					<Add option="-pedantic" />
-					<Add option="-std=c++11" />
 					<Add option="-Wall" />
-					<Add option="-ansi" />
 					<Add option="-pg" />
 					<Add option="-g" />
 					<Add option="-DWINVER=0x0500" />
+					<Add option="-DWIN32_LEAN_AND_MEAN" />
 				</Compiler>
 				<Linker>
 					<Add option="-pg -lgmon" />
-					<Add library="gdi32" />
-					<Add library="user32" />
-					<Add library="kernel32" />
-					<Add library="comctl32" />
 					<Add library="ws2_32" />
 				</Linker>
 			</Target>
@@ -38,9 +32,8 @@
 				<Option use_console_runner="0" />
 				<Compiler>
 					<Add option="-O2" />
-					<Add option="-std=c++11" />
-					<Add option="-ansi" />
 					<Add option="-DWINVER=0x0500" />
+					<Add option="-DWIN32_LEAN_AND_MEAN" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -57,13 +50,11 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-Wmain" />
-					<Add option="-pedantic" />
-					<Add option="-std=c++11" />
 					<Add option="-Wall" />
-					<Add option="-ansi" />
 					<Add option="-pg" />
 					<Add option="-g" />
 					<Add option="-DWINVER=0x0500" />
+					<Add option="-DWIN32_LEAN_AND_MEAN" />
 					<Add option="-D_WIN32_IE=0x400" />
 					<Add option="-DWIN32GUI" />
 					<Add option="-DWM_TRAYMSG=(WM_APP+1)" />
@@ -84,9 +75,8 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
-					<Add option="-std=c++11" />
-					<Add option="-ansi" />
 					<Add option="-DWINVER=0x0500" />
+					<Add option="-DWIN32_LEAN_AND_MEAN" />
 					<Add option="-D_WIN32_IE=0x400" />
 					<Add option="-DWIN32GUI" />
 					<Add option="-DWM_TRAYMSG=(WM_APP+1)" />
@@ -110,16 +100,12 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-Wmain" />
-					<Add option="-pedantic" />
 					<Add option="-Wall" />
-					<Add option="-ansi" />
 					<Add option="-pg" />
 					<Add option="-g" />
-					<Add option="-std=gnu++0x" />
 				</Compiler>
 				<Linker>
 					<Add option="-pg -lgmon" />
-					<Add option="-pg" />
 					<Add library="X11" />
 					<Add library="Xtst" />
 				</Linker>
@@ -132,8 +118,6 @@
 				<Option use_console_runner="0" />
 				<Compiler>
 					<Add option="-O2" />
-					<Add option="-ansi" />
-					<Add option="-std=gnu++0x" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -143,7 +127,7 @@
 			</Target>
 		</Build>
 		<Compiler>
-			<Add option="-Wall" />
+			<Add option="-std=gnu++0x" />
 			<Add option="-DD2KSERVER" />
 			<Add option="-DEMULATOR=0" />
 			<Add directory="." />
@@ -164,24 +148,9 @@
 		<Unit filename="../common/misc.h" />
 		<Unit filename="../common/udp.cpp" />
 		<Unit filename="../common/udp.h" />
-		<Unit filename="core/PPJIoctl.h">
-			<Option target="Debug" />
-			<Option target="Release" />
-			<Option target="Debug (GUI)" />
-			<Option target="Release (GUI)" />
-		</Unit>
-		<Unit filename="core/PPJoy.cpp">
-			<Option target="Debug" />
-			<Option target="Release" />
-			<Option target="Debug (GUI)" />
-			<Option target="Release (GUI)" />
-		</Unit>
-		<Unit filename="core/PPJoy.h">
-			<Option target="Debug" />
-			<Option target="Release" />
-			<Option target="Debug (GUI)" />
-			<Option target="Release (GUI)" />
-		</Unit>
+		<Unit filename="core/PPJIoctl.h" />
+		<Unit filename="core/PPJoy.cpp" />
+		<Unit filename="core/PPJoy.h" />
 		<Unit filename="core/client.cpp" />
 		<Unit filename="core/client.h" />
 		<Unit filename="core/config.cpp" />
