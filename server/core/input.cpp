@@ -166,11 +166,11 @@ namespace D2K {
 			}
 
 			void Input::Move(signed long int X, signed long int Y) {
-				Mouse(0, X, Y);
+				Mouse(false, X, Y);
 			}
 
 			void Input::MoveAbsolute(signed long int X, signed long int Y) {
-				Mouse(MOUSEEVENTF_ABSOLUTE, X, Y);
+				Mouse(true, X, Y);
 			}
 		}
 	}

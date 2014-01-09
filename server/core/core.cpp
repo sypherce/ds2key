@@ -39,7 +39,7 @@ namespace D2K {
 	namespace Core {
 		void ExecuteCommand(std::string Command) {
 			if(Command != "") {
-				if(Command.substr(0, D2K_COMMAND_LENGTH) == D2K_COMMAND) {	
+				if(Command.substr(0, D2K_COMMAND_LENGTH) == D2K_COMMAND) {
 					Command = Command.substr(D2K_COMMAND_LENGTH);
 				}
 				#ifdef _WIN32
@@ -207,11 +207,12 @@ namespace D2K {
 						UDP->Send(&Packet, sizeof(DS2KeyPacket));									//bounce back
 					}
 					else if(Packet.Type >= '/' + 1 && Packet.Type <= '/' + 2) {						//make sure this is a packet we accept
-						C::Client *pClient = Client[Packet.Profile];								//pointer to client
-						if(pClient == (C::Client*)NULL) {											//if profile not active,
-							pClient = new C::Client();												//create it
-							Config->LoadProfile(pClient->GetProfileDataPointer(), Packet.Profile);	//then load it
+						if(Client[Packet.Profile] == (C::Client*)NULL) {							//if profile not active,
+							Client[Packet.Profile] = new C::Client();								//create it
+							Config->LoadProfile(
+                                Client[Packet.Profile]->GetProfileDataPointer(), Packet.Profile);	//then load it
 						}
+						C::Client *pClient = Client[Packet.Profile];								//then make a pointer to it
 
 						if(Packet.Type == '/' + 1) {												//normal update
 							pClient->SetPacket(Packet);												//insert packet data

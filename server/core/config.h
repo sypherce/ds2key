@@ -48,14 +48,9 @@ namespace D2K {
 					//Assigns new port number
 					//@param Port Values range 1 - 65535, setting 0 defaults to 9501
 					void SetPort(uint16_t port);
-					
-					//@param Command Values range 0 - 255
-					//@return (NULL) if unassigned, otherwise a NULL terminated string
-					char* GetCommand(uint8_t Command);
 
 				private:
 					uint16_t Port;//Currently assigned port
-					char* Commands[256];//NULL terminated command pointers
 			};
 		}
 		extern C::Config *Config;

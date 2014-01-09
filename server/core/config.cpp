@@ -18,9 +18,6 @@ namespace D2K {
 			const char *iniFilename = "ds2key.ini";
 
 			Config::Config() {
-				for(int i = 0; i < 256; i++) {
-					Commands[i] = (char*)NULL;
-				}
 				Load();
 			}
 
@@ -30,12 +27,6 @@ namespace D2K {
 
 			int Config::Load() {
 				dictionary *ini = D2K::Core::iniParser::load(iniFilename);
-
-				for(int i = 0; i < 256; i++) {
-					if(Commands[i])
-						delete Commands[i];
-					Commands[i] = (char*)NULL;
-				}
 
 				if(ini == NULL) {
 					int err = errno;
@@ -49,20 +40,6 @@ namespace D2K {
 				iniParser::dump(ini, stderr);
 
 				SetPort(iniParser::getint(ini, "settings:port", DefaultPort));
-				for(int i = 0; i < 256; i++) {
-					std::ostringstream commandString;
-					commandString << "settings:command" << i;
-					std::string commandPointer = iniParser::getstring(ini, commandString.str(), "");
-					unsigned int commandLength = commandPointer.size();
-					if(commandLength > 0) {
-						Commands[i] = new char[commandLength + 1];
-						strncpy(Commands[i], commandPointer.c_str(), commandLength);
-						Commands[i][commandLength] = 0;
-					}
-					else {
-						Commands[i] = (char*)NULL;
-					}
-				}
 				iniParser::freedict(ini);
 
 				return 0;
@@ -92,23 +69,23 @@ namespace D2K {
 					Profile->SetVirtualKey(kStart, KEY_RETURN);
 					Profile->SetVirtualKey(kSelect, KEY_RSHIFT);
 					Profile->SetVirtualKey(kLid, KEY_ESCAPE);
-					Profile->SetVirtualKey(kBlue, KEY_1);
-					Profile->SetVirtualKey(kYellow, KEY_2);
-					Profile->SetVirtualKey(kRed, KEY_3);
-					Profile->SetVirtualKey(kGreen, KEY_4);
+					Profile->SetVirtualKey(kBlue, KEY_C);
+					Profile->SetVirtualKey(kYellow, KEY_D);
+					Profile->SetVirtualKey(kRed, KEY_E);
+					Profile->SetVirtualKey(kGreen, KEY_F);
 
-					Profile->SetVirtualKey(kTouch00, KEY_NUMPAD0);
-					Profile->SetVirtualKey(kTouch01, KEY_NUMPAD1);
-					Profile->SetVirtualKey(kTouch02, KEY_NUMPAD2);
-					Profile->SetVirtualKey(kTouch03, KEY_NUMPAD3);
-					Profile->SetVirtualKey(kTouch04, KEY_NUMPAD4);
-					Profile->SetVirtualKey(kTouch05, KEY_NUMPAD5);
-					Profile->SetVirtualKey(kTouch06, KEY_NUMPAD6);
-					Profile->SetVirtualKey(kTouch07, KEY_NUMPAD7);
-					Profile->SetVirtualKey(kTouch08, KEY_NUMPAD8);
-					Profile->SetVirtualKey(kTouch09, KEY_NUMPAD9);
-					Profile->SetVirtualKey(kTouch10, KEY_5);
-					Profile->SetVirtualKey(kTouch11, KEY_6);
+					Profile->SetVirtualKey(kTouch00, KEY_0);
+					Profile->SetVirtualKey(kTouch01, KEY_1);
+					Profile->SetVirtualKey(kTouch02, KEY_2);
+					Profile->SetVirtualKey(kTouch03, KEY_3);
+					Profile->SetVirtualKey(kTouch04, KEY_4);
+					Profile->SetVirtualKey(kTouch05, KEY_5);
+					Profile->SetVirtualKey(kTouch06, KEY_6);
+					Profile->SetVirtualKey(kTouch07, KEY_7);
+					Profile->SetVirtualKey(kTouch08, KEY_8);
+					Profile->SetVirtualKey(kTouch09, KEY_9);
+					Profile->SetVirtualKey(kTouch10, KEY_G);
+					Profile->SetVirtualKey(kTouch11, KEY_H);
 
 					int screenW = 256;
 					int screenH = 192;
@@ -236,11 +213,6 @@ namespace D2K {
 				fprintf(file, "[Settings]\n");
 				fprintf(file, "Port=%u\n", Port);
 
-				for(int i = 0; i < 256; i++) {
-					if(Commands[i])
-						fprintf(file, "Command%i=\"%s\"\n", i, Commands[i]);
-				}
-
 				fclose(file);
 				Load();
 
@@ -358,10 +330,6 @@ namespace D2K {
 					Config::Port = DefaultPort;
 				else
 					Config::Port = Port;
-			}
-
-			char *Config::GetCommand(uint8_t Command) {
-				return Commands[Command];
 			}
 		}
 	}
