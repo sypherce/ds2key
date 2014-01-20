@@ -106,7 +106,7 @@ namespace D2K {
 				Sock = socket(PF_INET, SOCK_DGRAM, 0);
 				if(Sock == INVALID_SOCKET) {
 					int err = NETerrno;
-					std::clog << "Error (socket): #" << err << "\n";
+					std::clog << "Error (socket): " << strerror(err) << "\n";
 					Disconnect();
 
 					return err;
@@ -118,7 +118,7 @@ namespace D2K {
 					if(err == NETEADDRINUSE)
 						std::clog << "Error (bind) Port #" << GetPort() << " currently in use\n";
 					else
-						std::clog << "Error (bind): #" << err << "\n";
+						std::clog << "Error (bind): " << strerror(err) << "\n";
 					Disconnect();
 					return err;
 				}
@@ -127,7 +127,7 @@ namespace D2K {
 				//set blocking mode
 				if(NETioctlsocket(Sock, FIONBIO, (unsigned long*)&Block) == SOCKET_ERROR) {
 					int err = NETerrno;
-					std::clog << "Error (NETioctlsocket): #" << err << "\n";
+					std::clog << "Error (NETioctlsocket): " << strerror(err) << "\n";
 					Disconnect();
 
 					return err;
@@ -143,7 +143,7 @@ namespace D2K {
 					Connected = false;	//udp system disconnects even if socket doesn't close
 					if(NETclosesocket(Sock) == SOCKET_ERROR) {
 						int err = NETerrno;
-						std::clog << "Error (NETclosesocket): #" << err << "\n";
+						std::clog << "Error (NETclosesocket):" << strerror(err) << "\n";
 
 						return err;
 					}
@@ -169,7 +169,7 @@ namespace D2K {
 					int sockaddrLen = sizeof(RemoteAddr);
 					if(sendto(Sock, (char*)buf, len, 0, (struct sockaddr*)&RemoteAddr, sockaddrLen) == SOCKET_ERROR) {
 						int err = NETerrno;
-						std::clog << "Error (sendto): #" << err << "\n";
+						std::clog << "Error (sendto): " << strerror(err) << "\n";
 						return err;
 					}
 				}
@@ -195,7 +195,7 @@ namespace D2K {
 					if(recvfrom(Sock, (char*)buf, len, 0, (struct sockaddr*)&RemoteAddr, &sockaddrLen) == SOCKET_ERROR) {
 						int err = NETerrno;
 						if(err != NETEWOULDBLOCK)
-							std::clog << "Error (recvfrom): #" << err << "\n";
+							std::clog << "Error (recvfrom): " << strerror(err) << "\n";
 						return err;
 					}
 				}

@@ -30,7 +30,7 @@ namespace D2K {
 
 				if(ini == NULL) {
 					int err = errno;
-					std::clog << "Error (iniParser::load): #" << err << "\nFailed to open file: " << iniFilename << "\n";
+					std::clog << "Error (iniParser::load): " << strerror(err) << "\nFailed to open file: " << iniFilename << "\n";
 					SetPort(DefaultPort);
 					Save();
 
@@ -53,7 +53,7 @@ namespace D2K {
 				iniParser::dump(ini, stderr);
 				if(ini == NULL) {
 					int err = errno;
-					std::clog << "Error (iniParser::load): #" << err << "\nFailed to open file: " << iniFilename << "\n";
+					std::clog << "Error (iniParser::load): " << strerror(err) << "\nFailed to open file: " << iniFilename << "\n";
 					Profile->Mouse = "Relative";
 					Profile->Joy = "0";
 					Profile->SetVirtualKey(kUp, KEY_UP);
@@ -205,7 +205,7 @@ namespace D2K {
 
 				if(file == NULL) {
 					int err = errno;
-					std::clog << "Error (fopen): #" << err << "\nFailed to open file: " << iniFilename << "\n";
+					std::clog << "Error (fopen): " << strerror(err) << "\nFailed to open file: " << iniFilename << "\n";
 
 					return err;
 				}
@@ -226,7 +226,7 @@ namespace D2K {
 				FILE *file = fopen(ssfilename.str().c_str(), "w");
 				if(file == NULL) {
 					int err = errno;
-					std::clog << "Error (fopen): #" << err << "\nFailed to save file: " << iniFilename << "\n";
+					std::clog << "Error (fopen): " << strerror(err) << "\nFailed to save file: " << iniFilename << "\n";
 
 					return err;
 				}
