@@ -31,7 +31,7 @@ namespace D2K {
 
 				if(ini == NULL) {
 					int err = errno;
-					std::clog << "Error (iniParser::load): #" << err << "\nFailed to open file: " << iniFilename << "\n";
+					std::clog << "Error (iniParser::load): " << strerror(err) << "\nFailed to open file: " << iniFilename << "\n";
 					Core::UDP->SetRemoteIP(DefaultIP);
 					Core::UDP->SetPort(DefaultPort);
 					Core::UDP->SetProfile(DefaultProfile);
@@ -56,7 +56,7 @@ namespace D2K {
 
 				if(file == NULL) {
 					int err = errno;
-					std::clog << "Error (fopen): #" << err << "\nFailed to open file: " << iniFilename << "\n";
+					std::clog << "Error (fopen): " << strerror(err) << "\nFailed to open file: " << iniFilename << "\n";
 
 					return err;
 				}
