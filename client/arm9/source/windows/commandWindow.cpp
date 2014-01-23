@@ -20,6 +20,7 @@ namespace D2K {
 			extern void button11Function();
 			extern void button12Function();
 
+			UDP::DS2KeySettingsPacket settings;
 			WindowClass *Window;
 			Label *LabelTitle;
 			Button *Button1;
@@ -43,76 +44,132 @@ namespace D2K {
 				int w = 64;
 				int h = 24;
 				int gap = 12;
+				Rect buttonRects[12];
+				buttonRects[0] = Rect(x,y,w,h);
+					y += h + gap;
+				buttonRects[1] = Rect(x,y,w,h);
+					y += h + gap;
+				buttonRects[2] = Rect(x,y,w,h);
+					y += h + gap;
+				buttonRects[3] = Rect(x,y,w,h);
+					x = x + w + gap;
+					y = 24;
+
+				buttonRects[4] = Rect(x,y,w,h);
+					y += h + gap;
+				buttonRects[5] = Rect(x,y,w,h);
+					y += h + gap;
+				buttonRects[6] = Rect(x,y,w,h);
+					y += h + gap;
+				buttonRects[7] = Rect(x,y,w,h);
+					y += h + gap;
+					x = x + w + gap;
+					y = 24;
+
+				buttonRects[8] = Rect(x,y,w,h);
+					y += h + gap;
+				buttonRects[9] = Rect(x,y,w,h);
+					y += h + gap;
+				buttonRects[10] = Rect(x,y,w,h);
+					y += h + gap;
+				buttonRects[11] = Rect(x,y,w,h);
+				settings = UDP::GetCommandSettings();
+				if(settings.Type == UDP_PACKET_COMMAND_SETTINGS) {//if settings packet was received
+
+					for(int i = 0; i <= 11; i++) {
+						buttonRects[i] = Rect(settings.X1[i], settings.X2[i], settings.Y1[i], settings.Y1[i]);
+					}
+				}
 
 				AppendObject(LabelTitle	= new Label(Screen, Rect(24,0+3,128,10), "Commands"));
 
-				AppendObject(Button1 = new Button(Screen, Rect(x,y,w,h), "Command 0", &button1Function));
-				y += h + gap;
-				AppendObject(Button2 = new Button(Screen, Rect(x,y,w,h), "Command 1", &button2Function));
-				y += h + gap;
-				AppendObject(Button3 = new Button(Screen, Rect(x,y,w,h), "Command 2", &button3Function));
-				y += h + gap;
-				AppendObject(Button4 = new Button(Screen, Rect(x,y,w,h), "Command 3", &button4Function));
+				AppendObject(Button1 = new Button(Screen, buttonRects[0], "Command 0", &button1Function));
+				AppendObject(Button2 = new Button(Screen, buttonRects[1], "Command 1", &button2Function));
+				AppendObject(Button3 = new Button(Screen, buttonRects[2], "Command 2", &button3Function));
+				AppendObject(Button4 = new Button(Screen, buttonRects[3], "Command 3", &button4Function));
 
-				x = x + w + gap;
-				y = 24;
+				AppendObject(Button5 = new Button(Screen, buttonRects[4], "Command 4", &button5Function));
+				AppendObject(Button6 = new Button(Screen, buttonRects[5], "Command 5", &button6Function));
+				AppendObject(Button7 = new Button(Screen, buttonRects[6], "Command 6", &button7Function));
+				AppendObject(Button8 = new Button(Screen, buttonRects[7], "Command 7", &button8Function));
 
-				AppendObject(Button5 = new Button(Screen, Rect(x,y,w,h), "Command 4", &button5Function));
-				y += h + gap;
-				AppendObject(Button6 = new Button(Screen, Rect(x,y,w,h), "Command 5", &button6Function));
-				y += h + gap;
-				AppendObject(Button7 = new Button(Screen, Rect(x,y,w,h), "Command 6", &button7Function));
-				y += h + gap;
-				AppendObject(Button8 = new Button(Screen, Rect(x,y,w,h), "Command 7", &button8Function));
-
-				x = x + w + gap;
-				y = 24;
-
-				AppendObject(Button9 = new Button(Screen, Rect(x,y,w,h), "Command 8", &button9Function));
-				y += h + gap;
-				AppendObject(Button10 = new Button(Screen, Rect(x,y,w,h), "Command 9", &button10Function));
-				y += h + gap;
-				AppendObject(Button11 = new Button(Screen, Rect(x,y,w,h), "Command 10", &button11Function));
-				y += h + gap;
-				AppendObject(Button12 = new Button(Screen, Rect(x,y,w,h), "Command 11", &button12Function));
+				AppendObject(Button9 = new Button(Screen, buttonRects[8], "Command 8", &button9Function));
+				AppendObject(Button10 = new Button(Screen, buttonRects[9], "Command 9", &button10Function));
+				AppendObject(Button11 = new Button(Screen, buttonRects[10], "Command 10", &button11Function));
+				AppendObject(Button12 = new Button(Screen, buttonRects[11], "Command 11", &button12Function));
 			}
 			WindowClass::~WindowClass() { }
+			void WindowClass::SetVisible(bool visible) {
+				Rect buttonRects[12];
+				settings = UDP::GetCommandSettings();
+				if(settings.Type == UDP_PACKET_COMMAND_SETTINGS) {//if settings packet was received
+					for(int i = 0; i <= 11; i++) {
+						buttonRects[i] = Rect(settings.X1[i], settings.Y1[i], settings.X2[i], settings.Y2[i]);
+					}
+					Button1->SetRect(buttonRects[0]);
+					Button2->SetRect(buttonRects[1]);
+					Button3->SetRect(buttonRects[2]);
+					Button4->SetRect(buttonRects[3]);
+					Button5->SetRect(buttonRects[4]);
+					Button6->SetRect(buttonRects[5]);
+					Button7->SetRect(buttonRects[6]);
+					Button8->SetRect(buttonRects[7]);
+					Button9->SetRect(buttonRects[8]);
+					Button10->SetRect(buttonRects[9]);
+					Button11->SetRect(buttonRects[10]);
+					Button12->SetRect(buttonRects[11]);
+
+					Button1->SetText(settings.text[0]);
+					Button2->SetText(settings.text[1]);
+					Button3->SetText(settings.text[2]);
+					Button4->SetText(settings.text[3]);
+					Button5->SetText(settings.text[4]);
+					Button6->SetText(settings.text[5]);
+					Button7->SetText(settings.text[6]);
+					Button8->SetText(settings.text[7]);
+					Button9->SetText(settings.text[8]);
+					Button10->SetText(settings.text[9]);
+					Button11->SetText(settings.text[10]);
+					Button12->SetText(settings.text[11]);
+				}
+				return Window::SetVisible(visible);
+			}
 
 			void button1Function() {
-				Core::UDP->SendCommand(0);
+				UDP::SendCommand(0);
 			}
 			void button2Function() {
-				Core::UDP->SendCommand(1);
+				UDP::SendCommand(1);
 			}
 			void button3Function() {
-				Core::UDP->SendCommand(2);
+				UDP::SendCommand(2);
 			}
 			void button4Function() {
-				Core::UDP->SendCommand(3);
+				UDP::SendCommand(3);
 			}
 			void button5Function() {
-				Core::UDP->SendCommand(4);
+				UDP::SendCommand(4);
 			}
 			void button6Function() {
-				Core::UDP->SendCommand(5);
+				UDP::SendCommand(5);
 			}
 			void button7Function() {
-				Core::UDP->SendCommand(6);
+				UDP::SendCommand(6);
 			}
 			void button8Function() {
-				Core::UDP->SendCommand(7);
+				UDP::SendCommand(7);
 			}
 			void button9Function() {
-				Core::UDP->SendCommand(8);
+				UDP::SendCommand(8);
 			}
 			void button10Function() {
-				Core::UDP->SendCommand(9);
+				UDP::SendCommand(9);
 			}
 			void button11Function() {
-				Core::UDP->SendCommand(10);
+				UDP::SendCommand(10);
 			}
 			void button12Function() {
-				Core::UDP->SendCommand(11);
+				UDP::SendCommand(11);
 			}
 		}
 	}

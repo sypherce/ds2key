@@ -14,7 +14,7 @@ using namespace D2K;
 using namespace D2K::GUI;
 
 int main() {
-	if(Core::Setup())								//DS hardware setup
+	if(D2K::Init())								//DS hardware setup
 		return 1;									//halt on error
 
 	//setup our windows
@@ -25,12 +25,12 @@ int main() {
 		Main::Window->SetVisible(true);				//show main window
 
 	while(true) {
-		Core::Loop();								//DS hardware loop
+		D2K::Loop();								//DS hardware loop
 
-		Core::UDP->Update(keysHeld(),				//update ds2key network
+		UDP::Update(keysHeld(),						//update ds2key network
 			Turbo::GetKeys(),
 			guitarGripKeysHeld() * guitarGripIsInserted(),
-			Turbo::GHGetKeys() * guitarGripIsInserted(),				
+			Turbo::GHGetKeys() * guitarGripIsInserted(),
 			(touchPosition*)NULL);
 
 		Main::Window->Update();						//update the window
@@ -42,8 +42,8 @@ int main() {
 	delete Keypad::Window;
 	delete Main::Window;
 
-	delete Core::UDP;		//disconnect network
-	delete Core::Config;	//save settings
+	UDP::DeInit();	//disconnect network
+	Config::Save();	//save settings
 
 	return 0;
 }

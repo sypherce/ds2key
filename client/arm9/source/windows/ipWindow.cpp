@@ -83,40 +83,40 @@ namespace D2K {
 			}
 
 			void button1Function() {
-				Core::UDP->SendCommand(0);
+				UDP::SendCommand(0);
 			}
 			void button2Function() {
-				Core::UDP->SendCommand(1);
+				UDP::SendCommand(1);
 			}
 			void button3Function() {
-				Core::UDP->SendCommand(2);
+				UDP::SendCommand(2);
 			}
 			void button4Function() {
-				Core::UDP->SendCommand(3);
+				UDP::SendCommand(3);
 			}
 			void button5Function() {
-				Core::UDP->SendCommand(4);
+				UDP::SendCommand(4);
 			}
 			void button6Function() {
-				Core::UDP->SendCommand(5);
+				UDP::SendCommand(5);
 			}
 			void button7Function() {
-				Core::UDP->SendCommand(6);
+				UDP::SendCommand(6);
 			}
 			void button8Function() {
-				Core::UDP->SendCommand(7);
+				UDP::SendCommand(7);
 			}
 			void button9Function() {
-				Core::UDP->SendCommand(8);
+				UDP::SendCommand(8);
 			}
 			void button10Function() {
-				Core::UDP->SendCommand(9);
+				UDP::SendCommand(9);
 			}
 			void button11Function() {
-				Core::UDP->SendCommand(10);
+				UDP::SendCommand(10);
 			}
 			void button12Function() {
-				Core::UDP->SendCommand(11);
+				UDP::SendCommand(11);
 			}
 		}
 	}

@@ -4,7 +4,8 @@
 #include <windef.h>
 
 namespace D2K {
-	namespace Core {
+	namespace Input {
+		#define MAX_JOYSTICKS 16
 		#define	NUM_ANALOG	8		//Number of analog values which we will provide
 		#define	NUM_DIGITAL	20		//Number of digital values which we will provide
 
@@ -18,24 +19,22 @@ namespace D2K {
 		} JOYSTICK_STATE;
 		#pragma pack(pop)
 
-		namespace C {
-			class PPJoy {
-				public:
-					PPJoy(int device);
-					~PPJoy();
-					int Update();
-					void SetButton(char button, char value);
-					void SetAxisPercent(char axis, char value);
-					int GetButton(char button);
-					int GetAxisPercent(char axis);
+		class PPJoy {
+			public:
+				PPJoy(int device);
+				~PPJoy();
+				int Update();
+				void SetButton(char button, char value);
+				void SetAxisPercent(char axis, char value);
+				int GetButton(char button);
+				int GetAxisPercent(char axis);
 
-				private:
-					HANDLE handle;
-					JOYSTICK_STATE JoyState;
-					void ResetAxes();
-					void ResetButtons();
-			};
-		}
+			private:
+				HANDLE handle;
+				JOYSTICK_STATE JoyState;
+				void ResetAxes();
+				void ResetButtons();
+		};
 	}
 }
 #endif//__PPJOY_H__

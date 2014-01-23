@@ -167,6 +167,8 @@
 #define KEY_NONAME VK_NONAME
 #define KEY_PA1 VK_PA1
 #define KEY_OEM_CLEAR VK_OEM_CLEAR
+#define KEY_SLASH VK_OEM_2
+#define KEY_BACKSLASH VK_OEM_5
 #elif defined __linux__
 #define KEY_VOID XK_VoidSymbol
 #define KEY_LBUTTON 0x8000 //LBUTTON
@@ -342,6 +344,8 @@
 #define KEY_NONAME KEY_NONE //NONAME
 #define KEY_PA1 KEY_NONE //PA1
 #define KEY_OEM_CLEAR KEY_NONE //OEM_CLEAR
+#define KEY_SLASH XK_slash
+#define KEY_BACKSLASH XK_backslash
 #endif//_WIN32
 
 #if (_WIN32_WINNT >= 0x0500)
@@ -401,19 +405,15 @@
 #endif//(_WIN32_WINNT >= 0x0500)
 
 namespace D2K {
-	namespace Core {
-		namespace Key {
-			typedef struct keyEntry {
-				uint32_t value;
-				const char *text;
-			} keyEntry;
-			//Variables
-			extern keyEntry Table[];
+	namespace Key {
+		typedef struct keyEntry {
+			uint32_t value;
+			const char *text;
+		} keyEntry;
 
-			//Functions
-			extern uint32_t GetNumber(const char *key);
-			extern char *GetString(uint32_t key);
-		}
+		//Functions
+		extern uint32_t GetNumber(const char *key);
+		extern char *GetString(uint32_t key);
 	}
 }
 

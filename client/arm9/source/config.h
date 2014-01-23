@@ -2,23 +2,14 @@
 #define __CONFIG_H__
 
 namespace D2K {
-	namespace Core {
-		namespace C {
-			class Config {
-				public:
-					Config();
-					~Config();
-					
-					//Loads settings from disk
-					//@return (0) upon success, else (errno)
-					int Load();
+	namespace Config {
+			//Loads settings from disk
+			//@return (0) upon success, else (errno)
+			int Load();
 
-					//Saves settings to disk
-					//@return (0) upon success, else (errno)
-					int Save();
-			};
-		}
-		extern C::Config *Config;
+			//Saves settings to disk
+			//@return (0) upon success, else (errno)
+			int Save();
 	}
 }
 

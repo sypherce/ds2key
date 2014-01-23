@@ -52,13 +52,13 @@ namespace D2K {
 			if(object) {
 				if(object->IsVisible()) {
 					if(keysDown()&KEY_TOUCH) {
-						if(object->IsClicked((uint8_t)Core::StylusPos.px, (uint8_t)Core::StylusPos.py)) {
+						if(object->IsClicked((uint8_t)D2K::StylusPos.px, (uint8_t)D2K::StylusPos.py)) {
 							object->SetStatus(1);				//Pressed
 						}
 					}
 					else if(keysHeld()&KEY_TOUCH) {
 						if(object->GetStatus() > 0) {
-							if(object->IsClicked((uint8_t)Core::StylusPos.px, (uint8_t)Core::StylusPos.py)) {
+							if(object->IsClicked((uint8_t)D2K::StylusPos.px, (uint8_t)D2K::StylusPos.py)) {
 								object->SetStatus(2);			//if we pressed and we're still hovering set to Held
 							}
 							else {
@@ -67,7 +67,7 @@ namespace D2K {
 						}
 					}
 					else if(keysUp()&KEY_TOUCH) {
-						if(object->IsClicked((uint8_t)Core::StylusPos.px, (uint8_t)Core::StylusPos.py)) {
+						if(object->IsClicked((uint8_t)D2K::StylusPos.px, (uint8_t)D2K::StylusPos.py)) {
 							int status = object->GetStatus();	//save status value
 							object->SetStatus(0);				//reset status
 							if(status == 2) {					//if we pressed and we're still hovering
