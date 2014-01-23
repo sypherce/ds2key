@@ -16,9 +16,21 @@ namespace D2K {
 		bool IsUpdated() {
 			return Update;
 		}
+		void DrawFastHorizontleLine(uint8_t screen, uint8_t x, uint8_t y, uint8_t w, uint16_t c) {
+			if(x >= SCREEN_WIDTH)
+				return;
+			if(y >= SCREEN_HEIGHT)
+				return;
+			if(x + w >= SCREEN_WIDTH)
+				w = SCREEN_WIDTH - x;
+			if(w == 0)
+				return;
+			dmaFillHalfWords(c, &GUI::Screen[screen][x + (y * SCREEN_WIDTH)], w * 2);
+		}
 
 		void SetPixel(uint8_t screen, uint8_t x, uint8_t y, uint16_t c) {
-			GUI::Screen[screen][x + (y * SCREEN_WIDTH)] = c;
+			if(y < SCREEN_HEIGHT)//if we're drawing on screen
+				GUI::Screen[screen][x + (y * SCREEN_WIDTH)] = c;
 		}
 		void ClearScreen(uint8_t screen, uint16_t c) {
 			dmaFillHalfWords(c, GUI::Screen[screen], SCREEN_WIDTH * SCREEN_HEIGHT * 2);
@@ -29,36 +41,36 @@ namespace D2K {
 				SetPixel(screen, rect.GetX2(), y, c);
 			}
 
-			dmaFillHalfWords(c, &GUI::Screen[screen][rect.GetX() + (rect.GetY() * SCREEN_WIDTH)], rect.GetW() * 2);
-			dmaFillHalfWords(c, &GUI::Screen[screen][rect.GetX() + (rect.GetY2() * SCREEN_WIDTH)], rect.GetW() * 2);
+			DrawFastHorizontleLine(screen, rect.GetX(), rect.GetY(), rect.GetW(), c);
+			DrawFastHorizontleLine(screen, rect.GetX(), rect.GetY2(), rect.GetW(), c);
 		}
 		void DrawFilledRect(uint8_t screen, GUI::Rect rect, uint16_t c) {
 			for(int y = rect.GetY(); y <= rect.GetY2(); y++)
-				dmaFillHalfWords(c, &GUI::Screen[screen][rect.GetX() + (y * SCREEN_WIDTH)], rect.GetW() * 2);
+				DrawFastHorizontleLine(screen, rect.GetX(), y, rect.GetW(), c);
 		}
 		void DrawLine(uint8_t screen, std::string text, uint8_t x, uint8_t y, uint16_t c) {
 			if(text == "X")
 				SetPixel(screen, x, y, c);
 			else if(text == "XX")
-				dmaFillHalfWords(c, &GUI::Screen[screen][x + (y * SCREEN_WIDTH)], 2 * 2);
+				DrawFastHorizontleLine(screen, x, y, 2, c);
 			else if(text == " XX")
-				dmaFillHalfWords(c, &GUI::Screen[screen][1 + x + (y * SCREEN_WIDTH)], 2 * 2);
+				DrawFastHorizontleLine(screen, 1 + x, y, 2, c);
 			else if(text == "  XX")
-				dmaFillHalfWords(c, &GUI::Screen[screen][2 + x + (y * SCREEN_WIDTH)], 2 * 2);
+				DrawFastHorizontleLine(screen, 2 + x, y, 2, c);
 			else if(text == "   XX")
-				dmaFillHalfWords(c, &GUI::Screen[screen][3 + x + (y * SCREEN_WIDTH)], 2 * 2);
+				DrawFastHorizontleLine(screen, 3 + x, y, 2, c);
 			else if(text == "XXX")
-				dmaFillHalfWords(c, &GUI::Screen[screen][x + (y * SCREEN_WIDTH)], 3 * 2);
+				DrawFastHorizontleLine(screen, x, y, 3, c);
 			else if(text == " XXX")
-				dmaFillHalfWords(c, &GUI::Screen[screen][1 + x + (y * SCREEN_WIDTH)], 3 * 2);
+				DrawFastHorizontleLine(screen, 1 + x, y, 3, c);
 			else if(text == "  XXX")
-				dmaFillHalfWords(c, &GUI::Screen[screen][2 + x + (y * SCREEN_WIDTH)], 3 * 2);
+				DrawFastHorizontleLine(screen, 2 + x, y, 3, c);
 			else if(text == "XXXX")
-				dmaFillHalfWords(c, &GUI::Screen[screen][x + (y * SCREEN_WIDTH)], 4 * 2);
+				DrawFastHorizontleLine(screen, x, y, 4, c);
 			else if(text == " XXXX")
-				dmaFillHalfWords(c, &GUI::Screen[screen][1 + x + (y * SCREEN_WIDTH)], 4 * 2);
+				DrawFastHorizontleLine(screen, 1 + x, y, 4, c);
 			else if(text == "XXXXX")
-				dmaFillHalfWords(c, &GUI::Screen[screen][x + (y * SCREEN_WIDTH)], 5 * 2);
+				DrawFastHorizontleLine(screen, x, y, 5, c);
 			else {
 				for(unsigned int i = 0; i < text.length(); i++)
 					if(text.at(i) != ' ')

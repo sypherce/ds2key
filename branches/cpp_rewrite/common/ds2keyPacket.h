@@ -1,8 +1,10 @@
 #ifndef __DS2KEYPACKET_H__
 #define __DS2KEYPACKET_H__
 
+#include <stdint.h>//uint8_t, uint16_t
+
 namespace D2K {
-	namespace Core {
+	namespace UDP {
 		#pragma pack(1)
 		typedef struct DS2KeyPacket {
 			uint8_t Type;
@@ -16,6 +18,20 @@ namespace D2K {
 			uint8_t TouchX;
 			uint8_t TouchY;
 		} DS2KeyPacket;
+
+
+		//contains button layout and text for command buttons
+		//there's a max of 12 buttons
+		//text max is currently 10 + null terminator
+		typedef struct DS2KeySettingsPacket {
+			uint8_t Type;
+			uint8_t Profile;
+			uint8_t X1[12];
+			uint8_t X2[12];
+			uint8_t Y1[12];
+			uint8_t Y2[12];
+			char text[12][11];
+		} DS2KeySettingsPacket;
 		#pragma pack()
 	}
 }

@@ -8,10 +8,11 @@
 namespace D2K {
 	namespace GUI {
 		namespace MainWindow {
+			const int width = 580;
+			const int height = 360;
+			const int x = 100;
+			const int border = 10;
 			const int listMax = 8;
-			extern int width;
-			extern int height;
-			extern int border;
 			extern GUI::Window window;
 			extern GUI::ListView *categoryListView;
 			extern GUI::TrayIcon *TrayIcon;

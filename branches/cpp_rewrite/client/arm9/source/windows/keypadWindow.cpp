@@ -123,7 +123,7 @@ namespace D2K {
 						if(Keypad::Window->Update()) {			//if pressed
 							Keypad::EditEntry->SetText(Buffer);	//set text
 						}
-						Core::Loop();
+						D2K::Loop();
 					}
 					Keypad::Window->SetVisible(false);			//hide keypad
 

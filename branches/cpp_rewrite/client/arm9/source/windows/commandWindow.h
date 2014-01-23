@@ -10,6 +10,7 @@ namespace D2K {
 				public:
 					WindowClass();
 					~WindowClass();
+					void SetVisible(bool visible);
 			};
 			extern GUI::Command::WindowClass *Window;
 		}

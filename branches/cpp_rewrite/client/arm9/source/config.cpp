@@ -10,66 +10,54 @@
 #include "common/misc.h"
 
 namespace D2K {
-	namespace Core {
-		C::Config *Config = (C::Config*)NULL;
-		namespace C {
-			const char *DefaultIP = "0.0.0.0";
-			const char *DefaultProfile = "0";
-			const char *iniFilename = "/ds2key.ini";
+	const char *DefaultIP = "0.0.0.0";
+	const char *DefaultProfile = "0";
+	const char *iniFilename = "/ds2key.ini";
 
-			Config::Config() {
-				Load();
-			}
+	namespace Config {
+		int Load() {
+			dictionary *ini = iniParser::load(iniFilename);
 
-			Config::~Config() {
-				Save();
-			}
-
-			int Config::Load() {
-				if(Core::UDP == NULL) return 1;
-				dictionary *ini = iniParser::load(iniFilename);
-
-				if(ini == NULL) {
-					int err = errno;
-					std::clog << "Error (iniParser::load): " << strerror(err) << "\nFailed to open file: " << iniFilename << "\n";
-					Core::UDP->SetRemoteIP(DefaultIP);
-					Core::UDP->SetPort(DefaultPort);
-					Core::UDP->SetProfile(DefaultProfile);
+			if(ini == NULL) {
+				int err = errno;
+				std::clog << "Error (iniParser::load): " << strerror(err) << "\nFailed to open file: " << iniFilename << "\n";
+				UDP::SetRemoteIP(DefaultIP);
+				UDP::SetPort(DefaultPort);
+				UDP::SetProfile(DefaultProfile);
+				if(err == ENOENT)//file doesn't exist
 					Save();
 
-					return err;
-				}
-
-				iniParser::dump(ini, stderr);
-
-				Core::UDP->SetRemoteIP(iniParser::getstring(ini, (char*)"settings:ip", (char*)DefaultIP));
-				Core::UDP->SetPort(iniParser::getstring(ini, (char*)"settings:port", (char*)Core::itoa(DefaultPort)));
-				Core::UDP->SetProfile(iniParser::getstring(ini, (char*)"settings:profile", (char*)DefaultProfile));
-
-				iniParser::freedict(ini);
-
-				return 0;
+				return err;
 			}
-			int Config::Save() {
-				if(Core::UDP == NULL) return 1;
-				FILE *file = fopen(iniFilename, "w");
 
-				if(file == NULL) {
-					int err = errno;
-					std::clog << "Error (fopen): " << strerror(err) << "\nFailed to open file: " << iniFilename << "\n";
+			iniParser::dump(ini, stderr);
 
-					return err;
-				}
+			UDP::SetRemoteIP(iniParser::getstring(ini, (char*)"settings:ip", (char*)DefaultIP));
+			UDP::SetPort(iniParser::getstring(ini, (char*)"settings:port", (char*)D2K::itoa(DefaultPort)));
+			UDP::SetProfile(iniParser::getstring(ini, (char*)"settings:profile", (char*)DefaultProfile));
 
-				fprintf(file, "[Settings]\n");
-				fprintf(file, "IP=%s\n", Core::UDP->GetRemoteIPString().c_str());
-				fprintf(file, "Port=%u\n", Core::UDP->GetPort());
-				fprintf(file, "Profile=%u\n", Core::UDP->GetProfile());
-				fclose(file);
-				Load();
+			iniParser::freedict(ini);
 
-				return 0;
+			return 0;
+		}
+		int Save() {
+			FILE *file = fopen(iniFilename, "w");
+
+			if(file == NULL) {
+				int err = errno;
+				std::clog << "Error (fopen): " << strerror(err) << "\nFailed to open file: " << iniFilename << "\n";
+
+				return err;
 			}
+
+			fprintf(file, "[Settings]\n");
+			fprintf(file, "IP=%s\n", UDP::GetRemoteIPString().c_str());
+			fprintf(file, "Port=%u\n", UDP::GetPort());
+			fprintf(file, "Profile=%u\n", UDP::GetProfile());
+			fclose(file);
+			Load();
+
+			return 0;
 		}
 	}
 }

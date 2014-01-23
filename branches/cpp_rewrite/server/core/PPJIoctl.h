@@ -4,7 +4,7 @@
 #include <windef.h>
 
 namespace D2K {
-	namespace Core {
+	namespace Input {
 		/* Define to use byte-size values for joystick axes, else dword size */
 		#undef UCHAR_AXES
 
