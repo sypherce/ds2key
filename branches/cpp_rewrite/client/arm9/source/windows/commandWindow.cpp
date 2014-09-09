@@ -22,7 +22,6 @@ namespace D2K {
 
 			UDP::DS2KeySettingsPacket settings;
 			WindowClass *Window;
-			Label *LabelTitle;
 			Button *Button1;
 			Button *Button2;
 			Button *Button3;
@@ -80,8 +79,6 @@ namespace D2K {
 						buttonRects[i] = Rect(settings.X1[i], settings.X2[i], settings.Y1[i], settings.Y1[i]);
 					}
 				}
-
-				AppendObject(LabelTitle	= new Label(Screen, Rect(24,0+3,128,10), "Commands"));
 
 				AppendObject(Button1 = new Button(Screen, buttonRects[0], "Command 0", &button1Function));
 				AppendObject(Button2 = new Button(Screen, buttonRects[1], "Command 1", &button2Function));

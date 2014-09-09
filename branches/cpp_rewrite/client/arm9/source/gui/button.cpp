@@ -6,12 +6,13 @@ namespace D2K {
 	namespace GUI {
 		Button::Button(uint8_t screen, GUI::Rect rect, std::string text, void (*function)()) : Label(screen, rect, text) {
 			GUI::Rect thisRect = GetRect();
-			int width = text.length() * 6 + 4;
-			if(thisRect.GetW() < width)
-				thisRect.SetW(width);
-			SetRect(thisRect);
+			int width = text.length() * 6 + 4;	//calculate width of "std::string text"
+
+			if(thisRect.GetW() < width)			//if button isn't big enough
+				thisRect.SetW(width);			//adjust it to text's length
+			SetRect(thisRect);					//and then reassign the Rect
+
 			Button::Function = function;
-			SetVisible(true);
 		}
 
 		Button::~Button() { }
@@ -20,11 +21,11 @@ namespace D2K {
 			if(!Object::Draw())
 				return false;
 
-			if(IsVisible()) {//ifChanged()
+			if(IsVisible()) {
 				Clear(Color[colorButtonBackground]);
-				if(GetStatus() == 2)
+				if(GetStatus() == ObjectStatusHeld)	//if we're active/clicked
 					DrawRect(GetScreen(), GetRect(), Color[colorButtonOutlineActive]);
-				else
+				else								//if we're idle
 					DrawRect(GetScreen(), GetRect(), Color[colorButtonOutline]);
 				DrawString(GetScreen(), GetText(), GetRect().GetX()+3, GetRect().GetY()+3, Color[colorButtonText]);
 			}

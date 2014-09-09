@@ -169,10 +169,10 @@ namespace D2K {
 				while(true) {
 					D2K::Loop();
 					UDP::Update(keysHeld(), Turbo::GetKeys(), guitarGripKeysHeld() * guitarGripIsInserted(), Turbo::GHGetKeys() * guitarGripIsInserted(), (touchPosition*)NULL);
-					Command::Window->Update();		//update and draw command window
-					ButtonCommands->Draw();			//draw [Commands] button
+					Command::Window->Update();			//update and draw command window
+					ButtonCommands->Draw();				//draw [Commands] button
 					if(Main::Window->CheckClick(ButtonCommands)) {
-						break;						//if pressed again, break
+						break;							//if pressed again, break
 					}
 				}
 

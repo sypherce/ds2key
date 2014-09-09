@@ -22,8 +22,9 @@ namespace D2K {
 				void SetW(uint8_t w);
 				uint8_t GetH();
 				void SetH(uint8_t h);
-				uint16_t GetX2();
-				uint16_t GetY2();
+				uint8_t GetX2();
+				uint8_t GetY2();
+				//@return true if (x), (y) Intersects, false if not
 				bool PointIntersect(uint8_t x, uint8_t y);
 				~Rect();
 		};

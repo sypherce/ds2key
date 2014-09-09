@@ -61,6 +61,8 @@ namespace D2K {
 		//@param Key Platform specific value
 		//@param State true = released, false = pressed
 		void Keyboard(uint16_t Key, bool State) {
+		static uint16_t KeyCounters[65535] = {0};//this allows 1 or more profile to press the same key, instead of going crazy
+        if((KeyCounters[Key] == 0 && State == false) || (KeyCounters[Key] == 1 && State == true)) {
 		#ifdef _WIN32
 			INPUT input;
 			if(Key == VK_LBUTTON || Key == VK_RBUTTON || Key == VK_MBUTTON) {
@@ -112,6 +114,11 @@ namespace D2K {
 			XTestFakeKeyEvent(display, code, !State, 0);
 			XFlush(display);
 		#endif//_WIN32
+            }
+
+            //doesn't check boundaries
+            if(State == false) KeyCounters[Key]++;
+            else KeyCounters[Key]--;
 		}
 
 		//Moves cursor position

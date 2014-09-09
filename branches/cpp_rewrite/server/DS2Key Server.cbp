@@ -39,7 +39,6 @@
 					<Add option="-s" />
 					<Add option="-static" />
 					<Add option="-static-libgcc" />
-					<Add option="-static-libstdc++" />
 					<Add library="ws2_32" />
 				</Linker>
 			</Target>
@@ -85,7 +84,6 @@
 					<Add option="-s" />
 					<Add option="-static" />
 					<Add option="-static-libgcc" />
-					<Add option="-static-libstdc++" />
 					<Add library="gdi32" />
 					<Add library="user32" />
 					<Add library="kernel32" />
@@ -105,7 +103,7 @@
 					<Add option="-g" />
 				</Compiler>
 				<Linker>
-					<Add option="-pg -lgmon" />
+					<Add option="-pg" />
 					<Add library="X11" />
 					<Add library="Xtst" />
 				</Linker>
@@ -148,9 +146,24 @@
 		<Unit filename="../common/misc.h" />
 		<Unit filename="../common/udp.cpp" />
 		<Unit filename="../common/udp.h" />
-		<Unit filename="core/PPJIoctl.h" />
-		<Unit filename="core/PPJoy.cpp" />
-		<Unit filename="core/PPJoy.h" />
+		<Unit filename="core/PPJIoctl.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="core/PPJoy.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="core/PPJoy.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
 		<Unit filename="core/client.cpp" />
 		<Unit filename="core/client.h" />
 		<Unit filename="core/config.cpp" />

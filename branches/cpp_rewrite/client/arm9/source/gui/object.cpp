@@ -6,7 +6,7 @@ namespace D2K {
 		Object::Object(uint8_t screen, GUI::Rect rect) {
 			Object::Screen = screen;
 			Object::Rect = rect;
-			Object::Status = 0;
+			Object::Status = ObjectStatusIdle;
 			SetVisible(false);
 			Function = &GUI::VoidFunction;
 		}
@@ -39,7 +39,7 @@ namespace D2K {
 			if(GetStatus() != value) {
 				Status = value;
 				SetUpdate(true);
-				Draw();
+				Draw();///I think this line needs removed
 			}
 		}
 		uint8_t Object::GetStatus() {
