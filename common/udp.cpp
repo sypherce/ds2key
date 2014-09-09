@@ -42,6 +42,38 @@
 #define NETclosesocket closesocket
 #define NETioctlsocket ioctl
 #define INVALID_SOCKET -1
+#elif defined PSP_DEF
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <pspnet.h>
+#include <pspnet_inet.h>
+#include <pspnet_apctl.h>
+#include <pspkernel.h>
+#include <pspdebug.h>
+#include <pspsdk.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <pspnet.h>
+#include <pspnet_inet.h>
+#include <pspnet_apctl.h>
+#include <pspnet_resolver.h>
+//#include <pspnet_resolver.h>
+#include <errno.h>
+#include <unistd.h>
+#include <sys/select.h>
+#include <sys/time.h>
+#include <sys/fd_set.h>
+//#define socklen_t int
+#define NETerrno sceNetInetGetErrno()
+#define NETEADDRINUSE EADDRINUSE
+#define NETEWOULDBLOCK EWOULDBLOCK
+#define NETclosesocket close
+#define NETioctlsocket ioctl
+#define SO_NONBLOCK 0x1009
+#define INVALID_SOCKET -1
+#define SOCKET_ERROR -1
 #endif//_WIN32
 #include "udp.h"
 #include "misc.h"
@@ -89,10 +121,7 @@ namespace D2K {
 			if(EMULATOR) return 0;					//skip if emulating
 			if(IsConnected())						//if already connected
 				Disconnect();						//disconnect first
-			if(port == 0)							//if port 0
-				SetPort(DefaultPort);				//use default port 9501
-			else
-				SetPort(port);
+			SetPort(port);                          //set port
 
 			UDP::Block = block;
 #ifdef D2KCLIENT
@@ -129,7 +158,11 @@ namespace D2K {
 #endif//D2KSERVER
 
 			//set blocking mode
+#ifdef PSP_DEF
+			if(setsockopt(Sock, SOL_SOCKET, SO_NONBLOCK, &UDP::Block, sizeof(UDP::Block)) == SOCKET_ERROR) {
+#else
 			if(NETioctlsocket(Sock, FIONBIO, (unsigned long*)&UDP::Block) == SOCKET_ERROR) {
+#endif
 				int err = NETerrno;
 				std::clog << "Error (NETioctlsocket): " << strerror(err) << "\n";
 				Disconnect();
@@ -213,9 +246,10 @@ namespace D2K {
 #elif defined(_WIN32) || defined(__linux__)
 			return LocalAddr.sin_addr.s_addr;
 #endif//ARM9
+			return 0;
 		}
 		std::string GetLocalIPString() {
-#ifdef ARM9
+#if defined(ARM9) || defined(PSP_DEF)
 			struct in_addr sin_addr;
 			sin_addr.s_addr = GetLocalIP();
 			std::string IP = inet_ntoa(sin_addr);
@@ -255,17 +289,10 @@ namespace D2K {
 			SetPort(atoi(port));
 		}
 		void SetPort(unsigned int port) {
-			Port = port;
-		}
-		void printSettings(DS2KeySettingsPacket settings) {
-			std::clog << "\n\nSettings:\n";
-			for(int i = 0; i <= 11; i++) {
-				std::clog << "X1: " << (int)settings.X1[i] << " ";
-				std::clog << "X2: " << (int)settings.X2[i] << " ";
-				std::clog << "Y1: " << (int)settings.Y1[i] << " ";
-				std::clog << "Y2: " << (int)settings.Y2[i] << " ";
-				std::clog << "Text: " << settings.text[i] << "\n";
-			}
+			if(port == 0)					//if port 0
+                Port = DefaultPort;         //use default port 9501
+			else
+                Port = port;
 		}
 
 #ifdef D2KCLIENT
@@ -306,7 +333,7 @@ namespace D2K {
 			unsigned long SavedRemoteIP = GetRemoteIP();			//save the remote IP
 			unsigned long LocalIP = GetLocalIP();					//get the local IP
 			SetRemoteIP(((LocalIP) & 0xFF) |						//setup the broadcast IP
-						(((LocalIP >> 8) & 0xFF) << 8 ) |
+						(((LocalIP >> 8) & 0xFF) << 8) |
 						(((LocalIP >> 16) & 0xFF) << 16) |
 						(0xFF << 24));
 
@@ -348,21 +375,23 @@ namespace D2K {
 			Packet.Profile = GetProfile();
 			Send((char*)&Packet, sizeof(DS2KeyPacket));				//send the packet out
 
-			if(Recv((char*)&settings, sizeof(DS2KeySettingsPacket)) == 0) {	//received something
-			std::clog << "X" << settings.Type << "X\n";
-				if(settings.Type == UDP_PACKET_COMMAND_SETTINGS) {		//received a lookup packet
-					printSettings(settings);
-					return settings;
+			//try 3 times
+			for(int i = 0; i < 3; i++) {
+				if(Recv((char*)&settings, sizeof(DS2KeySettingsPacket)) == 0) {	//received something
+					if(settings.Type == UDP_PACKET_COMMAND_SETTINGS) {			//received a lookup packet
+						return settings;
+					}
+					std::clog << "Error (GetCommandSettings): Received invalid packet\n";
 				}
+				swiWaitForVBlank();//wait a second before trying again
 			}
 			//if we didn't receive anything, or something invalid we return NULL
-			settings = {NULL};
-			std::clog << "NULLSETTINGS\n";
+			settings = (DS2KeySettingsPacket){0};
+			std::clog << "Error (GetCommandSettings): Failed to receive packet\n";
 			return settings;
 		}
 #else//D2KSERVER
 		void SendCommandSettings(DS2KeySettingsPacket settings) {
-						printSettings(settings);
 			Send((char*)&settings, sizeof(DS2KeySettingsPacket));	//send packet
 		}
 #endif//D2KCLIENT

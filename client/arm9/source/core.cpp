@@ -6,7 +6,6 @@
 #include <iostream>
 #include <errno.h>
 #include <nds.h>
-//#include <dirent.h>
 #include <fat.h>
 #include <dswifi9.h>
 
@@ -18,6 +17,8 @@
 namespace D2K {
 	touchPosition StylusPos;
 	bool InputChange = false;
+	bool EnableInputTimeout = false;
+	bool ToggleBothLights = false;
 
 	char* GetTime() {
 		static char timeChar[12];
@@ -57,14 +58,17 @@ namespace D2K {
 		if((keysUp()&KEY_LID) ||							//if lid just opened OR
 			(keysHeld()&KEY_TOUCH)) {						//screen is touched
 			vblCount = 0;									//reset timer
-			powerOn(PM_BACKLIGHT_BOTTOM|PM_BACKLIGHT_TOP);	//lights on
+			powerOn(PM_BACKLIGHT_BOTTOM);					//lights on
+			if(ToggleBothLights) powerOn(PM_BACKLIGHT_TOP);	//turn on top light only if enabled
 		}
 		else if((keysDown()&KEY_LID) ||						//if lid just closed OR
 			keysDown() ||									//a button pressed OR
 				vblCount == vblCountMax) {					//enough time passed
-			powerOff(PM_BACKLIGHT_BOTTOM|PM_BACKLIGHT_TOP);	//lights off
+			powerOff(PM_BACKLIGHT_BOTTOM);					//lights on
+			if(ToggleBothLights) powerOff(PM_BACKLIGHT_TOP);//turn off top light only if enabled
 		}
 		vblCount++;											//increment timer
+		if(!EnableInputTimeout) vblCount = 0;				//this avoids the screen turning off after 4 seconds
 	}
 
 	///vblank function we assign in Init()
@@ -90,13 +94,17 @@ namespace D2K {
 
 		consoleClear();
 
-		std::cout << D2K::VERSION_STRING << "\n-\n";
+		std::cout << D2K::VERSION_STRING;
+
+		//if we're running in emulator mode, let the user know
+		if(EMULATOR)
+			std::cout << " - Emulator Mode";
+
+		std::cout << "\n-\n";
 
 		if(!EMULATOR)
 		if(!fatInitDefault())
 			std::clog << "Error (fatInitDefault): Failed to access storage\n";
-		//if(opendir("/") == NULL)
-		//	std::clog << "Error (opendir): " << strerror(errno) << "\n";
 
 		std::cout << "Connecting via WFC data\n";
 		if(!EMULATOR)
@@ -110,6 +118,7 @@ namespace D2K {
 		UDP::Init();										//initilize udp
 		Config::Load();										//load udp settings
 		UDP::Connect();										//connect with settings
+		if(!ToggleBothLights) powerOff(PM_BACKLIGHT_TOP);
 
 		return false;										//return without error
 	}

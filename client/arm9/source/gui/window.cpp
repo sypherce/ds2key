@@ -37,7 +37,6 @@ namespace D2K {
 			}
 			GUI::SetUpdate(false);									//gui all updated
 		}
-		//set window itself, and all children visible
 		void Window::SetVisible(bool visible) {
 			Window::Visible = visible;								//window is now set
 			for(unsigned int i = 0; i < Objects.size(); i++) {		//for each child
@@ -47,31 +46,30 @@ namespace D2K {
 		bool Window::IsVisible() {
 			return Visible;
 		}
-		///this has a bug and once you've clicked a button it highlights even if you've released once before
 		bool Window::CheckClick(Object *object) {
 			if(object) {
 				if(object->IsVisible()) {
 					if(keysDown()&KEY_TOUCH) {
 						if(object->IsClicked((uint8_t)D2K::StylusPos.px, (uint8_t)D2K::StylusPos.py)) {
-							object->SetStatus(1);				//Pressed
+							object->SetStatus(ObjectStatusPressed);
 						}
 					}
 					else if(keysHeld()&KEY_TOUCH) {
-						if(object->GetStatus() > 0) {
+						if(object->GetStatus() > ObjectStatusIdle) {
 							if(object->IsClicked((uint8_t)D2K::StylusPos.px, (uint8_t)D2K::StylusPos.py)) {
-								object->SetStatus(2);			//if we pressed and we're still hovering set to Held
+								object->SetStatus(ObjectStatusHeld);	//if we pressed and we're still hovering set to Held
 							}
 							else {
-								object->SetStatus(1);			//if we held but we're not hovering set to Pressed
+								object->SetStatus(ObjectStatusPressed);	//if we held but we're not hovering set to Pressed
 							}
 						}
 					}
 					else if(keysUp()&KEY_TOUCH) {
+						int status = object->GetStatus();			//save status value
+						object->SetStatus(ObjectStatusIdle);		//reset status
 						if(object->IsClicked((uint8_t)D2K::StylusPos.px, (uint8_t)D2K::StylusPos.py)) {
-							int status = object->GetStatus();	//save status value
-							object->SetStatus(0);				//reset status
-							if(status == 2) {					//if we pressed and we're still hovering
-								return true;					//the object was clicked
+							if(status == ObjectStatusHeld) {		//if we pressed and we're still hovering
+								return true;						//the object was clicked
 							}
 						}
 					}

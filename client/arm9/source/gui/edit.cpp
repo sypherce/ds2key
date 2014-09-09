@@ -5,7 +5,6 @@
 namespace D2K {
 	namespace GUI {
 		Edit::Edit(uint8_t screen, GUI::Rect rect, std::string text, void (*function)()) : Button(screen, rect, text, function) {
-			SetVisible(true);
 		}
 
 		Edit::~Edit() { }
@@ -13,9 +12,9 @@ namespace D2K {
 		bool Edit::Draw() {
 			if(!Object::Draw())
 				return false;
-			if(IsVisible()) {//ifChanged()
+			if(IsVisible()) {
 				Clear(Color[colorEditBackground]);
-				if(GetStatus() == 2)
+				if(GetStatus() == ObjectStatusHeld)
 					DrawRect(GetScreen(), GetRect(), Color[colorEditOutlineActive]);
 				else
 					DrawRect(GetScreen(), GetRect(), Color[colorEditOutline]);

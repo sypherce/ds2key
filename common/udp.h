@@ -18,9 +18,11 @@
 #elif defined ARM9
 #include <nds.h>
 #include <netinet/in.h>//sockaddr_in
+#elif defined PSP_DEF
+#include "../pspclient/pspTouch.h"
 #endif//_WIN32
 
-#if defined(__linux__) || defined(ARM9)
+#if defined(__linux__) || defined(ARM9) || defined(PSP_DEF)
 typedef int SOCKET;
 #endif//defined(__linux__) || defined(ARM9)
 
@@ -34,6 +36,8 @@ namespace D2K {
 		int Connect();
 		int Connect(uint16_t port);
 		//connect udp system
+		//@param block false == blocking, true == non-blocking
+		//@param port Port to connect to. if port = 0, SetPort assigns to default port 9501
 		//\return (0) if connected, else (errno)
 		int Connect(bool block, uint16_t port);
 

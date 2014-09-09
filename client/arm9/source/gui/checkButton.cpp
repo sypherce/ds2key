@@ -16,12 +16,12 @@ namespace D2K {
 
 			if(IsVisible()) {//ifChanged()
 				Clear(Color[colorButtonBackground]);
-				if(GetStatus() == 2)
+				if(GetStatus() == ObjectStatusHeld)
 					DrawRect(GetScreen(), GetRect(), Color[colorButtonOutlineActive]);
 				else if(GetChecked())
 					DrawRect(GetScreen(), GetRect(), Color[colorButtonOutline]);
 				else
-					DrawRect(GetScreen(), GetRect(), Color[colorButtonBackground]);
+					DrawRect(GetScreen(), GetRect(), Color[colorButtonBackground]);//draws a flat button
 				DrawString(GetScreen(), GetText(), GetRect().GetX()+3, GetRect().GetY()+3, Color[colorButtonText]);
 			}
 

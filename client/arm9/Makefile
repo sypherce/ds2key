@@ -31,7 +31,7 @@ CFLAGS	:=	-g -Wall -O2\
 			-ffast-math \
 			$(ARCH)
 
-CFLAGS	+=	$(INCLUDE) -DARM9 -DD2KCLIENT -DEMULATOR="0x6F6F6258 == (*((uint32_t*)0x23FEE00))"
+CFLAGS	+=	$(INCLUDE) -DARM9 -DD2KCLIENT -DEMULATOR=0
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++11
 
 ASFLAGS	:=	-g $(ARCH)

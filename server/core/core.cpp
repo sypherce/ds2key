@@ -5,6 +5,7 @@
 #include <iostream>//std::cout, std::clog
 #include <algorithm>	//std::max,std::min
 #include <sstream>//ostringstream
+#include <chrono>//temp
 #ifdef _WIN32
 #include <windows.h>
 #include <shellapi.h>
@@ -211,8 +212,14 @@ namespace D2K {
 							ClientArray[Packet.Profile]->GetProfileDataPointer(), Packet.Profile);	//then load it
 					}
 					D2K::Client *pClient = ClientArray[Packet.Profile];								//then make a pointer to it
-
+					//static std::chrono::time_point<std::chrono::system_clock> lastTime= std::chrono::system_clock::now();//temp
 					if(Packet.Type == UDP_PACKET_NORMAL) {											//normal update
+
+					    //std::chrono::time_point<std::chrono::system_clock> thisTime = std::chrono::system_clock::now();//temp
+                        //std::chrono::duration<double> diffTime = thisTime - lastTime;//temp
+                        //printf("%lf\n", diffTime);//temp
+                        //lastTime = thisTime;//temp
+
 						pClient->SetPacket(Packet);													//insert packet data
 						pClient->Scan();															//update
 						ProcessPacket(pClient);														//process
@@ -225,7 +232,7 @@ namespace D2K {
 
 						if(PCButton) {
 							Input::Press(PCButton, Joystick);
-		Sleep(100);
+							Sleep(100);
 							Input::Release(PCButton, Joystick);
 						}
 						else {
