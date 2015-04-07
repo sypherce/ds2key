@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="DS2Key Server" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/DS2Key_console_debug.exe" prefix_auto="0" extension_auto="0" />
+				<Option object_output="obj/Debug/Console/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-Wmain" />
+					<Add option="-Wall" />
+					<Add option="-pg" />
+					<Add option="-g" />
+					<Add option="-DWINVER=0x0500" />
+					<Add option="-DWIN32_LEAN_AND_MEAN" />
+				</Compiler>
+				<Linker>
+					<Add option="-pg -lgmon" />
+					<Add library="ws2_32" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/DS2Key_console.exe" prefix_auto="0" extension_auto="0" />
+				<Option object_output="obj/Release/Console/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option use_console_runner="0" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-DWINVER=0x0500" />
+					<Add option="-DWIN32_LEAN_AND_MEAN" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add option="-static" />
+					<Add option="-static-libgcc" />
+					<Add library="ws2_32" />
+				</Linker>
+			</Target>
+			<Target title="Debug (GUI)">
+				<Option output="bin/DS2Key_debug.exe" prefix_auto="0" extension_auto="0" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-Wmain" />
+					<Add option="-Wall" />
+					<Add option="-pg" />
+					<Add option="-g" />
+					<Add option="-DWINVER=0x0500" />
+					<Add option="-DWIN32_LEAN_AND_MEAN" />
+					<Add option="-D_WIN32_IE=0x400" />
+					<Add option="-DWIN32GUI" />
+					<Add option="-DWM_TRAYMSG=(WM_APP+1)" />
+				</Compiler>
+				<Linker>
+					<Add option="-pg -lgmon" />
+					<Add library="gdi32" />
+					<Add library="user32" />
+					<Add library="kernel32" />
+					<Add library="comctl32" />
+					<Add library="ws2_32" />
+				</Linker>
+			</Target>
+			<Target title="Release (GUI)">
+				<Option output="bin/DS2Key.exe" prefix_auto="0" extension_auto="0" />
+				<Option object_output="obj/Release/" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-DWINVER=0x0500" />
+					<Add option="-DWIN32_LEAN_AND_MEAN" />
+					<Add option="-D_WIN32_IE=0x400" />
+					<Add option="-DWIN32GUI" />
+					<Add option="-DWM_TRAYMSG=(WM_APP+1)" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add option="-static" />
+					<Add option="-static-libgcc" />
+					<Add library="gdi32" />
+					<Add library="user32" />
+					<Add library="kernel32" />
+					<Add library="comctl32" />
+					<Add library="ws2_32" />
+				</Linker>
+			</Target>
+			<Target title="Debug (Linux)">
+				<Option output="bin/ds2key_debug" prefix_auto="0" extension_auto="0" />
+				<Option object_output="obj/Debug/Linux" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-Wmain" />
+					<Add option="-Wall" />
+					<Add option="-pg" />
+					<Add option="-g" />
+				</Compiler>
+				<Linker>
+					<Add option="-pg" />
+					<Add library="X11" />
+					<Add library="Xtst" />
+				</Linker>
+			</Target>
+			<Target title="Release (Linux)">
+				<Option output="bin/ds2key" prefix_auto="0" extension_auto="0" />
+				<Option object_output="obj/Release/Linux/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option use_console_runner="0" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="X11" />
+					<Add library="Xtst" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-std=gnu++0x" />
+			<Add option="-DD2KSERVER" />
+			<Add option="-DEMULATOR=0" />
+			<Add directory="." />
+			<Add directory=".." />
+		</Compiler>
+		<Unit filename="../common/ds2keyPacket.h" />
+		<Unit filename="../common/iniParserWrapper.cpp" />
+		<Unit filename="../common/iniParserWrapper.h" />
+		<Unit filename="../common/iniparser/src/dictionary.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../common/iniparser/src/dictionary.h" />
+		<Unit filename="../common/iniparser/src/iniparser.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../common/iniparser/src/iniparser.h" />
+		<Unit filename="../common/misc.cpp" />
+		<Unit filename="../common/misc.h" />
+		<Unit filename="../common/udp.cpp" />
+		<Unit filename="../common/udp.h" />
+		<Unit filename="core/PPJIoctl.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="core/PPJoy.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="core/PPJoy.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="core/client.cpp" />
+		<Unit filename="core/client.h" />
+		<Unit filename="core/config.cpp" />
+		<Unit filename="core/config.h" />
+		<Unit filename="core/core.cpp" />
+		<Unit filename="core/core.h" />
+		<Unit filename="core/input.cpp" />
+		<Unit filename="core/input.h" />
+		<Unit filename="core/key.cpp" />
+		<Unit filename="core/key.h" />
+		<Unit filename="gui/controls/button.cpp">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/button.h">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/checkButton.cpp">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/checkButton.h">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/comboButton.cpp">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/comboButton.h">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/edit.cpp">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/edit.h">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/label.cpp">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/label.h">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/listView.cpp">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/listView.h">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/menu.cpp">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/menu.h">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/menuItem.cpp">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/menuItem.h">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/menuPopUp.cpp">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/menuPopUp.h">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/object.cpp">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/object.h">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/radioButton.cpp">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/radioButton.h">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/statusBar.cpp">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/statusBar.h">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/trayIcon.cpp">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/trayIcon.h">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/window.cpp">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/controls/window.h">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/gui.cpp">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/gui.h">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/mainWindow.cpp">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/mainWindow.h">
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/resource.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/resource.rc">
+			<Option compilerVar="WINDRES" />
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="gui/xpmanifest.xml">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="Debug (GUI)" />
+			<Option target="Release (GUI)" />
+		</Unit>
+		<Unit filename="main.cpp" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+			<DoxyBlocks>
+				<comment_style block="0" line="0" />
+				<doxyfile_project />
+				<doxyfile_build />
+				<doxyfile_warnings />
+				<doxyfile_output />
+				<doxyfile_dot />
+				<general />
+			</DoxyBlocks>
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
