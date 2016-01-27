@@ -23,7 +23,7 @@ namespace D2K {
 				int err = errno;
 				std::clog << "Error (iniParser::load): " << strerror(err) << "\nFailed to open file: " << iniFilename << "\n";
 				UDP::SetRemoteIP(DefaultIP);
-				UDP::SetPort(DefaultPort);
+				UDP::SetPort(D2K::DEFAULT_PORT);
 				UDP::SetProfile(DefaultProfile);
 				if(err == ENOENT)//if file doesn't exist
 					Save();
@@ -35,7 +35,7 @@ namespace D2K {
 			iniParser::dump(ini, stderr);
 
 			UDP::SetRemoteIP(iniParser::getstring(ini, (char*)"settings:ip", (char*)DefaultIP));
-			UDP::SetPort(iniParser::getstring(ini, (char*)"settings:port", (char*)D2K::itoa(DefaultPort)));
+			UDP::SetPort(iniParser::getstring(ini, (char*)"settings:port", (char*)D2K::ltoa(D2K::DEFAULT_PORT)));
 			UDP::SetProfile(iniParser::getstring(ini, (char*)"settings:profile", (char*)DefaultProfile));
 
 			//close file

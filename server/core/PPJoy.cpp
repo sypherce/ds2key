@@ -33,7 +33,7 @@ namespace D2K {
 			DevName << "\\\\.\\PPJoyIOCTL" << device + 1;
 
 			//Open a handle to the control device for the virtual joystick.
-			handle = CreateFile(DevName.str().c_str(), GENERIC_WRITE, FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
+			handle = INVALID_HANDLE_VALUE;//CreateFile(DevName.str().c_str(), GENERIC_WRITE, FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
 
 			//Make sure we could open the device!
 			if(handle == INVALID_HANDLE_VALUE) {

@@ -73,10 +73,10 @@ namespace D2K {
 					y += h + gap;
 				buttonRects[11] = Rect(x,y,w,h);
 				settings = UDP::GetCommandSettings();
-				if(settings.Type == UDP_PACKET_COMMAND_SETTINGS) {//if settings packet was received
+				if(settings.type == UDP::PACKET::COMMAND_SETTINGS) {//if settings packet was received
 
 					for(int i = 0; i <= 11; i++) {
-						buttonRects[i] = Rect(settings.X1[i], settings.X2[i], settings.Y1[i], settings.Y1[i]);
+						buttonRects[i] = Rect(settings.x_1[i], settings.x_2[i], settings.y_1[i], settings.y_1[i]);
 					}
 				}
 
@@ -99,9 +99,9 @@ namespace D2K {
 			void WindowClass::SetVisible(bool visible) {
 				Rect buttonRects[12];
 				settings = UDP::GetCommandSettings();
-				if(settings.Type == UDP_PACKET_COMMAND_SETTINGS) {//if settings packet was received
+				if(settings.type == UDP::PACKET::COMMAND_SETTINGS) {//if settings packet was received
 					for(int i = 0; i <= 11; i++) {
-						buttonRects[i] = Rect(settings.X1[i], settings.Y1[i], settings.X2[i], settings.Y2[i]);
+						buttonRects[i] = Rect(settings.x_1[i], settings.y_1[i], settings.x_2[i], settings.y_2[i]);
 					}
 					Button1->SetRect(buttonRects[0]);
 					Button2->SetRect(buttonRects[1]);

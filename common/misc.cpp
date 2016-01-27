@@ -12,20 +12,32 @@ namespace D2K {
 	const std::string VERSION_STRING = "DS2Key (DS) SVN Build";
 	#endif//WIN32GUI
 
-	std::string itos(long i) {
+	std::string ltos(long i) {
 		std::stringstream stream;
 		stream << i;
 
 		return stream.str();
 	}
 
-	const char *itoa(long t) {
-		return itos(t).c_str();
+	const char* ltoa(long t) {
+		return ltos(t).c_str();
 	}
 
-	long stoi(std::string str) {
+	long stol(std::string str) {
 		std::stringstream stream(str);
-		long retVal;
-		return !(stream >> retVal) ? 0 : retVal;
+		long return_value;
+		return !(stream >> return_value) ? 0 : return_value;
+	}
+
+	uint8_t string_to_uint8_t(std::string str) {
+		std::stringstream stream(str);
+		uint8_t return_value;
+		return !(stream >> return_value) ? 0 : return_value;
+	}
+
+	uint16_t string_to_uint16_t(std::string str) {
+		std::stringstream stream(str);
+		uint16_t return_value;
+		return !(stream >> return_value) ? 0 : return_value;
 	}
 }

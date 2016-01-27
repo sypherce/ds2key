@@ -1,316 +1,357 @@
-/*
-	Virtual DS status
-*/
+// Virtual DS status
 
 #include "client.h"
 #include "key.h"
 #include "common/misc.h"
 #include <sstream>	//std::stringstream
 
-namespace D2K {
-	uint16_t bit2button(uint16_t Bit) {
-		switch(Bit) {
-			case kUp:
-				return DS2KEY_UP;
-			case kDown:
-				return DS2KEY_DOWN;
-			case kLeft:
-				return DS2KEY_LEFT;
-			case kRight:
-				return DS2KEY_RIGHT;
-			case kA:
-				return DS2KEY_A;
-			case kB:
-				return DS2KEY_B;
-			case kX:
-				return DS2KEY_X;
-			case kY:
-				return DS2KEY_Y;
-			case kL:
-				return DS2KEY_L;
-			case kR:
-				return DS2KEY_R;
-			case kStart:
-				return DS2KEY_START;
-			case kSelect:
-				return DS2KEY_SELECT;
-			case kLid:
-				return DS2KEY_LID;
-			case kBlue:
-				return DS2KEY_BLUE;
-			case kYellow:
-				return DS2KEY_YELLOW;
-			case kRed:
-				return DS2KEY_RED;
-			case kGreen:
-				return DS2KEY_GREEN;
-			default:
-				return 0;
-		}
-	}
-	Client *ClientArray[256] = {(Client*)NULL};
+namespace D2K
+{
+Client* g_client_array[256] = { nullptr };
 
-	bool ProfileData::isVirtualKey(std::string Button) {
-		if(Button.substr(0, D2K_COMMAND_LENGTH) != D2K_COMMAND)	//if button
-			return true;
-		//if command
-			return false;
+uint16_t BitToButton(int bit)
+{
+	switch(bit)
+	{
+	case KEYS::UP:
+		return DS2KEY_UP;
+	case KEYS::DOWN:
+		return DS2KEY_DOWN;
+	case KEYS::LEFT:
+		return DS2KEY_LEFT;
+	case KEYS::RIGHT:
+		return DS2KEY_RIGHT;
+	case KEYS::A:
+		return DS2KEY_A;
+	case KEYS::B:
+		return DS2KEY_B;
+	case KEYS::X:
+		return DS2KEY_X;
+	case KEYS::Y:
+		return DS2KEY_Y;
+	case KEYS::L:
+		return DS2KEY_L;
+	case KEYS::R:
+		return DS2KEY_R;
+	case KEYS::START:
+		return DS2KEY_START;
+	case KEYS::SELECT:
+		return DS2KEY_SELECT;
+	case KEYS::LID:
+		return DS2KEY_LID;
+	case KEYS::BLUE:
+		return DS2KEY_BLUE;
+	case KEYS::YELLOW:
+		return DS2KEY_YELLOW;
+	case KEYS::RED:
+		return DS2KEY_RED;
+	case KEYS::GREEN:
+		return DS2KEY_GREEN;
+	default:
+		return 0;
 	}
-	uint16_t ProfileData::StringToVirtualKey(std::string Button) {
-		if(isVirtualKey(Button))
-			return D2K::stoi(Button);
-		else
-			return 0;
-	}
-	//this currently is the same as D2K::itos
-	std::string ProfileData::VirtualKeyToString(uint16_t Button) {
-		std::stringstream stream;
-		stream << D2K::itos(Button);
+}
 
-		return stream.str();
-	}
-	ProfileData::ProfileData() {
-		Empty = "";
-	}
-	ProfileData::~ProfileData() {
+bool ProfileData::isVirtualKey(std::string button)
+{
+	if(button.substr(0, D2K_COMMAND_LENGTH) != D2K_COMMAND)	//if button
+		return true;
+	//if command
+		return false;
+}
+uint16_t ProfileData::StringToVirtualKey(std::string button)
+{
+	if(isVirtualKey(button))
+		return D2K::string_to_uint16_t(button);
+	else
+		return 0;
+}
+//this currently is the same as D2K::ltos
+std::string ProfileData::VirtualKeyToString(uint16_t button)
+{
+	std::stringstream stream;
+	stream << D2K::ltos(button);
 
-	}
-	std::string &ProfileData::GetStringReference(int Button) {
-		switch(Button) {
-			case kMouse:
-				return Mouse;
-			case kJoy:
-				return Joy;
-			case kA:
-				return A;
-			case kB:
-				return B;
-			case kX:
-				return X;
-			case kY:
-				return Y;
-			case kL:
-				return L;
-			case kR:
-				return R;
-			case kUp:
-				return Up;
-			case kDown:
-				return Down;
-			case kLeft:
-				return Left;
-			case kRight:
-				return Right;
-			case kStart:
-				return Start;
-			case kSelect:
-				return Select;
-			case kLid:
-				return Lid;
-			case kBlue:
-				return Blue;
-			case kYellow:
-				return Yellow;
-			case kRed:
-				return Red;
-			case kGreen:
-				return Green;
-			case kTouch00:
-				return Touch[0];
-			case kTouch01:
-				return Touch[1];
-			case kTouch02:
-				return Touch[2];
-			case kTouch03:
-				return Touch[3];
-			case kTouch04:
-				return Touch[4];
-			case kTouch05:
-				return Touch[5];
-			case kTouch06:
-				return Touch[6];
-			case kTouch07:
-				return Touch[7];
-			case kTouch08:
-				return Touch[8];
-			case kTouch09:
-				return Touch[9];
-			case kTouch10:
-				return Touch[10];
-			case kTouch11:
-				return Touch[11];
-			case kTouchString00:
-				return TouchString[0];
-			case kTouchString01:
-				return TouchString[1];
-			case kTouchString02:
-				return TouchString[2];
-			case kTouchString03:
-				return TouchString[3];
-			case kTouchString04:
-				return TouchString[4];
-			case kTouchString05:
-				return TouchString[5];
-			case kTouchString06:
-				return TouchString[6];
-			case kTouchString07:
-				return TouchString[7];
-			case kTouchString08:
-				return TouchString[8];
-			case kTouchString09:
-				return TouchString[9];
-			case kTouchString10:
-				return TouchString[10];
-			case kTouchString11:
-				return TouchString[11];
-			default:
-				return Empty;
-		}
-	}
+	return stream.str();
+}
+ProfileData::ProfileData()
+{
+	m_empty = "";
+}
+ProfileData::~ProfileData()
+{
 
-	std::string ProfileData::GetButtonString(int Button) {
-		if(isVirtualKey(GetStringReference(Button)))
-			return Key::GetString(GetVirtualKey(Button));
-		else
-			return GetCommand(Button);
+}
+std::string& ProfileData::GetStringReference(int button)
+{
+	switch(button)
+	{
+	case KEYS::MOUSE:
+		return m_mouse;
+	case KEYS::JOY:
+		return m_joy;
+	case KEYS::A:
+		return m_a;
+	case KEYS::B:
+		return m_b;
+	case KEYS::X:
+		return m_x;
+	case KEYS::Y:
+		return m_y;
+	case KEYS::L:
+		return m_l;
+	case KEYS::R:
+		return m_r;
+	case KEYS::UP:
+		return m_up;
+	case KEYS::DOWN:
+		return m_down;
+	case KEYS::LEFT:
+		return m_left;
+	case KEYS::RIGHT:
+		return m_right;
+	case KEYS::START:
+		return m_start;
+	case KEYS::SELECT:
+		return m_select;
+	case KEYS::LID:
+		return m_lid;
+	case KEYS::BLUE:
+		return m_blue;
+	case KEYS::YELLOW:
+		return m_yellow;
+	case KEYS::RED:
+		return m_red;
+	case KEYS::GREEN:
+		return m_green;
+	case KEYS::TOUCH_00:
+		return m_touch_command[0];
+	case KEYS::TOUCH_01:
+		return m_touch_command[1];
+	case KEYS::TOUCH_02:
+		return m_touch_command[2];
+	case KEYS::TOUCH_03:
+		return m_touch_command[3];
+	case KEYS::TOUCH_04:
+		return m_touch_command[4];
+	case KEYS::TOUCH_05:
+		return m_touch_command[5];
+	case KEYS::TOUCH_06:
+		return m_touch_command[6];
+	case KEYS::TOUCH_07:
+		return m_touch_command[7];
+	case KEYS::TOUCH_08:
+		return m_touch_command[8];
+	case KEYS::TOUCH_09:
+		return m_touch_command[9];
+	case KEYS::TOUCH_10:
+		return m_touch_command[10];
+	case KEYS::TOUCH_11:
+		return m_touch_command[11];
+	case KEYS::TOUCH_STRING_00:
+		return m_touch_string[0];
+	case KEYS::TOUCH_STRING_01:
+		return m_touch_string[1];
+	case KEYS::TOUCH_STRING_02:
+		return m_touch_string[2];
+	case KEYS::TOUCH_STRING_03:
+		return m_touch_string[3];
+	case KEYS::TOUCH_STRING_04:
+		return m_touch_string[4];
+	case KEYS::TOUCH_STRING_05:
+		return m_touch_string[5];
+	case KEYS::TOUCH_STRING_06:
+		return m_touch_string[6];
+	case KEYS::TOUCH_STRING_07:
+		return m_touch_string[7];
+	case KEYS::TOUCH_STRING_08:
+		return m_touch_string[8];
+	case KEYS::TOUCH_STRING_09:
+		return m_touch_string[9];
+	case KEYS::TOUCH_STRING_10:
+		return m_touch_string[10];
+	case KEYS::TOUCH_STRING_11:
+		return m_touch_string[11];
+	default:
+		return m_empty;
 	}
-	uint16_t ProfileData::GetValue(int Button) {
-		std::string &Pointer = GetStringReference(Button);
-		if(Pointer == "") {
-			return 0;
-		}
-		else {
-			return D2K::stoi(Pointer);
-		}
-	}
-	uint16_t ProfileData::GetVirtualKey(int Button) {
-		std::string &Pointer = GetStringReference(Button);
-		if(Pointer == "" || Pointer == "0") {
-			return 0;
-		}
-		else {
-			return StringToVirtualKey(Pointer);
-		}
-	}
+}
 
-	void ProfileData::SetVirtualKey(int Button, uint16_t Value) {
-		std::string &Pointer = GetStringReference(Button);
-		Pointer = VirtualKeyToString(Value);
-	}
+std::string ProfileData::GetButtonString(int button)
+{
+	if(isVirtualKey(GetStringReference(button)))
+		return Key::GetString(GetVirtualKey(button));
+	else
+		return GetCommand(button);
+}
+uint8_t ProfileData::GetValue8(int button)
+{
+	std::string& pointer = GetStringReference(button);
+	if(pointer == "")
+		return 0;
+	else
+		return D2K::string_to_uint8_t(pointer);
+}
+uint16_t ProfileData::GetValue(int button)
+{
+	std::string& pointer = GetStringReference(button);
+	if(pointer == "")
+		return 0;
+	else
+		return D2K::string_to_uint16_t(pointer);
+}
+uint16_t ProfileData::GetVirtualKey(int button)
+{
+	std::string& pointer = GetStringReference(button);
+	if(pointer == "" || pointer == "0")
+		return 0;
+	else
+		return StringToVirtualKey(pointer);
+}
 
-	void ProfileData::SetCommand(int Button, std::string Value) {
-		std::string &Pointer = GetStringReference(Button);
-		if(isVirtualKey(Value)) {
-			SetVirtualKey(Button, Key::GetNumber(Value.c_str()));
-		}
-		else {
-			Pointer = Value;
-		}
-	}
-	void ProfileData::SetTouchPos(uint8_t I, uint8_t X, uint8_t Y, uint8_t W, uint8_t H) {
-		if(I <= 11) {
-			TouchX[I] = X;
-			TouchY[I] = Y;
-			TouchW[I] = W;
-			TouchH[I] = H;
-		}
-	}
-	const std::string &ProfileData::GetCommand(int Button) {
-		std::string &Pointer = GetStringReference(Button);
-		if(!isVirtualKey(Pointer)) {
-			return Pointer;
-		}
-		return Empty;
-	}
+void ProfileData::SetVirtualKey(int button, uint16_t value)
+{
+	std::string& pointer = GetStringReference(button);
+	pointer = VirtualKeyToString(value);
+}
 
-	Client::Client() {
-		packet = UDP::DS2KeyPacket{0};
-		keys =
-		keysOld =
-		ghKeys =
-		ghKeysOld = 0;
+void ProfileData::SetCommand(int button, std::string value)
+{
+	std::string& Pointer = GetStringReference(button);
+	if(isVirtualKey(value))
+		SetVirtualKey(button, Key::GetNumber(value.c_str()));
+	else
+		Pointer = value;
+}
+void ProfileData::SetTouchPos(uint8_t i, uint8_t x, uint8_t y, uint8_t w, uint8_t h)
+{
+	if(i <= 11)
+	{
+		m_touch_x[i] = x;
+		m_touch_y[i] = y;
+		m_touch_w[i] = w;
+		m_touch_h[i] = h;
 	}
+}
+const std::string& ProfileData::GetCommand(int button)
+{
+	std::string& pointer = GetStringReference(button);
+	if(!isVirtualKey(pointer))
+		return pointer;
 
-	Client::~Client() { }
+	return m_empty;
+}
 
-	void Client::Scan(void) {
-		keysOld = keys;
-		keys = packet.Keys;
+Client::Client()
+{
+	m_packet = UDP::DS2KeyPacket{ 0 };
+	m_keys =
+	m_keys_old =
+	m_gh_keys =
+	m_gh_keys_old = 0;
+}
 
-		ghKeysOld = ghKeys;
-		ghKeys = packet.GHKeys;
-	}
+Client::~Client() {
+	
+}
 
-	ProfileData *Client::GetProfileDataPointer() {
-		return &Profile;
-	}
+void Client::Scan(void)
+{
+	m_keys_old = m_keys;
+	m_keys = m_packet.keys;
 
-	void Client::SetPacket(UDP::DS2KeyPacket p) {
-		packet = p;
-	}
+	m_gh_keys_old = m_gh_keys;
+	m_gh_keys = m_packet.gh_keys;
+}
 
-	void Client::SetTouchPos(uint8_t x, uint8_t y) {
-		packet.TouchX = x;
-		packet.TouchY = y;
-	}
+ProfileData* Client::GetProfileDataPointer()
+{
+	return &m_profile_data;
+}
 
-	void Client::Press(uint16_t key) {
-		packet.Keys |= key;
-	}
+void Client::SetPacket(UDP::DS2KeyPacket packet)
+{
+	m_packet = packet;
+}
 
-	void Client::Release(uint16_t key) {
-		packet.Keys &= ~key;
-	}
+void Client::SetTouchPos(uint8_t x, uint8_t y)
+{
+	m_packet.touch_x = x;
+	m_packet.touch_y = y;
+}
 
-	bool Client::Held(uint16_t key) {
-		return keys&key;
-	}
+void Client::Press(uint16_t key)
+{
+	m_packet.keys |= key;
+}
 
-	bool Client::Down(uint16_t key) {
-		return (keys &~ keysOld)&key;
-	}
+void Client::Release(uint16_t key)
+{
+	m_packet.keys &= ~key;
+}
 
-	bool Client::Up(uint16_t key) {
-		return ((keys ^ keysOld) & (~keys))&key;
-	}
+bool Client::Held(uint16_t key)
+{
+	return (m_keys&key) != 0;
+}
 
-	bool Client::Turbo(uint16_t key) {
-		return packet.KeysTurbo&key;
-	}
+bool Client::Down(uint16_t key)
+{
+	return ((m_keys &~ m_keys_old)&key) != 0;
+}
 
-	void Client::GHPress(uint8_t key) {
-		packet.GHKeys |= key;
-	}
+bool Client::Up(uint16_t key)
+{
+	return (((m_keys ^ m_keys_old) & (~m_keys))&key) != 0;
+}
 
-	void Client::GHRelease(uint8_t key) {
-		packet.GHKeys &= ~key;
-	}
+bool Client::Turbo(uint16_t key)
+{
+	return (m_packet.keys_turbo&key) != 0;
+}
 
-	bool Client::GHHeld(uint8_t key) {
-		return ghKeys&key;
-	}
+void Client::GHPress(uint8_t key)
+{
+	m_packet.gh_keys |= key != 0;
+}
 
-	bool Client::GHDown(uint8_t key) {
-		return (ghKeys &~ ghKeysOld)&key;
-	}
+void Client::GHRelease(uint8_t key)
+{
+	m_packet.gh_keys &= ~key != 0;
+}
 
-	bool Client::GHUp(uint8_t key) {
-		return ((ghKeys ^ ghKeysOld) & (~ghKeys))&key;
-	}
+bool Client::GHHeld(uint8_t key)
+{
+	return (m_gh_keys&key) != 0;
+}
 
-	bool Client::GHTurbo(uint8_t key) {
-		return packet.GHKeysTurbo&key;
-	}
+bool Client::GHDown(uint8_t key)
+{
+	return ((m_gh_keys &~ m_gh_keys_old)&key) != 0;
+}
 
-	uint8_t Client::GetX() {
-		return packet.TouchX;
-	}
+bool Client::GHUp(uint8_t key)
+{
+	return (((m_gh_keys ^ m_gh_keys_old) & (~m_gh_keys))&key) != 0;
+}
 
-	uint8_t Client::GetY() {
-		return packet.TouchY;
-	}
+bool Client::GHTurbo(uint8_t key)
+{
+	return (m_packet.gh_keys_turbo&key) != 0;
+}
 
-	uint8_t Client::GetProfileNumber() {
-		return packet.Profile;
-	}
+uint8_t Client::GetX()
+{
+	return m_packet.touch_x;
+}
+
+uint8_t Client::GetY()
+{
+	return m_packet.touch_y;
+}
+
+uint8_t Client::GetProfileNumber()
+{
+	return m_packet.profile;
+}
 }

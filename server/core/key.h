@@ -1,5 +1,4 @@
-#ifndef __KEY_H__
-#define __KEY_H__
+#pragma once
 
 #include <cstdint>
 #ifdef _WIN32
@@ -8,13 +7,6 @@
 #include <string.h>
 #include <X11/keysym.h>
 #endif//_WIN32
-
-//Windows Defines
-#ifdef _MSC_VER //less warnings from microsoft
-#define stricmp _stricmp
-#elif defined __linux__
-#define stricmp	strcasecmp
-#endif//_MSC_VER
 
 #define KEY_NONE 0
 
@@ -404,17 +396,18 @@
 #define KEY_PACKET KEY_NONE
 #endif//(_WIN32_WINNT >= 0x0500)
 
-namespace D2K {
-	namespace Key {
-		typedef struct keyEntry {
-			uint32_t value;
-			const char *text;
-		} keyEntry;
+namespace D2K
+{
+namespace Key
+{
+typedef struct KeyEntry
+{
+	uint32_t value;
+	const char* text;
+} KeyEntry;
 
-		//Functions
-		extern uint32_t GetNumber(const char *key);
-		extern char *GetString(uint32_t key);
-	}
+//Functions
+extern uint32_t GetNumber(const char* key);
+extern const char* GetString(uint32_t key);
 }
-
-#endif//__KEY_H__
+}
