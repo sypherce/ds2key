@@ -31,13 +31,13 @@ namespace D2K {
 
 	uint8_t string_to_uint8_t(std::string str) {
 		std::stringstream stream(str);
-		uint8_t return_value;
-		return !(stream >> return_value) ? 0 : return_value;
+		long return_value;
+		return !(stream >> return_value) ? 0 : (uint8_t)return_value;
 	}
 
 	uint16_t string_to_uint16_t(std::string str) {
 		std::stringstream stream(str);
-		uint16_t return_value;
-		return !(stream >> return_value) ? 0 : return_value;
+		long return_value;
+		return !(stream >> return_value) ? 0 : (uint16_t)return_value;
 	}
 }
