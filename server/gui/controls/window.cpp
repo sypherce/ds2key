@@ -9,10 +9,8 @@ Windows GUI
 #include "gui/resource.h"
 #include "window.h"
 
-namespace D2K
-{
-namespace GUI
-{
+namespace D2K {namespace GUI {
+
 Window::Window() : Object(0, 0, 0, 0)
 {
 	hwnd = NULL_VALUE;
@@ -119,5 +117,4 @@ void Window::SetText(std::string text)
 	locked = false;
 }
 
-}
-}
+}}//namespace D2K::GUI

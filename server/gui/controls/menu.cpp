@@ -1,6 +1,4 @@
-/*
-Windows GUI
-*/
+//Windows GUI
 
 #include <iostream>//std::cout, std::clog
 #include <windows.h>
@@ -9,10 +7,7 @@ Windows GUI
 #include "gui/resource.h"
 #include "menu.h"
 
-namespace D2K
-{
-namespace GUI
-{
+namespace D2K {namespace GUI {
 Menu::Menu() : Label("", 0, 0, 0, 0)
 {
 	hwnd = (HWND)CreateMenu();
@@ -48,5 +43,4 @@ bool Menu::Update()
 	return SetMenu(GetParentHWND(), (HMENU)hwnd);
 }
 
-}
-}
+}}//namespace D2K::GUI

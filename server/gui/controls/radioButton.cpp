@@ -8,10 +8,8 @@ Windows GUI
 #include "gui/resource.h"
 #include "radioButton.h"
 
-namespace D2K
-{
-namespace GUI
-{
+namespace D2K {namespace GUI {
+
 RadioButton::RadioButton(std::string text, int x, int y, int width, int height) : CheckButton(text, x, y, width, height) { }
 RadioButton::~RadioButton() { }
 bool RadioButton::Attach(Object *parentObject)
@@ -32,5 +30,4 @@ bool RadioButton::Attach(Object *parentObject)
 	return false;
 }
 
-}
-}
+}}//namespace D2K::GUI

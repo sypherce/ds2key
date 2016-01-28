@@ -8,10 +8,8 @@ Windows GUI
 #include "gui/resource.h"
 #include "edit.h"
 
-namespace D2K
-{
-namespace GUI
-{
+namespace D2K {namespace GUI {
+
 Edit::Edit(std::string text, int x, int y, int width, int height) : Label(text, x, y, width, height) { }
 Edit::~Edit() { }
 bool Edit::Attach(Object *parentObject)
@@ -33,5 +31,5 @@ bool Edit::Attach(Object *parentObject)
 	return false;
 }
 
-}
-}
+}}//namespace D2K::GUI
+

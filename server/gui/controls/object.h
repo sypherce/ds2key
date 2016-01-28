@@ -2,10 +2,8 @@
 
 #include <windows.h>
 
-namespace D2K
-{
-namespace GUI
-{
+namespace D2K {namespace GUI {
+
 class Object
 {
 public:
@@ -34,5 +32,4 @@ protected:
 	int ID;					//event ID
 };
 
-}
-}
+}}//namespace D2K::GUI

@@ -3,10 +3,8 @@
 #include <string>//std::string
 #include "label.h"
 
-namespace D2K
-{
-namespace GUI
-{
+namespace D2K {namespace GUI {
+
 class CheckButton : public Label
 {
 public:
@@ -16,5 +14,4 @@ public:
 	void SetChecked(bool checked);
 };
 
-}
-}
+}}//namespace D2K::GUI

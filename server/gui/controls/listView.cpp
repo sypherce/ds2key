@@ -8,10 +8,8 @@ Windows GUI
 #include "gui/resource.h"
 #include "listView.h"
 
-namespace D2K
-{
-namespace GUI
-{
+namespace D2K {namespace GUI {
+
 ListView::ListView(std::string text, int x, int y, int width, int height) : Label(text, x, y, width, height) { }
 ListView::~ListView() { }
 void ListView::SetHeaderVisible(bool visible)
@@ -121,6 +119,6 @@ void ListView::Append(std::string text, std::string text2)
 	ListView_SetItemText(hwnd, row, 1, (LPSTR)text2.c_str());//set second item text
 	locked = false;
 }
-}
 
-}
+}}//namespace D2K::GUI
+

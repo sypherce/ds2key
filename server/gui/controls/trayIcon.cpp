@@ -8,10 +8,8 @@ Windows GUI
 #include "gui/resource.h"
 #include "trayIcon.h"
 
-namespace D2K
-{
-namespace GUI
-{
+namespace D2K {namespace GUI {
+
 TrayIcon::TrayIcon(std::string text) : Label(text, 0, 0, 0, 0)
 {
 	ZeroMemory(&niData, sizeof(NOTIFYICONDATA));
@@ -49,5 +47,4 @@ void TrayIcon::Delete()
 	Shell_NotifyIcon(NIM_DELETE, &niData);
 }
 
-}
-}
+}}//namespace D2K::GUI

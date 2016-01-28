@@ -5,10 +5,7 @@
 #include "object.h"
 #include "label.h"
 
-namespace D2K
-{
-namespace GUI
-{
+namespace D2K {namespace GUI {
 class MenuItem : public Label
 {
 public:
@@ -19,5 +16,4 @@ public:
 	bool Attach(Object *parentObject);
 };
 
-}
-}
+}}//namespace D2K::GUI

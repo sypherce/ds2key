@@ -8,10 +8,8 @@ Windows GUI
 #include "gui/resource.h"
 #include "statusBar.h"
 
-namespace D2K
-{
-namespace GUI
-{
+namespace D2K {namespace GUI {
+
 StatusBar::StatusBar(std::string text, int x, int y, int width, int height) : Label(text, x, y, width, height) { }
 StatusBar::~StatusBar() { }
 bool StatusBar::Attach(Object *parentObject)
@@ -39,5 +37,4 @@ void StatusBar::SetText(std::string Text)
 	return;
 }
 
-}
-}
+}}//namespace D2K::GUI

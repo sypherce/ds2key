@@ -5,10 +5,8 @@
 #include "object.h"
 #include "label.h"
 
-namespace D2K
-{
-namespace GUI
-{
+namespace D2K {namespace GUI {
+
 class ComboButton : public Label
 {
 public:
@@ -20,5 +18,4 @@ public:
 	int GetSelection();
 };
 
-}
-}
+}}//namespace D2K::GUI

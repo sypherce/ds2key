@@ -1,10 +1,8 @@
 #include "checkButton.h"
 #include "../gui.h"
 
-namespace D2K
-{
-namespace GUI
-{
+namespace D2K {namespace GUI {
+
 CheckButton::CheckButton(std::string text, int x, int y, int width, int height) : Label(text, x, y, width, height) { }
 CheckButton::~CheckButton() { }
 bool CheckButton::Attach(Object *parentObject)
@@ -29,5 +27,4 @@ void CheckButton::SetChecked(bool checked)
 	SendMessage(hwnd, BM_SETCHECK, (WPARAM)checked, 0);
 }
 
-}
-}
+}}//namespace D2K::GUI

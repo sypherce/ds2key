@@ -5,10 +5,8 @@
 #include "object.h"
 #include "label.h"
 
-namespace D2K
-{
-namespace GUI
-{
+namespace D2K {namespace GUI {
+
 class StatusBar : public Label
 {
 public:
@@ -18,5 +16,4 @@ public:
 	void SetText(std::string Text);
 };
 
-}
-}
+}}//namespace D2K::GUI

@@ -5,10 +5,8 @@
 #include "object.h"
 #include "checkButton.h"
 
-namespace D2K
-{
-namespace GUI
-{
+namespace D2K {namespace GUI {
+
 class RadioButton : public CheckButton
 {
 public:
@@ -17,5 +15,4 @@ public:
 	bool Attach(Object *parentObject);
 };
 
-}
-}
+}}//namespace D2K::GUI

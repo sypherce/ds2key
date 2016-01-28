@@ -4,10 +4,8 @@
 #include <string>//std::string
 #include "object.h"
 
-namespace D2K
-{
-namespace GUI
-{
+namespace D2K {namespace GUI {
+
 class Label : public Object
 {
 public:
@@ -23,5 +21,4 @@ protected:
 	std::string Text;
 };
 
-}
-}
+}}//namespace D2K::GUI

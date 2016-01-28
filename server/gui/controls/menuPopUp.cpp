@@ -9,10 +9,7 @@ Windows GUI
 #include "gui/resource.h"
 #include "menuPopUp.h"
 
-namespace D2K
-{
-namespace GUI
-{
+namespace D2K {namespace GUI {
 MenuPopUp::MenuPopUp(std::string text) : Label(text, 0, 0, 0, 0)
 {
 	hwnd = (HWND)CreatePopupMenu();
@@ -43,5 +40,4 @@ bool MenuPopUp::Attach(Object *parentObject)
 	return false;
 }
 
-}
-}
+}}//namespace D2K::GUI

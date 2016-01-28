@@ -8,10 +8,8 @@ Windows GUI label control
 #include "gui/gui.h"
 #include "gui/resource.h"
 
-namespace D2K
-{
-namespace GUI
-{
+namespace D2K {namespace GUI {
+
 Label::Label(std::string text, int x, int y, int width, int height) : Object(x, y, width, height)
 {
 	Text = text;
@@ -64,5 +62,4 @@ long Label::SetStyle(long style)
 	return SetWindowLong(hwnd, GWL_STYLE, style);
 }
 
-}
-}
+}}//namespace D2K::GUI

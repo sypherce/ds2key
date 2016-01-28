@@ -8,10 +8,8 @@ Windows GUI
 #include "gui/resource.h"
 #include "comboButton.h"
 
-namespace D2K
-{
-namespace GUI
-{
+namespace D2K {namespace GUI {
+
 ComboButton::ComboButton(int x, int y, int width, int height) : Label("", x, y, width, height) { }
 ComboButton::~ComboButton() { }
 bool ComboButton::Attach(Object *parentObject)
@@ -49,5 +47,4 @@ int ComboButton::GetSelection()
 	return message;
 }
 
-}
-}
+}}//namespace D2K::GUI

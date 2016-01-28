@@ -6,10 +6,8 @@
 #include "object.h"
 #include "label.h"
 
-namespace D2K
-{
-namespace GUI
-{
+namespace D2K {namespace GUI {
+
 class TrayIcon : public Label
 {
 public:
@@ -23,5 +21,4 @@ private:
 	NOTIFYICONDATA niData;
 };
 
-}
-}
+}}//namespace D2K::GUI
