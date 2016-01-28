@@ -2,16 +2,13 @@
 
 #include <windows.h>
 
-namespace D2K
-{
-namespace Input
-{
+namespace D2K {namespace Input {
 #define MAX_JOYSTICKS 16
 #define	NUM_ANALOG	8		//Number of analog values which we will provide
 #define	NUM_DIGITAL	20		//Number of digital values which we will provide
 
 #pragma pack(push,1)		//All fields in structure must be byte aligned.
-typedef struct JOYSTICK_STATE
+typedef struct JOYSTICK_STATE final
 {
 	unsigned long	Signature;				//Signature to identify packet to PPJoy IOCTL
 	char			NumAnalog;				//Num of analog values we pass
@@ -21,7 +18,7 @@ typedef struct JOYSTICK_STATE
 } JOYSTICK_STATE;
 #pragma pack(pop)
 
-class PPJoy
+class PPJoy final
 {
 public:
 	PPJoy(int device);
@@ -38,5 +35,5 @@ private:
 	void ResetAxes();
 	void ResetButtons();
 };
-}
-}
+
+}}//namespace D2K::Input

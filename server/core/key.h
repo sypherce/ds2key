@@ -9,6 +9,7 @@
 #endif//_WIN32
 
 #define KEY_NONE 0
+#define KEY_JOY 0x100
 
 #ifdef _WIN32
 #define KEY_VOID KEY_NONE
@@ -396,18 +397,15 @@
 #define KEY_PACKET KEY_NONE
 #endif//(_WIN32_WINNT >= 0x0500)
 
-namespace D2K
-{
-namespace Key
-{
-typedef struct KeyEntry
+namespace D2K {namespace Key {
+
+typedef struct KeyEntry final
 {
 	uint32_t value;
 	const char* text;
 } KeyEntry;
 
-//Functions
 extern uint32_t GetNumber(const char* key);
 extern const char* GetString(uint32_t key);
-}
-}
+
+}}//namespace D2K::Key

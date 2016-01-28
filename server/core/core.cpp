@@ -24,8 +24,8 @@
 #include "client.h"
 #include "core.h"
 
-namespace D2K
-{
+namespace D2K{
+
 //used only once in code so far
 inline bool touchBetween(int x, int y, int x1, int y1, int x2, int y2)
 {
@@ -177,7 +177,7 @@ bool g_running = false;
 int Setup(int argc, char* argv[])
 {
 	bool non_blocking = true;//non-blocking == true
-	Config::load();
+	Config::Load();
 	UDP::Init();
 	Input::Init();
 	g_running = true;
@@ -190,21 +190,21 @@ int Setup(int argc, char* argv[])
 		}
 		else if(strcmp(argv[arg], "--console") == 0)		//setup console mode
 		{
-			#ifdef WINXP
+#ifdef WINXP
 			BOOL f = AllocConsole();
 			freopen("CONIN$", "r", stdin);
 			freopen("CONOUT$", "w", stdout);
 			freopen("CONOUT$", "w", stderr);
-			#endif
+#endif
 		}
 		else if(strncmp(argv[arg], "--port=", 7) == 0)		//assign a specific port
 		{
-			Config::set_port(atoi(&argv[arg][7]));
-			std::cout << "\nPort: " << Config::get_port() << "\n";
+			Config::SetConfigPort(atoi(&argv[arg][7]));
+			std::cout << "\nPort: " << Config::GetPort() << "\n";
 		}
 	}
 
-	return UDP::Connect(non_blocking, Config::get_port());			//startup networking
+	return UDP::Connect(non_blocking, Config::GetPort());			//startup networking
 }
 
 void Loop()
@@ -220,19 +220,19 @@ void Loop()
 			}
 			else if(Packet.type == UDP::PACKET::COMMAND_SETTINGS)								//looking for command settings
 			{
-				UDP::DS2KeySettingsPacket settings = UDP::DS2KeySettingsPacket{ 0 };
+				UDP::DS2KeySettingsPacket settings = UDP::DS2KeySettingsPacket{ };
 				if(g_client_array[Packet.profile] != nullptr)							//if profile is active
 				{
 					ProfileData* profile = g_client_array[Packet.profile]->GetProfileDataPointer();//make a pointer to the profile
 					settings.type = UDP::PACKET::COMMAND_SETTINGS;
-					for(int i = 0; i <= 11; i++)
+					for(int i = 0; i < UDP::SETTINGS_PACKET_MAX_BUTTONS; i++)
 					{
 						settings.x_1[i] = profile->m_touch_x[i];
 						settings.x_2[i] = profile->m_touch_w[i];
 						settings.y_1[i] = profile->m_touch_y[i];
 						settings.y_2[i] = profile->m_touch_h[i];
-						strncpy(settings.text[i], profile->m_touch_string[i].c_str(), 10);
-						settings.text[i][10] = 0;
+						strncpy(settings.text[i], profile->m_touch_string[i].c_str(), UDP::SETTINGS_PACKET_MAX_TEXT);
+						settings.text[i][UDP::SETTINGS_PACKET_MAX_TEXT] = 0;
 					}
 					UDP::SendCommandSettings(settings);											//send settings packet
 				}
@@ -242,7 +242,7 @@ void Loop()
 				if(g_client_array[Packet.profile] == nullptr)									//if profile not active,
 				{
 					g_client_array[Packet.profile] = new D2K::Client();							//create it
-					Config::load_profile(
+					Config::LoadProfile(
 						g_client_array[Packet.profile]->GetProfileDataPointer(), Packet.profile);	//then load it
 				}
 				D2K::Client* pClient = g_client_array[Packet.profile];								//then make a pointer to it
@@ -284,14 +284,14 @@ void Destroy()
 {
 	g_running = false;
 	for(int i = 0; i < 255; i++)
-		if(g_client_array[i] != NULL)
+		if(g_client_array[i] != nullptr)
 		{
 			delete(g_client_array[i]);
-			g_client_array[i] = NULL;
+			g_client_array[i] = nullptr;
 		}
 	UDP::DeInit();
 	Input::DeInit();
-	Config::save();
-}
+	Config::Save();
 }
 
+}//namespace D2K

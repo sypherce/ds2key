@@ -4,44 +4,47 @@
 #include <windows.h>
 #include <winuser.h>
 #include "PPJIoctl.h"
+#include "key.h"
 #elif defined __linux__
 #define NUM_DIGITAL 20
 #endif//_WIN32
 
 #include "input.h"
 
-namespace D2K
-{
-namespace Input
-{
+namespace D2K {namespace Input {
+
 #ifdef _WIN32
-PPJoy* ppjoy[MAX_JOYSTICKS] = { nullptr };
+PPJoy* g_ppjoy[MAX_JOYSTICKS] = { };
 #endif//_WIN32
 #ifdef __linux__
-Display* display;
+Display* g_display;
 #endif//__linux__
 
-void Init() {
+void Init()
+{
 #ifdef _WIN32
 	for (int i = 0; i < MAX_JOYSTICKS; i++)
 	{
-		ppjoy[i] = 0;
+		g_ppjoy[i] = 0;
 	}
 #endif//_WIN32
 #ifdef __linux__
-	display = XOpenDisplay(NULL);
+	g_display = XOpenDisplay(nullptr);
 #endif//__linux__
 }
 
-void DeInit() {
+void DeInit()
+{
 #ifdef _WIN32
 	for(int i = 0; i < MAX_JOYSTICKS; i++)
-		if(ppjoy[i] != 0) {
-			delete(ppjoy[i]);
-			ppjoy[i] = 0;
+		if(g_ppjoy[i] != 0)
+		{
+			delete(g_ppjoy[i]);
+			g_ppjoy[i] = 0;
 		}
 #endif//_WIN32
 }
+
 enum KeyState
 {
 	pressed = false,
@@ -81,11 +84,14 @@ bool IsExtended(uint16_t key)
 //@param state true = released, false = pressed
 void Keyboard(uint16_t key, KeyState state)
 {
-	static uint16_t s_press_counter[65535] = { 0 };//this allows 1 or more profile to press the same key, instead of going crazy
-	if((s_press_counter[key] == 0 && state == KeyState::pressed) || (s_press_counter[key] == 1 && state == KeyState::released)) {
+	static uint16_t s_press_counter[65535] = { };//this allows 1 or more profile to press the same key, instead of going crazy
+	if((s_press_counter[key] == 0 && state == KeyState::pressed)
+		|| (s_press_counter[key] == 1 && state == KeyState::released))
+	{
 #ifdef _WIN32
 		INPUT input;
-		if(key == VK_LBUTTON || key == VK_RBUTTON || key == VK_MBUTTON) {
+		if(key == VK_LBUTTON || key == VK_RBUTTON || key == VK_MBUTTON)
+		{
 			input.type = INPUT_MOUSE;
 			input.mi.dx = 0;
 			input.mi.dy = 0;
@@ -94,26 +100,30 @@ void Keyboard(uint16_t key, KeyState state)
 			input.mi.time = 0;
 			input.mi.dwFlags = MOUSEEVENTF_MOVE;
 
-			if(key == VK_LBUTTON) {
+			if(key == VK_LBUTTON)
+			{
 				if(state == KeyState::released)
 					input.mi.dwFlags |= MOUSEEVENTF_LEFTUP;
 				else
 					input.mi.dwFlags |= MOUSEEVENTF_LEFTDOWN;
 			}
-			else if(key == VK_RBUTTON) {
+			else if(key == VK_RBUTTON)
+			{
 				if(state == KeyState::released)
 					input.mi.dwFlags |= MOUSEEVENTF_RIGHTUP;
 				else
 					input.mi.dwFlags |= MOUSEEVENTF_RIGHTDOWN;
 			}
-			else if(key == VK_MBUTTON) {
+			else if(key == VK_MBUTTON)
+			{
 				if(state == KeyState::released)
 					input.mi.dwFlags |= MOUSEEVENTF_MIDDLEUP;
 				else
 					input.mi.dwFlags |= MOUSEEVENTF_MIDDLEDOWN;
 			}
 		}
-		else {
+		else
+		{
 			input.type = INPUT_KEYBOARD;
 			input.ki.wVk = key;
 			input.ki.dwFlags = KEYEVENTF_SCANCODE;
@@ -132,20 +142,23 @@ void Keyboard(uint16_t key, KeyState state)
 		SendInput(1, (LPINPUT)&input, sizeof(INPUT));
 #elif defined __linux__
 		int linux_state = (state != KeyState::released);//linux press values are the opposite of windows
-		int code = XKeysymToKeycode(display, key);
-		XTestFakeKeyEvent(display, code, linux_state, 0);
-		XFlush(display);
+		int code = XKeysymToKeycode(g_display, key);
+		XTestFakeKeyEvent(g_display, code, linux_state, 0);
+		XFlush(g_display);
 #endif//_WIN32
     }
 
     //doesn't check boundaries
-    if(state == false) s_press_counter[key]++;
-    else s_press_counter[key]--;
+    if(state == false)
+		s_press_counter[key]++;
+    else
+		s_press_counter[key]--;
 }
 
 //Moves cursor position
 //@param type true = absolute, false = relative
-void Mouse(bool type, signed long int x, signed long int y) {
+void Mouse(bool type, signed long int x, signed long int y)
+{
 #ifdef _WIN32
 	INPUT input;
 
@@ -163,50 +176,61 @@ void Mouse(bool type, signed long int x, signed long int y) {
 	unsigned int dummyInt;
 	unsigned int width, height;
 
-	int screen = DefaultScreen(display);
-	Window rootwindow = RootWindow(display, screen);
+	int screen = DefaultScreen(g_display);
+	Window rootwindow = RootWindow(g_display, screen);
 
-	if(XGetGeometry(display, rootwindow, &dummyWin, &dummyInt, &dummyInt, &width, &height, &dummyInt, &dummyInt)) {
+	if(XGetGeometry(g_display, rootwindow, &dummyWin, &dummyInt, &dummyInt, &width, &height, &dummyInt, &dummyInt))
+	{
 		if(type)
-			XTestFakeMotionEvent(display, screen, (m_x * width) / 65535, (m_y * height) / 65535, 0);
+			XTestFakeMotionEvent(g_display, screen, (m_x * width) / 65535, (m_y * height) / 65535, 0);
 		else
-			XTestFakeRelativeMotionEvent(display, m_x, m_y, 0);
+			XTestFakeRelativeMotionEvent(g_display, m_x, m_y, 0);
 	}
 #endif//_WIN32
 }
 
-void Press(uint16_t key, unsigned char joy) {
-	if(key >= 0x100 && key < 0x100 + NUM_DIGITAL) {//0x100 to (0x100 + NUM_DIGITAL) are virtual gamepad buttons
+void Press(uint16_t key, unsigned char joy)
+{
+	if(key >= KEY_JOY && key < KEY_JOY + NUM_DIGITAL) //virtual gamepad buttons
+	{
 #ifdef _WIN32
-		if(ppjoy[joy] == 0)
-			ppjoy[joy] = new PPJoy(joy);
-		ppjoy[joy]->SetButton(key - 0x100, 1);
-		ppjoy[joy]->Update();
+		if(g_ppjoy[joy] == 0)
+			g_ppjoy[joy] = new PPJoy(joy);
+		g_ppjoy[joy]->SetButton(key - KEY_JOY, 1);
+		g_ppjoy[joy]->Update();
 #endif//_WIN32
 	}
 	else
+	{
 		Keyboard(key, KeyState::pressed);
+	}
 }
 
-void Release(uint16_t key, unsigned char joy) {
-	if(key >= 0x100 && key < 0x100 + NUM_DIGITAL) {//0x100 to (0x100 + NUM_DIGITAL) are virtual gamepad buttons
+void Release(uint16_t key, unsigned char joy)
+{
+	if(key >= KEY_JOY && key < KEY_JOY + NUM_DIGITAL) //virtual gamepad buttons
+	{
 #ifdef _WIN32
-		if(ppjoy[joy] == 0)
-			ppjoy[joy] = new PPJoy(joy);
-		ppjoy[joy]->SetButton(key - 0x100, 0);
-		ppjoy[joy]->Update();
+		if(g_ppjoy[joy] == 0)
+			g_ppjoy[joy] = new PPJoy(joy);
+		g_ppjoy[joy]->SetButton(key - KEY_JOY, 0);
+		g_ppjoy[joy]->Update();
 #endif//_WIN32
 	}
 	else
+	{
 		Keyboard(key, KeyState::released);
+	}
 }
 
-void Move(signed long int x, signed long int y) {
+void Move(signed long int x, signed long int y)
+{
 	Mouse(false, x, y);
 }
 
-void MoveAbsolute(signed long int x, signed long int y) {
+void MoveAbsolute(signed long int x, signed long int y)
+{
 	Mouse(true, x, y);
 }
-}
-}
+
+}}//namespace D2K::Input

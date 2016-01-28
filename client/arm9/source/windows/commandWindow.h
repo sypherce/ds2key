@@ -1,20 +1,16 @@
-#ifndef __COMMANDINDOW_H__
-#define __COMMANDWINDOW_H__
+#pragma once
 
 #include "gui/window.h"
 
-namespace D2K {
-	namespace GUI {
-		namespace Command {
-			class WindowClass : public GUI::Window {
-				public:
-					WindowClass();
-					~WindowClass();
-					void SetVisible(bool visible);
-			};
-			extern GUI::Command::WindowClass *Window;
-		}
-	}
-}
+namespace D2K {namespace GUI {namespace Command {
 
-#endif//__COMMANDWINDOW_H__
+class WindowClass : public GUI::Window
+{
+	public:
+		WindowClass();
+		~WindowClass();
+		void SetVisible(bool visible);
+};
+extern GUI::Command::WindowClass *Window;
+
+}}}//namespace D2K::GUI::Command

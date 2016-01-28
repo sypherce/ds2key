@@ -8,11 +8,9 @@
 
 #include "key.h"
 
-namespace D2K
-{
-namespace Key
-{
-KeyEntry Table[] = {
+namespace D2K {namespace Key {
+
+KeyEntry g_table[] = {
 	{KEY_LBUTTON, "KEY_LBUTTON"},
 	{KEY_RBUTTON, "KEY_RBUTTON"},
 	{KEY_CANCEL, "KEY_CANCEL"},
@@ -188,26 +186,26 @@ KeyEntry Table[] = {
 	{KEY_OEM_CLEAR, "KEY_OEM_CLEAR"},
 	{KEY_SLASH, "KEY_SLASH"},
 	{KEY_BACKSLASH, "KEY_BACKSLASH"},
-	{0x100, "JOY_00"},
-	{0x101, "JOY_01"},
-	{0x102, "JOY_02"},
-	{0x103, "JOY_03"},
-	{0x104, "JOY_04"},
-	{0x105, "JOY_05"},
-	{0x106, "JOY_06"},
-	{0x107, "JOY_07"},
-	{0x108, "JOY_08"},
-	{0x109, "JOY_09"},
-	{0x10a, "JOY_10"},
-	{0x10b, "JOY_11"},
-	{0x10c, "JOY_12"},
-	{0x10d, "JOY_13"},
-	{0x10e, "JOY_14"},
-	{0x10f, "JOY_15"},
-	{0x110, "JOY_16"},
-	{0x111, "JOY_17"},
-	{0x112, "JOY_18"},
-	{0x113, "JOY_19"},
+	{KEY_JOY, "JOY_00"},
+	{KEY_JOY + 1, "JOY_01"},
+	{KEY_JOY + 2, "JOY_02"},
+	{KEY_JOY + 3, "JOY_03"},
+	{KEY_JOY + 4, "JOY_04"},
+	{KEY_JOY + 5, "JOY_05"},
+	{KEY_JOY + 6, "JOY_06"},
+	{KEY_JOY + 7, "JOY_07"},
+	{KEY_JOY + 8, "JOY_08"},
+	{KEY_JOY + 9, "JOY_09"},
+	{KEY_JOY + 10, "JOY_10"},
+	{KEY_JOY + 11, "JOY_11"},
+	{KEY_JOY + 12, "JOY_12"},
+	{KEY_JOY + 13, "JOY_13"},
+	{KEY_JOY + 14, "JOY_14"},
+	{KEY_JOY + 15, "JOY_15"},
+	{KEY_JOY + 16, "JOY_16"},
+	{KEY_JOY + 17, "JOY_17"},
+	{KEY_JOY + 18, "JOY_18"},
+	{KEY_JOY + 19, "JOY_19"},
 
 	{KEY_NONE, "KEY_NONE"},
 	{KEY_VOID, "KEY_VOID"}
@@ -215,7 +213,7 @@ KeyEntry Table[] = {
 
 uint32_t GetNumber(const char* key)
 {
-	for(KeyEntry* entry = Table; entry->value != KEY_VOID; entry++)
+	for(KeyEntry* entry = g_table; entry->value != KEY_VOID; entry++)
 	{
 		if(!strcmp(entry->text, key))
 			return entry->value;
@@ -226,14 +224,13 @@ uint32_t GetNumber(const char* key)
 
 const char* GetString(uint32_t key)
 {
-	for(KeyEntry* entry = Table; entry->value != KEY_VOID; entry++)
+	for(KeyEntry* entry = g_table; entry->value != KEY_VOID; entry++)
 	{
 		if(entry->value == key)
 			return entry->text;
 	}
 
-	return Table[KEY_NONE].text;
-}
-}
+	return g_table[KEY_NONE].text;
 }
 
+}}//namespace D2K::Input

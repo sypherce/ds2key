@@ -1,6 +1,5 @@
-/*
-	configuration loading/saving
-*/
+//configuration loading/saving
+
 #include <cstdio>
 #include <iostream>
 #include <errno.h>
@@ -10,58 +9,65 @@
 #include "common/misc.h"
 
 namespace D2K {
-	const char *DefaultIP = "0.0.0.0";
-	const char *DefaultProfile = "0";
-	const char *iniFilename = "/ds2key.ini";
 
-	namespace Config {
-		int Load() {
-			dictionary *ini = iniParser::load(iniFilename);
+const char *g_default_ip = "0.0.0.0";
+const char *g_default_profile = "0";
+const char *g_ini_filename = "/ds2key.ini";
 
-			//if we failed to open the ini file, setup defaults
-			if(ini == NULL) {
-				int err = errno;
-				std::clog << "Error (iniParser::load): " << strerror(err) << "\nFailed to open file: " << iniFilename << "\n";
-				UDP::SetRemoteIP(DefaultIP);
-				UDP::SetPort(D2K::DEFAULT_PORT);
-				UDP::SetProfile(DefaultProfile);
-				if(err == ENOENT)//if file doesn't exist
-					Save();
+namespace Config {
 
-				return err;
-			}
+int Load()
+{
+	dictionary *ini = iniParser::load(g_ini_filename);
 
-			//display file
-			iniParser::dump(ini, stderr);
+	//if we failed to open the ini file, setup defaults
+	if(ini == nullptr)
+	{
+		int err = errno;
+		std::clog << "Error (iniParser::load): " << strerror(err) << "\nFailed to open file: " << g_ini_filename << "\n";
+		UDP::SetRemoteIP(g_default_ip);
+		UDP::SetConfigPort(D2K::DEFAULT_PORT);
+		UDP::SetProfile(g_default_profile);
+		if(err == ENOENT)//if file doesn't exist
+			Save();
 
-			UDP::SetRemoteIP(iniParser::getstring(ini, (char*)"settings:ip", (char*)DefaultIP));
-			UDP::SetPort(iniParser::getstring(ini, (char*)"settings:port", (char*)D2K::ltoa(D2K::DEFAULT_PORT)));
-			UDP::SetProfile(iniParser::getstring(ini, (char*)"settings:profile", (char*)DefaultProfile));
-
-			//close file
-			iniParser::freedict(ini);
-
-			return 0;
-		}
-		int Save() {
-			FILE *file = fopen(iniFilename, "w");
-
-			//if we failed to open the ini file
-			if(file == NULL) {
-				int err = errno;
-				std::clog << "Error (fopen): " << strerror(err) << "\nFailed to open file: " << iniFilename << "\n";
-
-				return err;
-			}
-
-			fprintf(file, "[Settings]\n");
-			fprintf(file, "IP=%s\n", UDP::GetRemoteIPString().c_str());
-			fprintf(file, "Port=%u\n", UDP::GetPort());
-			fprintf(file, "Profile=%u\n", UDP::GetProfile());
-			fclose(file);
-			Load();//reload settings
-
-			return 0;
-		}
+		return err;
 	}
+
+	//display file
+	iniParser::dump(ini, stderr);
+
+	UDP::SetRemoteIP(iniParser::getstring(ini, (char*)"settings:ip", (char*)g_default_ip));
+	UDP::SetConfigPort(iniParser::getstring(ini, (char*)"settings:port", (char*)D2K::ltoa(D2K::DEFAULT_PORT)));
+	UDP::SetProfile(iniParser::getstring(ini, (char*)"settings:profile", (char*)g_default_profile));
+
+	//close file
+	iniParser::freedict(ini);
+
+	return 0;
 }
+int Save()
+{
+	FILE *file = fopen(g_ini_filename, "w");
+
+	//if we failed to open the ini file
+	if(file == nullptr)
+	{
+		int err = errno;
+		std::clog << "Error (fopen): " << strerror(err) << "\nFailed to open file: " << g_ini_filename << "\n";
+
+		return err;
+	}
+
+	fprintf(file, "[Settings]\n");
+	fprintf(file, "IP=%s\n", UDP::GetRemoteIPString().c_str());
+	fprintf(file, "Port=%u\n", UDP::GetPort());
+	fprintf(file, "Profile=%u\n", UDP::GetProfile());
+	fclose(file);
+	Load();//reload settings
+
+	return 0;
+}
+
+}//namespace Config
+}//namespace D2K

@@ -1,6 +1,5 @@
-/*
-	main - it all begins and ends here
-*/
+//main - it all begins and ends here
+
 #include "common/udp.h"
 #include "windows/mainWindow.h"
 #include "windows/keypadWindow.h"
@@ -13,7 +12,8 @@
 using namespace D2K;
 using namespace D2K::GUI;
 
-int main() {
+int main()
+{
 	if(D2K::Init())								//DS hardware setup
 		return 1;									//halt on error
 
@@ -24,14 +24,15 @@ int main() {
 	Main::Window = new Main::WindowClass();
 		Main::Window->SetVisible(true);				//show main window
 
-	while(true) {
+	while(true)
+	{
 		D2K::Loop();								//DS hardware loop
 
 		UDP::Update(keysHeld(),						//update ds2key network
 			Turbo::GetKeys(),
 			guitarGripKeysHeld() * guitarGripIsInserted(),
 			Turbo::GHGetKeys() * guitarGripIsInserted(),
-			(touchPosition*)NULL);
+			nullptr);
 
 		Main::Window->Update();						//update the window
 	}

@@ -17,10 +17,7 @@ typedef int SOCKET;
 #endif//_WIN32
 
 
-namespace D2K
-{
-namespace UDP
-{
+namespace D2K {namespace UDP {
 
 enum PACKET : uint8_t
 {
@@ -43,7 +40,7 @@ int Connect();
 int Connect(uint16_t port);
 //connect udp system
 //@param block false == blocking, true == non-blocking
-//@param port Port to connect to. if port = 0, SetPort assigns to default port 9501
+//@param port Port to connect to. if port = 0, SetConfigPort assigns to default port 9501
 //\return (0) if connected, else (errno)
 int Connect(bool non_blocking, uint16_t port);
 
@@ -76,9 +73,9 @@ std::string GetPortString();
 void SetRemoteIP(const std::string& text);
 void SetRemoteIP(unsigned long ip);
 
-void SetPort(const std::string& port);
-void SetPort(char* port);
-void SetPort(unsigned int port);
+void SetConfigPort(const std::string& port);
+void SetConfigPort(char* port);
+void SetConfigPort(unsigned int port);
 
 #ifdef D2KCLIENT
 //sends a command packet
@@ -104,6 +101,5 @@ DS2KeySettingsPacket GetCommandSettings();
 #else//D2KSERVER
 void SendCommandSettings(DS2KeySettingsPacket settings);
 #endif//D2KCLIENT
-}
-}
 
+}}//namespace D2K::UDP

@@ -5,9 +5,9 @@
 #include "common/misc.h"
 #include <sstream>	//std::stringstream
 
-namespace D2K
-{
-Client* g_client_array[256] = { nullptr };
+namespace D2K {
+
+Client* g_client_array[256] = { };
 
 uint16_t BitToButton(int bit)
 {
@@ -192,7 +192,7 @@ uint8_t ProfileData::GetValue8(int button)
 	else
 		return D2K::string_to_uint8_t(pointer);
 }
-uint16_t ProfileData::GetValue(int button)
+uint16_t ProfileData::GetValue16(int button)
 {
 	std::string& pointer = GetStringReference(button);
 	if(pointer == "")
@@ -225,7 +225,7 @@ void ProfileData::SetCommand(int button, std::string value)
 }
 void ProfileData::SetTouchPos(uint8_t i, uint8_t x, uint8_t y, uint8_t w, uint8_t h)
 {
-	if(i <= 11)
+	if(i < UDP::SETTINGS_PACKET_MAX_BUTTONS)
 	{
 		m_touch_x[i] = x;
 		m_touch_y[i] = y;
@@ -244,14 +244,15 @@ const std::string& ProfileData::GetCommand(int button)
 
 Client::Client()
 {
-	m_packet = UDP::DS2KeyPacket{ 0 };
+	m_packet = UDP::DS2KeyPacket{ };
 	m_keys =
 	m_keys_old =
 	m_gh_keys =
 	m_gh_keys_old = 0;
 }
 
-Client::~Client() {
+Client::~Client()
+{
 	
 }
 
@@ -354,4 +355,5 @@ uint8_t Client::GetProfileNumber()
 {
 	return m_packet.profile;
 }
-}
+
+}//namespace D2K

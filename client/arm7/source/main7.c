@@ -3,20 +3,24 @@
 
 volatile bool exitflag = false;
 
-void VblankHandler(void) {
+void VblankHandler(void)
+{
 	Wifi_Update();
 	resyncClock();//fixes libnds bug for 3DS
 }
 
-void VcountHandler() {
+void VcountHandler()
+{
 	inputGetAndSend();
 }
 
-void powerButtonCB() {
+void powerButtonCB()
+{
 	exitflag = true;
 }
 
-int main() {
+int main()
+{
 	readUserSettings();
 
 	irqInit();
@@ -39,7 +43,8 @@ int main() {
 	setPowerButtonCB(powerButtonCB);
 
 	// Keep the ARM7 mostly idle
-	while(!exitflag) {
+	while(!exitflag)
+	{
 		swiWaitForVBlank();
 	}
 	return 0;

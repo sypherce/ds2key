@@ -2,10 +2,8 @@
 
 #include <windows.h>
 
-namespace D2K
-{
-namespace Input
-{
+namespace D2K {namespace Input {
+
 // Define to use byte-size values for joystick axes, else dword size
 #undef UCHAR_AXES
 
@@ -47,7 +45,7 @@ namespace Input
 
 #define IOCTL_PPORTJOY_SET_FORCE		PPORTJOY_IOCTL (0x5)
 
-typedef struct JOYSTICK_CONFIG1
+typedef struct JOYSTICK_CONFIG1 final
 {
 	ULONG			Size;				// Number of bytes in this structure
 	ULONG			PortAddress;		// Base address for LPT port specified in LPTNumber
@@ -61,7 +59,7 @@ typedef struct JOYSTICK_CONFIG1
 
 // Structure to pass information about a joystick to add to the system. Callers should
 // fill all the fields of JOYSTICK_CONFIG1 except the PortAddress field.
-typedef struct JOYSTICK_ADD_DATA
+typedef struct JOYSTICK_ADD_DATA final
 {
 	JOYSTICK_CONFIG1	JoyData;		// Data for joystick to add
 	ULONG				Persistent;		// 1= automatically add joystick after reboot
@@ -69,13 +67,13 @@ typedef struct JOYSTICK_ADD_DATA
 
 // Structure to specify a joystick to delete. Callers should fill in the Size, JoyType,
 // UnitNumber and LPTNumber fields. Set all other fields to 0
-typedef struct JOYSTICK_DEL_DATA
+typedef struct JOYSTICK_DEL_DATA final
 {
 	JOYSTICK_CONFIG1	JoyData;		// Data for joystick to delete
 } JOYSTICK_DEL_DATA, *PJOYSTICK_DEL_DATA;
 
 // Structure to enumerate all the joysticks joysticks currently defined
-typedef struct JOYSTICK_ENUM_DATA
+typedef struct JOYSTICK_ENUM_DATA final
 {
 	ULONG				Count;			// Number of joystick currently defined	// No, num returned below
 	ULONG				Size;			// Size needed to enumerate all joysticks
@@ -84,7 +82,7 @@ typedef struct JOYSTICK_ENUM_DATA
 
 #define	JOYSTICK_STATE_V1	0x53544143
 
-typedef struct JOYSTICK_SET_STATE
+typedef struct JOYSTICK_SET_STATE final
 {
 	ULONG	Version;
 	UCHAR	Data[1];
@@ -92,13 +90,13 @@ typedef struct JOYSTICK_SET_STATE
 
 #define	JOYSTICK_FORCE_V1	0x21474f44
 
-typedef struct JOYSTICK_SET_FORCE
+typedef struct JOYSTICK_SET_FORCE final
 {
 	ULONG	Version;
 	UCHAR	Data[1];
 } JOYSTICK_SET_FORCE, *PJOYSTICK_SET_FORCE;
 
-typedef struct JOYSTICK_MAP
+typedef struct JOYSTICK_MAP final
 {
 	UCHAR		NumAxes;
 	UCHAR		NumButtons;
@@ -113,7 +111,7 @@ typedef struct JOYSTICK_MAP
 
 #define	JOYSTICK_MAP_V1	0x454E4F47
 
-typedef struct JOYSTICKMAP_HEADER
+typedef struct JOYSTICKMAP_HEADER final
 {
 	ULONG		Version;
 	UCHAR		MapScope;
@@ -124,5 +122,5 @@ typedef struct JOYSTICKMAP_HEADER
 	// Followed by
 	//JOYSTICK_MAP	MapData;
 } JOYSTICKMAP_HEADER, *PJOYSTICKMAP_HEADER;
-}
-}
+
+}}//namespace D2K::Input

@@ -7,8 +7,7 @@
 static const char* D2K_COMMAND = "*";
 static const int D2K_COMMAND_LENGTH = 1;
 
-namespace D2K
-{
+namespace D2K {
 static const uint16_t DS2KEY_A = (1 << (0));
 static const uint16_t DS2KEY_B = (1 << (1));
 static const uint16_t DS2KEY_SELECT = (1 << (2));
@@ -45,7 +44,7 @@ enum KEYS
 //probably not the best place for BitToButton
 extern uint16_t BitToButton(int bit);
 
-class ProfileData
+class ProfileData final
 {
 public:
 	ProfileData();
@@ -57,7 +56,7 @@ public:
 	//@return Human readable version of (Button)'s current setting. Example: KEY_A, EY_UP
 	std::string GetButtonString(int button);
 	uint8_t GetValue8(int button);
-	uint16_t GetValue(int button);
+	uint16_t GetValue16(int button);
 	uint16_t GetVirtualKey(int button);
 
 	void SetVirtualKey(int button, uint16_t value);
@@ -71,7 +70,7 @@ public:
 	//buttons
 	std::string m_up, m_down, m_left, m_right, m_a, m_b, m_x, m_y, m_l, m_r, m_start, m_select, m_lid;
 	//guitar grip buttons
-	std::string m_blue, m_yellow, m_red, m_green;//uint8_t?
+	std::string m_blue, m_yellow, m_red, m_green;
 	std::string m_empty;//this probably shouldn't be used but I don't know what to do
 	std::string m_touch_command[12];//Command
 	std::string m_touch_string[12];//String
@@ -87,7 +86,7 @@ private:
 };
 
 //Contains a client's current state
-class Client
+class Client final
 {
 public:
 	Client();
@@ -139,4 +138,5 @@ private:
 };
 
 extern Client* g_client_array[256];
-}
+
+}//namespace D2K
