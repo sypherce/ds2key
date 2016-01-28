@@ -5,9 +5,9 @@ namespace D2K {namespace GUI {
 
 Object::Object(uint8_t screen, GUI::Rect rect)
 {
-	Object::Screen = screen;
-	Object::Rect = rect;
-	Object::Status = OBJECT_STATUS::IDLE;
+	Object::m_screen = screen;
+	Object::m_rect = rect;
+	Object::m_status = OBJECT_STATUS::IDLE;
 	SetVisible(false);
 	Function = &GUI::VoidFunction;
 }
@@ -32,56 +32,56 @@ std::string Object::GetText()
 {
 	return "";
 }
-void Object::Clear(uint16_t c)
+void Object::Clear(uint16_t color)
 {
-	GUI::DrawFilledRect(Screen, Rect, c);
+	GUI::DrawFilledRect(m_screen, m_rect, color);
 }
 void Object::SetVisible(bool visible)
 {
 	GUI::SetUpdate(true);
 	Object::SetUpdate(true);
-	Object::Visible = visible;
+	Object::m_visible = visible;
 }
 void Object::SetStatus(uint8_t value)
 {
 	if(GetStatus() != value)
 	{
-		Status = value;
+		m_status = value;
 		SetUpdate(true);
 		Draw();///I think this line needs removed
 	}
 }
 uint8_t Object::GetStatus()
 {
-	return Status;
+	return m_status;
 }
 bool Object::IsVisible()
 {
-	return Visible;
+	return m_visible;
 }
 bool Object::IsClicked(uint8_t x, uint8_t y)
 {
-	return Rect.PointIntersect(x, y);
+	return m_rect.PointIntersect(x, y);
 }
 void Object::SetUpdate(bool value)
 {
-	Update = value;
+	m_update = value;
 }
 bool Object::IsUpdated()
 {
-	return Update;
+	return m_update;
 }
 bool Object::GetScreen()
 {
-	return Screen;
+	return m_screen;
 }
 D2K::GUI::Rect Object::GetRect()
 {
-	return Object::Rect;
+	return Object::m_rect;
 }
 void Object::SetRect(GUI::Rect rect)
 {
-	Object::Rect = rect;
+	Object::m_rect = rect;
 }
 
 }}//namespace D2K::GUI

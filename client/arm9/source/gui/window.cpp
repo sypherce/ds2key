@@ -8,28 +8,28 @@ namespace D2K {namespace GUI {
 
 Window::Window()
 {
-	Screen = 0;
+	m_screen = 0;
 	SetVisible(false);
 }
 Window::~Window()
 {
-	for(unsigned int i = 0; i < Objects.size(); i++)
+	for(unsigned int i = 0; i < m_objects.size(); i++)
 	{
-		delete Objects.at(i);
+		delete m_objects.at(i);
 	}
-	Objects.clear();
+	m_objects.clear();
 }
-void Window::AppendObject(Object *object)
+void Window::AppendObject(Object* object)
 {
-	Objects.push_back(object);
+	m_objects.push_back(object);
 }
-void Window::RemoveObject(Object *object)
+void Window::RemoveObject(Object* object)
 {
-	for(unsigned int i = 0; i < Objects.size(); i++)
+	for(unsigned int i = 0; i < m_objects.size(); i++)
 	{
-		if(Objects.at(i) == object)
+		if(m_objects.at(i) == object)
 		{
-			Objects.erase(Objects.begin()+i);
+			m_objects.erase(m_objects.begin()+i);
 			delete object;
 		}
 	}
@@ -38,27 +38,27 @@ void Window::RemoveObject(Object *object)
 void Window::Draw()
 {
 	if(GUI::IsUpdated())									//if gui was set to update
-		GUI::ClearScreen(Screen, Color[colorBackground]);	//clear everything
-	for(unsigned int i = 0; i < Objects.size(); i++)		//for each child
+		GUI::ClearScreen(m_screen, Color[COLOR_BACKGROUND]);	//clear everything
+	for(unsigned int i = 0; i < m_objects.size(); i++)		//for each child
 	{
-		if(Objects.at(i)->Draw())							//draw if object AND/OR gui updated
-			if(EMULATOR) std::cout << "button draw " << i << ": " << Objects.at(i)->GetText() << "\n";
+		if(m_objects.at(i)->Draw())							//draw if object AND/OR gui updated
+			if(EMULATOR) std::cout << "button draw " << i << ": " << m_objects.at(i)->GetText() << "\n";
 	}
 	GUI::SetUpdate(false);									//gui all updated
 }
 void Window::SetVisible(bool visible)
 {
-	Window::Visible = visible;								//window is now set
-	for(unsigned int i = 0; i < Objects.size(); i++)		//for each child
+	Window::m_visible = visible;								//window is now set
+	for(unsigned int i = 0; i < m_objects.size(); i++)		//for each child
 	{
-		Objects.at(i)->SetVisible(visible);					//set the same
+		m_objects.at(i)->SetVisible(visible);					//set the same
 	}
 }
 bool Window::IsVisible()
 {
-	return Visible;
+	return m_visible;
 }
-bool Window::CheckClick(Object *object)
+bool Window::CheckClick(Object* object)
 {
 	if(object)
 	{
@@ -101,11 +101,11 @@ bool Window::CheckClick(Object *object)
 bool Window::Update()
 {
 	Draw();
-	for(unsigned int i = 0; i < Objects.size(); i++)
+	for(unsigned int i = 0; i < m_objects.size(); i++)
 	{
-		if(CheckClick(Objects.at(i)))
+		if(CheckClick(m_objects.at(i)))
 		{
-			Objects.at(i)->Function();//execute the function
+			m_objects.at(i)->Function();//execute the function
 			return true;
 		}
 	}

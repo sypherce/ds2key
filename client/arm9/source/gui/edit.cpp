@@ -14,12 +14,12 @@ bool Edit::Draw()
 		return false;
 	if(IsVisible())
 	{
-		Clear(Color[colorEditBackground]);
+		Clear(Color[COLOR_EDIT_BACKGROUND]);
 		if(GetStatus() == OBJECT_STATUS::HELD)
-			DrawRect(GetScreen(), GetRect(), Color[colorEditOutlineActive]);
+			DrawRect(GetScreen(), GetRect(), Color[COLOR_EDIT_OUTLINE_ACTIVE]);
 		else
-			DrawRect(GetScreen(), GetRect(), Color[colorEditOutline]);
-		DrawString(GetScreen(), GetText(), GetRect().GetX()+3, GetRect().GetY()+3, Color[colorEditText]);
+			DrawRect(GetScreen(), GetRect(), Color[COLOR_EDIT_OUTLINE]);
+		DrawString(GetScreen(), GetText(), GetRect().GetX()+3, GetRect().GetY()+3, Color[COLOR_EDIT_TEXT]);
 	}
 
 	return true;

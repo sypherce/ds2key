@@ -20,62 +20,62 @@ extern void button10Function();
 extern void button11Function();
 extern void button12Function();
 
-WindowClass *Window;
-Label *label1;
-Button *Button1;
-Button *Button2;
-Button *Button3;
-Button *Button4;
-Button *Button5;
-Button *Button6;
-Button *Button7;
-Button *Button8;
-Button *Button9;
-Button *Button10;
-Button *Button11;
-Button *Button12;
+WindowClass* g_window;
+Label* label_1;
+Button* button_1;
+Button* button_2;
+Button* button_3;
+Button* button_4;
+Button* button_5;
+Button* button_6;
+Button* button_7;
+Button* button_8;
+Button* button_9;
+Button* button_10;
+Button* button_11;
+Button* button_12;
 
 //public
 WindowClass::WindowClass() : Window()
 {
-	Screen = 0;
+	m_screen = 0;
 	int x = 16;
 	int y = 24;
 	int w = 64;
 	int h = 24;
 	int gap = 12;
 
-	AppendObject(label1	= new Label(Screen, Rect(24,0+3,128,10), "IPs"));
+	AppendObject(label_1	= new Label(m_screen, Rect(24,0+3,128,10), "IPs"));
 
-	AppendObject(Button1 = new Button(Screen, Rect(x,y,w,h), "Command 1", &button1Function));
+	AppendObject(button_1 = new Button(m_screen, Rect(x,y,w,h), "Command 1", &button1Function));
 	y += h + gap;
-	AppendObject(Button2 = new Button(Screen, Rect(x,y,w,h), "Command 2", &button2Function));
+	AppendObject(button_2 = new Button(m_screen, Rect(x,y,w,h), "Command 2", &button2Function));
 	y += h + gap;
-	AppendObject(Button3 = new Button(Screen, Rect(x,y,w,h), "Command 3", &button3Function));
+	AppendObject(button_3 = new Button(m_screen, Rect(x,y,w,h), "Command 3", &button3Function));
 	y += h + gap;
-	AppendObject(Button4 = new Button(Screen, Rect(x,y,w,h), "Command 4", &button4Function));
-
-	x = x + w + gap;
-	y = 24;
-
-	AppendObject(Button5 = new Button(Screen, Rect(x,y,w,h), "Command 5", &button5Function));
-	y += h + gap;
-	AppendObject(Button6 = new Button(Screen, Rect(x,y,w,h), "Command 6", &button6Function));
-	y += h + gap;
-	AppendObject(Button7 = new Button(Screen, Rect(x,y,w,h), "Command 7", &button7Function));
-	y += h + gap;
-	AppendObject(Button8 = new Button(Screen, Rect(x,y,w,h), "Command 8", &button8Function));
+	AppendObject(button_4 = new Button(m_screen, Rect(x,y,w,h), "Command 4", &button4Function));
 
 	x = x + w + gap;
 	y = 24;
 
-	AppendObject(Button9 = new Button(Screen, Rect(x,y,w,h), "Command 9", &button9Function));
+	AppendObject(button_5 = new Button(m_screen, Rect(x,y,w,h), "Command 5", &button5Function));
 	y += h + gap;
-	AppendObject(Button10 = new Button(Screen, Rect(x,y,w,h), "Command 10", &button10Function));
+	AppendObject(button_6 = new Button(m_screen, Rect(x,y,w,h), "Command 6", &button6Function));
 	y += h + gap;
-	AppendObject(Button11 = new Button(Screen, Rect(x,y,w,h), "Command 11", &button11Function));
+	AppendObject(button_7 = new Button(m_screen, Rect(x,y,w,h), "Command 7", &button7Function));
 	y += h + gap;
-	AppendObject(Button12 = new Button(Screen, Rect(x,y,w,h), "Command 12", &button12Function));
+	AppendObject(button_8 = new Button(m_screen, Rect(x,y,w,h), "Command 8", &button8Function));
+
+	x = x + w + gap;
+	y = 24;
+
+	AppendObject(button_9 = new Button(m_screen, Rect(x,y,w,h), "Command 9", &button9Function));
+	y += h + gap;
+	AppendObject(button_10 = new Button(m_screen, Rect(x,y,w,h), "Command 10", &button10Function));
+	y += h + gap;
+	AppendObject(button_11 = new Button(m_screen, Rect(x,y,w,h), "Command 11", &button11Function));
+	y += h + gap;
+	AppendObject(button_12 = new Button(m_screen, Rect(x,y,w,h), "Command 12", &button12Function));
 }
 WindowClass::~WindowClass() { }
 bool WindowClass::Update()

@@ -24,7 +24,7 @@ char* GetTime()
 {
 	static char timeChar[12];
 	time_t unixTime = time(0);
-	struct tm* timeStruct = gmtime((const time_t *)&unixTime);
+	struct tm* timeStruct = gmtime((const time_t*)&unixTime);
 	int hour = timeStruct->tm_hour;
 	if(hour == 0)
 		hour = 12;
@@ -101,7 +101,7 @@ bool Init()
 	videoSetMode(MODE_5_2D);
 	vramSetBankA(VRAM_A_MAIN_BG_0x06000000);
 	int bg3 = bgInit(3, BgType_Bmp16, BgSize_B16_256x256, 0,0);
-	D2K::GUI::Screen[0] = bgGetGfxPtr(bg3);
+	D2K::GUI::g_screen[0] = bgGetGfxPtr(bg3);
 	lcdSwap();
 
 	consoleClear();

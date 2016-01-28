@@ -9,7 +9,9 @@ class WindowClass : public GUI::Window
 public:
 	WindowClass();
 	~WindowClass();
+
 	bool Update();
 };
-extern GUI::Main::WindowClass *Window;
+extern GUI::Main::WindowClass* g_window;
+
 }}}//namespace D2K::GUI::Main

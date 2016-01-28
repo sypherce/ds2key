@@ -10,15 +10,15 @@
 
 namespace D2K {
 
-const char *g_default_ip = "0.0.0.0";
-const char *g_default_profile = "0";
-const char *g_ini_filename = "/ds2key.ini";
+const char* g_default_ip = "0.0.0.0";
+const char* g_default_profile = "0";
+const char* g_ini_filename = "/ds2key.ini";
 
 namespace Config {
 
 int Load()
 {
-	dictionary *ini = iniParser::load(g_ini_filename);
+	dictionary* ini = iniParser::load(g_ini_filename);
 
 	//if we failed to open the ini file, setup defaults
 	if(ini == nullptr)
@@ -48,7 +48,7 @@ int Load()
 }
 int Save()
 {
-	FILE *file = fopen(g_ini_filename, "w");
+	FILE* file = fopen(g_ini_filename, "w");
 
 	//if we failed to open the ini file
 	if(file == nullptr)

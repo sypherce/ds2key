@@ -18,11 +18,11 @@ int main()
 		return 1;									//halt on error
 
 	//setup our windows
-	Keypad::Window = new Keypad::WindowClass();
-	Command::Window = new Command::WindowClass();
-	Turbo::Window = new Turbo::WindowClass();
-	Main::Window = new Main::WindowClass();
-		Main::Window->SetVisible(true);				//show main window
+	Keypad::g_window = new Keypad::WindowClass();
+	Command::g_window = new Command::WindowClass();
+	Turbo::g_window = new Turbo::WindowClass();
+	Main::g_window = new Main::WindowClass();
+	Main::g_window->SetVisible(true);				//show main window
 
 	while(true)
 	{
@@ -34,14 +34,14 @@ int main()
 			Turbo::GHGetKeys() * guitarGripIsInserted(),
 			nullptr);
 
-		Main::Window->Update();						//update the window
+		Main::g_window->Update();						//update the window
 	}
 
 	//delete windows
-	delete Turbo::Window;
-	delete Command::Window;
-	delete Keypad::Window;
-	delete Main::Window;
+	delete Turbo::g_window;
+	delete Command::g_window;
+	delete Keypad::g_window;
+	delete Main::g_window;
 
 	UDP::DeInit();	//disconnect network
 	Config::Save();	//save settings

@@ -5,7 +5,7 @@
 
 namespace D2K {namespace GUI {
 
-u16 *Screen[2];
+u16* g_screen[2];
 bool Update = false;
 uint16_t Color[colorMax];
 void VoidFunction() { }
@@ -28,17 +28,17 @@ void DrawFastHorizontleLine(uint8_t screen, uint8_t x, uint8_t y, uint8_t w, uin
 		w = SCREEN_WIDTH - x;
 	if(w == 0)
 		return;
-	dmaFillHalfWords(c, &GUI::Screen[screen][x + (y * SCREEN_WIDTH)], w * 2);
+	dmaFillHalfWords(c, &GUI::g_screen[screen][x + (y * SCREEN_WIDTH)], w * 2);
 }
 
 void SetPixel(uint8_t screen, uint8_t x, uint8_t y, uint16_t c)
 {
 	if(y < SCREEN_HEIGHT)//if we're drawing on screen
-		GUI::Screen[screen][x + (y * SCREEN_WIDTH)] = c;
+		GUI::g_screen[screen][x + (y * SCREEN_WIDTH)] = c;
 }
 void ClearScreen(uint8_t screen, uint16_t c)
 {
-	dmaFillHalfWords(c, GUI::Screen[screen], SCREEN_WIDTH * SCREEN_HEIGHT * 2);
+	dmaFillHalfWords(c, GUI::g_screen[screen], SCREEN_WIDTH * SCREEN_HEIGHT * 2);
 }
 void DrawRect(uint8_t screen, GUI::Rect rect, uint16_t c)
 {

@@ -24,84 +24,84 @@ extern void CheckButtonYellowFunction();
 extern void CheckButtonRedFunction();
 extern void CheckButtonGreenFunction();
 
-WindowClass *Window;
-Label *LabelTitle;
-CheckButton *CheckButtonL;
-CheckButton *CheckButtonR;
-CheckButton *CheckButtonLeft;
-CheckButton *CheckButtonRight;
-CheckButton *CheckButtonUp;
-CheckButton *CheckButtonDown;
-CheckButton *CheckButtonA;
-CheckButton *CheckButtonB;
-CheckButton *CheckButtonX;
-CheckButton *CheckButtonY;
-CheckButton *CheckButtonStart;
-CheckButton *CheckButtonSelect;
-CheckButton *CheckButtonEnable;
-CheckButton *CheckButtonBlue;
-CheckButton *CheckButtonYellow;
-CheckButton *CheckButtonRed;
-CheckButton *CheckButtonGreen;
+WindowClass* g_window;
+Label* label_title;
+CheckButton* check_button_l;
+CheckButton* check_button_r;
+CheckButton* check_button_left;
+CheckButton* check_button_right;
+CheckButton* check_button_up;
+CheckButton* check_button_down;
+CheckButton* check_button_a;
+CheckButton* check_button_b;
+CheckButton* check_button_x;
+CheckButton* check_button_y;
+CheckButton* check_button_start;
+CheckButton* check_button_select;
+CheckButton* check_button_enable;
+CheckButton* check_button_blue;
+CheckButton* check_button_yellow;
+CheckButton* check_button_red;
+CheckButton* check_button_green;
 
 //public
 WindowClass::WindowClass() : Window()
 {
-	Screen = 0;
+	m_screen = 0;
 
-	AppendObject(LabelTitle	= new Label(Screen, Rect(24,0+3,128,10), "Turbo Settings"));
+	AppendObject(label_title	= new Label(m_screen, Rect(24,0+3,128,10), "Turbo Settings"));
 				
-	AppendObject(CheckButtonL = new CheckButton(Screen, Rect(39,39,10,10), "L", &CheckButtonLFunction));
-	AppendObject(CheckButtonR = new CheckButton(Screen, Rect(205,40,10,10), "R", &CheckButtonRFunction));
+	AppendObject(check_button_l = new CheckButton(m_screen, Rect(39,39,10,10), "L", &CheckButtonLFunction));
+	AppendObject(check_button_r = new CheckButton(m_screen, Rect(205,40,10,10), "R", &CheckButtonRFunction));
 
-	AppendObject(CheckButtonLeft = new CheckButton(Screen, Rect(9,95,10,10), "Left", &CheckButtonLeftFunction));
-	AppendObject(CheckButtonRight = new CheckButton(Screen, Rect(69,95,10,10), "Right", &CheckButtonRightFunction));
-	AppendObject(CheckButtonUp = new CheckButton(Screen, Rect(39,80,10,10), "Up", &CheckButtonUpFunction));
-	AppendObject(CheckButtonDown = new CheckButton(Screen, Rect(39,110,10,10), "Down", &CheckButtonDownFunction));
+	AppendObject(check_button_left = new CheckButton(m_screen, Rect(9,95,10,10), "Left", &CheckButtonLeftFunction));
+	AppendObject(check_button_right = new CheckButton(m_screen, Rect(69,95,10,10), "Right", &CheckButtonRightFunction));
+	AppendObject(check_button_up = new CheckButton(m_screen, Rect(39,80,10,10), "Up", &CheckButtonUpFunction));
+	AppendObject(check_button_down = new CheckButton(m_screen, Rect(39,110,10,10), "Down", &CheckButtonDownFunction));
 
-	AppendObject(CheckButtonA = new CheckButton(Screen, Rect(235,95,10,10), "A", &CheckButtonAFunction));
-	AppendObject(CheckButtonB = new CheckButton(Screen, Rect(205,110,10,10), "B", &CheckButtonBFunction));
-	AppendObject(CheckButtonX = new CheckButton(Screen, Rect(205,80,10,10), "X", &CheckButtonXFunction));
-	AppendObject(CheckButtonY = new CheckButton(Screen, Rect(175,95,10,10), "Y", &CheckButtonYFunction));
+	AppendObject(check_button_a = new CheckButton(m_screen, Rect(235,95,10,10), "A", &CheckButtonAFunction));
+	AppendObject(check_button_b = new CheckButton(m_screen, Rect(205,110,10,10), "B", &CheckButtonBFunction));
+	AppendObject(check_button_x = new CheckButton(m_screen, Rect(205,80,10,10), "X", &CheckButtonXFunction));
+	AppendObject(check_button_y = new CheckButton(m_screen, Rect(175,95,10,10), "Y", &CheckButtonYFunction));
 
-	AppendObject(CheckButtonStart = new CheckButton(Screen, Rect(145,115,10,10), "Start", &CheckButtonStartFunction));
-	AppendObject(CheckButtonSelect = new CheckButton(Screen, Rect(85,115,10,10), "Select", &CheckButtonSelectFunction));
-	AppendObject(CheckButtonEnable = new CheckButton(Screen, Rect(100,35,10,10), "Enable", &CheckButtonEnableFunction));
+	AppendObject(check_button_start = new CheckButton(m_screen, Rect(145,115,10,10), "Start", &CheckButtonStartFunction));
+	AppendObject(check_button_select = new CheckButton(m_screen, Rect(85,115,10,10), "Select", &CheckButtonSelectFunction));
+	AppendObject(check_button_enable = new CheckButton(m_screen, Rect(100,35,10,10), "Enable", &CheckButtonEnableFunction));
 
 				
-	AppendObject(CheckButtonBlue = new CheckButton(Screen, Rect(40,130,10,10), "Blue", &CheckButtonBlueFunction));
-	AppendObject(CheckButtonYellow = new CheckButton(Screen, Rect(90,130,10,10), "Yellow", &CheckButtonYellowFunction));
-	AppendObject(CheckButtonRed = new CheckButton(Screen, Rect(140,130,10,10), "Red", &CheckButtonRedFunction));
-	AppendObject(CheckButtonGreen = new CheckButton(Screen, Rect(190,130,10,10), "Green", &CheckButtonGreenFunction));
+	AppendObject(check_button_blue = new CheckButton(m_screen, Rect(40,130,10,10), "Blue", &CheckButtonBlueFunction));
+	AppendObject(check_button_yellow = new CheckButton(m_screen, Rect(90,130,10,10), "Yellow", &CheckButtonYellowFunction));
+	AppendObject(check_button_red = new CheckButton(m_screen, Rect(140,130,10,10), "Red", &CheckButtonRedFunction));
+	AppendObject(check_button_green = new CheckButton(m_screen, Rect(190,130,10,10), "Green", &CheckButtonGreenFunction));
 }
 WindowClass::~WindowClass() { }
 uint16_t currentTurboKeys = 0;
 void UpdateTurboKeys()
 {
 	currentTurboKeys = 0;
-	if(CheckButtonL->GetChecked())
+	if(check_button_l->GetChecked())
 		currentTurboKeys |= KEY_L;
-	if(CheckButtonR->GetChecked())
+	if(check_button_r->GetChecked())
 		currentTurboKeys |= KEY_R;
-	if(CheckButtonLeft->GetChecked())
+	if(check_button_left->GetChecked())
 		currentTurboKeys |= KEY_LEFT;
-	if(CheckButtonRight->GetChecked())
+	if(check_button_right->GetChecked())
 		currentTurboKeys |= KEY_RIGHT;
-	if(CheckButtonUp->GetChecked())
+	if(check_button_up->GetChecked())
 		currentTurboKeys |= KEY_UP;
-	if(CheckButtonDown->GetChecked())
+	if(check_button_down->GetChecked())
 		currentTurboKeys |= KEY_DOWN;
-	if(CheckButtonA->GetChecked())
+	if(check_button_a->GetChecked())
 		currentTurboKeys |= KEY_A;
-	if(CheckButtonB->GetChecked())
+	if(check_button_b->GetChecked())
 		currentTurboKeys |= KEY_B;
-	if(CheckButtonX->GetChecked())
+	if(check_button_x->GetChecked())
 		currentTurboKeys |= KEY_X;
-	if(CheckButtonY->GetChecked())
+	if(check_button_y->GetChecked())
 		currentTurboKeys |= KEY_Y;
-	if(CheckButtonStart->GetChecked())
+	if(check_button_start->GetChecked())
 		currentTurboKeys |= KEY_START;
-	if(CheckButtonSelect->GetChecked())
+	if(check_button_select->GetChecked())
 		currentTurboKeys |= KEY_SELECT;
 }
 uint16_t CheckTurboKey(uint16_t a)
@@ -114,7 +114,7 @@ uint16_t CheckTurboKey(uint16_t a)
 uint16_t GetKeys()
 {
 	uint16_t keys = 0;
-	if(CheckButtonEnable->GetChecked() == false)
+	if(check_button_enable->GetChecked() == false)
 		return 0;
 	UpdateTurboKeys();
 	keys |= CheckTurboKey(KEY_A);
@@ -137,13 +137,13 @@ uint8_t currentGHTurboKeys = 0;
 void GHUpdateTurboKeys()
 {
 	currentGHTurboKeys = 0;
-	if(CheckButtonBlue->GetChecked())
+	if(check_button_blue->GetChecked())
 		currentGHTurboKeys |= GUITARGRIP_BLUE;
-	if(CheckButtonYellow->GetChecked())
+	if(check_button_yellow->GetChecked())
 		currentGHTurboKeys |= GUITARGRIP_YELLOW;
-	if(CheckButtonRed->GetChecked())
+	if(check_button_red->GetChecked())
 		currentGHTurboKeys |= GUITARGRIP_RED;
-	if(CheckButtonGreen->GetChecked())
+	if(check_button_green->GetChecked())
 		currentGHTurboKeys |= GUITARGRIP_GREEN;
 }
 uint8_t GHCheckTurboKey(uint16_t a)
@@ -156,7 +156,7 @@ uint8_t GHCheckTurboKey(uint16_t a)
 uint8_t GHGetKeys()
 {
 	uint8_t keys = 0;
-	if(CheckButtonEnable->GetChecked() == false)
+	if(check_button_enable->GetChecked() == false)
 		return 0;
 	GHUpdateTurboKeys();
 	keys |= GHCheckTurboKey(GUITARGRIP_BLUE);
@@ -168,70 +168,70 @@ uint8_t GHGetKeys()
 
 void CheckButtonLFunction()
 {
-	CheckButtonL->SetChecked(!CheckButtonL->GetChecked());
+	check_button_l->SetChecked(!check_button_l->GetChecked());
 }
 void CheckButtonRFunction()
 {
-	CheckButtonR->SetChecked(!CheckButtonR->GetChecked());
+	check_button_r->SetChecked(!check_button_r->GetChecked());
 }
 void CheckButtonLeftFunction()
 {
-	CheckButtonLeft->SetChecked(!CheckButtonLeft->GetChecked());
+	check_button_left->SetChecked(!check_button_left->GetChecked());
 }
 void CheckButtonRightFunction()
 {
-	CheckButtonRight->SetChecked(!CheckButtonRight->GetChecked());
+	check_button_right->SetChecked(!check_button_right->GetChecked());
 }
 void CheckButtonUpFunction()
 {
-	CheckButtonUp->SetChecked(!CheckButtonUp->GetChecked());
+	check_button_up->SetChecked(!check_button_up->GetChecked());
 }
 void CheckButtonDownFunction()
 {
-	CheckButtonDown->SetChecked(!CheckButtonDown->GetChecked());
+	check_button_down->SetChecked(!check_button_down->GetChecked());
 }
 void CheckButtonAFunction()
 {
-	CheckButtonA->SetChecked(!CheckButtonA->GetChecked());
+	check_button_a->SetChecked(!check_button_a->GetChecked());
 }
 void CheckButtonBFunction()
 {
-	CheckButtonB->SetChecked(!CheckButtonB->GetChecked());
+	check_button_b->SetChecked(!check_button_b->GetChecked());
 }
 void CheckButtonXFunction()
 {
-	CheckButtonX->SetChecked(!CheckButtonX->GetChecked());
+	check_button_x->SetChecked(!check_button_x->GetChecked());
 }
 void CheckButtonYFunction()
 {
-	CheckButtonY->SetChecked(!CheckButtonY->GetChecked());
+	check_button_y->SetChecked(!check_button_y->GetChecked());
 }
 void CheckButtonStartFunction()
 {
-	CheckButtonStart->SetChecked(!CheckButtonStart->GetChecked());
+	check_button_start->SetChecked(!check_button_start->GetChecked());
 }
 void CheckButtonSelectFunction()
 {
-	CheckButtonSelect->SetChecked(!CheckButtonSelect->GetChecked());
+	check_button_select->SetChecked(!check_button_select->GetChecked());
 }
 void CheckButtonEnableFunction()
 {
-	CheckButtonEnable->SetChecked(!CheckButtonEnable->GetChecked());
+	check_button_enable->SetChecked(!check_button_enable->GetChecked());
 }
 void CheckButtonBlueFunction()
 {
-	CheckButtonBlue->SetChecked(!CheckButtonBlue->GetChecked());
+	check_button_blue->SetChecked(!check_button_blue->GetChecked());
 }
 void CheckButtonYellowFunction()
 {
-	CheckButtonYellow->SetChecked(!CheckButtonYellow->GetChecked());
+	check_button_yellow->SetChecked(!check_button_yellow->GetChecked());
 }
 void CheckButtonGreenFunction()
 {
-	CheckButtonGreen->SetChecked(!CheckButtonGreen->GetChecked());
+	check_button_green->SetChecked(!check_button_green->GetChecked());
 }
 void CheckButtonRedFunction()
 {
-	CheckButtonRed->SetChecked(!CheckButtonRed->GetChecked());
+	check_button_red->SetChecked(!check_button_red->GetChecked());
 }
 }}}//namespace D2K::GUI::Turbo

@@ -22,8 +22,8 @@ bool Label::Draw()
 
 	if(IsVisible())
 	{
-		Clear(Color[colorBackground]);
-		DrawString(GetScreen(), GetText(), GetRect().GetX(), GetRect().GetY(), Color[colorLabelText]);
+		Clear(Color[COLOR_BACKGROUND]);
+		DrawString(GetScreen(), GetText(), GetRect().GetX(), GetRect().GetY(), Color[COLOR_LABEL_TEXT]);
 	}
 
 	return true;
@@ -31,11 +31,11 @@ bool Label::Draw()
 void Label::SetText(std::string text)
 {
 	Label::SetUpdate(true);
-	Label::Text = text;
+	Label::m_text = text;
 }
 std::string Label::GetText()
 {
-	return Text;
+	return m_text;
 }
 
 }}//namespace D2K::GUI

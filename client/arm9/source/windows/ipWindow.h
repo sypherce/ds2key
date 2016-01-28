@@ -11,6 +11,6 @@ public:
 	~WindowClass();
 	bool Update();
 };
-extern GUI::IP::WindowClass *Window;
+extern GUI::IP::WindowClass* g_window;
 
 }}}//namespace D2K::GUI::IP

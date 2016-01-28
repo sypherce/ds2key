@@ -11,6 +11,6 @@ class WindowClass : public GUI::Window {
 };
 extern uint16_t GetKeys();
 extern uint8_t GHGetKeys();
-extern GUI::Turbo::WindowClass *Window;
+extern GUI::Turbo::WindowClass* g_window;
 
 }}}//namespace D2K::GUI::Turbo

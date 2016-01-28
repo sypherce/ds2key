@@ -18,26 +18,26 @@ bool CheckButton::Draw()
 
 	if(IsVisible())//ifChanged()
 	{
-		Clear(Color[colorButtonBackground]);
+		Clear(Color[COLOR_BUTTON_BACKGROUND]);
 		if(GetStatus() == OBJECT_STATUS::HELD)
-			DrawRect(GetScreen(), GetRect(), Color[colorButtonOutlineActive]);
+			DrawRect(GetScreen(), GetRect(), Color[COLOR_BUTTON_OUTLINE_ACTIVE]);
 		else if(GetChecked())
-			DrawRect(GetScreen(), GetRect(), Color[colorButtonOutline]);
+			DrawRect(GetScreen(), GetRect(), Color[COLOR_BUTTON_OUTLINE]);
 		else
-			DrawRect(GetScreen(), GetRect(), Color[colorButtonBackground]);//draws a flat button
-		DrawString(GetScreen(), GetText(), GetRect().GetX()+3, GetRect().GetY()+3, Color[colorButtonText]);
+			DrawRect(GetScreen(), GetRect(), Color[COLOR_BUTTON_BACKGROUND]);//draws a flat button
+		DrawString(GetScreen(), GetText(), GetRect().GetX()+3, GetRect().GetY()+3, Color[COLOR_BUTTON_TEXT]);
 	}
 
 	return true;
 }
 bool CheckButton::GetChecked()
 {
-	return Checked;
+	return m_checked;
 }
 void CheckButton::SetChecked(bool checked)
 {
 	SetUpdate(true);
-	CheckButton::Checked = checked;
+	CheckButton::m_checked = checked;
 }
 
 }}//namespace D2K::GUI

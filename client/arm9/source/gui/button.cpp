@@ -25,12 +25,12 @@ bool Button::Draw()
 
 	if(IsVisible())
 	{
-		Clear(Color[colorButtonBackground]);
+		Clear(Color[COLOR_BUTTON_BACKGROUND]);
 		if(GetStatus() == OBJECT_STATUS::HELD)	//if we're active/clicked
-			DrawRect(GetScreen(), GetRect(), Color[colorButtonOutlineActive]);
+			DrawRect(GetScreen(), GetRect(), Color[COLOR_BUTTON_OUTLINE_ACTIVE]);
 		else								//if we're idle
-			DrawRect(GetScreen(), GetRect(), Color[colorButtonOutline]);
-		DrawString(GetScreen(), GetText(), GetRect().GetX()+3, GetRect().GetY()+3, Color[colorButtonText]);
+			DrawRect(GetScreen(), GetRect(), Color[COLOR_BUTTON_OUTLINE]);
+		DrawString(GetScreen(), GetText(), GetRect().GetX()+3, GetRect().GetY()+3, Color[COLOR_BUTTON_TEXT]);
 	}
 
 	return true;

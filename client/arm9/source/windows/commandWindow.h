@@ -9,8 +9,9 @@ class WindowClass : public GUI::Window
 	public:
 		WindowClass();
 		~WindowClass();
+
 		void SetVisible(bool visible);
 };
-extern GUI::Command::WindowClass *Window;
+extern GUI::Command::WindowClass* g_window;
 
 }}}//namespace D2K::GUI::Command

@@ -8,71 +8,71 @@ namespace D2K {namespace GUI {
 
 Rect::Rect()
 {
-	Rect::X =
-	Rect::Y =
-	Rect::W =
-	Rect::H = 0;
+	Rect::m_x =
+	Rect::m_y =
+	Rect::m_w =
+	Rect::m_h = 0;
 }
 Rect::Rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h)
 {
-	int X2 = x + w;
-	int Y2 = y + h;
-	if(X2 >= SCREEN_WIDTH - 1)		//if X2 is offscreen
+	int x_2 = x + w;
+	int y_2 = y + h;
+	if(x_2 >= SCREEN_WIDTH - 1)		//if x_2 is offscreen
 		w = SCREEN_WIDTH - 1 - x;
-	if(Y2 >= SCREEN_HEIGHT - 1)		//if Y2 is offscreen
+	if(y_2 >= SCREEN_HEIGHT - 1)		//if y_2 is offscreen
 		h = SCREEN_HEIGHT - 1 - y;
-	Rect::X = x;
-	Rect::Y = y;
-	Rect::W = w;
-	Rect::H = h;
+	Rect::m_x = x;
+	Rect::m_y = y;
+	Rect::m_w = w;
+	Rect::m_h = h;
 }
 uint8_t Rect::GetX()
 {
-	return X;
+	return m_x;
 }
 void Rect::SetX(uint8_t x)
 {
-	Rect::X = x;
+	Rect::m_x = x;
 }
 uint8_t Rect::GetY()
 {
-	return Y;
+	return m_y;
 }
 void Rect::SetY(uint8_t y)
 {
-	Rect::Y = y;
+	Rect::m_y = y;
 }
 uint8_t Rect::GetW()
 {
-	return W;
+	return m_w;
 }
 void Rect::SetW(uint8_t w)
 {
 	int tempW = GetX() + w;
 	if(tempW >= SCREEN_WIDTH - 1)//if tempW is offscreen
-		Rect::W = SCREEN_WIDTH - 1 - GetX();
+		Rect::m_w = SCREEN_WIDTH - 1 - GetX();
 	else
-		Rect::W = w;
+		Rect::m_w = w;
 }
 uint8_t Rect::GetH()
 {
-	return H;
+	return m_h;
 }
 void Rect::SetH(uint8_t h)
 {
 	int tempH = GetY() + h;
 	if(tempH >= SCREEN_HEIGHT - 1)//if tempH is offscreen
-		Rect::H = SCREEN_HEIGHT - 1 - GetY();
+		Rect::m_h = SCREEN_HEIGHT - 1 - GetY();
 	else
-		Rect::H = h;
+		Rect::m_h = h;
 }
 uint8_t Rect::GetX2()
 {
-	return X + W;
+	return m_x + m_w;
 }
 uint8_t Rect::GetY2()
 {
-	return Y + H;
+	return m_y + m_h;
 }
 bool Rect::PointIntersect(uint8_t x, uint8_t y)
 {
