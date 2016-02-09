@@ -23,7 +23,7 @@ extern void Button0Function();
 extern void ButtonBackspaceFunction();
 extern void ButtonEnterFunction();
 
-WindowClass* g_window = nullptr;
+WindowClass* g_window;
 Button* button_1;
 Button* button_2;
 Button* button_3;
@@ -108,33 +108,29 @@ void ButtonBackspaceFunction()	{
 //public
 std::string Entry(Label* label, Edit* edit, std::string text, int maxLength)
 {
-	if(Keypad::g_window != nullptr)
+	Keypad::label_entry->SetRect(label->GetRect());
+	Keypad::label_entry->SetText(label->GetText());
+
+	Keypad::edit_entry->SetRect(edit->GetRect());
+	Keypad::edit_entry->SetText(edit->GetText());
+
+	Buffer = text;
+	BufferLen = maxLength;
+
+	Main::g_window->SetVisible(false);			//hide main window
+	Keypad::g_window->SetVisible(true);			//show keypad
+
+	Keypad::g_window->Draw();						//and actually draw it
+	while(Keypad::g_window->IsVisible())
 	{
-		Keypad::label_entry->SetRect(label->GetRect());
-		Keypad::label_entry->SetText(label->GetText());
-
-		Keypad::edit_entry->SetRect(edit->GetRect());
-		Keypad::edit_entry->SetText(edit->GetText());
-
-		Buffer = text;
-		BufferLen = maxLength;
-
-		Main::g_window->SetVisible(false);			//hide main window
-		Keypad::g_window->SetVisible(true);			//show keypad
-
-		Keypad::g_window->Draw();						//and actually draw it
-		while(Keypad::g_window->IsVisible())
-		{
-			if(Keypad::g_window->Update())			//if pressed
-				Keypad::edit_entry->SetText(Buffer);	//set text
-			D2K::Loop();
-		}
-		Keypad::g_window->SetVisible(false);			//hide keypad
-
-		Main::g_window->SetVisible(true);				//go back to main window
-		return Buffer;
+		if(Keypad::g_window->Update())			//if pressed
+			Keypad::edit_entry->SetText(Buffer);	//set text
+		D2K::Loop();
 	}
-	return "Error (Keypad::Entry): Keypad == NULL_VALUE";	//this shouldn't happen
+	Keypad::g_window->SetVisible(false);			//hide keypad
+
+	Main::g_window->SetVisible(true);				//go back to main window
+	return Buffer;
 }
 
 }}}//namespace D2K::GUI::Keypad

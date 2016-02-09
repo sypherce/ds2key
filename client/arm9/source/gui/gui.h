@@ -8,7 +8,6 @@ namespace D2K {namespace GUI {
 
 extern void VoidFunction();
 extern uint16_t* g_screen[2];
-extern bool m_update;
 void SetUpdate(bool value);
 bool IsUpdated();
 void SetPixel(uint8_t screen, uint8_t x, uint8_t y, uint16_t c);

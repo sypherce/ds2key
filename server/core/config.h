@@ -33,4 +33,9 @@ namespace D2K {namespace Config{
 	//@param new_port Values range 1 - 65535, setting 0 defaults to 9501
 	void SetConfigPort(uint16_t port);//SetPort clashes in windows
 
+	//Load a client by profile id
+	//@param profile Values range 0 - 255
+	//@return (Client*) automatically loads profile into memory if needed
+	Client* GetClient(uint8_t profile);
+
 }}//namespace D2K::Config

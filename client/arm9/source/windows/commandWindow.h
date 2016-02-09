@@ -6,11 +6,11 @@ namespace D2K {namespace GUI {namespace Command {
 
 class WindowClass : public GUI::Window
 {
-	public:
-		WindowClass();
-		~WindowClass();
+public:
+	WindowClass();
+	~WindowClass();
 
-		void SetVisible(bool visible);
+	void SetVisible(bool visible);
 };
 extern GUI::Command::WindowClass* g_window;
 

@@ -37,21 +37,22 @@ void Window::RemoveObject(Object* object)
 //draws the window and it's children objects
 void Window::Draw()
 {
-	if(GUI::IsUpdated())									//if gui was set to update
+	if(GUI::IsUpdated())						//if gui was set to update
 		GUI::ClearScreen(m_screen, Color[COLOR_BACKGROUND]);	//clear everything
 	for(unsigned int i = 0; i < m_objects.size(); i++)		//for each child
 	{
-		if(m_objects.at(i)->Draw())							//draw if object AND/OR gui updated
-			if(EMULATOR) std::cout << "button draw " << i << ": " << m_objects.at(i)->GetText() << "\n";
+		if(m_objects.at(i)->Draw()
+		&& EMULATOR)						//draw if object AND/OR gui updated
+			std::cout << "button draw " << i << ": " << m_objects.at(i)->GetText() << "\n";
 	}
-	GUI::SetUpdate(false);									//gui all updated
+	GUI::SetUpdate(false);						//gui all updated
 }
 void Window::SetVisible(bool visible)
 {
-	Window::m_visible = visible;								//window is now set
+	m_visible = visible;						//window is now set
 	for(unsigned int i = 0; i < m_objects.size(); i++)		//for each child
 	{
-		m_objects.at(i)->SetVisible(visible);					//set the same
+		m_objects.at(i)->SetVisible(visible);			//set the same
 	}
 }
 bool Window::IsVisible()
@@ -60,38 +61,30 @@ bool Window::IsVisible()
 }
 bool Window::CheckClick(Object* object)
 {
-	if(object)
+	if(object != nullptr
+	&& object->IsVisible())
 	{
-		if(object->IsVisible())
+		if(keysDown()&KEY_TOUCH
+		&& object->IsClicked((uint8_t)D2K::g_stylus_position.px, (uint8_t)D2K::g_stylus_position.py))
 		{
-			if(keysDown()&KEY_TOUCH)
+			object->SetStatus(OBJECT_STATUS::PRESSED);
+		}
+		else if(keysHeld()&KEY_TOUCH
+		&& object->GetStatus() != OBJECT_STATUS::IDLE)
+		{
+			if(object->IsClicked((uint8_t)D2K::g_stylus_position.px, (uint8_t)D2K::g_stylus_position.py))
+				object->SetStatus(OBJECT_STATUS::HELD);		//if we pressed and we're still hovering set to Held
+			else
+				object->SetStatus(OBJECT_STATUS::PRESSED);	//if we held but we're not hovering set to Pressed
+		}
+		else if(keysUp()&KEY_TOUCH)
+		{
+			int status = object->GetStatus();			//save status value
+			object->SetStatus(OBJECT_STATUS::IDLE);			//reset status
+			if(object->IsClicked((uint8_t)D2K::g_stylus_position.px, (uint8_t)D2K::g_stylus_position.py)
+			&& status == OBJECT_STATUS::HELD)			//if we pressed and we're still hovering
 			{
-				if(object->IsClicked((uint8_t)D2K::StylusPos.px, (uint8_t)D2K::StylusPos.py))
-				{
-					object->SetStatus(OBJECT_STATUS::PRESSED);
-				}
-			}
-			else if(keysHeld()&KEY_TOUCH)
-			{
-				if(object->GetStatus() != OBJECT_STATUS::IDLE)
-				{
-					if(object->IsClicked((uint8_t)D2K::StylusPos.px, (uint8_t)D2K::StylusPos.py))
-						object->SetStatus(OBJECT_STATUS::HELD);	//if we pressed and we're still hovering set to Held
-					else
-						object->SetStatus(OBJECT_STATUS::PRESSED);	//if we held but we're not hovering set to Pressed
-				}
-			}
-			else if(keysUp()&KEY_TOUCH)
-			{
-				int status = object->GetStatus();			//save status value
-				object->SetStatus(OBJECT_STATUS::IDLE);		//reset status
-				if(object->IsClicked((uint8_t)D2K::StylusPos.px, (uint8_t)D2K::StylusPos.py))
-				{
-					if(status == OBJECT_STATUS::HELD)			//if we pressed and we're still hovering
-					{
-						return true;						//the object was clicked
-					}
-				}
+				return true;					//the object was clicked
 			}
 		}
 	}

@@ -31,7 +31,7 @@ bool Label::Draw()
 void Label::SetText(std::string text)
 {
 	Label::SetUpdate(true);
-	Label::m_text = text;
+	m_text = text;
 }
 std::string Label::GetText()
 {

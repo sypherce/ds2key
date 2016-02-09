@@ -1,8 +1,12 @@
 // Virtual input, includes Keyboard, Mouse, and Joystick support
 
 #ifdef _WIN32
+#ifdef __GNUC__
+#define _WIN32_WINNT 0x0500
+#endif
 #include <windows.h>
 #include <winuser.h>
+#include <iostream>//std::cout, std::clog
 #include "PPJIoctl.h"
 #include "key.h"
 #elif defined __linux__
@@ -45,12 +49,6 @@ void DeInit()
 #endif//_WIN32
 }
 
-enum KeyState
-{
-	pressed = false,
-	released = true,
-};
-
 //Checks if (key) is an "extended" key
 //@param key Platform specific value
 //@return true if (key) is an "extended" key
@@ -79,6 +77,18 @@ bool IsExtended(uint16_t key)
 	}
 }
 
+enum KeyState
+{
+#ifdef _WIN32
+	pressed = false,
+	released = true,
+#elif defined __linux__
+	//these linux values have not been tested
+	pressed = true,
+	released = false,
+#endif//_WIN32
+};
+
 //Presses or releases (key) depending on (state)
 //@param key Platform specific value
 //@param state true = released, false = pressed
@@ -86,43 +96,45 @@ void Keyboard(uint16_t key, KeyState state)
 {
 	static uint16_t s_press_counter[65535] = { };//this allows 1 or more profile to press the same key, instead of going crazy
 	if((s_press_counter[key] == 0 && state == KeyState::pressed)
-		|| (s_press_counter[key] == 1 && state == KeyState::released))
+	|| (s_press_counter[key] == 1 && state == KeyState::released))
 	{
 #ifdef _WIN32
-		INPUT input;
-		if(key == VK_LBUTTON || key == VK_RBUTTON || key == VK_MBUTTON)
+		INPUT input = { };
+		switch(key)
+		{
+		case VK_LBUTTON:
 		{
 			input.type = INPUT_MOUSE;
-			input.mi.dx = 0;
-			input.mi.dy = 0;
-			input.mi.dwExtraInfo = 0;
-			input.mi.mouseData = 0;
-			input.mi.time = 0;
 			input.mi.dwFlags = MOUSEEVENTF_MOVE;
 
-			if(key == VK_LBUTTON)
-			{
-				if(state == KeyState::released)
-					input.mi.dwFlags |= MOUSEEVENTF_LEFTUP;
-				else
-					input.mi.dwFlags |= MOUSEEVENTF_LEFTDOWN;
-			}
-			else if(key == VK_RBUTTON)
-			{
-				if(state == KeyState::released)
-					input.mi.dwFlags |= MOUSEEVENTF_RIGHTUP;
-				else
-					input.mi.dwFlags |= MOUSEEVENTF_RIGHTDOWN;
-			}
-			else if(key == VK_MBUTTON)
-			{
-				if(state == KeyState::released)
-					input.mi.dwFlags |= MOUSEEVENTF_MIDDLEUP;
-				else
-					input.mi.dwFlags |= MOUSEEVENTF_MIDDLEDOWN;
-			}
+			if(state == KeyState::released)
+				input.mi.dwFlags |= MOUSEEVENTF_LEFTUP;
+			else
+				input.mi.dwFlags |= MOUSEEVENTF_LEFTDOWN;
+			break;
 		}
-		else
+		case VK_RBUTTON:
+		{
+			input.type = INPUT_MOUSE;
+			input.mi.dwFlags = MOUSEEVENTF_MOVE;
+
+			if(state == KeyState::released)
+				input.mi.dwFlags |= MOUSEEVENTF_RIGHTUP;
+			else
+				input.mi.dwFlags |= MOUSEEVENTF_RIGHTDOWN;
+			break;
+		}
+		case VK_MBUTTON:
+		{
+			input.type = INPUT_MOUSE;
+			input.mi.dwFlags = MOUSEEVENTF_MOVE;
+			if(state == KeyState::released)
+				input.mi.dwFlags |= MOUSEEVENTF_MIDDLEUP;
+			else
+				input.mi.dwFlags |= MOUSEEVENTF_MIDDLEDOWN;
+			break;
+		}
+		default:
 		{
 			input.type = INPUT_KEYBOARD;
 			input.ki.wVk = key;
@@ -135,23 +147,24 @@ void Keyboard(uint16_t key, KeyState state)
 				input.ki.dwFlags |= KEYEVENTF_KEYUP;
 
 			input.ki.wScan = MapVirtualKey(key, 0);
-			input.ki.time = 0;
-			input.ki.dwExtraInfo = 0;
+			//input.ki.time = 0;
+			//input.ki.dwExtraInfo = 0;
+			break;
+		}
 		}
 
 		SendInput(1, (LPINPUT)&input, sizeof(INPUT));
 #elif defined __linux__
-		int linux_state = (state != KeyState::released);//linux press values are the opposite of windows
 		int code = XKeysymToKeycode(g_display, key);
-		XTestFakeKeyEvent(g_display, code, linux_state, 0);
+		XTestFakeKeyEvent(g_display, code, state, 0);
 		XFlush(g_display);
 #endif//_WIN32
-    }
+	}
 
-    //doesn't check boundaries
-    if(state == false)
+	//doesn't check boundaries
+	if(state == false)
 		s_press_counter[key]++;
-    else
+	else
 		s_press_counter[key]--;
 }
 
@@ -203,6 +216,7 @@ void Press(uint16_t key, unsigned char joy)
 	else
 	{
 		Keyboard(key, KeyState::pressed);
+		std::cout << "key" << key << "\n";
 	}
 }
 

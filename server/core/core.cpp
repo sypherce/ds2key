@@ -26,15 +26,6 @@
 
 namespace D2K{
 
-//used only once in code so far
-inline bool touchBetween(int x, int y, int x1, int y1, int x2, int y2)
-{
-	return ((x >= std::min((x1), (x2)) &&
-				x <= std::max((x1), (x2)) &&
-				y >= std::min((y1), (y2)) &&
-				y <= std::max((y1), (y2))) &&
-			(x1 + y1 + x2 + y2 > 0));
-}
 void ExecuteCommand(std::string Command)
 {
 	if(Command != "")
@@ -70,22 +61,19 @@ void ProcessPacket(D2K::Client* Client)
 
 		if(PCButton)
 		{
-			if(Client->Down(DSButton))						//pressed
+			if(Client->Down(DSButton))			//pressed
 				Input::Press(PCButton, Joystick);
-			else if(Client->Up(DSButton))					//released, even in turbo mode
+			else if(Client->Up(DSButton))			//released, even in turbo mode
 				Input::Release(PCButton, Joystick);
-			else if(turbo && Client->Turbo(DSButton))		//turbo set, button enabled for turbo and pressed
+			else if(turbo && Client->Turbo(DSButton))	//turbo set, button enabled for turbo and pressed
 				Input::Press(PCButton, Joystick);
-			else if(Client->Turbo(DSButton))				//turbo UNSET, button enabled for turbo and pressed
-				Input::Release(PCButton, Joystick);			//we release because turbo is UNSET
+			else if(Client->Turbo(DSButton))		//turbo UNSET, button enabled for turbo and pressed
+				Input::Release(PCButton, Joystick);	//we release because turbo is UNSET
 		}
-		else
+		else if(Client->Down(DSButton))				//pressed
 		{
-			if(Client->Down(DSButton))						//pressed
-			{
-				std::string Command = Profile->GetCommand(i);
-				ExecuteCommand(Command);
-			}
+			std::string Command = Profile->GetCommand(i);
+			ExecuteCommand(Command);
 		}
 	}
 	//gh buttons
@@ -97,14 +85,14 @@ void ProcessPacket(D2K::Client* Client)
 
 		if(PCButton)
 		{
-			if(Client->GHDown(DSButton))				//pressed
+			if(Client->GHDown(DSButton))			//pressed
 				Input::Press(PCButton, Joystick);
-			else if(Client->GHUp(DSButton))				//released, even in turbo mode
+			else if(Client->GHUp(DSButton))			//released, even in turbo mode
 				Input::Release(PCButton, Joystick);
 			else if(turbo && Client->GHTurbo(DSButton))	//turbo set, button enabled for turbo and pressed
 				Input::Press(PCButton, Joystick);
-			else if(Client->GHTurbo(DSButton))			//turbo UNSET, button enabled for turbo and pressed
-				Input::Release(PCButton, Joystick);		//we release because turbo is UNSET
+			else if(Client->GHTurbo(DSButton))		//turbo UNSET, button enabled for turbo and pressed
+				Input::Release(PCButton, Joystick);	//we release because turbo is UNSET
 		}
 		else
 		{
@@ -121,7 +109,7 @@ void ProcessPacket(D2K::Client* Client)
 	bool screen_touched = Client->Held(DS2KEY_TOUCH);
 	std::string moveType = Profile->m_mouse;
 
-	if(screen_touched)						//if touched
+	if(screen_touched)					//if touched
 	{
 		static const int s_ignore = 25;			//how much movement may be ignored, this helps jitter
 		static const int s_sensitivity = 3;		//relative movement sensitivity scale
@@ -134,8 +122,10 @@ void ProcessPacket(D2K::Client* Client)
 			last_y = y;
 			last_screen_touched = true;
 		}
-		if(!((x - last_x < -s_ignore) || (x - last_x > s_ignore) || (y - last_y < -s_ignore)
-				|| (y - last_y > s_ignore)))									//check that we've moved
+		if(!((x - last_x < -s_ignore)
+		|| (x - last_x > s_ignore)
+		|| (y - last_y < -s_ignore)
+		|| (y - last_y > s_ignore)))									//check that we've moved
 		{
 			if(moveType == "Relative")										//relative movement
 			{
@@ -162,13 +152,10 @@ void ProcessPacket(D2K::Client* Client)
 			last_y = y;
 		}
 	}
-	else
+	else if(last_screen_touched == true)		//if newly released
 	{
-		if(last_screen_touched == true)		//if newly released
-		{
-			last_x = last_y = 0;
-			last_screen_touched = false;
-		}
+		last_x = last_y = 0;
+		last_screen_touched = false;
 	}
 }
 
@@ -209,69 +196,67 @@ int Setup(int argc, char* argv[])
 
 void Loop()
 {
-	if(g_running && UDP::IsConnected())
+	UDP::DS2KeyPacket Packet;
+	if(g_running 
+	&& UDP::IsConnected()
+	&& UDP::Recv(&Packet, sizeof(UDP::DS2KeyPacket)) == 0)									//if we receive something without error
 	{
-		UDP::DS2KeyPacket Packet;
-		if(UDP::Recv(&Packet, sizeof(UDP::DS2KeyPacket)) == 0)									//if we receive something without error
+		switch(Packet.type)
 		{
-			if(Packet.type == UDP::PACKET::LOOKUP)												//looking for servers
+		case UDP::PACKET::LOOKUP:
+		{
+			UDP::Send(&Packet, sizeof(UDP::DS2KeyPacket));
+			break;
+		}
+		case UDP::PACKET::COMMAND_SETTINGS:
+		{
+			UDP::DS2KeySettingsPacket settings = UDP::DS2KeySettingsPacket{ };
+			if(g_client_array[Packet.profile] != nullptr)							//if profile is active
 			{
-				UDP::Send(&Packet, sizeof(UDP::DS2KeyPacket));									//bounce back
+				ProfileData* profile = g_client_array[Packet.profile]->GetProfileDataPointer();//make a pointer to the profile
+				settings.type = UDP::PACKET::COMMAND_SETTINGS;
+				for(int i = 0; i < UDP::SETTINGS_PACKET_MAX_BUTTONS; i++)
+				{
+					settings.x_1[i] = profile->m_touch_x[i];
+					settings.x_2[i] = profile->m_touch_w[i];
+					settings.y_1[i] = profile->m_touch_y[i];
+					settings.y_2[i] = profile->m_touch_h[i];
+					strncpy(settings.text[i], profile->m_touch_string[i].c_str(), UDP::SETTINGS_PACKET_MAX_TEXT);
+					settings.text[i][UDP::SETTINGS_PACKET_MAX_TEXT] = 0;
+				}
+				UDP::SendCommandSettings(settings);											//send settings packet
 			}
-			else if(Packet.type == UDP::PACKET::COMMAND_SETTINGS)								//looking for command settings
-			{
-				UDP::DS2KeySettingsPacket settings = UDP::DS2KeySettingsPacket{ };
-				if(g_client_array[Packet.profile] != nullptr)							//if profile is active
-				{
-					ProfileData* profile = g_client_array[Packet.profile]->GetProfileDataPointer();//make a pointer to the profile
-					settings.type = UDP::PACKET::COMMAND_SETTINGS;
-					for(int i = 0; i < UDP::SETTINGS_PACKET_MAX_BUTTONS; i++)
-					{
-						settings.x_1[i] = profile->m_touch_x[i];
-						settings.x_2[i] = profile->m_touch_w[i];
-						settings.y_1[i] = profile->m_touch_y[i];
-						settings.y_2[i] = profile->m_touch_h[i];
-						strncpy(settings.text[i], profile->m_touch_string[i].c_str(), UDP::SETTINGS_PACKET_MAX_TEXT);
-						settings.text[i][UDP::SETTINGS_PACKET_MAX_TEXT] = 0;
-					}
-					UDP::SendCommandSettings(settings);											//send settings packet
-				}
-			}
-			else if(Packet.type >= UDP::PACKET::NORMAL && Packet.type <= UDP::PACKET::COMMAND)	//make sure this is a packet we accept
-			{
-				if(g_client_array[Packet.profile] == nullptr)									//if profile not active,
-				{
-					g_client_array[Packet.profile] = new D2K::Client();							//create it
-					Config::LoadProfile(
-						g_client_array[Packet.profile]->GetProfileDataPointer(), Packet.profile);	//then load it
-				}
-				D2K::Client* pClient = g_client_array[Packet.profile];								//then make a pointer to it
-				if(Packet.type == UDP::PACKET::NORMAL)											//normal update
-				{
-					pClient->SetPacket(Packet);													//insert packet data
-					pClient->Scan();															//update
-					ProcessPacket(pClient);														//process
-				}
-				else if(Packet.type == UDP::PACKET::COMMAND)									//command update
-				{
-					int TouchButton = KEYS::TOUCH_00 + Packet.keys;
-					ProfileData* Data = pClient->GetProfileDataPointer();						//pointer to profile data
-					uint8_t Joystick = Data->GetValue8(KEYS::JOY);
-					uint16_t PCButton = Data->GetVirtualKey(TouchButton);
+			break;
+		}
+		case UDP::PACKET::NORMAL:
+		{
+			D2K::Client* pClient = Config::GetClient(Packet.profile);
+			pClient->SetPacket(Packet);													//insert packet data
+			pClient->Scan();															//update
+			ProcessPacket(pClient);
+			break;
+		}
+		case UDP::PACKET::COMMAND:
+		{
+			int TouchButton = KEYS::TOUCH_00 + Packet.keys;
+			D2K::Client* pClient = Config::GetClient(Packet.profile);
+			ProfileData* Data = pClient->GetProfileDataPointer();						//pointer to profile data
+			uint8_t Joystick = Data->GetValue8(KEYS::JOY);
+			uint16_t PCButton = Data->GetVirtualKey(TouchButton);
 
-					if(PCButton)
-					{
-						Input::Press(PCButton, Joystick);
-						Sleep(100);
-						Input::Release(PCButton, Joystick);
-					}
-					else
-					{
-						std::string Command = Data->GetCommand(TouchButton);
-						ExecuteCommand(Command);
-					}
-				}
+			if(PCButton)
+			{
+				Input::Press(PCButton, Joystick);
+				Sleep(100);
+				Input::Release(PCButton, Joystick);
 			}
+			else
+			{
+				std::string Command = Data->GetCommand(TouchButton);
+				ExecuteCommand(Command);
+			}
+			break;
+		}
 		}
 	}
 
@@ -284,11 +269,13 @@ void Destroy()
 {
 	g_running = false;
 	for(int i = 0; i < 255; i++)
+	{
 		if(g_client_array[i] != nullptr)
 		{
 			delete(g_client_array[i]);
 			g_client_array[i] = nullptr;
 		}
+	}
 	UDP::DeInit();
 	Input::DeInit();
 	Config::Save();

@@ -37,7 +37,7 @@ bool CheckButton::GetChecked()
 void CheckButton::SetChecked(bool checked)
 {
 	SetUpdate(true);
-	CheckButton::m_checked = checked;
+	m_checked = checked;
 }
 
 }}//namespace D2K::GUI

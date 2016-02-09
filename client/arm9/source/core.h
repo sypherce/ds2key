@@ -4,8 +4,7 @@
 
 namespace D2K {
 
-extern touchPosition StylusPos;
-extern bool InputChange;
+extern touchPosition g_stylus_position;
 
 //@return The current time
 extern char* GetTime();
@@ -14,7 +13,7 @@ extern char* GetTime();
 //@return (0) upon success, else (1)
 extern bool Init();
 
-//Loop function that calls VBLFunction()
+//Loop function that calls VBlankFunction()
 extern void Loop();
 
 }//namespace D2K

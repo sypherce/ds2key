@@ -141,7 +141,7 @@ void ButtonTouchFunction()
 		D2K::Loop();
 		if(Main::g_window->CheckClick(button_touch))
 			break;						//if pressed again, break
-		UDP::Update(keysHeld(), 0, guitarGripKeysHeld() * guitarGripIsInserted(), Turbo::GHGetKeys() * guitarGripIsInserted(), &D2K::StylusPos);
+		UDP::Update(keysHeld(), 0, guitarGripKeysHeld() * guitarGripIsInserted(), Turbo::GHGetKeys() * guitarGripIsInserted(), &D2K::g_stylus_position);
 	}
 
 	label_title->SetText(D2K::VERSION_STRING);

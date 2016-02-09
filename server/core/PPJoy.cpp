@@ -33,7 +33,7 @@ PPJoy::PPJoy(int device)
 	DevName << "\\\\.\\PPJoyIOCTL" << device + 1;
 
 	//Open a handle to the control device for the virtual joystick.
-	handle = CreateFile((LPCWSTR)DevName.str().c_str(), GENERIC_WRITE, FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL_VALUE);
+	handle = INVALID_HANDLE_VALUE;//CreateFile((LPCWSTR)DevName.str().c_str(), GENERIC_WRITE, FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL_VALUE);
 
 	//Make sure we could open the device!
 	if(handle == INVALID_HANDLE_VALUE)

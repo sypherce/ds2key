@@ -38,7 +38,7 @@ void fileConnectFunction(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 						UDP::IsConnected() ? GUI::MainWindow::MainMenu::fileConnect->GetID() : GUI::MainWindow::MainMenu::fileDisconnect->GetID(),
 						MF_BYCOMMAND);
 	//check if connected properly
-	std::string status = "Connected on Port #" + itos(Config::GetPort());
+	std::string status = "Connected on Port #" + D2K::ltos(Config::GetPort());
 	GUI::MainWindow::StatusBar->SetText(UDP::IsConnected() ? status : "Disconnected");
 }
 void fileDisconnectFunction(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -50,7 +50,7 @@ void fileDisconnectFunction(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
 						GUI::MainWindow::MainMenu::fileDisconnect->GetID(),
 						UDP::IsConnected() ? GUI::MainWindow::MainMenu::fileConnect->GetID() : GUI::MainWindow::MainMenu::fileDisconnect->GetID(),
 						MF_BYCOMMAND);
-	std::string status = "Connected on Port #" + D2K::itos(Config::GetPort());
+	std::string status = "Connected on Port #" + D2K::ltos(Config::GetPort());
 	GUI::MainWindow::StatusBar->SetText(UDP::IsConnected() ? status : "Disconnected");
 }
 void fileMinimizeFunction(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -63,7 +63,7 @@ void fileExitFunction(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	std::cout << "fileExitFunction()\n";
 	//delete GUI::MainWindow::TrayIcon;
 	//ExitProcess(0);
-	D2K::Running = false;
+	D2K::g_running = false;
 }
 
 void Setup()
@@ -116,23 +116,23 @@ void radioButton1Function(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	std::cout << "profileRadioButton1Function()\n";
 	checkButton1->SetEnabled(true);
-	ProfileData *Profile = ClientArray[comboButton1->GetSelection()]->GetProfileDataPointer();
-	Profile->Mouse = "Relative";
+	ProfileData *Profile = g_client_array[comboButton1->GetSelection()]->GetProfileDataPointer();
+	Profile->m_mouse = "Relative";
 }
 
 void radioButton2Function(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	std::cout << "profileRadioButton2Function()\n";
 	checkButton1->SetEnabled(true);
-	ProfileData *Profile = ClientArray[comboButton1->GetSelection()]->GetProfileDataPointer();
-	Profile->Mouse = "Absolute";
+	ProfileData *Profile = g_client_array[comboButton1->GetSelection()]->GetProfileDataPointer();
+	Profile->m_mouse = "Absolute";
 }
 
 void radioButton3Function(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	std::cout << "profileRadioButton3Function()\n";
-	ProfileData *Profile = ClientArray[comboButton1->GetSelection()]->GetProfileDataPointer();
-	Profile->Mouse = "Buttons";
+	ProfileData *Profile = g_client_array[comboButton1->GetSelection()]->GetProfileDataPointer();
+	Profile->m_mouse = "Buttons";
 	checkButton1->SetEnabled(false);
 }
 
@@ -143,13 +143,13 @@ void checkButton1Function(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 void comboButton1Function(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	int Profile = comboButton1->GetSelection();
-	if(ClientArray[Profile] == nullptr)							//if profile not active,
-		ClientArray[Profile] = new D2K::Client();							//create it
-	ProfileData *pData = ClientArray[Profile]->GetProfileDataPointer();
+	if(g_client_array[Profile] == nullptr)							//if profile not active,
+		g_client_array[Profile] = new D2K::Client();							//create it
+	ProfileData *pData = g_client_array[Profile]->GetProfileDataPointer();
 	Config::LoadProfile(pData, Profile);									//then load it
-	int rowBase = D2K::kUp;//this offsets the difference between our list, and the "kUp" enums
+	int rowBase = D2K::KEYS::UP;//this offsets the difference between our list, and the "kUp" enums
 	int row = 0;
-	for(row = 0; row <= D2K::kTouch11 - rowBase; row++)
+	for(row = 0; row <= D2K::KEYS::TOUCH_11 - rowBase; row++)
 	{
 		std::string ButtonString = pData->GetButtonString(rowBase + row);
 		if(ButtonString != "")
@@ -157,7 +157,7 @@ void comboButton1Function(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 				ButtonString = ButtonString.substr(D2K_COMMAND_LENGTH);
 		listView1->SetText(ButtonString, row, 1);
 	}
-	for(row; row <= D2K::kTouchString11 - rowBase; row++)
+	for(row; row <= D2K::KEYS::TOUCH_11 - rowBase; row++)
 	{
 		std::string ButtonString = pData->GetStringReference(rowBase + row);
 		if(ButtonString != "")
@@ -165,21 +165,21 @@ void comboButton1Function(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	for(int i = 0; i <= 11; i++)
 	{
-		std::string ButtonString = D2K::itos(pData->TouchX[i]);
+		std::string ButtonString = D2K::ltos(pData->m_touch_x[i]);
 		listView1->SetText(ButtonString, row++, 1);
 	}
 	for(int i = 0; i <= 11; i++)
 	{
-		std::string ButtonString = D2K::itos(pData->TouchY[i]);
+		std::string ButtonString = D2K::ltos(pData->m_touch_y[i]);
 		listView1->SetText(ButtonString, row++, 1);
 	}
 	for(int i = 0; i <= 11; i++)
 	{
-		std::string ButtonString = D2K::itos(pData->TouchW[i]);
+		std::string ButtonString = D2K::ltos(pData->m_touch_w[i]);
 		listView1->SetText(ButtonString, row++, 1);
 	}
 	for(int i = 0; i <= 11; i++){
-		std::string ButtonString = D2K::itos(pData->TouchH[i]);
+		std::string ButtonString = D2K::ltos(pData->m_touch_h[i]);
 		listView1->SetText(ButtonString, row++, 1);
 	}
 
@@ -188,9 +188,9 @@ void comboButton1Function(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	radioButton3->SetChecked(false);
 	checkButton1->SetEnabled(true);
 
-	if(pData->Mouse == "Absolute")
+	if(pData->m_mouse == "Absolute")
 		radioButton2->SetChecked(true);
-	/*else if(pData->Mouse == "Buttons")
+	/*else if(pData->m_mouse == "Buttons")
 	{
 		radioButton3->SetChecked(true);
 		checkButton1->SetEnabled(false);
@@ -237,7 +237,7 @@ void listView1Function(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 				if(i != VK_LBUTTON && i != VK_RBUTTON && i != VK_MBUTTON)
 				{
 					listView1->SetText(Key::GetString(i), selected, 1);
-					ClientArray[GUI::MainWindow::Profile::comboButton1->GetSelection()]->GetProfileDataPointer()->SetVirtualKey(listView1->GetSelection() + 3, i);
+					g_client_array[GUI::MainWindow::Profile::comboButton1->GetSelection()]->GetProfileDataPointer()->SetVirtualKey(listView1->GetSelection() + 3, i);
 
 					waiting = false;
 				}
@@ -269,7 +269,7 @@ void button1Function(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	int currentProfile = GUI::MainWindow::Profile::comboButton1->GetSelection();
 	Config::SaveProfile(
-			ClientArray[currentProfile]->GetProfileDataPointer(),
+			g_client_array[currentProfile]->GetProfileDataPointer(),
 			currentProfile);
 	comboButton1Function(hwnd, message, wParam, lParam);
 }
@@ -289,7 +289,7 @@ void button4Function(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	//update listview text
 	listView1->SetText(Key::GetString(VK_LBUTTON), listView1->GetSelection(), 1);
 	//update client setting
-	ClientArray[GUI::MainWindow::Profile::comboButton1->GetSelection()]->GetProfileDataPointer()->SetVirtualKey(listView1->GetSelection() + 3, VK_LBUTTON);
+	g_client_array[GUI::MainWindow::Profile::comboButton1->GetSelection()]->GetProfileDataPointer()->SetVirtualKey(listView1->GetSelection() + 3, VK_LBUTTON);
 	waiting = false;
 }
 
@@ -298,7 +298,7 @@ void button5Function(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	//update listview text
 	listView1->SetText(Key::GetString(VK_MBUTTON), listView1->GetSelection(), 1);
 	//update client setting
-	ClientArray[GUI::MainWindow::Profile::comboButton1->GetSelection()]->GetProfileDataPointer()->SetVirtualKey(listView1->GetSelection() + 3, VK_MBUTTON);
+	g_client_array[GUI::MainWindow::Profile::comboButton1->GetSelection()]->GetProfileDataPointer()->SetVirtualKey(listView1->GetSelection() + 3, VK_MBUTTON);
 	waiting = false;
 }
 
@@ -307,16 +307,16 @@ void button6Function(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	//update listview text
 	listView1->SetText(Key::GetString(VK_RBUTTON), listView1->GetSelection(), 1);
 	//update client setting
-	ClientArray[GUI::MainWindow::Profile::comboButton1->GetSelection()]->GetProfileDataPointer()->SetVirtualKey(listView1->GetSelection() + 3, VK_RBUTTON);
+	g_client_array[GUI::MainWindow::Profile::comboButton1->GetSelection()]->GetProfileDataPointer()->SetVirtualKey(listView1->GetSelection() + 3, VK_RBUTTON);
 	waiting = false;
 }
 
 void button7Function(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	uint32_t Value = 0x100 + D2K::stoi(edit1->GetText());
+	uint32_t Value = 0x100 + D2K::stol(edit1->GetText());
 	edit1->SetEnabled(true);
 	listView1->SetText(Key::GetString(Value), listView1->GetSelection(), 1);
-	ClientArray[GUI::MainWindow::Profile::comboButton1->GetSelection()]->GetProfileDataPointer()->SetVirtualKey(listView1->GetSelection() + 3, Value);
+	g_client_array[GUI::MainWindow::Profile::comboButton1->GetSelection()]->GetProfileDataPointer()->SetVirtualKey(listView1->GetSelection() + 3, Value);
 	waiting = false;
 }
 
@@ -491,21 +491,21 @@ Label *List[listMax] = { };
 Label *label;
 Edit *edit;
 
-std::string Port = D2K::itos(D2K::DefaultPort);
+std::string Port = D2K::ltos(D2K::DEFAULT_PORT);
 
 void editFunction(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	std::string portString = edit->GetText();
-	int portInt = D2K::stoi(portString);
+	int portInt = D2K::stol(portString);
 	if(portInt > 0 && portInt < 0xFFFF)
 		Port = portString;
 	else
 		edit->SetText(Port);
-	Config::SetPort(D2K::stoi(Port));
+	Config::SetConfigPort(D2K::stol(Port));
 	Config::Save();
 	UDP::Connect(Config::GetPort());
 
-	std::string status = "Connected on Port #" + D2K::itos(Config::GetPort());
+	std::string status = "Connected on Port #" + D2K::ltos(Config::GetPort());
 	GUI::MainWindow::StatusBar->SetText(UDP::IsConnected() ? status : "Disconnected");
 	CheckMenuRadioItem(	(HMENU)GUI::MainWindow::MainMenu::file->GetParentHWND(),
 						GUI::MainWindow::MainMenu::fileConnect->GetID(),
@@ -518,7 +518,7 @@ void editFunction(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 void Setup()
 {
-	Port = D2K::itos(Config::GetPort());
+	Port = D2K::ltos(Config::GetPort());
 	window.Append(label = new Label("Port", x, 15, 20, 16));
 
 	window.Append(
@@ -596,7 +596,7 @@ int Setup(HINSTANCE hThisInstance, int nCmdShow)
 	Profile::Setup();
 	Settings::Setup();
 	About::Setup();
-	std::string status = "Connected on Port #" + D2K::itos(Config::GetPort());
+	std::string status = "Connected on Port #" + D2K::ltos(Config::GetPort());
 	window.Append(GUI::MainWindow::StatusBar = new GUI::StatusBar(UDP::IsConnected() ? status : "Disconnected", 0, 0, 120, 120));
 	window.Append(GUI::MainWindow::TrayIcon = new GUI::TrayIcon("DS2Key"));
 

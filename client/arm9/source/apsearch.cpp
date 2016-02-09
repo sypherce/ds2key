@@ -6,10 +6,10 @@
 namespace D2K {namespace AP {
 
 int g_count = -1;
-bool m_searching = false;
+bool g_searching = false;
 int Update()
 {
-	if(m_searching)
+	if(g_searching)
 		g_count = Wifi_GetNumAP();
 	else
 		g_count = -1;

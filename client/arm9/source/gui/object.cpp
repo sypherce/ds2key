@@ -5,9 +5,9 @@ namespace D2K {namespace GUI {
 
 Object::Object(uint8_t screen, GUI::Rect rect)
 {
-	Object::m_screen = screen;
-	Object::m_rect = rect;
-	Object::m_status = OBJECT_STATUS::IDLE;
+	m_screen = screen;
+	m_rect = rect;
+	m_status = OBJECT_STATUS::IDLE;
 	SetVisible(false);
 	Function = &GUI::VoidFunction;
 }
@@ -40,7 +40,7 @@ void Object::SetVisible(bool visible)
 {
 	GUI::SetUpdate(true);
 	Object::SetUpdate(true);
-	Object::m_visible = visible;
+	m_visible = visible;
 }
 void Object::SetStatus(uint8_t value)
 {
@@ -77,11 +77,11 @@ bool Object::GetScreen()
 }
 D2K::GUI::Rect Object::GetRect()
 {
-	return Object::m_rect;
+	return m_rect;
 }
 void Object::SetRect(GUI::Rect rect)
 {
-	Object::m_rect = rect;
+	m_rect = rect;
 }
 
 }}//namespace D2K::GUI

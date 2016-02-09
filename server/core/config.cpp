@@ -10,16 +10,16 @@
 
 namespace D2K {namespace Config {
 
-const char* g_ini_filename = "ds2key.ini";
+const char* INI_FILENAME = "ds2key.ini";
 
 int Load()
 {
-	dictionary* ini = D2K::iniParser::load(g_ini_filename);
+	dictionary* ini = D2K::iniParser::load(INI_FILENAME);
 
 	if(ini == nullptr)
 	{
 		int err = errno;
-		std::clog << "Error (iniParser::load): #" << err << "\nFailed to open file: " << g_ini_filename << "\n";
+		std::clog << "Error (iniParser::load): #" << err << "\nFailed to open file: " << INI_FILENAME << "\n";
 		SetConfigPort(DEFAULT_PORT);
 		Save();
 
@@ -44,7 +44,7 @@ int LoadProfile(ProfileData* profile_data, uint8_t profile_number)
 	if(ini == nullptr)
 	{
 		int err = errno;
-		std::clog << "Error (iniParser::load): #" << err << "\nFailed to open file: " << g_ini_filename << "\n";
+		std::clog << "Error (iniParser::load): #" << err << "\nFailed to open file: " << INI_FILENAME << "\n";
 		profile_data->m_mouse = "Relative";
 		profile_data->m_joy = "0";
 		profile_data->SetVirtualKey(KEYS::UP, KEY_UP);
@@ -222,12 +222,12 @@ int LoadProfile(ProfileData* profile_data, uint8_t profile_number)
 
 int Save()
 {
-	FILE* file = fopen(g_ini_filename, "w");
+	FILE* file = fopen(INI_FILENAME, "w");
 
 	if(file == nullptr)
 	{
 		int err = errno;
-		std::clog << "Error (fopen): #" << err << "\nFailed to open file: " << g_ini_filename << "\n";
+		std::clog << "Error (fopen): #" << err << "\nFailed to open file: " << INI_FILENAME << "\n";
 
 		return err;
 	}
@@ -250,7 +250,7 @@ int SaveProfile(ProfileData* Profile, uint8_t profileNumber)
 	if(file == nullptr)
 	{
 		int err = errno;
-		std::clog << "Error (fopen): #" << err << "\nFailed to save file: " << g_ini_filename << "\n";
+		std::clog << "Error (fopen): #" << err << "\nFailed to save file: " << INI_FILENAME << "\n";
 
 		return err;
 	}
@@ -293,20 +293,30 @@ int SaveProfile(ProfileData* Profile, uint8_t profileNumber)
 
 //private
 //Currently assigned port
-uint16_t g_port = DEFAULT_PORT;
+uint16_t port = DEFAULT_PORT;
 
 //public
 uint16_t GetPort()
 {
-	return Config::g_port;
+	return Config::port;
 }
 
 void SetConfigPort(uint16_t port)
 {
 	if(port == 0)
-		Config::g_port = DEFAULT_PORT;
+		Config::port = DEFAULT_PORT;
 	else
-		Config::g_port = port;
+		Config::port = port;
+}
+
+Client* GetClient(uint8_t profile)
+{
+	if(g_client_array[profile] == nullptr)							//if profile not active,
+	{
+		g_client_array[profile] = new Client();						//create it
+		Config::LoadProfile(g_client_array[profile]->GetProfileDataPointer(), profile);	//then load it
+	}
+	return g_client_array[profile];
 }
 
 }}//namespace D2K::Config

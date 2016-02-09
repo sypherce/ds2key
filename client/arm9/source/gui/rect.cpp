@@ -8,10 +8,10 @@ namespace D2K {namespace GUI {
 
 Rect::Rect()
 {
-	Rect::m_x =
-	Rect::m_y =
-	Rect::m_w =
-	Rect::m_h = 0;
+	m_x =
+	m_y =
+	m_w =
+	m_h = 0;
 }
 Rect::Rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h)
 {
@@ -21,10 +21,10 @@ Rect::Rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h)
 		w = SCREEN_WIDTH - 1 - x;
 	if(y_2 >= SCREEN_HEIGHT - 1)		//if y_2 is offscreen
 		h = SCREEN_HEIGHT - 1 - y;
-	Rect::m_x = x;
-	Rect::m_y = y;
-	Rect::m_w = w;
-	Rect::m_h = h;
+	m_x = x;
+	m_y = y;
+	m_w = w;
+	m_h = h;
 }
 uint8_t Rect::GetX()
 {
@@ -32,7 +32,7 @@ uint8_t Rect::GetX()
 }
 void Rect::SetX(uint8_t x)
 {
-	Rect::m_x = x;
+	m_x = x;
 }
 uint8_t Rect::GetY()
 {
@@ -40,7 +40,7 @@ uint8_t Rect::GetY()
 }
 void Rect::SetY(uint8_t y)
 {
-	Rect::m_y = y;
+	m_y = y;
 }
 uint8_t Rect::GetW()
 {
@@ -50,9 +50,9 @@ void Rect::SetW(uint8_t w)
 {
 	int tempW = GetX() + w;
 	if(tempW >= SCREEN_WIDTH - 1)//if tempW is offscreen
-		Rect::m_w = SCREEN_WIDTH - 1 - GetX();
+		m_w = SCREEN_WIDTH - 1 - GetX();
 	else
-		Rect::m_w = w;
+		m_w = w;
 }
 uint8_t Rect::GetH()
 {
@@ -62,9 +62,9 @@ void Rect::SetH(uint8_t h)
 {
 	int tempH = GetY() + h;
 	if(tempH >= SCREEN_HEIGHT - 1)//if tempH is offscreen
-		Rect::m_h = SCREEN_HEIGHT - 1 - GetY();
+		m_h = SCREEN_HEIGHT - 1 - GetY();
 	else
-		Rect::m_h = h;
+		m_h = h;
 }
 uint8_t Rect::GetX2()
 {
@@ -76,10 +76,10 @@ uint8_t Rect::GetY2()
 }
 bool Rect::PointIntersect(uint8_t x, uint8_t y)
 {
-	return (x >= std::min((uint16_t)GetX(), (uint16_t)GetX2())
-			&& x <= std::max((uint16_t)GetX(), (uint16_t)GetX2())
-			&& y >= std::min((uint16_t)GetY(), (uint16_t)GetY2())
-			&& y <= std::max((uint16_t)GetY(), (uint16_t)GetY2()));
+	return (   x >= std::min((uint16_t)GetX(), (uint16_t)GetX2())
+		&& x <= std::max((uint16_t)GetX(), (uint16_t)GetX2())
+		&& y >= std::min((uint16_t)GetY(), (uint16_t)GetY2())
+		&& y <= std::max((uint16_t)GetY(), (uint16_t)GetY2()));
 }
 Rect::~Rect() { }
 

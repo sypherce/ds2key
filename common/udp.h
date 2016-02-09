@@ -16,7 +16,6 @@
 typedef int SOCKET;
 #endif//_WIN32
 
-
 namespace D2K {namespace UDP {
 
 enum PACKET : uint8_t
