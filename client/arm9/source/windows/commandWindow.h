@@ -12,6 +12,6 @@ public:
 
 	void SetVisible(bool visible);
 };
-extern GUI::Command::WindowClass* g_window;
+extern GUI::Command::WindowClass g_window;
 
 }}}//namespace D2K::GUI::Command

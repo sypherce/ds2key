@@ -12,6 +12,6 @@ public:
 
 	bool Update();
 };
-extern GUI::Main::WindowClass* g_window;
+extern GUI::Main::WindowClass g_window;
 
 }}}//namespace D2K::GUI::Main

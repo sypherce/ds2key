@@ -8,7 +8,6 @@
 
 namespace D2K {namespace GUI {namespace Keypad {
 
-//private
 extern void Button1Function();
 extern void Button2Function();
 extern void Button3Function();
@@ -23,7 +22,7 @@ extern void Button0Function();
 extern void ButtonBackspaceFunction();
 extern void ButtonEnterFunction();
 
-WindowClass* g_window;
+WindowClass g_window;
 Button* button_1;
 Button* button_2;
 Button* button_3;
@@ -41,7 +40,6 @@ Button* button_enter;
 Edit* edit_entry;
 Label* label_entry;
 
-//public
 WindowClass::WindowClass() : Window()
 {
 	m_screen = 0;
@@ -74,7 +72,6 @@ WindowClass::WindowClass() : Window()
 }
 WindowClass::~WindowClass() { }
 
-//private
 std::string Buffer;
 size_t BufferLen = 0;
 void append(char c)
@@ -85,27 +82,27 @@ void append(char c)
 
 void ButtonEnterFunction()
 {
-	Keypad::g_window->SetVisible(false);
-	Main::g_window->SetVisible(true);
+	Keypad::g_window.SetVisible(false);
+	Main::g_window.SetVisible(true);
 }
 
-void Button1Function()			{ append('1'); }
-void Button2Function()			{ append('2'); }
-void Button3Function()			{ append('3'); }
-void Button4Function()			{ append('4'); }
-void Button5Function()			{ append('5'); }
-void Button6Function()			{ append('6'); }
-void Button7Function()			{ append('7'); }
-void Button8Function()			{ append('8'); }
-void Button9Function()			{ append('9'); }
-void ButtonPeriodFunction()		{ append('.'); }
-void Button0Function()			{ append('0'); }
-void ButtonBackspaceFunction()	{
+void Button1Function()		{ append('1'); }
+void Button2Function()		{ append('2'); }
+void Button3Function()		{ append('3'); }
+void Button4Function()		{ append('4'); }
+void Button5Function()		{ append('5'); }
+void Button6Function()		{ append('6'); }
+void Button7Function()		{ append('7'); }
+void Button8Function()		{ append('8'); }
+void Button9Function()		{ append('9'); }
+void ButtonPeriodFunction()	{ append('.'); }
+void Button0Function()		{ append('0'); }
+void ButtonBackspaceFunction()
+{
 	if(Buffer.length() > 0)
 		Buffer.resize(Buffer.length() - 1);
 }
 
-//public
 std::string Entry(Label* label, Edit* edit, std::string text, int maxLength)
 {
 	Keypad::label_entry->SetRect(label->GetRect());
@@ -117,19 +114,19 @@ std::string Entry(Label* label, Edit* edit, std::string text, int maxLength)
 	Buffer = text;
 	BufferLen = maxLength;
 
-	Main::g_window->SetVisible(false);			//hide main window
-	Keypad::g_window->SetVisible(true);			//show keypad
+	Main::g_window.SetVisible(false);			// Hide main window
+	Keypad::g_window.SetVisible(true);			// Show keypad
 
-	Keypad::g_window->Draw();						//and actually draw it
-	while(Keypad::g_window->IsVisible())
+	Keypad::g_window.Draw();				// And actually draw it
+	while(Keypad::g_window.IsVisible())
 	{
-		if(Keypad::g_window->Update())			//if pressed
-			Keypad::edit_entry->SetText(Buffer);	//set text
+		if(Keypad::g_window.Update())			// If pressed
+			Keypad::edit_entry->SetText(Buffer);	// Set text
 		D2K::Loop();
 	}
-	Keypad::g_window->SetVisible(false);			//hide keypad
+	Keypad::g_window.SetVisible(false);			// Hide keypad
 
-	Main::g_window->SetVisible(true);				//go back to main window
+	Main::g_window.SetVisible(true);			// Go back to main window
 	return Buffer;
 }
 

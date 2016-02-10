@@ -24,7 +24,7 @@ extern void CheckButtonYellowFunction();
 extern void CheckButtonRedFunction();
 extern void CheckButtonGreenFunction();
 
-WindowClass* g_window;
+WindowClass g_window;
 Label* label_title;
 CheckButton* check_button_l;
 CheckButton* check_button_r;

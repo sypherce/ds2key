@@ -17,7 +17,7 @@ namespace D2K {
 
 touchPosition g_stylus_position;
 bool input_changed = false;
-bool enable_input_timeout = false;
+bool enable_input_timeout = true;
 bool toggle_both_lights = false;
 
 char* GetTime()
@@ -58,31 +58,31 @@ void UpdateInputs()
 	}
 }
 
-///updates backlights depending on touch and lid status
+// Updates backlights depending on touch and lid status
 void UpdateLid()
 {
 	static uint32_t s_vblank_count = 0;
-	static const uint32_t VBLANK_MAX = (60 * 4);			//4 seconds
+	static const uint32_t VBLANK_MAX = (60 * 4);			// 4 seconds
 
-	if((keysUp()&KEY_LID)						//if lid just opened OR
-	|| (keysHeld()&KEY_TOUCH))					//screen is touched
+	if((keysUp()&KEY_LID)						// If lid just opened OR
+	|| (keysHeld()&KEY_TOUCH))					// Screen is touched
 	{
-		s_vblank_count = 0;					//reset timer
-		powerOn(PM_BACKLIGHT_BOTTOM);				//lights on
-		if(toggle_both_lights)					//turn on top light only if enabled
+		s_vblank_count = 0;					// Reset timer
+		powerOn(PM_BACKLIGHT_BOTTOM);				// Lights on
+		if(toggle_both_lights)					// Turn on top light only if enabled
 			powerOn(PM_BACKLIGHT_TOP);	
 	}
-	else if((keysDown()&KEY_LID)					//if lid just closed OR
-	|| keysDown() 							//a button pressed OR
-	|| s_vblank_count == VBLANK_MAX)				//enough time passed
+	else if((keysDown()&KEY_LID)					// If lid just closed OR
+	|| keysDown() 							// A button pressed OR
+	|| s_vblank_count == VBLANK_MAX)				// Enough time passed
 	{
-		powerOff(PM_BACKLIGHT_BOTTOM);				//lights off
+		powerOff(PM_BACKLIGHT_BOTTOM);				// Lights off
 		if(toggle_both_lights)
-			powerOff(PM_BACKLIGHT_TOP);			//turn off top light only if enabled
+			powerOff(PM_BACKLIGHT_TOP);			// Turn off top light only if enabled
 	}
 	if(s_vblank_count < VBLANK_MAX)
-		s_vblank_count++;					//increment timer
-	if(!enable_input_timeout)					//this avoids the screen turning off after 4 seconds
+		s_vblank_count++;					// Increment timer
+	if(!enable_input_timeout)					// This avoids the screen turning off after 4 seconds
 		s_vblank_count = 0;
 }
 
@@ -95,11 +95,11 @@ void VBlankFunction()
 
 bool Init()
 {
-	//screen setup
-	//powerOff(PM_BACKLIGHT_TOP);
+	// Screen setup
+	// PowerOff(PM_BACKLIGHT_TOP);
 	videoSetModeSub(MODE_0_2D);
 
-	//console setup
+	// Console setup
 	consoleDemoInit();
 	vramSetPrimaryBanks(VRAM_A_LCD, VRAM_B_MAIN_SPRITE, VRAM_C_SUB_BG, VRAM_D_LCD);
 
@@ -111,8 +111,7 @@ bool Init()
 
 	consoleClear();
 
-	//if we're running in emulator mode, let the user know
-	if(EMULATOR)
+	if(EMULATOR)  // If we're running in emulator mode, let the user know
 		std::cout << " - Emulator Mode";
 
 	std::cout << "\n-\n";
@@ -123,21 +122,21 @@ bool Init()
 
 	std::cout << "Connecting via WFC data\n";
 	if(!EMULATOR
-	&& !Wifi_InitDefault(WFC_CONNECT))		///this needs replaced
+	&& !Wifi_InitDefault(WFC_CONNECT))
 	{
 		std::clog << "Error (Wifi_InitDefault): Failed to connect\n";
-		return true;				//return with error
+		return true;				// Return with error
 	}
 
-	irqSet(IRQ_VBLANK, VBlankFunction);		//setup vblank function
+	irqSet(IRQ_VBLANK, VBlankFunction);		// Setup vblank function
 
-	UDP::Init();					//initilize udp
-	Config::Load();					//load udp settings
-	UDP::Connect();					//connect with settings
+	UDP::Init();					// Initilize UDP
+	Config::Load();					// Load UDP settings
+	UDP::Connect();					// Connect with settings
 	if(!toggle_both_lights)
 		powerOff(PM_BACKLIGHT_TOP);
 
-	return false;					//return without error
+	return false;					// Return without error
 }
 
 void Loop()

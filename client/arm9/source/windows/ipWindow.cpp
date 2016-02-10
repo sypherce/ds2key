@@ -1,4 +1,4 @@
-#include <string>  // std::string
+#include <string>// std::string
 #include "ipWindow.h"
 #include "gui/button.h"
 #include "gui/label.h"
@@ -6,7 +6,6 @@
 
 namespace D2K {namespace GUI {namespace IP {
 
-//private
 extern void button1Function();
 extern void button2Function();
 extern void button3Function();
@@ -20,7 +19,7 @@ extern void button10Function();
 extern void button11Function();
 extern void button12Function();
 
-WindowClass* g_window;
+WindowClass g_window;
 Label* label_1;
 Button* button_1;
 Button* button_2;
@@ -35,7 +34,6 @@ Button* button_10;
 Button* button_11;
 Button* button_12;
 
-//public
 WindowClass::WindowClass() : Window()
 {
 	m_screen = 0;
