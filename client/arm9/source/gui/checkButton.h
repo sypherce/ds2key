@@ -1,6 +1,6 @@
 #pragma once
 
-#include <string>	//std::string
+#include <string>  // std::string
 #include "rect.h"
 #include "button.h"
 

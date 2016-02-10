@@ -7,14 +7,14 @@
 
 #ifdef __linux__
 #include <netdb.h>
-#elif defined ARM9
+#elif defined(ARM9)
 #include <nds.h>
 #include <netinet/in.h>//sockaddr_in
-#endif//__linux__
+#endif
 
 #ifndef _WIN32
 typedef int SOCKET;
-#endif//_WIN32
+#endif
 
 namespace D2K {namespace UDP {
 
@@ -47,17 +47,17 @@ int Connect(bool non_blocking, uint16_t port);
 //@return (0) without error, else (errno)
 int Disconnect();
 
-//Sends contents of (buf) up to (len) in size
-//@param buf Pointer to data
-//@param len Length of data to send
+//Sends contents of (buffer) up to (length) in size
+//@param buffer Pointer to data
+//@param length Length of data to send
 //@return (0) without error, (-1) not connected, (-2) invalid length, (-3) invalid pointer, else (errno)
 int Send(const void* buffer, unsigned int length);
 
-//Receives contents into (buf) up to (len) in size
-//@param buf Pointer to data.
-//(buf) must be allocated before calling.
-//(buf) is only modified up to (len) if recvfrom is successful, otherwise it should be left un modified.
-//@param len Length of data to receive
+//Receives contents into (buffer) up to (length) in size
+//@param buffer Pointer to data.
+//(buffer) must be allocated before calling.
+//(buffer) is only modified up to (length) if recvfrom is successful, otherwise it should be left un modified.
+//@param length Length of data to receive
 //\return (0) without error, (-1) not connected, (-2) invalid length, (-3) invalid pointer, else (errno)
 int Recv(void* buffer, unsigned int length);
 
@@ -97,8 +97,8 @@ void SetProfile(unsigned int profile);
 
 DS2KeySettingsPacket GetCommandSettings();
 
-#else//D2KSERVER
+#elif defined(D2KSERVER)
 void SendCommandSettings(DS2KeySettingsPacket settings);
-#endif//D2KCLIENT
+#endif
 
 }}//namespace D2K::UDP

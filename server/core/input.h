@@ -2,9 +2,9 @@
 
 #ifdef _WIN32
 #include "PPJoy.h"
-#elif defined __linux__
+#elif defined(__linux__)
 #include <X11/extensions/XTest.h>
-#endif//_WIN32
+#endif
 #include <cstdint>//uint8_t, etc
 
 //Performs Virtual Keyboard, Mouse, and Gamepad events

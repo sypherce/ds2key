@@ -29,10 +29,10 @@ int main()
 		D2K::Loop();						//DS hardware loop
 
 		UDP::Update(keysHeld(),					//update ds2key network
-			Turbo::GetKeys(),
-			guitarGripKeysHeld() * guitarGripIsInserted(),
-			Turbo::GHGetKeys() * guitarGripIsInserted(),
-			nullptr);
+			    Turbo::GetKeys(),
+			    guitarGripKeysHeld() * guitarGripIsInserted(),
+			    Turbo::GHGetKeys() * guitarGripIsInserted(),
+			    nullptr);
 
 		Main::g_window->Update();				//update the window
 	}

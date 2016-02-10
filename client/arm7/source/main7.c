@@ -6,7 +6,7 @@ volatile bool exit_flag = false;
 void VBlankHandler(void)
 {
 	Wifi_Update();
-	resyncClock();//fixes libnds bug for 3DS
+	resyncClock();  // Fixes libnds bug for 3DS
 }
 
 void VCountHandler()
@@ -24,8 +24,8 @@ int main()
 	readUserSettings();
 
 	irqInit();
-	// Start the RTC tracking IRQ
-	initClockIRQ();
+
+	initClockIRQ(); // Start the RTC tracking IRQ
 	fifoInit();
 
 	SetYtrigger(80);

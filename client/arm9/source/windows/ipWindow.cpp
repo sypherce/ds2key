@@ -1,4 +1,4 @@
-#include <string>	//std::string
+#include <string>  // std::string
 #include "ipWindow.h"
 #include "gui/button.h"
 #include "gui/label.h"
@@ -45,7 +45,7 @@ WindowClass::WindowClass() : Window()
 	int h = 24;
 	int gap = 12;
 
-	AppendObject(label_1	= new Label(m_screen, Rect(24,0+3,128,10), "IPs"));
+	AppendObject(label_1 = new Label(m_screen, Rect(24,0+3,128,10), "IPs"));
 
 	AppendObject(button_1 = new Button(m_screen, Rect(x,y,w,h), "Command 1", &button1Function));
 	y += h + gap;

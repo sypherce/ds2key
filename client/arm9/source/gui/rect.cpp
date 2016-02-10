@@ -1,5 +1,5 @@
-#include <nds/arm9/video.h>	//SCREEN_WIDTH
-#include <nds/dma.h>		//dmaFillHalfWords
+#include <nds/arm9/video.h>  // SCREEN_WIDTH
+#include <nds/dma.h>  // dmaFillHalfWords
 #include <algorithm>
 //std::min, std::max
 #include "gui.h"
@@ -17,9 +17,9 @@ Rect::Rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h)
 {
 	int x_2 = x + w;
 	int y_2 = y + h;
-	if(x_2 >= SCREEN_WIDTH - 1)		//if x_2 is offscreen
+	if(x_2 >= SCREEN_WIDTH - 1)  // If x_2 is offscreen
 		w = SCREEN_WIDTH - 1 - x;
-	if(y_2 >= SCREEN_HEIGHT - 1)		//if y_2 is offscreen
+	if(y_2 >= SCREEN_HEIGHT - 1)  // If y_2 is offscreen
 		h = SCREEN_HEIGHT - 1 - y;
 	m_x = x;
 	m_y = y;
@@ -49,7 +49,7 @@ uint8_t Rect::GetW()
 void Rect::SetW(uint8_t w)
 {
 	int tempW = GetX() + w;
-	if(tempW >= SCREEN_WIDTH - 1)//if tempW is offscreen
+	if(tempW >= SCREEN_WIDTH - 1)  // If tempW is offscreen
 		m_w = SCREEN_WIDTH - 1 - GetX();
 	else
 		m_w = w;
@@ -61,7 +61,7 @@ uint8_t Rect::GetH()
 void Rect::SetH(uint8_t h)
 {
 	int tempH = GetY() + h;
-	if(tempH >= SCREEN_HEIGHT - 1)//if tempH is offscreen
+	if(tempH >= SCREEN_HEIGHT - 1) // If tempH is offscreen
 		m_h = SCREEN_HEIGHT - 1 - GetY();
 	else
 		m_h = h;

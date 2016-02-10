@@ -3,7 +3,7 @@
 #include "client.h"
 #include "key.h"
 #include "common/misc.h"
-#include <sstream>	//std::stringstream
+#include <sstream>  // std::stringstream
 
 namespace D2K {
 
@@ -253,7 +253,7 @@ Client::Client()
 
 Client::~Client()
 {
-	
+
 }
 
 void Client::Scan(void)

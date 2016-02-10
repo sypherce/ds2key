@@ -1,4 +1,4 @@
-#include <string>	//std::string
+#include <string>  // std::string
 #include "checkButton.h"
 #include "gui.h"
 

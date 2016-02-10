@@ -9,9 +9,9 @@
 #include <iostream>//std::cout, std::clog
 #include "PPJIoctl.h"
 #include "key.h"
-#elif defined __linux__
+#elif defined(__linux__)
 #define NUM_DIGITAL 20
-#endif//_WIN32
+#endif
 
 #include "input.h"
 
@@ -19,10 +19,10 @@ namespace D2K {namespace Input {
 
 #ifdef _WIN32
 PPJoy* g_ppjoy[MAX_JOYSTICKS] = { };
-#endif//_WIN32
+#endif
 #ifdef __linux__
 Display* g_display;
-#endif//__linux__
+#endif
 
 void Init()
 {
@@ -31,10 +31,10 @@ void Init()
 	{
 		g_ppjoy[i] = 0;
 	}
-#endif//_WIN32
+#endif
 #ifdef __linux__
 	g_display = XOpenDisplay(nullptr);
-#endif//__linux__
+#endif
 }
 
 void DeInit()
@@ -46,7 +46,7 @@ void DeInit()
 			delete(g_ppjoy[i]);
 			g_ppjoy[i] = 0;
 		}
-#endif//_WIN32
+#endif
 }
 
 //Checks if (key) is an "extended" key
@@ -54,7 +54,7 @@ void DeInit()
 //@return true if (key) is an "extended" key
 bool IsExtended(uint16_t key)
 {
-	switch (key)
+	switch(key)
 	{
 	case VK_INSERT:
 	case VK_DELETE:
@@ -82,11 +82,11 @@ enum KeyState
 #ifdef _WIN32
 	pressed = false,
 	released = true,
-#elif defined __linux__
+#elif defined(__linux__)
 	//these linux values have not been tested
 	pressed = true,
 	released = false,
-#endif//_WIN32
+#endif
 };
 
 //Presses or releases (key) depending on (state)
@@ -95,6 +95,7 @@ enum KeyState
 void Keyboard(uint16_t key, KeyState state)
 {
 	static uint16_t s_press_counter[65535] = { };//this allows 1 or more profile to press the same key, instead of going crazy
+
 	if((s_press_counter[key] == 0 && state == KeyState::pressed)
 	|| (s_press_counter[key] == 1 && state == KeyState::released))
 	{
@@ -154,11 +155,11 @@ void Keyboard(uint16_t key, KeyState state)
 		}
 
 		SendInput(1, (LPINPUT)&input, sizeof(INPUT));
-#elif defined __linux__
+#elif defined(__linux__)
 		int code = XKeysymToKeycode(g_display, key);
 		XTestFakeKeyEvent(g_display, code, state, 0);
 		XFlush(g_display);
-#endif//_WIN32
+#endif
 	}
 
 	//doesn't check boundaries
@@ -184,7 +185,7 @@ void Mouse(bool type, signed long int x, signed long int y)
 	input.mi.time = 0;
 
 	SendInput(1, (LPINPUT)&input, sizeof(INPUT));
-#elif defined __linux__
+#elif defined(__linux__)
 	Window dummyWin;
 	unsigned int dummyInt;
 	unsigned int width, height;
@@ -199,7 +200,7 @@ void Mouse(bool type, signed long int x, signed long int y)
 		else
 			XTestFakeRelativeMotionEvent(g_display, m_x, m_y, 0);
 	}
-#endif//_WIN32
+#endif
 }
 
 void Press(uint16_t key, unsigned char joy)
@@ -211,7 +212,7 @@ void Press(uint16_t key, unsigned char joy)
 			g_ppjoy[joy] = new PPJoy(joy);
 		g_ppjoy[joy]->SetButton(key - KEY_JOY, 1);
 		g_ppjoy[joy]->Update();
-#endif//_WIN32
+#endif
 	}
 	else
 	{
@@ -229,7 +230,7 @@ void Release(uint16_t key, unsigned char joy)
 			g_ppjoy[joy] = new PPJoy(joy);
 		g_ppjoy[joy]->SetButton(key - KEY_JOY, 0);
 		g_ppjoy[joy]->Update();
-#endif//_WIN32
+#endif
 	}
 	else
 	{

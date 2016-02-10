@@ -1,5 +1,5 @@
 #include "misc.h"
-#include <sstream>	//std::stringstream
+#include <sstream>  // std::stringstream
 
 namespace D2K {
 
@@ -11,7 +11,7 @@ const std::string VERSION_STRING = "DS2Key (Console) SVN Build";
 const std::string VERSION_STRING = "DS2Key (Linux) SVN Build";
 #elif defined(ARM9)
 const std::string VERSION_STRING = "DS2Key (DS) SVN Build";
-#endif//WIN32GUI
+#endif
 
 std::string ltos(long i)
 {
@@ -37,7 +37,8 @@ long stol(std::string str)
 uint8_t string_to_uint8_t(std::string str)
 {
 	long return_value = D2K::stol(str);
-	if (return_value > 255 // Clamp to uint8_t
+	// Clamp to uint8_t
+	if (return_value > 255
 	|| return_value < 0)
 		return_value = 0;
 
@@ -47,7 +48,8 @@ uint8_t string_to_uint8_t(std::string str)
 uint16_t string_to_uint16_t(std::string str)
 {
 	long return_value = D2K::stol(str);
-	if (return_value > 65535 // Clamp to uint16_t
+	// Clamp to uint16_t
+	if (return_value > 65535
 	|| return_value < 0)
 		return_value = 0;
 

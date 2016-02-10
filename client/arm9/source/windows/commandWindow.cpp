@@ -1,4 +1,4 @@
-#include <string>	//std::string
+#include <string>  // std::string
 #include "commandWindow.h"
 #include "gui/button.h"
 #include "common/udp.h"
@@ -35,7 +35,7 @@ Button* button_11;
 Button* button_12;
 
 //public
-WindowClass::WindowClass() :Window()
+WindowClass::WindowClass() : Window()
 {
 	m_screen = 0;
 	int x = 16;
@@ -73,6 +73,7 @@ WindowClass::WindowClass() :Window()
 		y += h + gap;
 	button_rects[11] = Rect(x,y,w,h);
 	settings = UDP::GetCommandSettings();
+
 	if(settings.type == UDP::PACKET::COMMAND_SETTINGS)//if settings packet was received
 	{
 		for(int i = 0; i <= 11; i++)
@@ -101,6 +102,7 @@ void WindowClass::SetVisible(bool visible)
 {
 	Rect button_rects[12];
 	settings = UDP::GetCommandSettings();
+
 	if(settings.type == UDP::PACKET::COMMAND_SETTINGS)//if settings packet was received
 	{
 		for(int i = 0; i <= 11; i++)
@@ -133,6 +135,7 @@ void WindowClass::SetVisible(bool visible)
 		button_11->SetText(settings.text[10]);
 		button_12->SetText(settings.text[11]);
 	}
+
 	return Window::SetVisible(visible);
 }
 

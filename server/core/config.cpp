@@ -10,7 +10,7 @@
 
 namespace D2K {namespace Config {
 
-const char* INI_FILENAME = "ds2key.ini";
+const std::string INI_FILENAME = "ds2key.ini";
 
 int Load()
 {
@@ -39,7 +39,7 @@ int LoadProfile(ProfileData* profile_data, uint8_t profile_number)
 	std::ostringstream ssfilename;
 	ssfilename << "ds2key.p" << (int)profile_number << ".ini";
 
-	dictionary* ini = iniParser::load(ssfilename.str().c_str());
+	dictionary* ini = iniParser::load(ssfilename.str());
 	iniParser::dump(ini, stderr);
 	if(ini == nullptr)
 	{
@@ -222,7 +222,7 @@ int LoadProfile(ProfileData* profile_data, uint8_t profile_number)
 
 int Save()
 {
-	FILE* file = fopen(INI_FILENAME, "w");
+	FILE* file = fopen(INI_FILENAME.c_str(), "w");
 
 	if(file == nullptr)
 	{

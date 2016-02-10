@@ -1,7 +1,7 @@
 #pragma once
 
-#include <string>		//std::string
-#include <cstdint>		//uint8_t, etc
+#include <string>  //s td::string
+#include <cstdint>  // uint8_t, etc
 #include "common/ds2keyPacket.h"
 
 static const char* D2K_COMMAND = "*";

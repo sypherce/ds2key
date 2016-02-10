@@ -10,9 +10,9 @@
 
 namespace D2K {namespace Config {
 
-const char* DEFAULT_IP = "0.0.0.0";
-const char* DEFAULT_PROFILE = "0";
-const char* INI_FILENAME = "/ds2key.ini";
+const std::string DEFAULT_IP = "0.0.0.0";
+const std::string DEFAULT_PROFILE = "0";
+const std::string INI_FILENAME = "/ds2key.ini";
 
 int Load()
 {
@@ -35,9 +35,9 @@ int Load()
 	//display file
 	iniParser::dump(ini, stderr);
 
-	UDP::SetRemoteIP(iniParser::getstring(ini, (char*)"settings:ip", (char*)DEFAULT_IP));
-	UDP::SetConfigPort(iniParser::getstring(ini, (char*)"settings:port", (char*)D2K::ltoa(D2K::DEFAULT_PORT)));
-	UDP::SetProfile(iniParser::getstring(ini, (char*)"settings:profile", (char*)DEFAULT_PROFILE));
+	UDP::SetRemoteIP(iniParser::getstring(ini, "settings:ip", DEFAULT_IP));
+	UDP::SetConfigPort(iniParser::getstring(ini, "settings:port", D2K::ltos(D2K::DEFAULT_PORT)));
+	UDP::SetProfile(iniParser::getstring(ini, "settings:profile", DEFAULT_PROFILE));
 
 	//close file
 	iniParser::freedict(ini);
@@ -46,7 +46,7 @@ int Load()
 }
 int Save()
 {
-	FILE* file = fopen(INI_FILENAME, "w");
+	FILE* file = fopen(INI_FILENAME.c_str(), "w");
 
 	//if we failed to open the ini file
 	if(file == nullptr)

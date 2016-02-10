@@ -1,4 +1,4 @@
-#include <string>	//std::string
+#include <string>  // std::string
 
 //windows
 #include "mainWindow.h"
@@ -24,7 +24,6 @@ const int LENGTH_IP = 15;
 const int LENGTH_PORT = 5;
 const int LENGTH_PROFILE = 3;
 
-//private
 extern void EditIPFunction();
 extern void EditPortFunction();
 extern void EditProfileFunction();
@@ -50,22 +49,21 @@ Button* button_turbo;
 Button* button_ip;
 Button* button_commands;
 
-//public
 WindowClass::WindowClass() : Window()
 {
-	Color[COLOR_BACKGROUND] 			= ARGB16(1, 19, 22, 25);
+	Color[COLOR_BACKGROUND] 		= ARGB16(1, 19, 22, 25);
 
-	Color[COLOR_LABEL_TEXT] 			= ARGB16(1, 0, 0, 0);
+	Color[COLOR_LABEL_TEXT] 		= ARGB16(1, 0, 0, 0);
 	Color[COLOR_LABEL_BACKGROUND]		= Color[COLOR_BACKGROUND];
 
-	Color[COLOR_BUTTON_TEXT]			= Color[COLOR_LABEL_TEXT];
+	Color[COLOR_BUTTON_TEXT]		= Color[COLOR_LABEL_TEXT];
 	Color[COLOR_BUTTON_BACKGROUND]		= ARGB16(1, 31, 30, 15);
-	Color[COLOR_BUTTON_OUTLINE]			= Color[COLOR_BUTTON_TEXT];
+	Color[COLOR_BUTTON_OUTLINE]		= Color[COLOR_BUTTON_TEXT];
 	Color[COLOR_BUTTON_OUTLINE_ACTIVE]	= ARGB16(1, 31, 0, 0);
 
-	Color[COLOR_EDIT_TEXT]				= Color[COLOR_LABEL_TEXT];
+	Color[COLOR_EDIT_TEXT]			= Color[COLOR_LABEL_TEXT];
 	Color[COLOR_EDIT_BACKGROUND]		= ARGB16(1, 31, 31, 31);
-	Color[COLOR_EDIT_OUTLINE]			= Color[COLOR_EDIT_TEXT];
+	Color[COLOR_EDIT_OUTLINE]		= Color[COLOR_EDIT_TEXT];
 	Color[COLOR_EDIT_OUTLINE_ACTIVE]	= Color[COLOR_BUTTON_OUTLINE_ACTIVE];
 
 	m_screen = 0;
@@ -81,7 +79,7 @@ WindowClass::WindowClass() : Window()
 	AppendObject(edit_port			= new Edit(m_screen, Rect(112,48,79,10), UDP::GetPortString(), &EditPortFunction));
 	AppendObject(edit_profile		= new Edit(m_screen, Rect(136,72,55,10), UDP::GetProfileString(), &EditProfileFunction));
 	AppendObject(button_turbo		= new Button(m_screen, Rect(0,177,35,10), "Turbo", &ButtonTurboFunction));
-	AppendObject(button_commands	= new Button(m_screen, Rect(95,177,35,10), "Commands", &ButtonCommandsFunction));
+	AppendObject(button_commands		= new Button(m_screen, Rect(95,177,35,10), "Commands", &ButtonCommandsFunction));
 	AppendObject(button_touch		= new Button(m_screen, Rect(217,177,35,10), "Touch", &ButtonTouchFunction));
 }
 WindowClass::~WindowClass() { }
@@ -89,12 +87,15 @@ bool WindowClass::Update()
 {
 	static char seconds = 0;
 
-	static int c = 0;c++;if(c > 30)//counter
-	if(label_clock->IsVisible())
+	const int UPDATE_COUNTER_MAX = 30;
+	static int update_counter = 0;
+	update_counter++;
+	if((update_counter >= UPDATE_COUNTER_MAX)
+	&&(label_clock->IsVisible()))
 	{
-		c = 0;
+		update_counter = 0;
 		char* timePointer = D2K::GetTime();
-		if(seconds != timePointer[7])	//if seconds differ
+		if(seconds != timePointer[7])  // If seconds differ
 		{
 			seconds = timePointer[7];
 			label_clock->SetText(timePointer);
@@ -103,7 +104,6 @@ bool WindowClass::Update()
 	return Window::Update();
 }
 
-//private
 void EditIPFunction()
 {
 	std::string entry = Keypad::Entry(label_ip, edit_ip, UDP::GetRemoteIPString(), LENGTH_IP);
@@ -130,7 +130,8 @@ void EditProfileFunction()
 }
 void ButtonTouchFunction()
 {
-	Main::g_window->SetVisible(false);	//hide main window
+	// Hide main window
+	Main::g_window->SetVisible(false);
 	label_title->SetText("Touch Mode");
 	label_title->SetVisible(true);
 	button_touch->SetVisible(true);
@@ -139,8 +140,10 @@ void ButtonTouchFunction()
 	while(true)
 	{
 		D2K::Loop();
-		if(Main::g_window->CheckClick(button_touch))
-			break;						//if pressed again, break
+
+		if(Main::g_window->CheckClick(button_touch))  // If pressed again, break
+			break;
+
 		UDP::Update(keysHeld(), 0, guitarGripKeysHeld() * guitarGripIsInserted(), Turbo::GHGetKeys() * guitarGripIsInserted(), &D2K::g_stylus_position);
 	}
 
@@ -150,7 +153,7 @@ void ButtonTouchFunction()
 
 void ButtonTurboFunction()
 {
-	Main::g_window->SetVisible(false);	//hide main window
+	Main::g_window->SetVisible(false);  // Hide main window
 	button_turbo->SetVisible(true);
 	Turbo::g_window->SetVisible(true);
 
@@ -160,8 +163,9 @@ void ButtonTurboFunction()
 		UDP::Update(keysHeld(), Turbo::GetKeys(), guitarGripKeysHeld() * guitarGripIsInserted(), Turbo::GHGetKeys() * guitarGripIsInserted(), nullptr);
 		Turbo::g_window->Update();
 		button_turbo->Draw();
-		if(Main::g_window->CheckClick(button_turbo))
-			break;						//if pressed again, break
+
+		if(Main::g_window->CheckClick(button_turbo))  // If pressed again, break
+			break;
 	}
 
 	Turbo::g_window->SetVisible(false);
@@ -175,22 +179,23 @@ void ButtonIPFunction()
 void ButtonCommandsFunction()
 {
 	UDP::GetCommandSettings();
-	Main::g_window->SetVisible(false);	//hide main window
-	button_commands->SetVisible(true);	//keep [Commands] button visible
-	Command::g_window->SetVisible(true);	//show command window
+	Main::g_window->SetVisible(false);  // Hide main window
+	button_commands->SetVisible(true);  // Keep [Commands] button visible
+	Command::g_window->SetVisible(true);    // Show command window
 
 	while(true)
 	{
 		D2K::Loop();
 		UDP::Update(keysHeld(), Turbo::GetKeys(), guitarGripKeysHeld() * guitarGripIsInserted(), Turbo::GHGetKeys() * guitarGripIsInserted(), nullptr);
-		Command::g_window->Update();			//update and draw command window
-		button_commands->Draw();				//draw [Commands] button
-		if(Main::g_window->CheckClick(button_commands))
-			break;							//if pressed again, break
+		Command::g_window->Update();  // Update and draw command window
+		button_commands->Draw();  // Draw [Commands] button
+
+		if(Main::g_window->CheckClick(button_commands))   // If pressed again, break
+			break;							
 	}
 
 	Command::g_window->SetVisible(false);
-	Main::g_window->SetVisible(true);		//show main window
+	Main::g_window->SetVisible(true);  // Show main window
 }
 
 }}}//namespace D2K::GUI::Main

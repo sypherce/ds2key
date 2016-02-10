@@ -3,13 +3,10 @@
 #include <string>//std::string
 extern "C"
 {
-	#include "iniparser/src/dictionary.h"
+#include "iniparser/src/dictionary.h"
 }
 
-namespace D2K
-{
-namespace iniParser
-{
+namespace D2K {namespace iniParser {
 extern int getnsec(dictionary* d);
 extern std::string getsecname(dictionary* d, int n);
 extern void dump_ini(dictionary* d, FILE* f);
@@ -26,5 +23,4 @@ extern void unset(dictionary* ini, std::string entry);
 extern int find_entry(dictionary* ini, std::string entry);
 extern dictionary* load(std::string ininame);
 extern void freedict(dictionary* d);
-}
-}
+}}//namespace D2K::iniParser

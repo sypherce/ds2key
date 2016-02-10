@@ -1,4 +1,4 @@
-#include <string>	//std::string
+#include <string>  // std::string
 #include "turboWindow.h"
 #include "gui/checkButton.h"
 #include "gui/label.h"
