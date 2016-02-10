@@ -64,15 +64,30 @@ bool Window::CheckClick(Object* object)
 	if(object != nullptr
 	&& object->IsVisible())
 	{
+		uint8_t x = D2K::g_stylus_position.px,
+			y = D2K::g_stylus_position.py;
+
+		// clamp x value
+		if(D2K::g_stylus_position.px >= SCREEN_WIDTH)
+			x = SCREEN_WIDTH - 1;
+		else if(D2K::g_stylus_position.px < 0)
+			x = 0;
+			
+		// clamp y value
+		if(D2K::g_stylus_position.py > SCREEN_HEIGHT)
+			x = SCREEN_HEIGHT - 1;
+		else if(D2K::g_stylus_position.py < 0)
+			y = 0;
+
 		if(keysDown()&KEY_TOUCH
-		&& object->IsClicked((uint8_t)D2K::g_stylus_position.px, (uint8_t)D2K::g_stylus_position.py))
+		&& object->IsClicked(x, y))
 		{
 			object->SetStatus(OBJECT_STATUS::PRESSED);
 		}
 		else if(keysHeld()&KEY_TOUCH
 		&& object->GetStatus() != OBJECT_STATUS::IDLE)
 		{
-			if(object->IsClicked((uint8_t)D2K::g_stylus_position.px, (uint8_t)D2K::g_stylus_position.py))
+			if(object->IsClicked(x, y))
 				object->SetStatus(OBJECT_STATUS::HELD);		//if we pressed and we're still hovering set to Held
 			else
 				object->SetStatus(OBJECT_STATUS::PRESSED);	//if we held but we're not hovering set to Pressed
@@ -81,7 +96,7 @@ bool Window::CheckClick(Object* object)
 		{
 			int status = object->GetStatus();			//save status value
 			object->SetStatus(OBJECT_STATUS::IDLE);			//reset status
-			if(object->IsClicked((uint8_t)D2K::g_stylus_position.px, (uint8_t)D2K::g_stylus_position.py)
+			if(object->IsClicked(x, y)
 			&& status == OBJECT_STATUS::HELD)			//if we pressed and we're still hovering
 			{
 				return true;					//the object was clicked

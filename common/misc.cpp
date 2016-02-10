@@ -4,13 +4,13 @@
 namespace D2K {
 
 #ifdef WIN32GUI
-const std::string VERSION_STRING = "DS2Key (GUI) SVN Build";
+const std::string VERSION_STRING = "DS2Key (GUI) git Build";
 #elif defined(_WIN32)
-const std::string VERSION_STRING = "DS2Key (Console) SVN Build";
+const std::string VERSION_STRING = "DS2Key (Console) git Build";
 #elif defined(__linux__)
-const std::string VERSION_STRING = "DS2Key (Linux) SVN Build";
+const std::string VERSION_STRING = "DS2Key (Linux) git Build";
 #elif defined(ARM9)
-const std::string VERSION_STRING = "DS2Key (DS) SVN Build";
+const std::string VERSION_STRING = "DS2Key (DS) git Build";
 #endif
 
 std::string ltos(long i)
