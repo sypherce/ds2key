@@ -5,7 +5,7 @@
 #include "core.h"
 
 namespace D2K {namespace GUI {namespace Turbo {
-//private
+
 extern void CheckButtonLFunction();
 extern void CheckButtonRFunction();
 extern void CheckButtonLeftFunction();
@@ -44,7 +44,6 @@ CheckButton* check_button_yellow;
 CheckButton* check_button_red;
 CheckButton* check_button_green;
 
-//public
 WindowClass::WindowClass() : Window()
 {
 	m_screen = 0;
