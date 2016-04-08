@@ -5,27 +5,37 @@
 #endif
 
 #include <cstdlib>  // atoi
-#include <iostream>  // std::cout, std::clog
+#include <iostream> // std::cout, std::clog
 #include <sstream>  // std::stringstream
 #include <cstring>  // strerror
 
+#include "client/arm9/source/ndstouch.h"
+
 //system specific includes
 #ifdef _WIN32
-#include <ws2tcpip.h>  // socklength_t
+#include <ws2tcpip.h>     // socklength_t
 #elif defined(__linux__)
-#include <unistd.h>  // close
-#include <arpa/inet.h>  // inet_ntoa
-#include <sys/ioctl.h>  // ioctl
+#include <unistd.h>       // close
+#include <arpa/inet.h>    // inet_ntoa
+#include <sys/ioctl.h>    // ioctl
 #elif defined(ARM9)
-#include <nds/ndstypes.h>  // dswifi9.h
+#include <nds/ndstypes.h> // dswifi9.h
 #include <dswifi9.h>
 #include <netinet/in.h>
 #include <netdb.h>
 #include <errno.h>
+#elif defined(_3DS)
+#include <3ds.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <sys/ioctl.h>
+#include <stdio.h>
+#include <unistd.h>
 #endif
 
 //shared (linux, nds) defines
-#if defined(__linux__) || defined(ARM9)
+#if defined(__linux__) || defined(ARM9) || defined(_3DS)
 #define NETerrno errno
 #define NETEADDRINUSE EADDRINUSE
 #define NETEWOULDBLOCK EWOULDBLOCK
@@ -46,6 +56,9 @@
 #elif defined(ARM9)
 typedef int socklen_t;
 #define NETclosesocket closesocket
+#elif defined(_3DS)
+#define SOCKET_ERROR -1
+#define NETclosesocket closesocket
 #endif
 
 #include "udp.h"
@@ -61,7 +74,8 @@ SOCKET socket_id = INVALID_SOCKET;
 DS2KeyPacket packet = DS2KeyPacket{ };
 uint8_t profile = 0;
 std::string remote_ip = "";
-#elif defined(D2KSERVER)
+#endif
+#if defined(D2KSERVER) || defined(_WIN32)
 struct sockaddr_in local_sockaddr = { };
 #endif
 struct sockaddr_in remote_sockaddr = { };
@@ -99,11 +113,11 @@ int Connect(uint16_t port)
 
 int Connect(bool non_blocking, uint16_t port)
 {
-	if(EMULATOR)  // Skip if emulating
+	if(EMULATOR)          // Skip if emulating
 		return 0;
 
-	if(IsConnected())  // If already connected
-		Disconnect();  // Disconnect first
+	if(IsConnected())     // If already connected
+		Disconnect(); // Disconnect first
 
 	SetConfigPort(port);  // Set port
 
@@ -111,7 +125,7 @@ int Connect(bool non_blocking, uint16_t port)
 #ifdef D2KCLIENT
 	remote_sockaddr.sin_family = AF_INET;
 	remote_sockaddr.sin_port = htons(GetPort());
-#elif defined(D2KSERVER)
+#elif defined(D2KSERVER) || defined(_WIN32)
 	int sockaddrlength = sizeof(struct sockaddr_in);
 	local_sockaddr = sockaddr_in{ };
 	local_sockaddr.sin_family = AF_INET;
@@ -194,7 +208,7 @@ int Send(const void* buffer, unsigned int length)
 		std::clog << "Error (UDP::Send) Invalid pointer\n";
 		return -3;
 	}
-	else  // successful
+	else // successful
 	{
 		int sockaddrlength = sizeof(remote_sockaddr);
 		if(sendto(socket_id, (const char*)buffer, length, 0, (struct sockaddr*)&remote_sockaddr, sockaddrlength) == SOCKET_ERROR)
@@ -225,7 +239,7 @@ int Recv(void* buffer, unsigned int length)
 		std::clog << "Error (UDP::Recv) Invalid pointer\n";
 		return -3;
 	}
-	else  // Successful
+	else // Successful
 	{
 		socklen_t sockaddrlength = sizeof(remote_sockaddr);
 		if(recvfrom(socket_id, (char*)buffer, length, 0, (struct sockaddr*)&remote_sockaddr, &sockaddrlength) == SOCKET_ERROR)
@@ -251,7 +265,7 @@ unsigned long GetLocalIP()
 }
 std::string GetLocalIPString()
 {
-#ifdef ARM9
+#if defined(ARM9) || defined(_3DS)
 	struct in_addr sin_addr;
 	sin_addr.s_addr = GetLocalIP();
 	std::string IP = inet_ntoa(sin_addr);
@@ -300,7 +314,7 @@ void SetConfigPort(char* port)
 }
 void SetConfigPort(unsigned int port)
 {
-	if(port == 0)  // If port 0
+	if(port == 0)                     // If port 0
 		UDP::port = DEFAULT_PORT; // Use default port 9501
 	else
 		UDP::port = port;
@@ -309,67 +323,66 @@ void SetConfigPort(unsigned int port)
 #ifdef D2KCLIENT
 void SendCommand(uint8_t command)
 {
-	if(command >= UDP::SETTINGS_PACKET_MAX_BUTTONS)  // Valid range is 0 - 11
+	if(command >= UDP::SETTINGS_PACKET_MAX_BUTTONS) // Valid range is 0 - 11
 		return;
 
-	packet = DS2KeyPacket{ };  // Clear the packet
+	packet = DS2KeyPacket{ };                       // Clear the packet
 	packet.type = UDP::PACKET::COMMAND;
 	packet.profile = GetProfile();
 	packet.keys = command;
 
-	Send(&packet, sizeof(DS2KeyPacket));  // Send packet
+	Send(&packet, sizeof(DS2KeyPacket));            // Send packet
 }
 
 void Update(uint32_t keys, uint32_t keysTurbo, uint32_t gripKeys, uint32_t gripKeysTurbo, touchPosition* pos)
 {
-	if(EMULATOR)  // Skip if emulating
+	if(EMULATOR)                         // Skip if emulating
 		return;					
-	packet = DS2KeyPacket{ };  // Clear the packet
+	packet = DS2KeyPacket{ };            // Clear the packet
 	packet.type = UDP::PACKET::NORMAL;
 	packet.profile = GetProfile();
 	packet.keys = keys;
 	packet.keys_turbo = keysTurbo;
-	if(pos != nullptr)  // Touch status is active
+	if(pos != nullptr)                   // Touch status is active
 	{
-		packet.touch_x = pos->px;  // Update x
-		packet.touch_y = pos->py;  // Update y
+		packet.touch_x = pos->px;    // Update x
+		packet.touch_y = pos->py;    // Update y
 	}
-	else  // Touch status is inactive
+	else                                 // Touch status is inactive
 	{
-		packet.keys &= ~KEY_TOUCH;  // Clear touch status
+		packet.keys &= ~KEY_TOUCH;   // Clear touch status
 	}
 	packet.gh_keys = gripKeys;
 	packet.gh_keys_turbo = gripKeysTurbo;
 
-	Send(&packet, sizeof(DS2KeyPacket));  // Send packet
+	Send(&packet, sizeof(DS2KeyPacket)); // Send packet
 }
 
 void ServerLookup()
 {
-	if(EMULATOR)						// Skip if emulating
+	if(EMULATOR)                                        // Skip if emulating
 		return;					
-	unsigned long saved_remote_ip = GetRemoteIP();		// Save the remote IP
-	unsigned long LocalIP = GetLocalIP();			// Get the local IP
-	SetRemoteIP(((LocalIP) & 0xFF) |			// Setup the broadcast IP
+	unsigned long saved_remote_ip = GetRemoteIP();      // Save the remote IP
+	unsigned long LocalIP = GetLocalIP();               // Get the local IP
+	SetRemoteIP(((LocalIP) & 0xFF) |                    // Setup the broadcast IP
 		   (((LocalIP >> 8) & 0xFF) << 8) |
 		   (((LocalIP >> 16) & 0xFF) << 16) |
 		   (0xFF << 24));
 
-	packet = DS2KeyPacket{ };				// Clear the packet
-	packet.type = UDP::PACKET::LOOKUP;			// Set as a lookup packet
+	packet = DS2KeyPacket{ };                           // Clear the packet
+	packet.type = UDP::PACKET::LOOKUP;                  // Set as a lookup packet
 
-	Send(&packet, sizeof(DS2KeyPacket));			// Send the packet out
+	Send(&packet, sizeof(DS2KeyPacket));                // Send the packet out
 
-	if(Recv((char*)&packet, sizeof(DS2KeyPacket)) != 0)	// Didn't receive anything
+	if(Recv((char*)&packet, sizeof(DS2KeyPacket)) != 0) // Didn't receive anything
 	{
-		SetRemoteIP(saved_remote_ip);			// Reset the remote IP
+		SetRemoteIP(saved_remote_ip);               // Reset the remote IP
 	}
-	else if(packet.type == UDP::PACKET::LOOKUP)		// Received a lookup packet
+	else if(packet.type == UDP::PACKET::LOOKUP)         // Received a lookup packet
 	{
-		if(GetLocalIP() == GetRemoteIP())		// If it's from the local IP
-			SetRemoteIP(saved_remote_ip);		// Reset the remote IP
+		if(GetLocalIP() == GetRemoteIP())           // If it's from the local IP
+			SetRemoteIP(saved_remote_ip);       // Reset the remote IP
 	}
-
 }
 
 uint8_t GetProfile()
@@ -383,7 +396,7 @@ std::string GetProfileString()
 
 void SetProfile(const std::string& profile)
 {
-	SetProfile(stol(profile));
+	SetProfile(D2K::stol(profile));
 }
 void SetProfile(char* profile)
 {
@@ -413,7 +426,9 @@ DS2KeySettingsPacket GetCommandSettings()
 			}
 			std::clog << "Error (GetCommandSettings): Received invalid packet\n";
 		}
-		swiWaitForVBlank();  // Wait a second before trying again
+	gspWaitForVBlank();
+	VBlankFunction();
+		//!swiWaitForVBlank();  // Wait a second before trying again
 	}
 	// If we didn't receive anything, or something invalid we return NULL_VALUE
 	settings = DS2KeySettingsPacket{ };

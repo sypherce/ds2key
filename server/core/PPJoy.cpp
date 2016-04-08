@@ -39,7 +39,7 @@ PPJoy::PPJoy(int device)
 	if(handle == INVALID_HANDLE_VALUE)
 	{
 		std::clog << "Error (CreateFile) #" << (int)GetLastError() << "\n"
-				<< "Failed to open device: " <<	DevName.str() << "\n";
+		          << "Failed to open device: " << DevName.str() << "\n";
 
 		return;
 	}

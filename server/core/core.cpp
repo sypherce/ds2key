@@ -53,11 +53,11 @@ void ProcessPacket(D2K::Client* Client)
 	ProfileData* Profile = Client->GetProfileDataPointer();
 
 	//buttons
-	for(int i = KEYS::UP; i <= KEYS::LID; i++)
+	for(int enum_key = KEYS::UP; enum_key <= KEYS::LID; enum_key++)
 	{
-		uint16_t DSButton = BitToButton(i);
+		uint16_t DSButton = EnumKeyToNDSKeypadBit(enum_key);
 		uint8_t Joystick = Profile->GetValue8(KEYS::JOY);
-		uint16_t PCButton = Profile->GetVirtualKey(i);
+		uint16_t PCButton = Profile->GetVirtualKey(enum_key);
 
 		if(PCButton)
 		{
@@ -78,17 +78,17 @@ void ProcessPacket(D2K::Client* Client)
 		//pressed
 		else if(Client->Down(DSButton))
 		{
-			std::string Command = Profile->GetCommand(i);
+			std::string Command = Profile->GetCommand(enum_key);
 			ExecuteCommand(Command);
 		}
 	}
 	//gh buttons
-	for(int i = KEYS::BLUE; i <= KEYS::GREEN; i++)
+	for(int enum_key = KEYS::BLUE; enum_key <= KEYS::GREEN; enum_key++)
 	{
-		//all the guitar hero buttons are 8bit values, type casting BitToButton should be fine
-		uint8_t DSButton = (uint8_t)BitToButton(i);
+		//all the guitar hero buttons are 8bit values, type casting EnumKeyToNDSKeypadBit should be fine
+		uint8_t DSButton = (uint8_t)EnumKeyToNDSKeypadBit(enum_key);
 		uint8_t Joystick = Profile->GetValue8(KEYS::JOY);
-		uint16_t PCButton = Profile->GetVirtualKey(i);
+		uint16_t PCButton = Profile->GetVirtualKey(enum_key);
 
 		if(PCButton)
 		{
@@ -108,7 +108,7 @@ void ProcessPacket(D2K::Client* Client)
 		}
 		else
 		{
-			std::string Command = Profile->GetCommand(i);
+			std::string Command = Profile->GetCommand(enum_key);
 			ExecuteCommand(Command);
 		}
 	}
@@ -191,6 +191,8 @@ bool g_running = false;
 // --block sets UDP blocking mode, otherwise we start in non-blocking mode
 // --console enables a console window for the GUI interface
 // --port assigns a custom port
+//
+// return (0) if connected, else (errno)
 int Setup(int argc, char* argv[])
 {
 	bool non_blocking = true;

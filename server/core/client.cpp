@@ -9,9 +9,30 @@ namespace D2K {
 
 Client* g_client_array[256] = { };
 
-uint16_t BitToButton(int bit)
+uint16_t EnumKeyToNDSKeypadBit(int enum_key)
 {
-	switch(bit)
+	// TODO: These kinda just make everything uglier... maybe this should be removed
+	static const uint16_t DS2KEY_A = (1 << (0));
+	static const uint16_t DS2KEY_B = (1 << (1));
+	static const uint16_t DS2KEY_SELECT = (1 << (2));
+	static const uint16_t DS2KEY_START = (1 << (3));
+	static const uint16_t DS2KEY_RIGHT = (1 << (4));
+	static const uint16_t DS2KEY_LEFT = (1 << (5));
+	static const uint16_t DS2KEY_UP = (1 << (6));
+	static const uint16_t DS2KEY_DOWN = (1 << (7));
+	static const uint16_t DS2KEY_R = (1 << (8));
+	static const uint16_t DS2KEY_L = (1 << (9));
+	static const uint16_t DS2KEY_X = (1 << (10));
+	static const uint16_t DS2KEY_Y = (1 << (11));
+	static const uint16_t DS2KEY_TOUCH = (1 << (12));
+	static const uint16_t DS2KEY_LID = (1 << (13));
+
+	static const uint8_t DS2KEY_BLUE = (1 << (3));
+	static const uint8_t DS2KEY_YELLOW = (1 << (4));
+	static const uint8_t DS2KEY_RED = (1 << (5));
+	static const uint8_t DS2KEY_GREEN = (1 << (6));
+
+	switch(enum_key)
 	{
 	case KEYS::UP:
 		return DS2KEY_UP;
@@ -76,15 +97,15 @@ std::string ProfileData::VirtualKeyToString(uint16_t button)
 }
 ProfileData::ProfileData()
 {
-	m_empty = "";
+
 }
 ProfileData::~ProfileData()
 {
 
 }
-std::string& ProfileData::GetStringReference(int button)
+std::string& ProfileData::GetStringReference(int enum_key)
 {
-	switch(button)
+	switch(enum_key)
 	{
 	case KEYS::MOUSE:
 		return m_mouse;
@@ -173,53 +194,53 @@ std::string& ProfileData::GetStringReference(int button)
 	case KEYS::TOUCH_STRING_11:
 		return m_touch_string[11];
 	default:
-		return m_empty;
+		return std::string("");
 	}
 }
 
-std::string ProfileData::GetButtonString(int button)
+std::string ProfileData::GetButtonString(int enum_key)
 {
-	if(isVirtualKey(GetStringReference(button)))
-		return Key::GetString(GetVirtualKey(button));
+	if(isVirtualKey(GetStringReference(enum_key)))
+		return Key::GetString(GetVirtualKey(enum_key));
 	else
-		return GetCommand(button);
+		return GetCommand(enum_key);
 }
-uint8_t ProfileData::GetValue8(int button)
+uint8_t ProfileData::GetValue8(int enum_key)
 {
-	std::string& pointer = GetStringReference(button);
+	std::string& pointer = GetStringReference(enum_key);
 	if(pointer == "")
 		return 0;
 	else
 		return D2K::string_to_uint8_t(pointer);
 }
-uint16_t ProfileData::GetValue16(int button)
+uint16_t ProfileData::GetValue16(int enum_key)
 {
-	std::string& pointer = GetStringReference(button);
+	std::string& pointer = GetStringReference(enum_key);
 	if(pointer == "")
 		return 0;
 	else
 		return D2K::string_to_uint16_t(pointer);
 }
-uint16_t ProfileData::GetVirtualKey(int button)
+uint16_t ProfileData::GetVirtualKey(int enum_key)
 {
-	std::string& pointer = GetStringReference(button);
+	std::string& pointer = GetStringReference(enum_key);
 	if(pointer == "" || pointer == "0")
 		return 0;
 	else
 		return StringToVirtualKey(pointer);
 }
 
-void ProfileData::SetVirtualKey(int button, uint16_t value)
+void ProfileData::SetVirtualKey(int enum_key, uint16_t value)
 {
-	std::string& pointer = GetStringReference(button);
+	std::string& pointer = GetStringReference(enum_key);
 	pointer = VirtualKeyToString(value);
 }
 
-void ProfileData::SetCommand(int button, std::string value)
+void ProfileData::SetCommand(int enum_key, std::string value)
 {
-	std::string& Pointer = GetStringReference(button);
+	std::string& Pointer = GetStringReference(enum_key);
 	if(isVirtualKey(value))
-		SetVirtualKey(button, Key::GetNumber(value.c_str()));
+		SetVirtualKey(enum_key, Key::GetNumber(value.c_str()));
 	else
 		Pointer = value;
 }
@@ -233,13 +254,13 @@ void ProfileData::SetTouchPos(uint8_t i, uint8_t x, uint8_t y, uint8_t w, uint8_
 		m_touch_h[i] = h;
 	}
 }
-const std::string& ProfileData::GetCommand(int button)
+const std::string& ProfileData::GetCommand(int enum_key)
 {
-	std::string& pointer = GetStringReference(button);
+	std::string& pointer = GetStringReference(enum_key);
 	if(!isVirtualKey(pointer))
 		return pointer;
 
-	return m_empty;
+	return std::string("");
 }
 
 Client::Client()
@@ -349,11 +370,6 @@ uint8_t Client::GetX()
 uint8_t Client::GetY()
 {
 	return m_packet.touch_y;
-}
-
-uint8_t Client::GetProfileNumber()
-{
-	return m_packet.profile;
 }
 
 }//namespace D2K

@@ -10,7 +10,7 @@
 
 namespace D2K {namespace Config {
 
-const std::string DEFAULT_IP = "0.0.0.0";
+const std::string DEFAULT_IP = "192.168.1.255";
 const std::string DEFAULT_PROFILE = "0";
 const std::string INI_FILENAME = "/ds2key.ini";
 
@@ -22,7 +22,8 @@ int Load()
 	if(ini == nullptr)
 	{
 		int err = errno;
-		std::clog << "Error (iniParser::load): " << strerror(err) << "\nFailed to open file: " << INI_FILENAME << "\n";
+		std::clog << "Error (iniParser::load): " << strerror(err) << "\n" <<
+		             "Failed to open file: " << INI_FILENAME << "\n";
 		UDP::SetRemoteIP(DEFAULT_IP);
 		UDP::SetConfigPort(D2K::DEFAULT_PORT);
 		UDP::SetProfile(DEFAULT_PROFILE);
@@ -52,7 +53,8 @@ int Save()
 	if(file == nullptr)
 	{
 		int err = errno;
-		std::clog << "Error (fopen): " << strerror(err) << "\nFailed to open file: " << INI_FILENAME << "\n";
+		std::clog << "Error (fopen): " << strerror(err) << "\n" <<
+		             "Failed to open file: " << INI_FILENAME << "\n";
 
 		return err;
 	}

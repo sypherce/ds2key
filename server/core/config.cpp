@@ -1,7 +1,7 @@
 // configuration loading/saving
 
 #include <iostream>//std::cout, std::clog
-#include <sstream>//ostringstream
+#include <sstream> //ostringstream
 #include "config.h"
 #include "key.h"
 #include "common/iniParserWrapper.h"
@@ -19,7 +19,8 @@ int Load()
 	if(ini == nullptr)
 	{
 		int err = errno;
-		std::clog << "Error (iniParser::load): #" << err << "\nFailed to open file: " << INI_FILENAME << "\n";
+		std::clog << "Error (iniParser::load): #" << err << "\n" << 
+		             "Failed to open file: " << INI_FILENAME << "\n";
 		SetConfigPort(DEFAULT_PORT);
 		Save();
 
@@ -44,7 +45,8 @@ int LoadProfile(ProfileData* profile_data, uint8_t profile_number)
 	if(ini == nullptr)
 	{
 		int err = errno;
-		std::clog << "Error (iniParser::load): #" << err << "\nFailed to open file: " << INI_FILENAME << "\n";
+		std::clog << "Error (iniParser::load): #" << err << "\n" << 
+		             "Failed to open file: " << INI_FILENAME << "\n";
 		profile_data->m_mouse = "Relative";
 		profile_data->m_joy = "0";
 		profile_data->SetVirtualKey(KEYS::UP, KEY_UP);
@@ -90,11 +92,11 @@ int LoadProfile(ProfileData* profile_data, uint8_t profile_number)
 		int TouchButton = 0;
 		for(int y = 0; y < screenH; y += screenH / 3)
 			for(int x = 0; x < screenW; x += screenW / 4)
-				profile_data->SetTouchPos(	TouchButton++,	//buttons 0 - 11
-										x,				//x
-										y,				//y
+				profile_data->SetTouchPos(	TouchButton++,                  //buttons 0 - 11
+										x,              //x
+										y,              //y
 										screenW / 4,	//w
-										screenH / 3		//h
+										screenH / 3     //h
 										);
 
 		SaveProfile(profile_data, profile_number);
@@ -211,9 +213,9 @@ int LoadProfile(ProfileData* profile_data, uint8_t profile_number)
 
 	for(int i = 0; i < UDP::SETTINGS_PACKET_MAX_BUTTONS; i++)
 	{
-        if(profile_data->m_touch_w[i] == 0 &&  profile_data->m_touch_h[i] == 0)     //if the button won't even show
+        if(profile_data->m_touch_w[i] == 0 &&  profile_data->m_touch_h[i] == 0) //if the button won't even show
             profile_data->m_touch_string[i].clear();
-        else                                //otherwise shrink down to our max chars
+        else                                                                    //otherwise shrink down to our max chars
             profile_data->m_touch_string[i].resize(10);
 	}
 
@@ -227,7 +229,8 @@ int Save()
 	if(file == nullptr)
 	{
 		int err = errno;
-		std::clog << "Error (fopen): #" << err << "\nFailed to open file: " << INI_FILENAME << "\n";
+		std::clog << "Error (fopen): #" << err << "\n" <<
+		             "Failed to open file: " << INI_FILENAME << "\n";
 
 		return err;
 	}
@@ -250,7 +253,8 @@ int SaveProfile(ProfileData* Profile, uint8_t profileNumber)
 	if(file == nullptr)
 	{
 		int err = errno;
-		std::clog << "Error (fopen): #" << err << "\nFailed to save file: " << INI_FILENAME << "\n";
+		std::clog << "Error (fopen): #" << err << "\n" <<
+		             "Failed to save file: " << INI_FILENAME << "\n";
 
 		return err;
 	}
@@ -311,10 +315,10 @@ void SetConfigPort(uint16_t port)
 
 Client* GetClient(uint8_t profile)
 {
-	if(g_client_array[profile] == nullptr)							//if profile not active,
+        if(g_client_array[profile] == nullptr)                                                  //if profile not active,
 	{
-		g_client_array[profile] = new Client();						//create it
-		Config::LoadProfile(g_client_array[profile]->GetProfileDataPointer(), profile);	//then load it
+		g_client_array[profile] = new Client();                                         //create it
+		Config::LoadProfile(g_client_array[profile]->GetProfileDataPointer(), profile); //then load it
 	}
 	return g_client_array[profile];
 }

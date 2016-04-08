@@ -10,17 +10,17 @@ typedef struct DS2KeyPacket final
 	uint8_t type;
 	uint8_t profile;
 	uint16_t keys;
-	uint16_t keys_turbo;//Enabled Turbo keys
+	uint16_t keys_turbo;       //Enabled Turbo keys
 	uint8_t gh_keys;
-	uint8_t gh_keys_turbo;//Enabled GuitarGrip Turbo keys
+	uint8_t gh_keys_turbo;     //Enabled GuitarGrip Turbo keys
 	uint16_t touch_keys;
-	uint16_t touch_keys_turbo;//Enabled Touch Turbo keys
+	uint16_t touch_keys_turbo; //Enabled Touch Turbo keys
 	uint8_t touch_x;
 	uint8_t touch_y;
 } DS2KeyPacket;
 
-const int SETTINGS_PACKET_MAX_BUTTONS = 12;  // 12 buttons
-const int SETTINGS_PACKET_MAX_TEXT = 10;  // 10 chars, 1 null terminator
+const int SETTINGS_PACKET_MAX_BUTTONS = 12; // 12 buttons
+const int SETTINGS_PACKET_MAX_TEXT    = 10; // 10 chars, 1 null terminator
 
 //contains button layout and text for command buttons
 //there's a max of 12 buttons

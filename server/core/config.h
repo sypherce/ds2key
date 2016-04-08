@@ -6,13 +6,13 @@
 
 namespace D2K {namespace Config{
 
-	//loads settings from disk
+	//Loads settings from disk
 	//@return (0) upon success, else (errno)
 	int Load();
 
-	//Saves Profile settings to disk
-	//@param Profile Pointer to actual data
-	//@param profileNumber Fills in # in ds2key.p#.ini. Example: ds2key.p1.ini
+	//Loads Profile settings to disk
+	//@param profile Pointer to actual data
+	//@param profile_number Fills in # in ds2key.p#.ini. Example: ds2key.p1.ini
 	//@return (0) upon success, else (errno)
 	int LoadProfile(ProfileData* profile, uint8_t profile_number);
 
@@ -21,8 +21,8 @@ namespace D2K {namespace Config{
 	int Save();
 
 	//Saves Profile settings to disk
-	//@param Profile Pointer to actual data
-	//@param profileNumber Fills in # in ds2key.p#.ini. Example: ds2key.p1.ini
+	//@param profile Pointer to actual data
+	//@param profile_number Fills in # in ds2key.p#.ini. Example: ds2key.p1.ini
 	//@return (0) upon success, else (errno)
 	int SaveProfile(ProfileData* profile, uint8_t profile_number);
 

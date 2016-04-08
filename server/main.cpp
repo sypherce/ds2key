@@ -13,13 +13,15 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance,
 	D2K::GUI::Setup();
 	if(D2K::GUI::MainWindow::Setup(hThisInstance, nCmdShow) == 0)
 	{
-		D2K::GUI::MainWindow::Profile::checkButton1->SetVisible(false);  // Disabled until implemented
+		D2K::GUI::MainWindow::Profile::checkButton1->SetVisible(false); // Disabled until implemented
 #elif defined(_WIN32) || defined(__linux__)
 
 int main(int argc, char* argv[])
 {
 	if(D2K::Setup(argc, argv)) // Exit if we don't connect properly
+	{
 		return 1;
+	}
 #endif
 
 		while(D2K::g_running)

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <cstdint>  // uint16_t
+#include <cstdint> // uint16_t
 #include <string>  // std::string
 
 namespace D2K {

@@ -10,6 +10,9 @@
 #elif defined(ARM9)
 #include <nds.h>
 #include <netinet/in.h>//sockaddr_in
+#elif defined(_3DS)
+#include <3ds.h>
+#include <netinet/in.h>//sockaddr_in
 #endif
 
 #ifndef _WIN32
@@ -39,8 +42,8 @@ int Connect();
 int Connect(uint16_t port);
 //connect udp system
 //@param block false == blocking, true == non-blocking
-//@param port Port to connect to. if port = 0, SetConfigPort assigns to default port 9501
-//\return (0) if connected, else (errno)
+//@param port Port to connect to. if port 0, SetConfigPort assigns to default port 9501
+//@return (0) if connected, else (errno)
 int Connect(bool non_blocking, uint16_t port);
 
 //disconnect udp system
@@ -58,7 +61,7 @@ int Send(const void* buffer, unsigned int length);
 //(buffer) must be allocated before calling.
 //(buffer) is only modified up to (length) if recvfrom is successful, otherwise it should be left un modified.
 //@param length Length of data to receive
-//\return (0) without error, (-1) not connected, (-2) invalid length, (-3) invalid pointer, else (errno)
+//@return (0) without error, (-1) not connected, (-2) invalid length, (-3) invalid pointer, else (errno)
 int Recv(void* buffer, unsigned int length);
 
 unsigned long GetLocalIP();
