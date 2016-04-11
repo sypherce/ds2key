@@ -1,21 +1,23 @@
-#ifndef __SYSTEM_H__
-#define __SYSTEM_H__
+#pragma once
 
-#include <nds.h>//touchPosition
+#if defined(_3DS)
+#include <3ds.h>// touchPosition
+#elif defined(_NDS)
+#include <nds.h>// touchPosition
+#endif
 
 namespace D2K {
-	extern touchPosition StylusPos;
-	extern bool InputChange;
 
-	//@return The current time
-	extern char* GetTime();
+extern touchPosition g_stylus_position;
 
-	//Setup the nds system. Start fat, wifi, and our udp system.
-	//@return (0) upon success, else (1)
-	extern bool Init();
+// @return The current time
+extern char* GetTime();
 
-	//Loop function that calls VBLFunction()
-	extern void Loop();
-}
+// Setup the nds system. Start fat, wifi, and our udp system.
+// @return (0) upon success, else (1)
+extern bool Init();
 
-#endif//__SYSTEM_H__
+// Loop function that calls VBlankFunction()
+extern void Loop();
+
+}//namespace D2K

@@ -1,20 +1,16 @@
-#ifndef __IPINDOW_H__
-#define __IPWINDOW_H__
+#pragma once
 
 #include "gui/window.h"
 
-namespace D2K {
-	namespace GUI {
-		namespace IP {
-			class WindowClass : public GUI::Window {
-				public:
-					WindowClass();
-					~WindowClass();
-					bool Update();
-			};
-			extern GUI::IP::WindowClass *Window;
-		}
-	}
-}
+namespace D2K {namespace GUI {namespace IP {
 
-#endif//__IPWINDOW_H__
+class WindowClass : public GUI::Window
+{
+public:
+	WindowClass();
+	~WindowClass();
+	bool Update();
+};
+extern GUI::IP::WindowClass g_window;
+
+}}}//namespace D2K::GUI::IP

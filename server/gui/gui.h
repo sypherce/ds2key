@@ -1,5 +1,4 @@
-#ifndef __GUI_H__
-#define __GUI_H__
+#pragma once
 
 #include <windows.h>
 #include <string>//std::string
@@ -18,34 +17,34 @@
 #include "controls/trayIcon.h"
 #include "controls/window.h"
 
-namespace D2K {
-	namespace GUI {
-		extern void voidFunction(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
-		extern HINSTANCE hThisInstance;
-		extern LPSTR lpszArgument;
-		extern int eventCounter;
-		const int eventMax = 200;
-		extern bool locked;
+namespace D2K {namespace GUI {
 
-		void SetFont(HWND hwnd);
+extern void voidFunction(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+extern HINSTANCE hThisInstance;
+extern LPSTR lpszArgument;
+extern int eventCounter;
+const int eventMax = 200;
+extern bool locked;
 
-		struct Event {
-			D2K::GUI::Object *object;
-			void (*function)(HWND, UINT, WPARAM, LPARAM);
-			void (*function2)(HWND, UINT, WPARAM, LPARAM);
-		};
-		extern Event events[D2K::GUI::eventMax];
+void SetFont(HWND hwnd);
 
-		void Setup();
+struct Event
+{
+	D2K::GUI::Object *object;
+	void (*function)(HWND, UINT, WPARAM, LPARAM);
+	void (*function2)(HWND, UINT, WPARAM, LPARAM);
+};
+extern Event events[D2K::GUI::eventMax];
 
-		/*  Make the class name into a global variable  */
+void Setup();
 
-		extern MSG messages;            /* Here messages to the application are saved */
+//  Make the class name into a global variable  
 
-		/*  This function is called by the Windows function DispatchMessage()  */
-		WPARAM GetMessages();
+extern MSG messages;            // Here messages to the application are saved 
 
-		LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
-	}
-}
-#endif//__GUI_H__
+//  This function is called by the Windows function DispatchMessage()  
+WPARAM GetMessages();
+
+LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+
+}}//namespace D2K::GUI
