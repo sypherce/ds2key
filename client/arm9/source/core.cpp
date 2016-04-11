@@ -4,11 +4,18 @@
 #include <cstdio>
 #include <iostream>
 #include <errno.h>
+
+#if defined(_3DS)
+#include <3ds.h>
+#include <malloc.h>
+#elif defined(_NDS)
 #include <nds.h>
 #include <fat.h>
 #include <dswifi9.h>
 
 #include "gui/gui.h"//D2K::GUI::Screen
+#endif
+
 #include "common/udp.h"
 #include "common/misc.h"
 #include "config.h"
@@ -47,10 +54,12 @@ void UpdateInputs()
 	{
 		input_changed = false;
 		scanKeys();
+#ifdef _NDS
 		if(guitarGripIsInserted())
 		{
 			guitarGripScanKeys();
 		}
+#endif
 		if(!keysUp()&&KEY_TOUCH)
 		{
 			touchRead(&g_stylus_position);
@@ -64,6 +73,7 @@ void UpdateLid()
 	static uint32_t s_vblank_count = 0;
 	static const uint32_t VBLANK_MAX = (60 * 4);			// 4 seconds
 
+#ifdef _NDS
 	if((keysUp()&KEY_LID)						// If lid just opened OR
 	|| (keysHeld()&KEY_TOUCH))					// Screen is touched
 	{
@@ -80,6 +90,7 @@ void UpdateLid()
 		if(toggle_both_lights)
 			powerOff(PM_BACKLIGHT_TOP);			// Turn off top light only if enabled
 	}
+#endif
 	if(s_vblank_count < VBLANK_MAX)
 		s_vblank_count++;					// Increment timer
 	if(!enable_input_timeout)					// This avoids the screen turning off after 4 seconds
@@ -96,6 +107,10 @@ void VBlankFunction()
 bool Init()
 {
 	// Screen setup
+#if defined(_3DS)
+	gfxInitDefault();
+	consoleInit(GFX_TOP, NULL);
+#elif defined(_NDS)
 	// PowerOff(PM_BACKLIGHT_TOP);
 	videoSetModeSub(MODE_0_2D);
 
@@ -110,12 +125,14 @@ bool Init()
 	lcdSwap();
 
 	consoleClear();
+#endif
 
 	if(EMULATOR)  // If we're running in emulator mode, let the user know
 		std::cout << " - Emulator Mode";
 
 	std::cout << "\n-\n";
 
+#ifdef _NDS
 	if(!EMULATOR
 	&& !fatInitDefault())
 		std::clog << "Error (fatInitDefault): Failed to access storage\n";
@@ -127,14 +144,40 @@ bool Init()
 		std::clog << "Error (Wifi_InitDefault): Failed to connect\n";
 		return true;				// Return with error
 	}
-
+	
 	irqSet(IRQ_VBLANK, VBlankFunction);		// Setup vblank function
+
+#endif
+
+#ifdef _3DS
+	#define SOC_ALIGN       0x1000
+	#define SOC_BUFFERSIZE  0x100000
+
+	// allocate buffer for SOC service
+	static u32 *SOC_buffer = (u32*)memalign(SOC_ALIGN, SOC_BUFFERSIZE);
+
+	if(SOC_buffer == nullptr) {
+		std::clog << "memalign: failed to allocate\n";
+		return true;
+	}
+
+	int soc_init = socInit(SOC_buffer, SOC_BUFFERSIZE);
+	// Now intialise soc:u service
+	if(soc_init != 0)
+	{
+    	std::clog << "socInit: " << (unsigned int)soc_init << "\n";
+		return true;
+	}
+#endif
+
 
 	UDP::Init();					// Initilize UDP
 	Config::Load();					// Load UDP settings
 	UDP::Connect();					// Connect with settings
+#ifdef _NDS
 	if(!toggle_both_lights)
 		powerOff(PM_BACKLIGHT_TOP);
+#endif
 
 	return false;					// Return without error
 }
@@ -142,7 +185,11 @@ bool Init()
 void Loop()
 {
 	input_changed = true;
+#if defined(_3DS)
+	gspWaitForVBlank();VBlankFunction();
+#elif defined(_NDS)
 	swiWaitForVBlank();
+#endif
 }
 
 }//namespace D2K

@@ -9,16 +9,14 @@
 #include <sstream>  // std::stringstream
 #include <cstring>  // strerror
 
-#include "client/arm9/source/ndstouch.h"
-
-//system specific includes
+// system specific includes
 #ifdef _WIN32
 #include <ws2tcpip.h>     // socklength_t
 #elif defined(__linux__)
 #include <unistd.h>       // close
 #include <arpa/inet.h>    // inet_ntoa
 #include <sys/ioctl.h>    // ioctl
-#elif defined(ARM9)
+#elif defined(_NDS)
 #include <nds/ndstypes.h> // dswifi9.h
 #include <dswifi9.h>
 #include <netinet/in.h>
@@ -34,8 +32,8 @@
 #include <unistd.h>
 #endif
 
-//shared (linux, nds) defines
-#if defined(__linux__) || defined(ARM9) || defined(_3DS)
+// shared (linux, nds) defines
+#if defined(__linux__) || defined(_NDS) || defined(_3DS)
 #define NETerrno errno
 #define NETEADDRINUSE EADDRINUSE
 #define NETEWOULDBLOCK EWOULDBLOCK
@@ -43,7 +41,7 @@
 #define INVALID_SOCKET -1
 #endif
 
-//system specific defines
+// system specific defines
 #ifdef _WIN32
 #define NETerrno WSAGetLastError()
 #define NETEADDRINUSE WSAEADDRINUSE
@@ -53,7 +51,7 @@
 #elif defined(__linux__)
 #define NETclosesocket close
 #define SOCKET_ERROR -1
-#elif defined(ARM9)
+#elif defined(_NDS)
 typedef int socklen_t;
 #define NETclosesocket closesocket
 #elif defined(_3DS)
@@ -117,7 +115,7 @@ int Connect(bool non_blocking, uint16_t port)
 		return 0;
 
 	if(IsConnected())     // If already connected
-		Disconnect(); // Disconnect first
+		Disconnect();     // Disconnect first
 
 	SetConfigPort(port);  // Set port
 
@@ -144,7 +142,7 @@ int Connect(bool non_blocking, uint16_t port)
 	}
 
 #ifdef D2KSERVER
-	//bind a local address and port
+	// bind a local address and port
 	if(bind(socket_id, (struct sockaddr*)&local_sockaddr, sockaddrlength) == SOCKET_ERROR)
 	{
 		int err = NETerrno;
@@ -157,14 +155,16 @@ int Connect(bool non_blocking, uint16_t port)
 	}
 #endif
 
-	//set blocking mode
+	// set blocking mode
 	if(NETioctlsocket(socket_id, FIONBIO, (unsigned long*)&UDP::non_blocking) == SOCKET_ERROR)
 	{
 		int err = NETerrno;
 		std::clog << "Error (NETioctlsocket): " << strerror(err) << "\n";
+#ifdef _NDS
 		Disconnect();
 
 		return err;
+#endif
 	}
 	connected = true;
 
@@ -173,7 +173,7 @@ int Connect(bool non_blocking, uint16_t port)
 
 int Disconnect()
 {
-	if(EMULATOR)  // Skip if emulating
+	if(EMULATOR) // Skip if emulating
 		return 0;
 	if(IsConnected())
 	{
@@ -208,7 +208,7 @@ int Send(const void* buffer, unsigned int length)
 		std::clog << "Error (UDP::Send) Invalid pointer\n";
 		return -3;
 	}
-	else // successful
+	else // Successful
 	{
 		int sockaddrlength = sizeof(remote_sockaddr);
 		if(sendto(socket_id, (const char*)buffer, length, 0, (struct sockaddr*)&remote_sockaddr, sockaddrlength) == SOCKET_ERROR)
@@ -256,7 +256,7 @@ int Recv(void* buffer, unsigned int length)
 
 unsigned long GetLocalIP()
 {
-#ifdef ARM9
+#ifdef _NDS
 	return Wifi_GetIP();
 #elif defined(_WIN32) || defined(__linux__)
 	return local_sockaddr.sin_addr.s_addr;
@@ -265,7 +265,7 @@ unsigned long GetLocalIP()
 }
 std::string GetLocalIPString()
 {
-#if defined(ARM9) || defined(_3DS)
+#if defined(_NDS) || defined(_3DS)
 	struct in_addr sin_addr;
 	sin_addr.s_addr = GetLocalIP();
 	std::string IP = inet_ntoa(sin_addr);
@@ -314,7 +314,7 @@ void SetConfigPort(char* port)
 }
 void SetConfigPort(unsigned int port)
 {
-	if(port == 0)                     // If port 0
+	if(port == 0)                 // If port 0
 		UDP::port = DEFAULT_PORT; // Use default port 9501
 	else
 		UDP::port = port;
@@ -345,12 +345,12 @@ void Update(uint32_t keys, uint32_t keysTurbo, uint32_t gripKeys, uint32_t gripK
 	packet.keys_turbo = keysTurbo;
 	if(pos != nullptr)                   // Touch status is active
 	{
-		packet.touch_x = pos->px;    // Update x
-		packet.touch_y = pos->py;    // Update y
+		packet.touch_x = pos->px;        // Update x
+		packet.touch_y = pos->py;        // Update y
 	}
 	else                                 // Touch status is inactive
 	{
-		packet.keys &= ~KEY_TOUCH;   // Clear touch status
+		packet.keys &= ~KEY_TOUCH;       // Clear touch status
 	}
 	packet.gh_keys = gripKeys;
 	packet.gh_keys_turbo = gripKeysTurbo;
@@ -376,12 +376,12 @@ void ServerLookup()
 
 	if(Recv((char*)&packet, sizeof(DS2KeyPacket)) != 0) // Didn't receive anything
 	{
-		SetRemoteIP(saved_remote_ip);               // Reset the remote IP
+		SetRemoteIP(saved_remote_ip);                   // Reset the remote IP
 	}
 	else if(packet.type == UDP::PACKET::LOOKUP)         // Received a lookup packet
 	{
-		if(GetLocalIP() == GetRemoteIP())           // If it's from the local IP
-			SetRemoteIP(saved_remote_ip);       // Reset the remote IP
+		if(GetLocalIP() == GetRemoteIP())               // If it's from the local IP
+			SetRemoteIP(saved_remote_ip);               // Reset the remote IP
 	}
 }
 
@@ -406,6 +406,9 @@ void SetProfile(unsigned int profile)
 {
 	UDP::profile = profile;
 }
+#ifdef _3DS
+extern void VBlankFunction();
+#endif
 DS2KeySettingsPacket GetCommandSettings()
 {
 	DS2KeySettingsPacket settings = DS2KeySettingsPacket{ };
@@ -426,9 +429,14 @@ DS2KeySettingsPacket GetCommandSettings()
 			}
 			std::clog << "Error (GetCommandSettings): Received invalid packet\n";
 		}
-	gspWaitForVBlank();
-	VBlankFunction();
-		//!swiWaitForVBlank();  // Wait a second before trying again
+		
+		// Wait a second before trying again
+#if defined(_3DS)
+		gspWaitForVBlank();  
+		VBlankFunction();
+#elif defined (_NDS)
+		swiWaitForVBlank();
+#endif
 	}
 	// If we didn't receive anything, or something invalid we return NULL_VALUE
 	settings = DS2KeySettingsPacket{ };

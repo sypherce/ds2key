@@ -53,9 +53,9 @@ void ProcessPacket(D2K::Client* Client)
 	ProfileData* Profile = Client->GetProfileDataPointer();
 
 	//buttons
-	for(int enum_key = KEYS::UP; enum_key <= KEYS::LID; enum_key++)
+	for(int enum_key = _START_OF_BUTTONS_ + 1; enum_key < KEYS::_END_OF_BUTTONS_; enum_key++)
 	{
-		uint16_t DSButton = EnumKeyToNDSKeypadBit(enum_key);
+		uint32_t DSButton = EnumKeyToNDSKeypadBit(enum_key);
 		uint8_t Joystick = Profile->GetValue8(KEYS::JOY);
 		uint16_t PCButton = Profile->GetVirtualKey(enum_key);
 
@@ -63,10 +63,16 @@ void ProcessPacket(D2K::Client* Client)
 		{
 			// Pressed
 			if(Client->Down(DSButton))
+			{
 				Input::Press(PCButton, Joystick);
+				std::clog << "press:" << PCButton << "\n";
+			}
 			// Released, even in turbo mode
 			else if(Client->Up(DSButton))
+			{
 				Input::Release(PCButton, Joystick);
+				std::clog << "release:" << PCButton << "\n";
+			}
 			// Turbo set, button enabled for turbo and pressed
 			else if(turbo && Client->Turbo(DSButton))
 				Input::Press(PCButton, Joystick);

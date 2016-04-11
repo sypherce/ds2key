@@ -33,7 +33,18 @@ static const uint16_t DS2KEY_TOUCH = (1 << (12));
 //this represents each value in a Keys Profile array. Example: Profile[KEYS::UP] is defined as KEY_UP by default
 enum KEYS
 {
-	Profile, MOUSE, JOY, UP, DOWN, LEFT, RIGHT, A, B, X, Y, L, R, START, SELECT, LID,
+	Profile, MOUSE, JOY,
+
+	_START_OF_BUTTONS_,
+
+	DUP, DDOWN, DLEFT, DRIGHT, A, B, X, Y, L, R, START, SELECT, LID,
+
+	ZL, ZR,
+	CSTICK_UP, CSTICK_DOWN, CSTICK_LEFT, CSTICK_RIGHT,
+	CPAD_UP, CPAD_DOWN, CPAD_LEFT, CPAD_RIGHT, 
+
+	_END_OF_BUTTONS_,
+
 	BLUE, YELLOW, RED, GREEN,
 	TOUCH_00, TOUCH_01, TOUCH_02, TOUCH_03, TOUCH_04, TOUCH_05, TOUCH_06, TOUCH_07, TOUCH_08, TOUCH_09, TOUCH_10, TOUCH_11,
 	TOUCH_STRING_00, TOUCH_STRING_01, TOUCH_STRING_02, TOUCH_STRING_03, TOUCH_STRING_04, TOUCH_STRING_05, TOUCH_STRING_06, TOUCH_STRING_07, TOUCH_STRING_08, TOUCH_STRING_09, TOUCH_STRING_10, TOUCH_STRING_11,
@@ -43,7 +54,7 @@ enum KEYS
 	TOUCH_00H, TOUCH_01H, TOUCH_02H, TOUCH_03H, TOUCH_04H, TOUCH_05H, TOUCH_06H, TOUCH_07H, TOUCH_08H, TOUCH_09H, TOUCH_10H, TOUCH_11H,
 	END
 };
-extern uint16_t EnumKeyToNDSKeypadBit(int enum_key);
+extern uint32_t EnumKeyToNDSKeypadBit(int enum_key);
 
 class ProfileData final
 {
@@ -107,7 +118,14 @@ public:
 	uint8_t m_id;//TODO:Is this just garbage?
 	std::string m_mouse;
 	std::string m_joy;
-	std::string m_up, m_down, m_left, m_right, m_a, m_b, m_x, m_y, m_l, m_r, m_start, m_select, m_lid;
+	std::string m_dpad_up, m_dpad_down, m_dpad_left, m_dpad_right, m_a, m_b, m_x, m_y, m_l, m_r, m_start, m_select, m_lid;
+
+	std::string m_zl, m_zr;
+
+	std::string m_cstick_up, m_cstick_down, m_cstick_left, m_cstick_right;
+
+	std::string m_cpad_up, m_cpad_down, m_cpad_left, m_cpad_right;
+
 	std::string m_blue, m_yellow, m_red, m_green;
 	std::string m_touch_command[12];
 	std::string m_touch_string[12];
@@ -137,12 +155,12 @@ public:
 	ProfileData* GetProfileDataPointer();
 
 	void SetPacket(UDP::DS2KeyPacket p);
-	bool Held(uint16_t key);
-	bool Down(uint16_t key);
-	bool Up(uint16_t key);
+	bool Held(uint32_t key);
+	bool Down(uint32_t key);
+	bool Up(uint32_t key);
 
 	//@return true if (key) has Turbo mode enabled
-	bool Turbo(uint16_t key);
+	bool Turbo(uint32_t key);
 
 	bool GHHeld(uint8_t key);
 	bool GHDown(uint8_t key);
@@ -159,8 +177,8 @@ public:
 
 private:
 	void SetTouchPos(uint8_t x, uint8_t y);
-	void Press(uint16_t key);
-	void Release(uint16_t key);
+	void Press(uint32_t key);
+	void Release(uint32_t key);
 
 	void GHPress(uint8_t key);
 	void GHRelease(uint8_t key);
@@ -168,8 +186,8 @@ private:
 	UDP::DS2KeyPacket m_packet;
 	ProfileData m_profile_data;
 
-	uint16_t m_keys;
-	uint16_t m_keys_old;
+	uint32_t m_keys;
+	uint32_t m_keys_old;
 	uint8_t m_gh_keys;
 	uint8_t m_gh_keys_old;
 };

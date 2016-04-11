@@ -9,23 +9,34 @@ namespace D2K {
 
 Client* g_client_array[256] = { };
 
-uint16_t EnumKeyToNDSKeypadBit(int enum_key)
+uint32_t EnumKeyToNDSKeypadBit(int enum_key)
 {
 	// TODO: These kinda just make everything uglier... maybe this should be removed
-	static const uint16_t DS2KEY_A = (1 << (0));
-	static const uint16_t DS2KEY_B = (1 << (1));
-	static const uint16_t DS2KEY_SELECT = (1 << (2));
-	static const uint16_t DS2KEY_START = (1 << (3));
-	static const uint16_t DS2KEY_RIGHT = (1 << (4));
-	static const uint16_t DS2KEY_LEFT = (1 << (5));
-	static const uint16_t DS2KEY_UP = (1 << (6));
-	static const uint16_t DS2KEY_DOWN = (1 << (7));
-	static const uint16_t DS2KEY_R = (1 << (8));
-	static const uint16_t DS2KEY_L = (1 << (9));
-	static const uint16_t DS2KEY_X = (1 << (10));
-	static const uint16_t DS2KEY_Y = (1 << (11));
-	static const uint16_t DS2KEY_TOUCH = (1 << (12));
-	static const uint16_t DS2KEY_LID = (1 << (13));
+	static const uint32_t DS2KEY_A = (1 << (0));
+	static const uint32_t DS2KEY_B = (1 << (1));
+	static const uint32_t DS2KEY_SELECT = (1 << (2));
+	static const uint32_t DS2KEY_START = (1 << (3));
+	static const uint32_t DS2KEY_DRIGHT = (1 << (4)); 
+	static const uint32_t DS2KEY_DLEFT = (1 << (5)); 
+	static const uint32_t DS2KEY_DUP = (1 << (6)); 
+	static const uint32_t DS2KEY_DDOWN = (1 << (7)); 
+	static const uint32_t DS2KEY_R = (1 << (8));
+	static const uint32_t DS2KEY_L = (1 << (9));
+	static const uint32_t DS2KEY_X = (1 << (10));
+	static const uint32_t DS2KEY_Y = (1 << (11));
+	static const uint32_t DS2KEY_TOUCH = (1 << (12)) | (1 << (20));
+	static const uint32_t DS2KEY_LID = (1 << (13));
+
+	static const uint32_t DS2KEY_ZL = (1 << (14));
+	static const uint32_t DS2KEY_ZR = (1 << (15));
+	static const uint32_t DS2KEY_CSTICK_RIGHT = (1 << (24));
+	static const uint32_t DS2KEY_CSTICK_LEFT = (1 << (25));
+	static const uint32_t DS2KEY_CSTICK_UP = (1 << (26));
+	static const uint32_t DS2KEY_CSTICK_DOWN = (1 << (27));
+	static const uint32_t DS2KEY_CPAD_RIGHT = (1 << (28));
+	static const uint32_t DS2KEY_CPAD_LEFT = (1 << (29));
+	static const uint32_t DS2KEY_CPAD_UP = (1 << (30));
+	static const uint32_t DS2KEY_CPAD_DOWN = (1 << (31));
 
 	static const uint8_t DS2KEY_BLUE = (1 << (3));
 	static const uint8_t DS2KEY_YELLOW = (1 << (4));
@@ -34,14 +45,14 @@ uint16_t EnumKeyToNDSKeypadBit(int enum_key)
 
 	switch(enum_key)
 	{
-	case KEYS::UP:
-		return DS2KEY_UP;
-	case KEYS::DOWN:
-		return DS2KEY_DOWN;
-	case KEYS::LEFT:
-		return DS2KEY_LEFT;
-	case KEYS::RIGHT:
-		return DS2KEY_RIGHT;
+	case KEYS::DUP:
+		return DS2KEY_DUP;
+	case KEYS::DDOWN:
+		return DS2KEY_DDOWN;
+	case KEYS::DLEFT:
+		return DS2KEY_DLEFT;
+	case KEYS::DRIGHT:
+		return DS2KEY_DRIGHT;
 	case KEYS::A:
 		return DS2KEY_A;
 	case KEYS::B:
@@ -50,16 +61,43 @@ uint16_t EnumKeyToNDSKeypadBit(int enum_key)
 		return DS2KEY_X;
 	case KEYS::Y:
 		return DS2KEY_Y;
+
 	case KEYS::L:
 		return DS2KEY_L;
 	case KEYS::R:
 		return DS2KEY_R;
+
 	case KEYS::START:
 		return DS2KEY_START;
 	case KEYS::SELECT:
 		return DS2KEY_SELECT;
+
 	case KEYS::LID:
 		return DS2KEY_LID;
+
+	case KEYS::ZL:
+		return DS2KEY_ZL;
+	case KEYS::ZR:
+		return DS2KEY_ZR;
+	
+	case KEYS::CSTICK_UP:
+		return DS2KEY_CSTICK_UP;
+	case KEYS::CSTICK_DOWN:
+		return DS2KEY_CSTICK_DOWN;
+	case KEYS::CSTICK_LEFT:
+		return DS2KEY_CSTICK_LEFT;
+	case KEYS::CSTICK_RIGHT:
+		return DS2KEY_CSTICK_RIGHT;
+
+	case KEYS::CPAD_UP:
+		return DS2KEY_CPAD_UP;
+	case KEYS::CPAD_DOWN:
+		return DS2KEY_CPAD_DOWN;
+	case KEYS::CPAD_LEFT:
+		return DS2KEY_CPAD_LEFT;
+	case KEYS::CPAD_RIGHT:
+		return DS2KEY_CPAD_RIGHT;
+
 	case KEYS::BLUE:
 		return DS2KEY_BLUE;
 	case KEYS::YELLOW:
@@ -123,14 +161,14 @@ std::string& ProfileData::GetStringReference(int enum_key)
 		return m_l;
 	case KEYS::R:
 		return m_r;
-	case KEYS::UP:
-		return m_up;
-	case KEYS::DOWN:
-		return m_down;
-	case KEYS::LEFT:
-		return m_left;
-	case KEYS::RIGHT:
-		return m_right;
+	case KEYS::DUP:
+		return m_dpad_up;
+	case KEYS::DDOWN:
+		return m_dpad_down;
+	case KEYS::DLEFT:
+		return m_dpad_left;
+	case KEYS::DRIGHT:
+		return m_dpad_right;
 	case KEYS::START:
 		return m_start;
 	case KEYS::SELECT:
@@ -145,6 +183,30 @@ std::string& ProfileData::GetStringReference(int enum_key)
 		return m_red;
 	case KEYS::GREEN:
 		return m_green;
+		
+	case KEYS::ZL:
+		return m_zl;
+	case KEYS::ZR:
+		return m_zr;
+
+	case KEYS::CSTICK_UP:
+		return m_cstick_up;
+	case KEYS::CSTICK_DOWN:
+		return m_cstick_down;
+	case KEYS::CSTICK_LEFT:
+		return m_cstick_left;
+	case KEYS::CSTICK_RIGHT:
+		return m_cstick_right;
+
+	case KEYS::CPAD_UP:
+		return m_cpad_up;
+	case KEYS::CPAD_DOWN:
+		return m_cpad_down;
+	case KEYS::CPAD_LEFT:
+		return m_cpad_left;
+	case KEYS::CPAD_RIGHT:
+		return m_cpad_right;
+
 	case KEYS::TOUCH_00:
 		return m_touch_command[0];
 	case KEYS::TOUCH_01:
@@ -302,32 +364,32 @@ void Client::SetTouchPos(uint8_t x, uint8_t y)
 	m_packet.touch_y = y;
 }
 
-void Client::Press(uint16_t key)
+void Client::Press(uint32_t key)
 {
 	m_packet.keys |= key;
 }
 
-void Client::Release(uint16_t key)
+void Client::Release(uint32_t key)
 {
 	m_packet.keys &= ~key;
 }
 
-bool Client::Held(uint16_t key)
+bool Client::Held(uint32_t key)
 {
 	return (m_keys&key) != 0;
 }
 
-bool Client::Down(uint16_t key)
+bool Client::Down(uint32_t key)
 {
 	return ((m_keys &~ m_keys_old)&key) != 0;
 }
 
-bool Client::Up(uint16_t key)
+bool Client::Up(uint32_t key)
 {
 	return (((m_keys ^ m_keys_old) & (~m_keys))&key) != 0;
 }
 
-bool Client::Turbo(uint16_t key)
+bool Client::Turbo(uint32_t key)
 {
 	return (m_packet.keys_turbo&key) != 0;
 }

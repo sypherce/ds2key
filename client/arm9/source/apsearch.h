@@ -1,5 +1,6 @@
 #pragma once
 
+#ifdef _NDS
 #include <dswifi9.h>//Wifi_AccessPoint
 
 namespace D2K{ namespace AP{
@@ -13,3 +14,4 @@ Wifi_AccessPoint* GetAP(int i);
 void Print(int i);
 
 }}//namespace D2K::AP
+#endif

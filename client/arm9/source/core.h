@@ -1,6 +1,10 @@
 #pragma once
 
+#if defined(_3DS)
+#include <3ds.h>// touchPosition
+#elif defined(_NDS)
 #include <nds.h>// touchPosition
+#endif
 
 namespace D2K {
 

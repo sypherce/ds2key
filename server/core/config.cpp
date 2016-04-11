@@ -49,23 +49,38 @@ int LoadProfile(ProfileData* profile_data, uint8_t profile_number)
 		             "Failed to open file: " << INI_FILENAME << "\n";
 		profile_data->m_mouse = "Relative";
 		profile_data->m_joy = "0";
-		profile_data->SetVirtualKey(KEYS::UP, KEY_UP);
-		profile_data->SetVirtualKey(KEYS::DOWN, KEY_DOWN);
-		profile_data->SetVirtualKey(KEYS::LEFT, KEY_LEFT);
-		profile_data->SetVirtualKey(KEYS::RIGHT, KEY_RIGHT);
-		profile_data->SetVirtualKey(KEYS::A, KEY_A);
-		profile_data->SetVirtualKey(KEYS::B, KEY_B);
-		profile_data->SetVirtualKey(KEYS::X, KEY_X);
-		profile_data->SetVirtualKey(KEYS::Y, KEY_Y);
-		profile_data->SetVirtualKey(KEYS::L, KEY_L);
-		profile_data->SetVirtualKey(KEYS::R, KEY_R);
+
+		profile_data->SetVirtualKey(KEYS::DUP, KEY_UP);
+		profile_data->SetVirtualKey(KEYS::DDOWN, KEY_DOWN);
+		profile_data->SetVirtualKey(KEYS::DLEFT, KEY_LEFT);
+		profile_data->SetVirtualKey(KEYS::DRIGHT, KEY_RIGHT);
+		profile_data->SetVirtualKey(KEYS::A, KEY_F);
+		profile_data->SetVirtualKey(KEYS::B, KEY_D);
+		profile_data->SetVirtualKey(KEYS::X, KEY_S);
+		profile_data->SetVirtualKey(KEYS::Y, KEY_A);
+		profile_data->SetVirtualKey(KEYS::L, KEY_W);
+		profile_data->SetVirtualKey(KEYS::R, KEY_E);
 		profile_data->SetVirtualKey(KEYS::START, KEY_RETURN);
 		profile_data->SetVirtualKey(KEYS::SELECT, KEY_RSHIFT);
 		profile_data->SetVirtualKey(KEYS::LID, KEY_ESCAPE);
-		profile_data->SetVirtualKey(KEYS::BLUE, KEY_C);
-		profile_data->SetVirtualKey(KEYS::YELLOW, KEY_D);
-		profile_data->SetVirtualKey(KEYS::RED, KEY_E);
-		profile_data->SetVirtualKey(KEYS::GREEN, KEY_F);
+		
+		profile_data->SetVirtualKey(KEYS::ZL, KEY_Q);
+		profile_data->SetVirtualKey(KEYS::ZR, KEY_R);
+
+		profile_data->SetVirtualKey(KEYS::CSTICK_UP, KEY_NUMPAD8);
+		profile_data->SetVirtualKey(KEYS::CSTICK_DOWN, KEY_NUMPAD2);
+		profile_data->SetVirtualKey(KEYS::CSTICK_LEFT, KEY_NUMPAD4);
+		profile_data->SetVirtualKey(KEYS::CSTICK_RIGHT, KEY_NUMPAD6);
+
+		profile_data->SetVirtualKey(KEYS::CPAD_UP, KEY_HOME);
+		profile_data->SetVirtualKey(KEYS::CPAD_DOWN, KEY_END);
+		profile_data->SetVirtualKey(KEYS::CPAD_LEFT, KEY_DELETE);
+		profile_data->SetVirtualKey(KEYS::CPAD_RIGHT, KEY_NEXT);
+
+		profile_data->SetVirtualKey(KEYS::BLUE, KEY_NUMPAD1);
+		profile_data->SetVirtualKey(KEYS::YELLOW, KEY_NUMPAD3);
+		profile_data->SetVirtualKey(KEYS::RED, KEY_NUMPAD7);
+		profile_data->SetVirtualKey(KEYS::GREEN, KEY_NUMPAD9);
 
 		profile_data->SetVirtualKey(KEYS::TOUCH_00, KEY_0);
 		profile_data->SetVirtualKey(KEYS::TOUCH_01, KEY_1);
@@ -77,8 +92,8 @@ int LoadProfile(ProfileData* profile_data, uint8_t profile_number)
 		profile_data->SetVirtualKey(KEYS::TOUCH_07, KEY_7);
 		profile_data->SetVirtualKey(KEYS::TOUCH_08, KEY_8);
 		profile_data->SetVirtualKey(KEYS::TOUCH_09, KEY_9);
-		profile_data->SetVirtualKey(KEYS::TOUCH_10, KEY_G);
-		profile_data->SetVirtualKey(KEYS::TOUCH_11, KEY_H);
+		profile_data->SetVirtualKey(KEYS::TOUCH_10, KEY_OEM_MINUS);
+		profile_data->SetVirtualKey(KEYS::TOUCH_11, KEY_OEM_PLUS);
 
 		for(int i = 0; i < UDP::SETTINGS_PACKET_MAX_BUTTONS; i++)
 		{
@@ -114,10 +129,10 @@ int LoadProfile(ProfileData* profile_data, uint8_t profile_number)
 		profile_data->m_mouse = "Relative";
 
 	profile_data->m_joy = iniParser::getstring(ini, "profile:joy", "0");
-	profile_data->SetCommand(KEYS::UP, iniParser::getstring(ini, "profile:up", "Key_None"));
-	profile_data->SetCommand(KEYS::DOWN, iniParser::getstring(ini, "profile:down", "Key_None"));
-	profile_data->SetCommand(KEYS::LEFT, iniParser::getstring(ini, "profile:left", "Key_None"));
-	profile_data->SetCommand(KEYS::RIGHT, iniParser::getstring(ini, "profile:right", "Key_None"));
+	profile_data->SetCommand(KEYS::DUP, iniParser::getstring(ini, "profile:dpadup", "Key_None"));
+	profile_data->SetCommand(KEYS::DDOWN, iniParser::getstring(ini, "profile:dpaddown", "Key_None"));
+	profile_data->SetCommand(KEYS::DLEFT, iniParser::getstring(ini, "profile:dpadleft", "Key_None"));
+	profile_data->SetCommand(KEYS::DRIGHT, iniParser::getstring(ini, "profile:dpadright", "Key_None"));
 	profile_data->SetCommand(KEYS::A, iniParser::getstring(ini, "profile:a", "Key_None"));
 	profile_data->SetCommand(KEYS::B, iniParser::getstring(ini, "profile:b", "Key_None"));
 	profile_data->SetCommand(KEYS::X, iniParser::getstring(ini, "profile:x", "Key_None"));
@@ -127,6 +142,20 @@ int LoadProfile(ProfileData* profile_data, uint8_t profile_number)
 	profile_data->SetCommand(KEYS::START, iniParser::getstring(ini, "profile:start", "Key_None"));
 	profile_data->SetCommand(KEYS::SELECT, iniParser::getstring(ini, "profile:select", "Key_None"));
 	profile_data->SetCommand(KEYS::LID, iniParser::getstring(ini, "profile:lid", "Key_None"));
+
+	profile_data->SetCommand(KEYS::ZL, iniParser::getstring(ini, "profile:zl", "Key_None"));
+	profile_data->SetCommand(KEYS::ZR, iniParser::getstring(ini, "profile:zr", "Key_None"));
+
+	profile_data->SetCommand(KEYS::CSTICK_UP, iniParser::getstring(ini, "profile:cstickup", "Key_None"));
+	profile_data->SetCommand(KEYS::CSTICK_DOWN, iniParser::getstring(ini, "profile:cstickdown", "Key_None"));
+	profile_data->SetCommand(KEYS::CSTICK_LEFT, iniParser::getstring(ini, "profile:cstickleft", "Key_None"));
+	profile_data->SetCommand(KEYS::CSTICK_RIGHT, iniParser::getstring(ini, "profile:cstickright", "Key_None"));
+
+	profile_data->SetCommand(KEYS::CPAD_UP, iniParser::getstring(ini, "profile:cpadup", "Key_None"));
+	profile_data->SetCommand(KEYS::CPAD_DOWN, iniParser::getstring(ini, "profile:cpaddown", "Key_None"));
+	profile_data->SetCommand(KEYS::CPAD_LEFT, iniParser::getstring(ini, "profile:cpadleft", "Key_None"));
+	profile_data->SetCommand(KEYS::CPAD_RIGHT, iniParser::getstring(ini, "profile:cpadright", "Key_None"));
+	
 	profile_data->SetCommand(KEYS::BLUE, iniParser::getstring(ini, "profile:blue", "Key_None"));
 	profile_data->SetCommand(KEYS::YELLOW, iniParser::getstring(ini, "profile:yellow", "Key_None"));
 	profile_data->SetCommand(KEYS::RED, iniParser::getstring(ini, "profile:red", "Key_None"));
@@ -262,10 +291,11 @@ int SaveProfile(ProfileData* Profile, uint8_t profileNumber)
 	fprintf(file, "[Profile]\n");
 	fprintf(file, "Mouse=%s\n", Profile->m_mouse.c_str());
 	fprintf(file, "Joy=%s\n", Profile->m_joy.c_str());
-	fprintf(file, "Up=%s\n", Profile->GetButtonString(KEYS::UP).c_str());
-	fprintf(file, "Down=%s\n", Profile->GetButtonString(KEYS::DOWN).c_str());
-	fprintf(file, "Left=%s\n", Profile->GetButtonString(KEYS::LEFT).c_str());
-	fprintf(file, "Right=%s\n", Profile->GetButtonString(KEYS::RIGHT).c_str());
+		
+	fprintf(file, "DPadUp=%s\n", Profile->GetButtonString(KEYS::DUP).c_str());
+	fprintf(file, "DPadDown=%s\n", Profile->GetButtonString(KEYS::DDOWN).c_str());
+	fprintf(file, "DPadLeft=%s\n", Profile->GetButtonString(KEYS::DLEFT).c_str());
+	fprintf(file, "DPadRight=%s\n", Profile->GetButtonString(KEYS::DRIGHT).c_str());
 	fprintf(file, "A=%s\n", Profile->GetButtonString(KEYS::A).c_str());
 	fprintf(file, "B=%s\n", Profile->GetButtonString(KEYS::B).c_str());
 	fprintf(file, "X=%s\n", Profile->GetButtonString(KEYS::X).c_str());
@@ -275,6 +305,20 @@ int SaveProfile(ProfileData* Profile, uint8_t profileNumber)
 	fprintf(file, "Start=%s\n", Profile->GetButtonString(KEYS::START).c_str());
 	fprintf(file, "Select=%s\n", Profile->GetButtonString(KEYS::SELECT).c_str());
 	fprintf(file, "Lid=%s\n", Profile->GetButtonString(KEYS::LID).c_str());
+
+	fprintf(file, "ZL=%s\n", Profile->GetButtonString(KEYS::ZL).c_str());
+	fprintf(file, "ZR=%s\n", Profile->GetButtonString(KEYS::ZR).c_str());
+	
+	fprintf(file, "CStickUp=%s\n", Profile->GetButtonString(KEYS::CSTICK_UP).c_str());
+	fprintf(file, "CStickDown=%s\n", Profile->GetButtonString(KEYS::CSTICK_DOWN).c_str());
+	fprintf(file, "CStickLeft=%s\n", Profile->GetButtonString(KEYS::CSTICK_LEFT).c_str());
+	fprintf(file, "CStickRight=%s\n", Profile->GetButtonString(KEYS::CSTICK_RIGHT).c_str());
+		
+	fprintf(file, "CPadUp=%s\n", Profile->GetButtonString(KEYS::CPAD_UP).c_str());
+	fprintf(file, "CPadDown=%s\n", Profile->GetButtonString(KEYS::CPAD_DOWN).c_str());
+	fprintf(file, "CPadLeft=%s\n", Profile->GetButtonString(KEYS::CPAD_LEFT).c_str());
+	fprintf(file, "CPadRight=%s\n", Profile->GetButtonString(KEYS::CPAD_RIGHT).c_str());
+
 	fprintf(file, "Blue=%s\n", Profile->GetButtonString(KEYS::BLUE).c_str());
 	fprintf(file, "Yellow=%s\n", Profile->GetButtonString(KEYS::YELLOW).c_str());
 	fprintf(file, "Red=%s\n", Profile->GetButtonString(KEYS::RED).c_str());
@@ -283,7 +327,7 @@ int SaveProfile(ProfileData* Profile, uint8_t profileNumber)
 	for(int i = 0; i < UDP::SETTINGS_PACKET_MAX_BUTTONS; i++)
 	{
 		fprintf(file, "Touch%.2d=%s\n", i, Profile->GetButtonString(KEYS::TOUCH_00 + i).c_str());
-		fprintf(file, "m_touch_string%.2d=%s\n", i, Profile->m_touch_string[i].c_str());
+		fprintf(file, "TouchString%.2d=%s\n", i, Profile->m_touch_string[i].c_str());
 		fprintf(file, "Touch%.2dX=%i\n", i, Profile->m_touch_x[i]);
 		fprintf(file, "Touch%.2dY=%i\n", i, Profile->m_touch_y[i]);
 		fprintf(file, "Touch%.2dW=%i\n", i, Profile->m_touch_w[i]);

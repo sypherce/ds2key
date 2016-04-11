@@ -1,3 +1,4 @@
+#ifdef _NDS
 #include <nds.h>
 #include <cstdio>
 #include <dswifi9.h>
@@ -43,3 +44,4 @@ void Print(int i)
 }
 
 }}//namespace D2K::AP
+#endif
