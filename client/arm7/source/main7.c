@@ -1,27 +1,31 @@
 #include <nds.h>
 #include <dswifi7.h>
 
-volatile bool exitflag = false;
+volatile bool exit_flag = false;
 
-void VblankHandler(void) {
+void VBlankHandler(void)
+{
 	Wifi_Update();
-	resyncClock();//fixes libnds bug for 3DS
+	resyncClock();  // Fixes libnds bug for 3DS
 }
 
-void VcountHandler() {
+void VCountHandler()
+{
 	inputGetAndSend();
 }
 
-void powerButtonCB() {
-	exitflag = true;
+void PowerButtonCallback()
+{
+	exit_flag = true;
 }
 
-int main() {
+int main()
+{
 	readUserSettings();
 
 	irqInit();
-	// Start the RTC tracking IRQ
-	initClockIRQ();
+
+	initClockIRQ(); // Start the RTC tracking IRQ
 	fifoInit();
 
 	SetYtrigger(80);
@@ -31,15 +35,16 @@ int main() {
 
 	installSystemFIFO();
 
-	irqSet(IRQ_VCOUNT, VcountHandler);
-	irqSet(IRQ_VBLANK, VblankHandler);
+	irqSet(IRQ_VCOUNT, VCountHandler);
+	irqSet(IRQ_VBLANK, VBlankHandler);
 
 	irqEnable( IRQ_VBLANK | IRQ_VCOUNT | IRQ_NETWORK);
 
-	setPowerButtonCB(powerButtonCB);
+	setPowerButtonCB(PowerButtonCallback);
 
 	// Keep the ARM7 mostly idle
-	while(!exitflag) {
+	while(exit_flag == false)
+	{
 		swiWaitForVBlank();
 	}
 	return 0;

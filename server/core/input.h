@@ -1,37 +1,35 @@
-#ifndef __INPUT_H__
-#define __INPUT_H__
+#pragma once
 
 #ifdef _WIN32
 #include "PPJoy.h"
-#elif defined __linux__
+#elif defined(__linux__)
 #include <X11/extensions/XTest.h>
-#endif//_WIN32
+#endif
 #include <cstdint>//uint8_t, etc
 
-namespace D2K {
-	//Performs Virtual Keyboard, Mouse, and Gamepad events
-	namespace Input {
-		//Assigns each ppjoy pointer to NULL in windows
-		void Init();
+//Performs Virtual Keyboard, Mouse, and Gamepad events
+namespace D2K {namespace Input {
 
-		//Deletes each active ppjoy pointer in windows
-		void DeInit();
+//Assigns each ppjoy pointer to nullptr in windows
+void Init();
 
-		//Sends a virtual key press, or a virtual gamepad button press
-		//@param Key Platform specific key or gamepad button value
-		//@param Joy (ppjoy) device number. Value ranges 0-15. Ignored if (key) is not a gamepad button value.
-		void Press(uint16_t Key, unsigned char Joy);
+//Deletes each active ppjoy pointer in windows
+void DeInit();
 
-		//Sends a virtual key release, or a virtual gamepad button release
-		//@param Key Platform specific key or gamepad button value
-		//@param Joy (ppjoy) device number. Value ranges 0-15. Ignored if (key) is not a gamepad button value.
-		void Release(uint16_t Key, unsigned char Joy);
+//Sends a virtual key press, or a virtual gamepad button press
+//@param Key Platform specific key or gamepad button value
+//@param Joy (ppjoy) device number. Value ranges 0-15. Ignored if (key) is not a gamepad button value.
+void Press(uint16_t key, unsigned char joy);
 
-		//Moves cursor relative to it's current position
-		void Move(signed long int X, signed long int Y);
+//Sends a virtual key release, or a virtual gamepad button release
+//@param Key Platform specific key or gamepad button value
+//@param Joy (ppjoy) device number. Value ranges 0-15. Ignored if (key) is not a gamepad button value.
+void Release(uint16_t key, unsigned char joy);
 
-		//Moves cursor to (X), (Y)
-		void MoveAbsolute(signed long int X, signed long int Y);
-	}
-}
-#endif//__UDP_H__
+//Moves cursor relative to it's current position
+void Move(signed long int x, signed long int y);
+
+//Moves cursor to (X), (Y)
+void MoveAbsolute(signed long int x, signed long int y);
+
+}}//namespace D2K::Input

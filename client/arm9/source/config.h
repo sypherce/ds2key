@@ -1,16 +1,13 @@
-#ifndef __CONFIG_H__
-#define __CONFIG_H__
+#pragma once
 
-namespace D2K {
-	namespace Config {
-			//Loads settings from disk
-			//@return (0) upon success, else (errno)
-			int Load();
+namespace D2K {namespace Config {
 
-			//Saves settings to disk
-			//@return (0) upon success, else (errno)
-			int Save();
-	}
-}
+//Loads settings from disk
+//@return (0) upon success, else (errno)
+int Load();
 
-#endif//__CONFIG_H__
+//Saves settings to disk
+//@return (0) upon success, else (errno)
+int Save();
+
+}}//D2K::Config

@@ -18,7 +18,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef _WIN32
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 
 /** Maximum value size for integers and doubles. */
 #define MAXVALSZ    1024

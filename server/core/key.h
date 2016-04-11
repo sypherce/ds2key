@@ -1,22 +1,15 @@
-#ifndef __KEY_H__
-#define __KEY_H__
+#pragma once
 
 #include <cstdint>
 #ifdef _WIN32
 #include <windows.h>
-#elif defined __linux__
+#elif defined(__linux__)
 #include <string.h>
 #include <X11/keysym.h>
-#endif//_WIN32
-
-//Windows Defines
-#ifdef _MSC_VER //less warnings from microsoft
-#define stricmp _stricmp
-#elif defined __linux__
-#define stricmp	strcasecmp
-#endif//_MSC_VER
+#endif
 
 #define KEY_NONE 0
+#define KEY_JOY 0x100
 
 #ifdef _WIN32
 #define KEY_VOID KEY_NONE
@@ -169,7 +162,7 @@
 #define KEY_OEM_CLEAR VK_OEM_CLEAR
 #define KEY_SLASH VK_OEM_2
 #define KEY_BACKSLASH VK_OEM_5
-#elif defined __linux__
+#elif defined(__linux__)
 #define KEY_VOID XK_VoidSymbol
 #define KEY_LBUTTON 0x8000 //LBUTTON
 #define KEY_RBUTTON 0x8002 //RBUTTON
@@ -346,7 +339,7 @@
 #define KEY_OEM_CLEAR KEY_NONE //OEM_CLEAR
 #define KEY_SLASH XK_slash
 #define KEY_BACKSLASH XK_backslash
-#endif//_WIN32
+#endif
 
 #if (_WIN32_WINNT >= 0x0500)
 #define KEY_XBUTTON1 VK_XBUTTON1
@@ -375,7 +368,7 @@
 #define KEY_OEM_PERIOD VK_OEM_PERIOD
 #define KEY_OEM_102 VK_OEM_102
 #define KEY_PACKET VK_PACKET
-#else//linux or windows
+#elif defined(_WIN32) || defined(__linux__)
 #define KEY_XBUTTON1 KEY_NONE
 #define KEY_XBUTTON2 KEY_NONE
 #define KEY_BROWSER_BACK KEY_NONE
@@ -402,19 +395,17 @@
 #define KEY_OEM_PERIOD KEY_NONE
 #define KEY_OEM_102 KEY_NONE
 #define KEY_PACKET KEY_NONE
-#endif//(_WIN32_WINNT >= 0x0500)
+#endif
 
-namespace D2K {
-	namespace Key {
-		typedef struct keyEntry {
-			uint32_t value;
-			const char *text;
-		} keyEntry;
+namespace D2K {namespace Key {
 
-		//Functions
-		extern uint32_t GetNumber(const char *key);
-		extern char *GetString(uint32_t key);
-	}
-}
+typedef struct KeyEntry final
+{
+	uint32_t value;
+	const char* text;
+} KeyEntry;
 
-#endif//__KEY_H__
+extern uint32_t GetNumber(const char* key);
+extern const char* GetString(uint32_t key);
+
+}}//namespace D2K::Key

@@ -1,27 +1,28 @@
-#include <string>	//std::string
+#include <string>  // std::string
 #include "edit.h"
 #include "gui.h"
 
-namespace D2K {
-	namespace GUI {
-		Edit::Edit(uint8_t screen, GUI::Rect rect, std::string text, void (*function)()) : Button(screen, rect, text, function) {
-		}
+namespace D2K {namespace GUI{
 
-		Edit::~Edit() { }
+Edit::Edit(uint8_t screen, GUI::Rect rect, std::string text, void (*function)()) : Button(screen, rect, text, function) { }
 
-		bool Edit::Draw() {
-			if(!Object::Draw())
-				return false;
-			if(IsVisible()) {
-				Clear(Color[colorEditBackground]);
-				if(GetStatus() == ObjectStatusHeld)
-					DrawRect(GetScreen(), GetRect(), Color[colorEditOutlineActive]);
-				else
-					DrawRect(GetScreen(), GetRect(), Color[colorEditOutline]);
-				DrawString(GetScreen(), GetText(), GetRect().GetX()+3, GetRect().GetY()+3, Color[colorEditText]);
-			}
+Edit::~Edit() { }
 
-			return true;
-		}
+bool Edit::Draw()
+{
+	if(!Object::Draw())
+		return false;
+	if(IsVisible())
+	{
+		Clear(Color[COLOR_EDIT_BACKGROUND]);
+		if(GetStatus() == OBJECT_STATUS::HELD)
+			DrawRect(GetScreen(), GetRect(), Color[COLOR_EDIT_OUTLINE_ACTIVE]);
+		else
+			DrawRect(GetScreen(), GetRect(), Color[COLOR_EDIT_OUTLINE]);
+		DrawString(GetScreen(), GetText(), GetRect().GetX()+3, GetRect().GetY()+3, Color[COLOR_EDIT_TEXT]);
 	}
+
+	return true;
 }
+
+}}//namespace D2K::GUI

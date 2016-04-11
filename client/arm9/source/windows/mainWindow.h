@@ -1,20 +1,17 @@
-#ifndef __MAINWINDOW_H__
-#define __MAINWINDOW_H__
+#pragma once
 
 #include "gui/window.h"
 
-namespace D2K {
-	namespace GUI {
-		namespace Main {
-			class WindowClass : public GUI::Window {
-				public:
-					WindowClass();
-					~WindowClass();
-					bool Update();
-			};
-			extern GUI::Main::WindowClass *Window;
-		}
-	}
-}
+namespace D2K {namespace GUI {namespace Main {
 
-#endif//__MAINWINDOW_H__
+class WindowClass : public GUI::Window
+{
+public:
+	WindowClass();
+	~WindowClass();
+
+	bool Update();
+};
+extern GUI::Main::WindowClass g_window;
+
+}}}//namespace D2K::GUI::Main

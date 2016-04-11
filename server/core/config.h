@@ -1,40 +1,41 @@
-#ifndef __CONFIG_H__
-#define __CONFIG_H__
+#pragma once
 
 #include <cstdint>
 
 #include "client.h"
-#undef SetPort
 
-namespace D2K {
-	namespace Config {
-		//loads settings from disk
-		//@return (0) upon success, else (errno)
-		int Load();
+namespace D2K {namespace Config{
 
-		//Saves Profile settings to disk
-		//@param Profile Pointer to actual data
-		//@param profileNumber Fills in # in ds2key.p#.ini. Example: ds2key.p1.ini
-		//@return (0) upon success, else (errno)
-		int LoadProfile(ProfileData *Profile, uint8_t profileNumber);
+	//Loads settings from disk
+	//@return (0) upon success, else (errno)
+	int Load();
 
-		//Saves settings to disk
-		//@return (0) upon success, else (errno)
-		int Save();
+	//Loads Profile settings to disk
+	//@param profile Pointer to actual data
+	//@param profile_number Fills in # in ds2key.p#.ini. Example: ds2key.p1.ini
+	//@return (0) upon success, else (errno)
+	int LoadProfile(ProfileData* profile, uint8_t profile_number);
 
-		//Saves Profile settings to disk
-		//@param Profile Pointer to actual data
-		//@param profileNumber Fills in # in ds2key.p#.ini. Example: ds2key.p1.ini
-		//@return (0) upon success, else (errno)
-		int SaveProfile(ProfileData *Profile, uint8_t profileNumber);
+	//Saves settings to disk
+	//@return (0) upon success, else (errno)
+	int Save();
 
-		//@return Currently assigned port number, values range from 1 - 65535
-		uint16_t GetPort();
+	//Saves Profile settings to disk
+	//@param profile Pointer to actual data
+	//@param profile_number Fills in # in ds2key.p#.ini. Example: ds2key.p1.ini
+	//@return (0) upon success, else (errno)
+	int SaveProfile(ProfileData* profile, uint8_t profile_number);
 
-		//Assigns new port number
-		//@param Port Values range 1 - 65535, setting 0 defaults to 9501
-		void SetPort(uint16_t port);
-	}
-}
+	//@return Currently assigned port number, values range from 1 - 65535
+	uint16_t GetPort();
 
-#endif//__CONFIG_H__
+	//Assigns new port number
+	//@param new_port Values range 1 - 65535, setting 0 defaults to 9501
+	void SetConfigPort(uint16_t port);//SetPort clashes in windows
+
+	//Load a client by profile id
+	//@param profile Values range 0 - 255
+	//@return (Client*) automatically loads profile into memory if needed
+	Client* GetClient(uint8_t profile);
+
+}}//namespace D2K::Config
