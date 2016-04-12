@@ -40,7 +40,7 @@ typedef struct DS2KeySettingsPacket final
 } __attribute__((packed)) DS2KeySettingsPacket;
 #ifdef _MSC_VER
 #pragma pack()
-#undef __attribute__(x)
+#undef __attribute__
 #endif
 
 }}//namespace D2K::UDP

@@ -1,0 +1,113 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="3DS|ARM">
+      <Configuration>3DS</Configuration>
+      <Platform>ARM</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="NDS|ARM">
+      <Configuration>NDS</Configuration>
+      <Platform>ARM</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\client\arm9\source\apsearch.cpp" />
+    <ClCompile Include="..\client\arm9\source\config.cpp" />
+    <ClCompile Include="..\client\arm9\source\core.cpp" />
+    <ClCompile Include="..\client\arm9\source\gui\button.cpp" />
+    <ClCompile Include="..\client\arm9\source\gui\checkButton.cpp" />
+    <ClCompile Include="..\client\arm9\source\gui\edit.cpp" />
+    <ClCompile Include="..\client\arm9\source\gui\gui.cpp" />
+    <ClCompile Include="..\client\arm9\source\gui\label.cpp" />
+    <ClCompile Include="..\client\arm9\source\gui\object.cpp" />
+    <ClCompile Include="..\client\arm9\source\gui\rect.cpp" />
+    <ClCompile Include="..\client\arm9\source\gui\window.cpp" />
+    <ClCompile Include="..\client\arm9\source\main9.cpp" />
+    <ClCompile Include="..\client\arm9\source\windows\commandWindow.cpp" />
+    <ClCompile Include="..\client\arm9\source\windows\ipWindow.cpp" />
+    <ClCompile Include="..\client\arm9\source\windows\keypadWindow.cpp" />
+    <ClCompile Include="..\client\arm9\source\windows\mainWindow.cpp" />
+    <ClCompile Include="..\client\arm9\source\windows\turboWindow.cpp" />
+    <ClCompile Include="..\common\iniParserWrapper.cpp" />
+    <ClCompile Include="..\common\iniparser\src\dictionary.c" />
+    <ClCompile Include="..\common\iniparser\src\iniparser.c" />
+    <ClCompile Include="..\common\misc.cpp" />
+    <ClCompile Include="..\common\udp.cpp" />
+    <ClCompile Include="arm7\source\main7.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='3DS|ARM'">true</ExcludedFromBuild>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\client\arm9\source\apsearch.h" />
+    <ClInclude Include="..\client\arm9\source\config.h" />
+    <ClInclude Include="..\client\arm9\source\core.h" />
+    <ClInclude Include="..\client\arm9\source\gui\button.h" />
+    <ClInclude Include="..\client\arm9\source\gui\checkButton.h" />
+    <ClInclude Include="..\client\arm9\source\gui\edit.h" />
+    <ClInclude Include="..\client\arm9\source\gui\gui.h" />
+    <ClInclude Include="..\client\arm9\source\gui\label.h" />
+    <ClInclude Include="..\client\arm9\source\gui\object.h" />
+    <ClInclude Include="..\client\arm9\source\gui\rect.h" />
+    <ClInclude Include="..\client\arm9\source\gui\window.h" />
+    <ClInclude Include="..\client\arm9\source\windows\commandWindow.h" />
+    <ClInclude Include="..\client\arm9\source\windows\ipWindow.h" />
+    <ClInclude Include="..\client\arm9\source\windows\keypadWindow.h" />
+    <ClInclude Include="..\client\arm9\source\windows\mainWindow.h" />
+    <ClInclude Include="..\client\arm9\source\windows\turboWindow.h" />
+    <ClInclude Include="..\common\ds2keyPacket.h" />
+    <ClInclude Include="..\common\iniParserWrapper.h" />
+    <ClInclude Include="..\common\iniparser\src\dictionary.h" />
+    <ClInclude Include="..\common\iniparser\src\iniparser.h" />
+    <ClInclude Include="..\common\misc.h" />
+    <ClInclude Include="..\common\udp.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{6CEBDB4B-370A-4F11-A723-651484B0EF49}</ProjectGuid>
+    <Keyword>MakeFileProj</Keyword>
+    <ProjectName>client</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='NDS|ARM'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='3DS|ARM'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='NDS|ARM'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='3DS|ARM'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='NDS|ARM'">
+    <NMakeBuildCommandLine>C:\devkitPro\msys\bin\make.exe -f Makefile.nds</NMakeBuildCommandLine>
+    <NMakeOutput>client.nds</NMakeOutput>
+    <NMakeCleanCommandLine>C:\devkitPro\msys\bin\make.exe -f Makefile.nds clean</NMakeCleanCommandLine>
+    <NMakePreprocessorDefinitions>ARM9;_NDS;D2KCLIENT;DEMULATOR=0;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <IncludePath>C:\devkitPro\devkitARM\include;C:\devkitPro\libnds\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <NMakeReBuildCommandLine>C:\devkitPro\msys\bin\make.exe -f Makefile.nds clean &amp;&amp; C:\devkitPro\msys\bin\make.exe -f Makefile.nds</NMakeReBuildCommandLine>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='3DS|ARM'">
+    <NMakeBuildCommandLine>C:\devkitPro\msys\bin\make.exe -f Makefile.3ds</NMakeBuildCommandLine>
+    <NMakeOutput>client.3dsx</NMakeOutput>
+    <NMakeCleanCommandLine>C:\devkitPro\msys\bin\make.exe -f Makefile.3ds clean</NMakeCleanCommandLine>
+    <NMakePreprocessorDefinitions>ARM11;_3DS;D2KCLIENT;EMULATOR=0;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <IncludePath>C:\devkitPro\devkitARM\include;C:\devkitPro\libctru\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <NMakeReBuildCommandLine>C:\devkitPro\msys\bin\make.exe -f Makefile.3ds clean &amp;&amp; C:\devkitPro\msys\bin\make.exe -f Makefile.3ds</NMakeReBuildCommandLine>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

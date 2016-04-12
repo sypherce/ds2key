@@ -147,7 +147,8 @@ void comboButton1Function(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		g_client_array[Profile] = new D2K::Client();							//create it
 	ProfileData *pData = g_client_array[Profile]->GetProfileDataPointer();
 	Config::LoadProfile(pData, Profile);									//then load it
-	int rowBase = D2K::KEYS::UP;//this offsets the difference between our list, and the "kUp" enums
+	//!04-11-16 the following is broken. DUP and TOUCH_11 has crap in the middle of it now.
+	int rowBase = D2K::KEYS::DUP;//this offsets the difference between our list, and the "kUp" enums
 	int row = 0;
 	for(row = 0; row <= D2K::KEYS::TOUCH_11 - rowBase; row++)
 	{
