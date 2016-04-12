@@ -4,6 +4,26 @@
 #include <string>//std::string
 #include "rect.h"
 
+#if defined(_3DS)
+//this is all patchwork right now
+#include <stdint.h>
+#define SCREEN_HEIGHT 192
+#define SCREEN_WIDTH 256
+#define _3DS_SCREEN_WIDTH 320
+#define _3DS_SCREEN_HEIGHT 240
+#define ARGB16(a, r, g, b) (((a) << 15) | (r) | ((g) << 5) | ((b) << 10))
+
+//guitar grip dummy defines
+#define guitarGripKeysHeld() ((uint8_t)0) 
+#define guitarGripIsInserted() ((bool)false)
+
+#define GUITARGRIP_GREEN BIT(6)
+#define GUITARGRIP_RED BIT(5)
+#define GUITARGRIP_YELLOW BIT(4)
+#define GUITARGRIP_BLUE BIT(3)
+
+#endif
+
 namespace D2K {namespace GUI {
 
 extern void VoidFunction();

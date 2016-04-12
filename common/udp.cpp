@@ -360,6 +360,9 @@ void Update(uint32_t keys, uint32_t keysTurbo, uint32_t gripKeys, uint32_t gripK
 
 void ServerLookup()
 {
+#if defined(_3DS)                                           // This is broken on 3DS right now
+	return;
+#endif
 	if(EMULATOR)                                        // Skip if emulating
 		return;					
 	unsigned long saved_remote_ip = GetRemoteIP();      // Save the remote IP
@@ -406,9 +409,6 @@ void SetProfile(unsigned int profile)
 {
 	UDP::profile = profile;
 }
-#ifdef _3DS
-extern void VBlankFunction();
-#endif
 DS2KeySettingsPacket GetCommandSettings()
 {
 	DS2KeySettingsPacket settings = DS2KeySettingsPacket{ };

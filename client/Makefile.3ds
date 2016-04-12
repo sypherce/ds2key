@@ -29,9 +29,9 @@ include $(DEVKITARM)/3ds_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	$(notdir $(CURDIR))
 BUILD		:=	build
-SOURCES		:=	arm9/source ../common ../common/iniparser/src
+SOURCES		:=	arm9/source arm9/source/gui arm9/source/windows ../common ../common/iniparser/src
 DATA		:=	data
-INCLUDES	:=	arm9/source ..
+INCLUDES	:=	arm9/source arm9/source/gui arm9/source/windows ..
 #ROMFS		:=	romfs
 
 #---------------------------------------------------------------------------------

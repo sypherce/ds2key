@@ -102,7 +102,7 @@
     <NMakeOutput>client.3dsx</NMakeOutput>
     <NMakeCleanCommandLine>C:\devkitPro\msys\bin\make.exe -f Makefile.3ds clean</NMakeCleanCommandLine>
     <NMakePreprocessorDefinitions>ARM11;_3DS;D2KCLIENT;EMULATOR=0;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <IncludePath>C:\devkitPro\devkitARM\include;C:\devkitPro\libctru\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <IncludePath>$(ProjectDir)..;C:\devkitPro\devkitARM\arm-none-eabi\include;C:\devkitPro\devkitARM\arm-none-eabi\include\c++\5.3.0;C:\devkitPro\libctru\include</IncludePath>
     <NMakeReBuildCommandLine>C:\devkitPro\msys\bin\make.exe -f Makefile.3ds clean &amp;&amp; C:\devkitPro\msys\bin\make.exe -f Makefile.3ds</NMakeReBuildCommandLine>
   </PropertyGroup>
   <ItemDefinitionGroup>

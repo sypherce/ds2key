@@ -1,13 +1,11 @@
 // main - it all begins and ends here
 
 #include "common/udp.h"
-#ifdef _NDS
 #include "windows/mainWindow.h"
 #include "windows/keypadWindow.h"
 #include "windows/commandWindow.h"
 #include "windows/turboWindow.h"
 #include "apsearch.h"
-#endif
 #include "core.h"
 #include "config.h"
 
@@ -65,9 +63,7 @@ int main()
 
 		return 1;				// halt on error
 	}
-#ifdef _NDS
 	D2K::GUI::Main::g_window.SetVisible(true);	// Show main window
-#endif
 
 	// TODO: We never actually get out of this loop. If we can, and go back
 	// to our loader or something we should
@@ -95,9 +91,9 @@ int main()
 			    guitarGripKeysHeld() * guitarGripIsInserted(),
 			    D2K::GUI::Turbo::GHGetKeys() * guitarGripIsInserted(),
 			    nullptr);
+#endif
 
 		D2K::GUI::Main::g_window.Update();	// Update the window
-#endif
 
 	}
 

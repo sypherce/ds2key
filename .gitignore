@@ -33,3 +33,14 @@
 *.elf
 *.ini
 *.log
+*.map
+*.tlog
+*.tlog\
+*.idb
+*.ilk
+*.pdb
+*.3dsx
+*.smdh
+*.lst
+client.nds
+DS2Key.nds

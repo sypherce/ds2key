@@ -9,8 +9,10 @@ const std::string VERSION_STRING = "DS2Key (GUI) git Build";
 const std::string VERSION_STRING = "DS2Key (Console) git Build";
 #elif defined(__linux__)
 const std::string VERSION_STRING = "DS2Key (Linux) git Build";
-#elif defined(ARM9)
+#elif defined(_NDS)
 const std::string VERSION_STRING = "DS2Key (DS) git Build";
+#elif defined(_3DS)
+const std::string VERSION_STRING = "DS2Key (3DS) git Build";
 #endif
 
 std::string ltos(long i)

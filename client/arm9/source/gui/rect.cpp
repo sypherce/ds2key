@@ -1,5 +1,7 @@
+#if defined(_NDS)
 #include <nds/arm9/video.h>  // SCREEN_WIDTH
 #include <nds/dma.h>  // dmaFillHalfWords
+#endif
 #include <algorithm>
 //std::min, std::max
 #include "gui.h"

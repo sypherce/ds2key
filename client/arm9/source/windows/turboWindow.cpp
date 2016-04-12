@@ -4,6 +4,10 @@
 #include "gui/label.h"
 #include "core.h"
 
+#ifdef _3DS
+#include "gui/gui.h"
+#endif
+
 namespace D2K {namespace GUI {namespace Turbo {
 
 extern void CheckButtonLFunction();

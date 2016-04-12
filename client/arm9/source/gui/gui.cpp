@@ -1,11 +1,13 @@
+#if defined(_NDS)
 #include <nds/arm9/video.h>  // SCREEN_WIDTH
 #include <nds/dma.h>  // dmaFillHalfWords
+#endif
 #include <algorithm>  // std::min, std::max
 #include "gui.h"
 
 namespace D2K {namespace GUI {
 
-u16* g_screen[2];
+uint16_t* g_screen[2];
 bool Update = false;
 uint16_t Color[colorMax];
 void VoidFunction() { }
@@ -28,17 +30,43 @@ void DrawFastHorizontleLine(uint8_t screen, uint8_t x, uint8_t y, uint8_t w, uin
 		w = SCREEN_WIDTH - x;
 	if(w == 0)
 		return;
+#if defined(_NDS)
 	dmaFillHalfWords(c, &GUI::g_screen[screen][x + (y * SCREEN_WIDTH)], w * 2);
+#elif defined(_3DS)
+	for(int i = 0; i < w; i++)
+		SetPixel(screen, x + i, y, c);
+#endif
 }
 
 void SetPixel(uint8_t screen, uint8_t x, uint8_t y, uint16_t c)
 {
 	if(y < SCREEN_HEIGHT)//if we're drawing on screen
+#if defined(_NDS)
 		GUI::g_screen[screen][x + (y * SCREEN_WIDTH)] = c;
+#elif defined(_3DS)
+	{
+		uint8_t* screen_pointer = (uint8_t*)GUI::g_screen[screen];
+
+		unsigned char red   = (c & 0x7C00) >> 10 << 3;
+		unsigned char green = (c & 0x3E0)  >> 5  << 3;
+		unsigned char blue  =  c & 0x001f        << 3;
+
+		screen_pointer[((x * _3DS_SCREEN_HEIGHT + (_3DS_SCREEN_HEIGHT - y)) * 3) + 0] = red;
+		screen_pointer[((x * _3DS_SCREEN_HEIGHT + (_3DS_SCREEN_HEIGHT - y)) * 3) + 1] = green;
+		screen_pointer[((x * _3DS_SCREEN_HEIGHT + (_3DS_SCREEN_HEIGHT - y)) * 3) + 2] = blue;
+	}
+#endif
 }
+
 void ClearScreen(uint8_t screen, uint16_t c)
 {
+#if defined(_NDS)
 	dmaFillHalfWords(c, GUI::g_screen[screen], SCREEN_WIDTH * SCREEN_HEIGHT * 2);
+#elif defined(_3DS)
+	for(int x = 0; x < _3DS_SCREEN_WIDTH; x++)
+		for(int y = 0; y < _3DS_SCREEN_HEIGHT; y++)
+			SetPixel(screen, x, y, c);
+#endif
 }
 void DrawRect(uint8_t screen, GUI::Rect rect, uint16_t c)
 {

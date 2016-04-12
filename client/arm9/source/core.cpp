@@ -12,9 +12,9 @@
 #include <nds.h>
 #include <fat.h>
 #include <dswifi9.h>
+#endif
 
 #include "gui/gui.h"//D2K::GUI::Screen
-#endif
 
 #include "common/udp.h"
 #include "common/misc.h"
@@ -110,6 +110,10 @@ bool Init()
 #if defined(_3DS)
 	gfxInitDefault();
 	consoleInit(GFX_TOP, NULL);
+	gfxSetDoubleBuffering(GFX_BOTTOM, false);
+
+	//Get the bottom screen's frame buffer
+	D2K::GUI::g_screen[0] = (uint16_t*)gfxGetFramebuffer(GFX_BOTTOM, GFX_LEFT, NULL, NULL);
 #elif defined(_NDS)
 	// PowerOff(PM_BACKLIGHT_TOP);
 	videoSetModeSub(MODE_0_2D);
@@ -186,6 +190,11 @@ void Loop()
 {
 	input_changed = true;
 #if defined(_3DS)
+	
+        // Flush and swap framebuffers
+        gfxFlushBuffers();
+        gfxSwapBuffers();
+
 	gspWaitForVBlank();VBlankFunction();
 #elif defined(_NDS)
 	swiWaitForVBlank();
