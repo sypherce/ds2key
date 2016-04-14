@@ -78,7 +78,7 @@ WindowClass::WindowClass() : Window()
 	AppendObject(check_button_green = new CheckButton(m_screen, Rect(190,130,10,10), "Green", &CheckButtonGreenFunction));
 }
 WindowClass::~WindowClass() { }
-uint16_t currentTurboKeys = 0;
+uint32_t currentTurboKeys = 0;
 void UpdateTurboKeys()
 {
 	currentTurboKeys = 0;
@@ -107,16 +107,16 @@ void UpdateTurboKeys()
 	if(check_button_select->GetChecked())
 		currentTurboKeys |= KEY_SELECT;
 }
-uint16_t CheckTurboKey(uint16_t a)
+uint32_t CheckTurboKey(uint32_t a)
 {
 	if(currentTurboKeys&a)
 		if(keysHeld()&a)
 			return a;
 	return 0;
 }
-uint16_t GetKeys()
+uint32_t GetKeys()
 {
-	uint16_t keys = 0;
+	uint32_t keys = 0;
 	if(check_button_enable->GetChecked() == false)
 		return 0;
 	UpdateTurboKeys();
@@ -149,7 +149,7 @@ void GHUpdateTurboKeys()
 	if(check_button_green->GetChecked())
 		currentGHTurboKeys |= GUITARGRIP_GREEN;
 }
-uint8_t GHCheckTurboKey(uint16_t a)
+uint8_t GHCheckTurboKey(uint8_t a)
 {
 	if(currentGHTurboKeys&a)
 		if(guitarGripKeysHeld()&a)

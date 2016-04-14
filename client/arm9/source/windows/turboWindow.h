@@ -10,7 +10,7 @@ public:
 	WindowClass();
 	~WindowClass();
 };
-extern uint16_t GetKeys();
+extern uint32_t GetKeys();
 extern uint8_t GHGetKeys();
 extern GUI::Turbo::WindowClass g_window;
 
