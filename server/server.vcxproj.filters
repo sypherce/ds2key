@@ -52,12 +52,6 @@
     <ClInclude Include="core\key.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="core\PPJIoctl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="core\PPJoy.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="gui\controls\button.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -109,6 +103,15 @@
     <ClInclude Include="gui\resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="core\vjoy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\vjoy\inc\public.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\vjoy\inc\vjoyinterface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\common\iniParserWrapper.cpp">
@@ -139,9 +142,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="core\key.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="core\PPJoy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
@@ -193,6 +193,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="gui\mainWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\vjoy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

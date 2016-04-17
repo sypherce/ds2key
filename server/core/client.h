@@ -4,31 +4,40 @@
 #include <cstdint>  //uint8_t, etc
 #include "common/ds2keyPacket.h"
 
-static const char* D2K_COMMAND = "*";
-static const int D2K_COMMAND_LENGTH = 1;
 
 namespace D2K {
-//TODO: This following block of code should be removed
-/*static const uint16_t DS2KEY_A = (1 << (0));
-static const uint16_t DS2KEY_B = (1 << (1));
-static const uint16_t DS2KEY_SELECT = (1 << (2));
-static const uint16_t DS2KEY_START = (1 << (3));
-static const uint16_t DS2KEY_RIGHT = (1 << (4));
-static const uint16_t DS2KEY_LEFT = (1 << (5));
-static const uint16_t DS2KEY_UP = (1 << (6));
-static const uint16_t DS2KEY_DOWN = (1 << (7));
-static const uint16_t DS2KEY_R = (1 << (8));
-static const uint16_t DS2KEY_L = (1 << (9));
-static const uint16_t DS2KEY_X = (1 << (10));
-static const uint16_t DS2KEY_Y = (1 << (11));
-static const uint16_t DS2KEY_TOUCH = (1 << (12));
-static const uint16_t DS2KEY_LID = (1 << (13));
+static const char* D2K_COMMAND = "*";
+static const int D2K_COMMAND_LENGTH = 1;
+static const uint32_t DS2KEY_A = (1 << (0));
+static const uint32_t DS2KEY_B = (1 << (1));
+static const uint32_t DS2KEY_SELECT = (1 << (2));
+static const uint32_t DS2KEY_START = (1 << (3));
+static const uint32_t DS2KEY_DRIGHT = (1 << (4)); 
+static const uint32_t DS2KEY_DLEFT = (1 << (5)); 
+static const uint32_t DS2KEY_DUP = (1 << (6)); 
+static const uint32_t DS2KEY_DDOWN = (1 << (7)); 
+static const uint32_t DS2KEY_R = (1 << (8));
+static const uint32_t DS2KEY_L = (1 << (9));
+static const uint32_t DS2KEY_X = (1 << (10));
+static const uint32_t DS2KEY_Y = (1 << (11));
+static const uint32_t DS2KEY_TOUCH = (1 << (12)) | (1 << (20));
+static const uint32_t DS2KEY_LID = (1 << (13));
+
+static const uint32_t DS2KEY_ZL = (1 << (14));
+static const uint32_t DS2KEY_ZR = (1 << (15));
+static const uint32_t DS2KEY_CSTICK_RIGHT = (1 << (24));
+static const uint32_t DS2KEY_CSTICK_LEFT = (1 << (25));
+static const uint32_t DS2KEY_CSTICK_UP = (1 << (26));
+static const uint32_t DS2KEY_CSTICK_DOWN = (1 << (27));
+static const uint32_t DS2KEY_CPAD_RIGHT = (1 << (28));
+static const uint32_t DS2KEY_CPAD_LEFT = (1 << (29));
+static const uint32_t DS2KEY_CPAD_UP = (1 << (30));
+static const uint32_t DS2KEY_CPAD_DOWN = (1 << (31));
 
 static const uint8_t DS2KEY_BLUE = (1 << (3));
 static const uint8_t DS2KEY_YELLOW = (1 << (4));
 static const uint8_t DS2KEY_RED = (1 << (5));
-static const uint8_t DS2KEY_GREEN = (1 << (6));*/
-static const uint16_t DS2KEY_TOUCH = (1 << (12));
+static const uint8_t DS2KEY_GREEN = (1 << (6));
 
 //this represents each value in a Keys Profile array. Example: Profile[KEYS::UP] is defined as KEY_UP by default
 enum KEYS
@@ -169,14 +178,14 @@ public:
 	//@return true if (key) has Turbo mode enabled
 	bool GHTurbo(uint8_t key);
 
-	//@return Stylus current X Position. Values range 0-255
-	uint8_t GetX();
+	//@return Stylus current X Position. Values range 0-255(NDS), 0-319(3DS)
+	uint16_t GetX();
 
-	//@return Stylus current X Position. Values range 0-191
-	uint8_t GetY();
+	//@return Stylus current X Position. Values range 0-191(NDS), 0-239(3DS)
+	uint16_t GetY();
 
 private:
-	void SetTouchPos(uint8_t x, uint8_t y);
+	void SetTouchPos(uint16_t x, uint16_t y);
 	void Press(uint32_t key);
 	void Release(uint32_t key);
 

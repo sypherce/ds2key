@@ -7,29 +7,29 @@ namespace D2K {namespace GUI {
 class Rect {
 public:
 	Rect();
-	Rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h);
+	Rect(uint16_t x, uint16_t y, uint16_t w, uint16_t h);
 	~Rect();
 
-	uint8_t GetX();
-	uint8_t GetY();
-	uint8_t GetW();
-	uint8_t GetH();
-	uint8_t GetX2();
-	uint8_t GetY2();
+	uint16_t GetX();
+	uint16_t GetY();
+	uint16_t GetW();
+	uint16_t GetH();
+	uint16_t GetX2();
+	uint16_t GetY2();
 
-	void SetX(uint8_t x);
-	void SetY(uint8_t y);
-	void SetW(uint8_t w);
-	void SetH(uint8_t h);
+	void SetX(uint16_t x);
+	void SetY(uint16_t y);
+	void SetW(uint16_t w);
+	void SetH(uint16_t h);
 
 	//@return true if (x), (y) Intersects, false if not
-	bool PointIntersect(uint8_t x, uint8_t y);
+	bool PointIntersect(uint16_t x, uint16_t y);
 
 private:
-	uint8_t m_x;
-	uint8_t m_y;
-	uint8_t m_w;
-	uint8_t m_h;
+	uint16_t m_x;
+	uint16_t m_y;
+	uint16_t m_w;
+	uint16_t m_h;
 };
 
 }}//namespace D2K::GUI

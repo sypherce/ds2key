@@ -10,7 +10,7 @@
 #include <cstring>  // strerror
 
 // system specific includes
-#ifdef _WIN32
+#if defined(_WIN32)
 #include <ws2tcpip.h>     // socklength_t
 #elif defined(__linux__)
 #include <unistd.h>       // close
@@ -30,6 +30,7 @@
 #include <sys/ioctl.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <fcntl.h>
 #endif
 
 // shared (linux, nds) defines
@@ -42,7 +43,7 @@
 #endif
 
 // system specific defines
-#ifdef _WIN32
+#if defined(_WIN32)
 #define NETerrno WSAGetLastError()
 #define NETEADDRINUSE WSAEADDRINUSE
 #define NETEWOULDBLOCK WSAEWOULDBLOCK
@@ -120,7 +121,7 @@ int Connect(bool non_blocking, uint16_t port)
 	SetConfigPort(port);  // Set port
 
 	UDP::non_blocking = non_blocking;
-#ifdef D2KCLIENT
+#if defined(D2KCLIENT)
 	remote_sockaddr.sin_family = AF_INET;
 	remote_sockaddr.sin_port = htons(GetPort());
 #elif defined(D2KSERVER) || defined(_WIN32)
@@ -155,12 +156,20 @@ int Connect(bool non_blocking, uint16_t port)
 	}
 #endif
 
+#ifdef _3DS
+	int flags = fcntl(socket_id, F_GETFL, 0);
+	if(non_blocking && fcntl(socket_id, F_SETFL, flags | O_NONBLOCK))
+	{
+		int err = NETerrno;
+		std::clog << "Error (fcntl): " << strerror(err) << "\n";
+#else
 	// set blocking mode
 	if(NETioctlsocket(socket_id, FIONBIO, (unsigned long*)&UDP::non_blocking) == SOCKET_ERROR)
 	{
 		int err = NETerrno;
 		std::clog << "Error (NETioctlsocket): " << strerror(err) << "\n";
-#ifdef _NDS
+#endif
+#if defined(_NDS) | defined (_3DS)//TODO check if this needs done for everything
 		Disconnect();
 
 		return err;
@@ -256,8 +265,10 @@ int Recv(void* buffer, unsigned int length)
 
 unsigned long GetLocalIP()
 {
-#ifdef _NDS
+#if defined(_NDS)
 	return Wifi_GetIP();
+#elif defined(_3DS)
+	return gethostid();
 #elif defined(_WIN32) || defined(__linux__)
 	return local_sockaddr.sin_addr.s_addr;
 #endif
@@ -320,7 +331,7 @@ void SetConfigPort(unsigned int port)
 		UDP::port = port;
 }
 
-#ifdef D2KCLIENT
+#if defined(D2KCLIENT)
 void SendCommand(uint8_t command)
 {
 	if(command >= UDP::SETTINGS_PACKET_MAX_BUTTONS) // Valid range is 0 - 11
@@ -360,9 +371,6 @@ void Update(uint32_t keys, uint32_t keysTurbo, uint32_t gripKeys, uint32_t gripK
 
 void ServerLookup()
 {
-#if defined(_3DS)                                           // This is broken on 3DS right now
-	return;
-#endif
 	if(EMULATOR)                                        // Skip if emulating
 		return;					
 	unsigned long saved_remote_ip = GetRemoteIP();      // Save the remote IP
@@ -376,6 +384,17 @@ void ServerLookup()
 	packet.type = UDP::PACKET::LOOKUP;                  // Set as a lookup packet
 
 	Send(&packet, sizeof(DS2KeyPacket));                // Send the packet out
+	
+	//wait for 1 second
+	for(int i = 0; i < 60; i++)
+	{
+#if defined(_3DS)
+		gspWaitForVBlank();
+		VBlankFunction();
+#elif defined (_NDS)
+		swiWaitForVBlank();
+#endif
+	}
 
 	if(Recv((char*)&packet, sizeof(DS2KeyPacket)) != 0) // Didn't receive anything
 	{

@@ -18,8 +18,8 @@ typedef struct DS2KeyPacket final
 	uint8_t gh_keys_turbo;     //Enabled GuitarGrip Turbo keys
 	uint16_t touch_keys;
 	uint16_t touch_keys_turbo; //Enabled Touch Turbo keys
-	uint8_t touch_x;
-	uint8_t touch_y;
+	uint16_t touch_x;
+	uint16_t touch_y;
 } __attribute__((packed)) DS2KeyPacket;
 
 const int SETTINGS_PACKET_MAX_BUTTONS = 12; // 12 buttons

@@ -17,7 +17,10 @@ extern char* GetTime();
 // @return (0) upon success, else (1)
 extern bool Init();
 
+// Shutdown the system. Currently only 3DS.
+extern void DeInit();
+
 // Loop function that calls VBlankFunction()
-extern void Loop();
+extern int Loop();
 
 }//namespace D2K

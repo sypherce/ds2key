@@ -11,38 +11,6 @@ Client* g_client_array[256] = { };
 
 uint32_t EnumKeyToNDSKeypadBit(int enum_key)
 {
-	// TODO: These kinda just make everything uglier... maybe this should be removed
-	static const uint32_t DS2KEY_A = (1 << (0));
-	static const uint32_t DS2KEY_B = (1 << (1));
-	static const uint32_t DS2KEY_SELECT = (1 << (2));
-	static const uint32_t DS2KEY_START = (1 << (3));
-	static const uint32_t DS2KEY_DRIGHT = (1 << (4)); 
-	static const uint32_t DS2KEY_DLEFT = (1 << (5)); 
-	static const uint32_t DS2KEY_DUP = (1 << (6)); 
-	static const uint32_t DS2KEY_DDOWN = (1 << (7)); 
-	static const uint32_t DS2KEY_R = (1 << (8));
-	static const uint32_t DS2KEY_L = (1 << (9));
-	static const uint32_t DS2KEY_X = (1 << (10));
-	static const uint32_t DS2KEY_Y = (1 << (11));
-	static const uint32_t DS2KEY_TOUCH = (1 << (12)) | (1 << (20));
-	static const uint32_t DS2KEY_LID = (1 << (13));
-
-	static const uint32_t DS2KEY_ZL = (1 << (14));
-	static const uint32_t DS2KEY_ZR = (1 << (15));
-	static const uint32_t DS2KEY_CSTICK_RIGHT = (1 << (24));
-	static const uint32_t DS2KEY_CSTICK_LEFT = (1 << (25));
-	static const uint32_t DS2KEY_CSTICK_UP = (1 << (26));
-	static const uint32_t DS2KEY_CSTICK_DOWN = (1 << (27));
-	static const uint32_t DS2KEY_CPAD_RIGHT = (1 << (28));
-	static const uint32_t DS2KEY_CPAD_LEFT = (1 << (29));
-	static const uint32_t DS2KEY_CPAD_UP = (1 << (30));
-	static const uint32_t DS2KEY_CPAD_DOWN = (1 << (31));
-
-	static const uint8_t DS2KEY_BLUE = (1 << (3));
-	static const uint8_t DS2KEY_YELLOW = (1 << (4));
-	static const uint8_t DS2KEY_RED = (1 << (5));
-	static const uint8_t DS2KEY_GREEN = (1 << (6));
-
 	switch(enum_key)
 	{
 	case KEYS::DUP:
@@ -358,7 +326,7 @@ void Client::SetPacket(UDP::DS2KeyPacket packet)
 	m_packet = packet;
 }
 
-void Client::SetTouchPos(uint8_t x, uint8_t y)
+void Client::SetTouchPos(uint16_t x, uint16_t y)
 {
 	m_packet.touch_x = x;
 	m_packet.touch_y = y;
@@ -424,12 +392,12 @@ bool Client::GHTurbo(uint8_t key)
 	return (m_packet.gh_keys_turbo&key) != 0;
 }
 
-uint8_t Client::GetX()
+uint16_t Client::GetX()
 {
 	return m_packet.touch_x;
 }
 
-uint8_t Client::GetY()
+uint16_t Client::GetY()
 {
 	return m_packet.touch_y;
 }

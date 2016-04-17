@@ -10,6 +10,7 @@
 
 #define KEY_NONE 0
 #define KEY_JOY 0x100
+#define KEY_JOY_MAX (KEY_JOY + 32) 
 
 #ifdef _WIN32
 #define KEY_VOID KEY_NONE

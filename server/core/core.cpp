@@ -123,8 +123,8 @@ void ProcessPacket(D2K::Client* Client)
 	turbo = !turbo;
 
 	// Touch screen
-	uint8_t x = Client->GetX();
-	uint8_t y = Client->GetY();
+	uint16_t x = Client->GetX();
+	uint16_t y = Client->GetY();
 	bool screen_touched = Client->Held(DS2KEY_TOUCH);
 	std::string moveType = Profile->m_mouse;
 

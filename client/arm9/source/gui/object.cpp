@@ -59,7 +59,7 @@ bool Object::IsVisible()
 {
 	return m_visible;
 }
-bool Object::IsClicked(uint8_t x, uint8_t y)
+bool Object::IsClicked(uint16_t x, uint16_t y)
 {
 	return m_rect.PointIntersect(x, y);
 }

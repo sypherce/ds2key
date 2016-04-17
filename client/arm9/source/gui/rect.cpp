@@ -1,12 +1,19 @@
-#if defined(_NDS)
+#ifdef _NDS
 #include <nds/arm9/video.h>  // SCREEN_WIDTH
 #include <nds/dma.h>  // dmaFillHalfWords
 #endif
+#include <iostream>
 #include <algorithm>
 //std::min, std::max
 #include "gui.h"
 
 namespace D2K {namespace GUI {
+
+#if defined(_NDS)
+const float SCREEN_SCALE = 1.0;
+#elif defined(_3DS)
+const float SCREEN_SCALE = 1.25;
+#endif
 
 Rect::Rect()
 {
@@ -15,7 +22,7 @@ Rect::Rect()
 	m_w =
 	m_h = 0;
 }
-Rect::Rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h)
+Rect::Rect(uint16_t x, uint16_t y, uint16_t w, uint16_t h)
 {
 	int x_2 = x + w;
 	int y_2 = y + h;
@@ -28,55 +35,55 @@ Rect::Rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h)
 	m_w = w;
 	m_h = h;
 }
-uint8_t Rect::GetX()
+uint16_t Rect::GetX()
 {
-	return m_x;
+	return (uint16_t)(m_x * SCREEN_SCALE);
 }
-void Rect::SetX(uint8_t x)
+void Rect::SetX(uint16_t x)
 {
 	m_x = x;
 }
-uint8_t Rect::GetY()
+uint16_t Rect::GetY()
 {
-	return m_y;
+	return (uint16_t)(m_y * SCREEN_SCALE);
 }
-void Rect::SetY(uint8_t y)
+void Rect::SetY(uint16_t y)
 {
 	m_y = y;
 }
-uint8_t Rect::GetW()
+uint16_t Rect::GetW()
 {
-	return m_w;
+	return (uint16_t)(m_w * SCREEN_SCALE);
 }
-void Rect::SetW(uint8_t w)
+void Rect::SetW(uint16_t w)
 {
-	int tempW = GetX() + w;
+	int tempW = m_w + w;
 	if(tempW >= SCREEN_WIDTH - 1)  // If tempW is offscreen
-		m_w = SCREEN_WIDTH - 1 - GetX();
+		m_w = SCREEN_WIDTH - 1 - m_x;
 	else
 		m_w = w;
 }
-uint8_t Rect::GetH()
+uint16_t Rect::GetH()
 {
-	return m_h;
+	return (uint16_t)(m_h * SCREEN_SCALE);
 }
-void Rect::SetH(uint8_t h)
+void Rect::SetH(uint16_t h)
 {
-	int tempH = GetY() + h;
+	int tempH = m_y + h;
 	if(tempH >= SCREEN_HEIGHT - 1) // If tempH is offscreen
-		m_h = SCREEN_HEIGHT - 1 - GetY();
+		m_h = SCREEN_HEIGHT - 1 - m_y;
 	else
 		m_h = h;
 }
-uint8_t Rect::GetX2()
+uint16_t Rect::GetX2()
 {
-	return m_x + m_w;
+	return GetX() + GetW();
 }
-uint8_t Rect::GetY2()
+uint16_t Rect::GetY2()
 {
-	return m_y + m_h;
+	return GetY() + GetH();
 }
-bool Rect::PointIntersect(uint8_t x, uint8_t y)
+bool Rect::PointIntersect(uint16_t x, uint16_t y)
 {
 	return (   x >= std::min((uint16_t)GetX(), (uint16_t)GetX2())
 		&& x <= std::max((uint16_t)GetX(), (uint16_t)GetX2())

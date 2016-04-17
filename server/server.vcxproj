@@ -82,7 +82,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(ProjectDir)core\vjoy\lib\vJoyInterface.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <UACUIAccess>false</UACUIAccess>
     </Link>
   </ItemDefinitionGroup>
@@ -105,7 +105,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(ProjectDir)core\vjoy\lib\vJoyInterface.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <UACUIAccess>false</UACUIAccess>
       <UACExecutionLevel>AsInvoker</UACExecutionLevel>
     </Link>
@@ -129,7 +129,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(ProjectDir)core\vjoy\lib\vJoyInterface.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <UACUIAccess>false</UACUIAccess>
     </Link>
   </ItemDefinitionGroup>
@@ -145,8 +145,9 @@
     <ClInclude Include="core\core.h" />
     <ClInclude Include="core\input.h" />
     <ClInclude Include="core\key.h" />
-    <ClInclude Include="core\PPJIoctl.h" />
-    <ClInclude Include="core\PPJoy.h" />
+    <ClInclude Include="core\vjoy.h" />
+    <ClInclude Include="core\vjoy\inc\public.h" />
+    <ClInclude Include="core\vjoy\inc\vjoyinterface.h" />
     <ClInclude Include="gui\controls\button.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='GUI Release|Win32'">false</ExcludedFromBuild>
@@ -244,7 +245,7 @@
     <ClCompile Include="core\core.cpp" />
     <ClCompile Include="core\input.cpp" />
     <ClCompile Include="core\key.cpp" />
-    <ClCompile Include="core\PPJoy.cpp" />
+    <ClCompile Include="core\vjoy.cpp" />
     <ClCompile Include="gui\controls\button.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='GUI Release|Win32'">false</ExcludedFromBuild>

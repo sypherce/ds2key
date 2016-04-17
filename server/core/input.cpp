@@ -7,7 +7,7 @@
 #include <windows.h>
 #include <winuser.h>
 #include <iostream>//std::cout, std::clog
-#include "PPJIoctl.h"
+#include "vjoy.h"
 #include "key.h"
 #elif defined(__linux__)
 #define NUM_DIGITAL 20
@@ -17,21 +17,12 @@
 
 namespace D2K {namespace Input {
 
-#ifdef _WIN32
-PPJoy* g_ppjoy[MAX_JOYSTICKS] = { };
-#endif
 #ifdef __linux__
 Display* g_display;
 #endif
 
 void Init()
 {
-#ifdef _WIN32
-	for (int i = 0; i < MAX_JOYSTICKS; i++)
-	{
-		g_ppjoy[i] = 0;
-	}
-#endif
 #ifdef __linux__
 	g_display = XOpenDisplay(nullptr);
 #endif
@@ -40,12 +31,9 @@ void Init()
 void DeInit()
 {
 #ifdef _WIN32
-	for(int i = 0; i < MAX_JOYSTICKS; i++)
-		if(g_ppjoy[i] != 0)
-		{
-			delete(g_ppjoy[i]);
-			g_ppjoy[i] = 0;
-		}
+	for(int i = 1; i < Joystick::MAX_JOYSTICKS; i++)
+		if(Joystick::IsActive(i))
+			Joystick::DeInit(i);
 #endif
 }
 
@@ -203,15 +191,13 @@ void Mouse(bool type, signed long int x, signed long int y)
 #endif
 }
 
-void Press(uint16_t key, unsigned char joy)
+void Press(uint16_t key, uint8_t joy)
 {
-	if(key >= KEY_JOY && key < KEY_JOY + NUM_DIGITAL) //virtual gamepad buttons
+	if(key >= KEY_JOY && key < KEY_JOY_MAX) //virtual gamepad buttons
 	{
 #ifdef _WIN32
-		if(g_ppjoy[joy] == 0)
-			g_ppjoy[joy] = new PPJoy(joy);
-		g_ppjoy[joy]->SetButton(key - KEY_JOY, 1);
-		g_ppjoy[joy]->Update();
+		Joystick::SetButton(joy + 1, key - KEY_JOY, true);
+		Joystick::Update(joy + 1);
 #endif
 	}
 	else
@@ -221,15 +207,13 @@ void Press(uint16_t key, unsigned char joy)
 	}
 }
 
-void Release(uint16_t key, unsigned char joy)
+void Release(uint16_t key, uint8_t joy)
 {
-	if(key >= KEY_JOY && key < KEY_JOY + NUM_DIGITAL) //virtual gamepad buttons
+	if(key >= KEY_JOY && key < KEY_JOY_MAX) //virtual gamepad buttons
 	{
 #ifdef _WIN32
-		if(g_ppjoy[joy] == 0)
-			g_ppjoy[joy] = new PPJoy(joy);
-		g_ppjoy[joy]->SetButton(key - KEY_JOY, 0);
-		g_ppjoy[joy]->Update();
+		Joystick::SetButton(joy + 1, key - KEY_JOY, false);
+		Joystick::Update(joy + 1);
 #endif
 	}
 	else

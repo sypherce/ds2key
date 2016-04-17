@@ -1,4 +1,4 @@
-#if defined(_NDS)
+#ifdef _NDS
 #include <nds/arm9/video.h>  // SCREEN_WIDTH
 #include <nds/dma.h>  // dmaFillHalfWords
 #endif
@@ -7,6 +7,13 @@
 
 namespace D2K {namespace GUI {
 
+#if defined(_NDS)
+const uint16_t MAX_X = SCREEN_WIDTH;
+const uint16_t MAX_Y = SCREEN_HEIGHT;
+#elif defined(_3DS)
+const uint16_t MAX_X = _3DS_SCREEN_WIDTH;
+const uint16_t MAX_Y = _3DS_SCREEN_HEIGHT;
+#endif
 uint16_t* g_screen[2];
 bool Update = false;
 uint16_t Color[colorMax];
@@ -20,14 +27,14 @@ bool IsUpdated()
 {
 	return Update;
 }
-void DrawFastHorizontleLine(uint8_t screen, uint8_t x, uint8_t y, uint8_t w, uint16_t c)
+void DrawFastHorizontleLine(uint8_t screen, uint16_t x, uint16_t y, uint16_t w, uint16_t c)
 {
-	if(x >= SCREEN_WIDTH)
+	if(x >= MAX_X)
 		return;
-	if(y >= SCREEN_HEIGHT)
+	if(y >= MAX_Y)
 		return;
-	if(x + w >= SCREEN_WIDTH)
-		w = SCREEN_WIDTH - x;
+	if(x + w >= MAX_X)
+		w = MAX_X - x;
 	if(w == 0)
 		return;
 #if defined(_NDS)
@@ -38,9 +45,9 @@ void DrawFastHorizontleLine(uint8_t screen, uint8_t x, uint8_t y, uint8_t w, uin
 #endif
 }
 
-void SetPixel(uint8_t screen, uint8_t x, uint8_t y, uint16_t c)
+void SetPixel(uint8_t screen, uint16_t x, uint16_t y, uint16_t c)
 {
-	if(y < SCREEN_HEIGHT)//if we're drawing on screen
+	if(y < MAX_Y)//if we're drawing on screen
 #if defined(_NDS)
 		GUI::g_screen[screen][x + (y * SCREEN_WIDTH)] = c;
 #elif defined(_3DS)
@@ -84,7 +91,7 @@ void DrawFilledRect(uint8_t screen, GUI::Rect rect, uint16_t c)
 	for(int y = rect.GetY(); y <= rect.GetY2(); y++)
 		DrawFastHorizontleLine(screen, rect.GetX(), y, rect.GetW(), c);
 }
-void DrawLine(uint8_t screen, std::string text, uint8_t x, uint8_t y, uint16_t c)
+void DrawLine(uint8_t screen, std::string text, uint16_t x, uint16_t y, uint16_t c)
 {
 	if (text == "X")
 	{
@@ -139,7 +146,7 @@ void DrawLine(uint8_t screen, std::string text, uint8_t x, uint8_t y, uint16_t c
 		}
 	}
 }
-void DrawLetter(uint8_t screen, char letter, uint8_t x, uint8_t y, uint16_t c)
+void DrawLetter(uint8_t screen, char letter, uint16_t x, uint16_t y, uint16_t c)
 {
 	switch(letter)
 	{
@@ -530,7 +537,7 @@ void DrawLetter(uint8_t screen, char letter, uint8_t x, uint8_t y, uint16_t c)
 	}
 	}
 }
-void DrawString(uint8_t ccreen, std::string text, uint8_t x, uint8_t y, uint16_t c)
+void DrawString(uint8_t ccreen, std::string text, uint16_t x, uint16_t y, uint16_t c)
 {
 	for(unsigned int i = 0; i < text.length(); i++)
 	{

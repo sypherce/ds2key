@@ -36,7 +36,7 @@ public:
 	bool IsVisible();
 	//checks if object is clicked at (x), (y)
 	//@return (true) if clicked, (false) if not
-	bool IsClicked(uint8_t x, uint8_t y);
+	bool IsClicked(uint16_t x, uint16_t y);
 	//@return current screen of object
 
 	bool GetScreen();

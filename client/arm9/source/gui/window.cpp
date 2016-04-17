@@ -64,18 +64,18 @@ bool Window::CheckClick(Object* object)
 	if(object != nullptr
 	&& object->IsVisible())
 	{
-		uint8_t x = D2K::g_stylus_position.px,
+		uint16_t x = D2K::g_stylus_position.px,
 			y = D2K::g_stylus_position.py;
 
 		// clamp x value
-		if(D2K::g_stylus_position.px >= SCREEN_WIDTH)
-			x = SCREEN_WIDTH - 1;
+		if(D2K::g_stylus_position.px >= MAX_X)
+			x = MAX_X - 1;
 		else if(D2K::g_stylus_position.px < 0)
 			x = 0;
 			
 		// clamp y value
-		if(D2K::g_stylus_position.py > SCREEN_HEIGHT)
-			x = SCREEN_HEIGHT - 1;
+		if(D2K::g_stylus_position.py > MAX_Y)
+			x = MAX_Y - 1;
 		else if(D2K::g_stylus_position.py < 0)
 			y = 0;
 
