@@ -206,6 +206,23 @@ KeyEntry g_table[] = {
 	{KEY_JOY + 17, "JOY_17"},
 	{KEY_JOY + 18, "JOY_18"},
 	{KEY_JOY + 19, "JOY_19"},
+	{KEY_JOY + 20, "JOY_20"},
+	{KEY_JOY + 21, "JOY_21"},
+	{KEY_JOY + 22, "JOY_22"},
+	{KEY_JOY + 23, "JOY_23"},
+	{KEY_JOY + 24, "JOY_24"},
+	{KEY_JOY + 25, "JOY_25"},
+	{KEY_JOY + 26, "JOY_26"},
+	{KEY_JOY + 27, "JOY_27"},
+	{KEY_JOY + 28, "JOY_28"},
+	{KEY_JOY + 29, "JOY_29"},
+	{KEY_JOY + 30, "JOY_30"},
+	{KEY_JOY + 31, "JOY_31"},
+
+	{KEY_JOY_UP, "JOY_UP"},
+	{KEY_JOY_DOWN, "JOY_DOWN"},
+	{KEY_JOY_LEFT, "JOY_LEFT"},
+	{KEY_JOY_RIGHT, "JOY_RIGHT"},
 
 	{KEY_NONE, "KEY_NONE"},
 	{KEY_VOID, "KEY_VOID"}

@@ -10,7 +10,13 @@
 
 #define KEY_NONE 0
 #define KEY_JOY 0x100
-#define KEY_JOY_MAX (KEY_JOY + 32) 
+#define KEY_JOY_MAX   (KEY_JOY + 32)//check key.cpp for final KEY_JOY value 
+#define KEY_JOY_UP    (KEY_JOY_MAX)
+#define KEY_JOY_DOWN  (KEY_JOY_MAX + 1)
+#define KEY_JOY_LEFT  (KEY_JOY_MAX + 2)
+#define KEY_JOY_RIGHT (KEY_JOY_MAX + 3)
+#define KEY_JOY_HAT    KEY_JOY_UP
+#define KEY_JOY_HAT_MAX    KEY_JOY_RIGHT
 
 #ifdef _WIN32
 #define KEY_VOID KEY_NONE

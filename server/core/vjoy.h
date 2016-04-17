@@ -13,6 +13,8 @@ extern bool DeInit(uint8_t device);
 extern bool IsActive(uint8_t device);
 extern int Update(uint8_t device);
 extern void SetButton(uint8_t device, uint8_t button, bool value);
+extern void SetHat(uint8_t device, uint8_t hat, bool value);
+extern void UpdateHat(uint8_t device);
 extern void SetAxisPercent(uint8_t device, uint8_t axis, uint8_t value);
 extern bool GetButton(uint8_t device, uint8_t button);
 

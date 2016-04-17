@@ -200,6 +200,13 @@ void Press(uint16_t key, uint8_t joy)
 		Joystick::Update(joy + 1);
 #endif
 	}
+	else if(key >= KEY_JOY_HAT && key <= KEY_JOY_HAT_MAX) //virtual gamepad buttons
+	{
+#ifdef _WIN32
+		Joystick::SetHat(joy + 1, key - KEY_JOY_HAT, true);
+		Joystick::Update(joy + 1);
+#endif
+	}
 	else
 	{
 		Keyboard(key, KeyState::pressed);
@@ -213,6 +220,13 @@ void Release(uint16_t key, uint8_t joy)
 	{
 #ifdef _WIN32
 		Joystick::SetButton(joy + 1, key - KEY_JOY, false);
+		Joystick::Update(joy + 1);
+#endif
+	}
+	else if(key >= KEY_JOY_HAT && key <= KEY_JOY_HAT_MAX) //virtual gamepad buttons
+	{
+#ifdef _WIN32
+		Joystick::SetHat(joy + 1, key - KEY_JOY_HAT, false);
 		Joystick::Update(joy + 1);
 #endif
 	}

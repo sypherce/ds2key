@@ -22,6 +22,19 @@ namespace Joystick {
 //joystick_position[0] is unused, but it makes the rest of the code not need
 //joystick_position[device+1]
 JOYSTICK_POSITION joystick_position[MAX_JOYSTICKS+1]{ };
+const int CONTINUOUS_UP = 0;
+const int CONTINUOUS_UP_RIGHT = 4500;
+const int CONTINUOUS_RIGHT = 9000;
+const int CONTINUOUS_DOWN_RIGHT = 13500;
+const int CONTINUOUS_DOWN = 18000;
+const int CONTINUOUS_DOWN_LEFT = 22500;
+const int CONTINUOUS_LEFT = 27000;
+const int CONTINUOUS_UP_LEFT = 31500;
+const int CONTINUOUS_NEUTRAL = -1;
+bool hat_up[MAX_JOYSTICKS+1]{ };
+bool hat_down[MAX_JOYSTICKS+1]{ };
+bool hat_left[MAX_JOYSTICKS+1]{ };
+bool hat_right[MAX_JOYSTICKS+1]{ };
 
 //return false/0 if successful
 bool Init(uint8_t device)
@@ -127,6 +140,49 @@ void SetButton(uint8_t device, uint8_t button, bool value)
 		joystick_position[device].lButtons |= 1 << button;
 	else      //release
 		joystick_position[device].lButtons &= ~(1 << button);
+}
+void SetHat(uint8_t device, uint8_t hat, bool value)
+{	
+	if(!IsActive(device)
+	&&  Init(device))
+		return;
+
+	if(hat >= 4)
+	{
+		std::clog << "vJoy device " << device << " invalid hat value of: " << hat << "\n";
+		return;
+	}
+	
+	if(hat == 0)
+		hat_up[device] = value;
+	else if(hat == 1)
+		hat_down[device] = value;
+	else if(hat == 2)
+		hat_left[device] = value;
+	else if(hat == 3)
+		hat_right[device] = value;
+	UpdateHat(device);
+}
+void UpdateHat(uint8_t device)
+{
+	     if( hat_up[device] && !hat_down[device] && !hat_left[device] && !hat_right[device])
+		joystick_position[device].bHats = CONTINUOUS_UP;
+	else if( hat_up[device] && !hat_down[device] && !hat_left[device] &&  hat_right[device])
+		joystick_position[device].bHats = CONTINUOUS_UP_RIGHT;
+	else if(!hat_up[device] && !hat_down[device] && !hat_left[device] &&  hat_right[device])
+		joystick_position[device].bHats = CONTINUOUS_RIGHT;
+	else if(!hat_up[device] &&  hat_down[device] && !hat_left[device] &&  hat_right[device])
+		joystick_position[device].bHats = CONTINUOUS_DOWN_RIGHT;
+	else if(!hat_up[device] &&  hat_down[device] && !hat_left[device] && !hat_right[device])
+		joystick_position[device].bHats = CONTINUOUS_DOWN;
+	else if(!hat_up[device] &&  hat_down[device] &&  hat_left[device] && !hat_right[device])
+		joystick_position[device].bHats = CONTINUOUS_DOWN_LEFT;
+	else if(!hat_up[device] && !hat_down[device] &&  hat_left[device] && !hat_right[device])
+		joystick_position[device].bHats = CONTINUOUS_LEFT;
+	else if( hat_up[device] && !hat_down[device] &&  hat_left[device] && !hat_right[device])
+		joystick_position[device].bHats = CONTINUOUS_UP_LEFT;
+	else
+		joystick_position[device].bHats = CONTINUOUS_NEUTRAL;
 }
 void SetAxisPercent(uint8_t device, uint8_t axis, uint8_t value)
 {
