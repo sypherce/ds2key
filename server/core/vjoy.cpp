@@ -123,7 +123,6 @@ void SetButton(uint8_t device, uint8_t button, bool value)
 	&&  Init(device))
 		return;
 
-	button = 1 << button;//erase if commiting, I think this works :)
 	if(value) //press
 		joystick_position[device].lButtons |= 1 << button;
 	else      //release
@@ -176,8 +175,8 @@ bool GetButton(uint8_t device, uint8_t button)
 	if(!IsActive(device))
 		return false;
 
-	button = 1 << button;//erase if commiting, I think this works :)
-	return (joystick_position[device].lButtons&button) != 0;
+	uint16_t bit_shift_button = 1 << button;
+	return (joystick_position[device].lButtons&bit_shift_button) != 0;
 }
 
 }}}//namespace D2K::Input
