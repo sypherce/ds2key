@@ -22,7 +22,7 @@
     <ClCompile Include="source\gui\object.cpp" />
     <ClCompile Include="source\gui\rect.cpp" />
     <ClCompile Include="source\gui\window.cpp" />
-    <ClCompile Include="source\main9.cpp" />
+    <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\windows\commandWindow.cpp" />
     <ClCompile Include="source\windows\ipWindow.cpp" />
     <ClCompile Include="source\windows\keypadWindow.cpp" />
