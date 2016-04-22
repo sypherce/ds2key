@@ -86,21 +86,35 @@ WindowClass::~WindowClass() { }
 bool WindowClass::Update()
 {
 	static char seconds = 0;
+	static std::string ip { };
+	static int update_counter = 0;
 
 	const int UPDATE_COUNTER_MAX = 30;
-	static int update_counter = 0;
-	update_counter++;
-	if((update_counter >= UPDATE_COUNTER_MAX)
-	&&(label_clock->IsVisible()))
+	if(update_counter >= UPDATE_COUNTER_MAX)
 	{
 		update_counter = 0;
-		char* timePointer = D2K::GetTime();
-		if(seconds != timePointer[7])  // If seconds differ
+		
+		if(edit_ip->IsVisible())
 		{
-			seconds = timePointer[7];
-			label_clock->SetText(timePointer);
+			std::string temp_ip = UDP::GetRemoteIPString()
+			if(ip != temp_ip)
+			{
+				ip = temp_ip;
+				edit_ip->SetText(ip);
+			}
+		}
+		if(label_clock->IsVisible())
+		{
+			char* timePointer = D2K::GetTime();
+			if(seconds != timePointer[7])  // If seconds differ
+			{
+				seconds = timePointer[7];
+				label_clock->SetText(timePointer);
+			}
 		}
 	}
+	update_counter++;
+
 	return Window::Update();
 }
 
