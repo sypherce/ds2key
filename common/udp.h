@@ -7,7 +7,7 @@
 
 #ifdef __linux__
 #include <netdb.h>
-#elif defined(ARM9)
+#elif defined(_NDS)
 #include <nds.h>
 #include <netinet/in.h>//sockaddr_in
 #elif defined(_3DS)
