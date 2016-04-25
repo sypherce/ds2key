@@ -96,7 +96,7 @@ bool WindowClass::Update()
 		
 		if(edit_ip->IsVisible())
 		{
-			std::string temp_ip = UDP::GetRemoteIPString()
+			std::string temp_ip = UDP::GetRemoteIPString();
 			if(ip != temp_ip)
 			{
 				ip = temp_ip;
