@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stdint.h>//uint8_t, uint16_t, uint32_t
+#include <cstdint>//uint8_t, uint16_t, uint32_t
 
 namespace D2K {namespace UDP{
 
