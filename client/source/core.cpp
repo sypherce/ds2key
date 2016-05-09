@@ -15,6 +15,8 @@
 #include <dswifi9.h>
 #endif
 
+#include "core.h"
+
 #include "gui/gui.h"//D2K::GUI::Screen
 
 #include "common/udp.h"
@@ -26,7 +28,44 @@ namespace D2K {
 touchPosition g_stylus_position;
 bool input_changed = false;
 bool enable_input_timeout = true;
-bool toggle_both_lights = false;
+bool toggle_both_lights = true;
+
+void BacklightsOn()
+{
+#if defined(_NDS)
+	powerOn(PM_BACKLIGHT_BOTTOM);
+#elif defined(_3DS)
+	GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_BOTTOM);
+#endif
+	// Turn on top light only if enabled
+	if(toggle_both_lights)
+	{
+#if defined(_NDS)
+		powerOn(PM_BACKLIGHT_TOP);	
+#elif defined(_3DS)
+		GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_TOP);	
+#endif
+	}
+}
+
+void BacklightsOff()
+{
+#if defined(_NDS)
+	powerOff(PM_BACKLIGHT_BOTTOM);
+#elif defined(_3DS)
+	GSPLCD_PowerOffBacklight(GSPLCD_SCREEN_BOTTOM);
+#endif
+	// Turn off top light only if enabled
+	if(toggle_both_lights)
+	{
+#if defined(_NDS)
+		powerOff(PM_BACKLIGHT_TOP);
+#elif defined(_3DS)
+		GSPLCD_PowerOffBacklight(GSPLCD_SCREEN_TOP);
+#endif
+	}
+}
+
 
 char* GetTime()
 {
@@ -49,8 +88,14 @@ char* GetTime()
 }
 
 #ifdef _3DS
+enum
+{
+	KEY_LID = BIT(13)
+};
+
 static uint8_t lid_open{};
 uint8_t old_lid_open{};
+
 void ScanLid()
 {
 	old_lid_open = lid_open;
@@ -58,22 +103,33 @@ void ScanLid()
 }
 
 //just closed
-bool LidDown()
+uint32_t LidDown()
 {
-	return lid_open == 0 && old_lid_open == 1;
+	if(lid_open == 0 && old_lid_open == 1)
+		return KEY_LID;
+
+	return 0;
 }
 //still closed
-bool LidHeld()
+uint32_t LidHeld()
 {
-	return lid_open == 0 && old_lid_open == 0;
+	if(lid_open == 0 && old_lid_open == 0)
+		return KEY_LID;
+
+	return 0;
 }
 //just opened
-bool LidUp()
+uint32_t LidUp()
 {
-	return lid_open == 1 && old_lid_open == 0;
+	if(lid_open == 1 && old_lid_open == 0)
+		return KEY_LID;
+
+	return 0;
 }
 //no event for still being opened
 #endif
+
+uint32_t g_keys_held, g_keys_down, g_keys_up{ };
 
 ///updates input values
 void UpdateInputs()
@@ -88,10 +144,18 @@ void UpdateInputs()
 			guitarGripScanKeys();
 		}
 #endif
-#ifdef _3DS
+#if defined(_3DS)
 		ScanLid();
+		g_keys_held = keysHeld() | LidHeld();
+		g_keys_down = keysDown() | LidDown();
+		g_keys_up = keysUp() | LidUp();
+#elif defined(_NDS)
+		g_keys_held = keysHeld();
+		g_keys_down = keysDown();
+		g_keys_up = keysUp();
 #endif
-		if(!(keysUp()&KEY_TOUCH))
+
+		if(!(g_keys_up&KEY_TOUCH))
 		{
 			touchRead(&g_stylus_position);
 		}
@@ -102,46 +166,26 @@ void UpdateInputs()
 void UpdateLid()
 {
 	static uint32_t s_vblank_count = 0;
-	static const uint32_t VBLANK_MAX = (60 * 4);			// 4 seconds
+	static const uint32_t VBLANK_MAX = (60 * 4); // 4 seconds
 
-#if defined(_NDS)
-	if((keysUp()&KEY_LID)						// If lid just opened OR
-	|| (keysHeld()&KEY_TOUCH))					// Screen is touched
+	if(g_keys_up&KEY_LID                         // If lid just opened OR
+	|| g_keys_held&KEY_TOUCH)                    // Screen is touched
 	{
-		s_vblank_count = 0;					// Reset timer
-		powerOn(PM_BACKLIGHT_BOTTOM);				// Lights on
-		if(toggle_both_lights)					// Turn on top light only if enabled
-			powerOn(PM_BACKLIGHT_TOP);	
+		s_vblank_count = 0;                  // Reset timer
+		BacklightsOn();                      // Backlights on
 	}
-	else if((keysDown()&KEY_LID)					// If lid just closed OR
-	|| keysDown() 							// A button pressed OR
-	|| s_vblank_count == VBLANK_MAX)				// Enough time passed
+	else if(g_keys_down                          // A button pressed, possibly the lid OR
+	|| s_vblank_count == VBLANK_MAX)             // Enough time passed
 	{
-		powerOff(PM_BACKLIGHT_BOTTOM);				// Lights off
-		if(toggle_both_lights)
-			powerOff(PM_BACKLIGHT_TOP);			// Turn off top light only if enabled
+		BacklightsOff();                     // Backlights off
 	}
-#elif defined(_3DS)
-	if(LidUp()							// If lid just opened OR
-	|| keysHeld()&KEY_TOUCH)					// Screen is touched
-	{
-		s_vblank_count = 0;					// Reset timer
-		GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_BOTTOM);		// Lights on
-		if(toggle_both_lights)					// Turn on top light only if enabled
-			GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_TOP);	
-	}
-	else if(keysDown() 						// A button pressed OR
-	|| s_vblank_count == VBLANK_MAX)				// Enough time passed
-	{
-		GSPLCD_PowerOffBacklight(GSPLCD_SCREEN_BOTTOM);		// Lights off
-		if(toggle_both_lights)
-			GSPLCD_PowerOffBacklight(GSPLCD_SCREEN_TOP);	// Turn off top light only if enabled
-	}
-#endif
+
 	if(s_vblank_count < VBLANK_MAX)
-		s_vblank_count++;					// Increment timer
-	if(!enable_input_timeout)					// This avoids the screen turning off after 4 seconds
+		s_vblank_count++;                    // Increment timer
+	if(!enable_input_timeout)                    // This avoids the screen turning off after 4 seconds
 		s_vblank_count = 0;
+	//while(g_keys_held&KEY_LID)                  // Wait here while the lid is closed
+	//	WaitForVBlank();
 }
 
 ///vblank function we assign in Init()
@@ -149,6 +193,16 @@ void VBlankFunction()
 {
 	UpdateInputs();
 	UpdateLid();
+}
+
+void WaitForVBlank()
+{
+#if defined(_3DS)
+	gspWaitForVBlank();
+	VBlankFunction();
+#elif defined(_NDS)
+	swiWaitForVBlank();
+#endif
 }
 
 bool Init()
@@ -195,10 +249,10 @@ bool Init()
 	&& !Wifi_InitDefault(WFC_CONNECT))
 	{
 		std::clog << "Error (Wifi_InitDefault): Failed to connect\n";
-		return true;				// Return with error
+		return true;                // Return with error
 	}
 	
-	irqSet(IRQ_VBLANK, VBlankFunction);		// Setup vblank function
+	irqSet(IRQ_VBLANK, VBlankFunction); // Setup vblank function
 
 #endif
 
@@ -224,15 +278,15 @@ bool Init()
 #endif
 
 
-	UDP::Init();					// Initilize UDP
-	Config::Load();					// Load UDP settings
-	UDP::Connect();					// Connect with settings
+	UDP::Init();    // Initilize UDP
+	Config::Load(); // Load UDP settings
+	UDP::Connect(); // Connect with settings
 #ifdef _NDS
 	if(!toggle_both_lights)
 		powerOff(PM_BACKLIGHT_TOP);
 #endif
 
-	return false;					// Return without error
+	return false;   // Return without error
 }
 
 void DeInit()
@@ -248,26 +302,24 @@ void DeInit()
 int Loop()
 {
 #if defined(_3DS)
-	if(
-	(keysHeld()&KEY_START)&&
-	(keysHeld()&KEY_SELECT)&&
-	(keysHeld()&KEY_L)&&
-	(keysHeld()&KEY_R)
-	) return 1;
+	if(!aptMainLoop())
+		return 0;
+
+	if((g_keys_held&KEY_START)
+	&& (g_keys_held&KEY_SELECT)
+	&& (g_keys_held&KEY_L)
+	&& (g_keys_held&KEY_R))
+		return 0;
+
+	// Flush and swap framebuffers
+	gfxFlushBuffers();
+	gfxSwapBuffers();
 #endif
+
 	input_changed = true;
-#if defined(_3DS)
-	
-        // Flush and swap framebuffers
-        gfxFlushBuffers();
-        gfxSwapBuffers();
+	WaitForVBlank();
 
-	gspWaitForVBlank();VBlankFunction();
-#elif defined(_NDS)
-	swiWaitForVBlank();
-#endif
-
-	return 0;
+	return 1;
 }
 
 }//namespace D2K

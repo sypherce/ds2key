@@ -37,22 +37,22 @@ void Window::RemoveObject(Object* object)
 //draws the window and it's children objects
 void Window::Draw()
 {
-	if(GUI::IsUpdated())						//if gui was set to update
-		GUI::ClearScreen(m_screen, Color[COLOR_BACKGROUND]);	//clear everything
-	for(unsigned int i = 0; i < m_objects.size(); i++)		//for each child
+	if(GUI::IsUpdated())                                         //if gui was set to update
+		GUI::ClearScreen(m_screen, Color[COLOR_BACKGROUND]); //clear everything
+	for(unsigned int i = 0; i < m_objects.size(); i++)           //for each child
 	{
-		if(m_objects.at(i)->Draw()
-		&& EMULATOR)						//draw if object AND/OR gui updated
+		if(m_objects.at(i)->Draw()                           //draw if object AND/OR gui updated
+		&& EMULATOR)
 			std::cout << "button draw " << i << ": " << m_objects.at(i)->GetText() << "\n";
 	}
-	GUI::SetUpdate(false);						//gui all updated
+	GUI::SetUpdate(false);                                       //gui all updated
 }
 void Window::SetVisible(bool visible)
 {
-	m_visible = visible;						//window is now set
-	for(unsigned int i = 0; i < m_objects.size(); i++)		//for each child
+	m_visible = visible                                          //window is now set
+	for(unsigned int i = 0; i < m_objects.size(); i++)           //for each child
 	{
-		m_objects.at(i)->SetVisible(visible);			//set the same
+		m_objects.at(i)->SetVisible(visible);                //set the same
 	}
 }
 bool Window::IsVisible()
@@ -79,32 +79,32 @@ bool Window::CheckClick(Object* object)
 		else if(D2K::g_stylus_position.py < 0)
 			y = 0;
 
-		if(keysDown()&KEY_TOUCH
+		if(g_keys_down&KEY_TOUCH
 		&& object->IsClicked(x, y))
 		{
 			object->SetStatus(OBJECT_STATUS::PRESSED);
 		}
-		else if(keysHeld()&KEY_TOUCH
+		else if(g_keys_held&KEY_TOUCH
 		&& object->GetStatus() != OBJECT_STATUS::IDLE)
 		{
 			if(object->IsClicked(x, y))
-				object->SetStatus(OBJECT_STATUS::HELD);		//if we pressed and we're still hovering set to Held
+				object->SetStatus(OBJECT_STATUS::HELD);    //if we pressed and we're still hovering set to Held
 			else
-				object->SetStatus(OBJECT_STATUS::PRESSED);	//if we held but we're not hovering set to Pressed
+				object->SetStatus(OBJECT_STATUS::PRESSED); //if we held but we're not hovering set to Pressed
 		}
-		else if(keysUp()&KEY_TOUCH)
+		else if(g_keys_up&KEY_TOUCH)
 		{
-			int status = object->GetStatus();			//save status value
-			object->SetStatus(OBJECT_STATUS::IDLE);			//reset status
+			int status = object->GetStatus();                  //save status value
+			object->SetStatus(OBJECT_STATUS::IDLE);            //reset status
 			if(object->IsClicked(x, y)
-			&& status == OBJECT_STATUS::HELD)			//if we pressed and we're still hovering
+			&& status == OBJECT_STATUS::HELD)                  //if we pressed and we're still hovering
 			{
-				return true;					//the object was clicked
+				return true;                               //the object was clicked
 			}
 		}
 	}
 
-	return false;//the object wasn't clicked
+	return false; // the object wasn't clicked
 }
 bool Window::Update()
 {
@@ -113,7 +113,7 @@ bool Window::Update()
 	{
 		if(CheckClick(m_objects.at(i)))
 		{
-			m_objects.at(i)->Function();//execute the function
+			m_objects.at(i)->Function(); // execute the function
 			return true;
 		}
 	}

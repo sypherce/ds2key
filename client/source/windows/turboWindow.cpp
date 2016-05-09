@@ -110,7 +110,7 @@ void UpdateTurboKeys()
 uint32_t CheckTurboKey(uint32_t a)
 {
 	if(currentTurboKeys&a)
-		if(keysHeld()&a)
+		if(g_keys_held&a)
 			return a;
 	return 0;
 }
@@ -140,6 +140,7 @@ uint8_t currentGHTurboKeys = 0;
 void GHUpdateTurboKeys()
 {
 	currentGHTurboKeys = 0;
+#ifdef _NDS
 	if(check_button_blue->GetChecked())
 		currentGHTurboKeys |= GUITARGRIP_BLUE;
 	if(check_button_yellow->GetChecked())
@@ -148,6 +149,7 @@ void GHUpdateTurboKeys()
 		currentGHTurboKeys |= GUITARGRIP_RED;
 	if(check_button_green->GetChecked())
 		currentGHTurboKeys |= GUITARGRIP_GREEN;
+#endif
 }
 uint8_t GHCheckTurboKey(uint8_t a)
 {
@@ -161,11 +163,13 @@ uint8_t GHGetKeys()
 	uint8_t keys = 0;
 	if(check_button_enable->GetChecked() == false)
 		return 0;
+#ifdef _NDS
 	GHUpdateTurboKeys();
 	keys |= GHCheckTurboKey(GUITARGRIP_BLUE);
 	keys |= GHCheckTurboKey(GUITARGRIP_YELLOW);
 	keys |= GHCheckTurboKey(GUITARGRIP_RED);
 	keys |= GHCheckTurboKey(GUITARGRIP_GREEN);
+#endif
 	return keys;
 }
 

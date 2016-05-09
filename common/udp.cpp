@@ -60,6 +60,10 @@ typedef int socklen_t;
 #define NETclosesocket closesocket
 #endif
 
+#if defined(_NDS) || defined(_3DS)
+#include "core.h"
+#endif
+
 #include "udp.h"
 #include "misc.h"
 
@@ -388,12 +392,7 @@ void ServerLookup()
 	//wait for 1 second
 	for(int i = 0; i < 60; i++)
 	{
-#if defined(_3DS)
-		gspWaitForVBlank();
-		VBlankFunction();
-#elif defined (_NDS)
-		swiWaitForVBlank();
-#endif
+		WaitForVBlank();
 	}
 
 	if(Recv((char*)&packet, sizeof(DS2KeyPacket)) != 0) // Didn't receive anything
@@ -450,12 +449,7 @@ DS2KeySettingsPacket GetCommandSettings()
 		}
 		
 		// Wait a second before trying again
-#if defined(_3DS)
-		gspWaitForVBlank();  
-		VBlankFunction();
-#elif defined (_NDS)
-		swiWaitForVBlank();
-#endif
+		WaitForVBlank();
 	}
 	// If we didn't receive anything, or something invalid we return NULL_VALUE
 	settings = DS2KeySettingsPacket{ };

@@ -65,13 +65,13 @@ void ProcessPacket(D2K::Client* Client)
 			if(Client->Down(DSButton))
 			{
 				Input::Press(PCButton, Joystick);
-				std::clog << "press:" << PCButton << "\n";
+				//TODO:log std::clog << "press:" << PCButton << "\n";
 			}
 			// Released, even in turbo mode
 			else if(Client->Up(DSButton))
 			{
 				Input::Release(PCButton, Joystick);
-				std::clog << "release:" << PCButton << "\n";
+				//TODO:log std::clog << "release:" << PCButton << "\n";
 			}
 			// Turbo set, button enabled for turbo and pressed
 			else if(turbo && Client->Turbo(DSButton))

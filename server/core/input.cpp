@@ -210,7 +210,7 @@ void Press(uint16_t key, uint8_t joy)
 	else
 	{
 		Keyboard(key, KeyState::pressed);
-		std::cout << "key" << key << "\n";
+		//TODO:log std::cout << "key" << key << "\n";
 	}
 }
 

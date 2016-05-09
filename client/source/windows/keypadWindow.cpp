@@ -86,17 +86,17 @@ void ButtonEnterFunction()
 	Main::g_window.SetVisible(true);
 }
 
-void Button1Function()		{ append('1'); }
-void Button2Function()		{ append('2'); }
-void Button3Function()		{ append('3'); }
-void Button4Function()		{ append('4'); }
-void Button5Function()		{ append('5'); }
-void Button6Function()		{ append('6'); }
-void Button7Function()		{ append('7'); }
-void Button8Function()		{ append('8'); }
-void Button9Function()		{ append('9'); }
-void ButtonPeriodFunction()	{ append('.'); }
-void Button0Function()		{ append('0'); }
+void Button1Function()      { append('1'); }
+void Button2Function()      { append('2'); }
+void Button3Function()      { append('3'); }
+void Button4Function()      { append('4'); }
+void Button5Function()      { append('5'); }
+void Button6Function()      { append('6'); }
+void Button7Function()      { append('7'); }
+void Button8Function()      { append('8'); }
+void Button9Function()      { append('9'); }
+void ButtonPeriodFunction() { append('.'); }
+void Button0Function()      { append('0'); }
 void ButtonBackspaceFunction()
 {
 	if(Buffer.length() > 0)
@@ -114,19 +114,19 @@ std::string Entry(Label* label, Edit* edit, std::string text, int maxLength)
 	Buffer = text;
 	BufferLen = maxLength;
 
-	Main::g_window.SetVisible(false);			// Hide main window
-	Keypad::g_window.SetVisible(true);			// Show keypad
+	Main::g_window.SetVisible(false);                    // Hide main window
+	Keypad::g_window.SetVisible(true);                   // Show keypad
 
-	Keypad::g_window.Draw();				// And actually draw it
-	while(Keypad::g_window.IsVisible())
+	Keypad::g_window.Draw();                             // And actually draw it
+	while(D2K::Loop()
+	   && Keypad::g_window.IsVisible())
 	{
-		if(Keypad::g_window.Update())			// If pressed
-			Keypad::edit_entry->SetText(Buffer);	// Set text
-		D2K::Loop();
+		if(Keypad::g_window.Update())                // If pressed
+			Keypad::edit_entry->SetText(Buffer); // Set text
 	}
-	Keypad::g_window.SetVisible(false);			// Hide keypad
+	Keypad::g_window.SetVisible(false);                  // Hide keypad
 
-	Main::g_window.SetVisible(true);			// Go back to main window
+	Main::g_window.SetVisible(true);                     // Go back to main window
 	return Buffer;
 }
 

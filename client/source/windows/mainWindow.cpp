@@ -87,6 +87,8 @@ bool WindowClass::Update()
 {
 	static char seconds = 0;
 	static std::string ip { };
+	static std::string port { };
+	static std::string profile { };
 	static int update_counter = 0;
 
 	const int UPDATE_COUNTER_MAX = 30;
@@ -101,6 +103,24 @@ bool WindowClass::Update()
 			{
 				ip = temp_ip;
 				edit_ip->SetText(ip);
+			}
+		}
+		if(edit_port->IsVisible())
+		{
+			std::string temp_port = UDP::GetPortString();
+			if(port != temp_port)
+			{
+				port = temp_port;
+				edit_port->SetText(port);
+			}
+		}
+		if(edit_profile->IsVisible())
+		{
+			std::string temp_profile = UDP::GetProfileString();
+			if(profile != temp_profile)
+			{
+				profile = temp_profile;
+				edit_profile->SetText(profile);
 			}
 		}
 		if(label_clock->IsVisible())
@@ -150,14 +170,14 @@ void ButtonTouchFunction()
 	button_touch->SetVisible(true);
 	Main::g_window.Draw();
 
-	while(true)
+	while(D2K::Loop())
 	{
-		D2K::Loop();
-
 		if(Main::g_window.CheckClick(button_touch))  // If pressed again, break
 			break;
 
-		UDP::Update(keysHeld(), 0, guitarGripKeysHeld() * guitarGripIsInserted(), Turbo::GHGetKeys() * guitarGripIsInserted(), &D2K::g_stylus_position);
+		UDP::Update(g_keys_held, 0, guitarGripKeysHeld() * guitarGripIsInserted(), Turbo::GHGetKeys() * guitarGripIsInserted(), &D2K::g_stylus_position);
+
+		Main::g_window.Update();
 	}
 
 	label_title->SetText(D2K::VERSION_STRING);
@@ -170,15 +190,16 @@ void ButtonTurboFunction()
 	button_turbo->SetVisible(true);
 	Turbo::g_window.SetVisible(true);
 
-	while(true)
+	while(D2K::Loop())
 	{
-		D2K::Loop();
-		UDP::Update(keysHeld(), Turbo::GetKeys(), guitarGripKeysHeld() * guitarGripIsInserted(), Turbo::GHGetKeys() * guitarGripIsInserted(), nullptr);
+		UDP::Update(g_keys_held, Turbo::GetKeys(), guitarGripKeysHeld() * guitarGripIsInserted(), Turbo::GHGetKeys() * guitarGripIsInserted(), nullptr);
 		Turbo::g_window.Update();
 		button_turbo->Draw();
 
 		if(Main::g_window.CheckClick(button_turbo))  // If pressed again, break
 			break;
+
+		Main::g_window.Update();
 	}
 
 	Turbo::g_window.SetVisible(false);
@@ -196,15 +217,14 @@ void ButtonCommandsFunction()
 	button_commands->SetVisible(true);  // Keep [Commands] button visible
 	Command::g_window.SetVisible(true);  // Show command window
 
-	while(true)
+	while(D2K::Loop())
 	{
-		D2K::Loop();
-		UDP::Update(keysHeld(), Turbo::GetKeys(), guitarGripKeysHeld() * guitarGripIsInserted(), Turbo::GHGetKeys() * guitarGripIsInserted(), nullptr);
+		UDP::Update(g_keys_held, Turbo::GetKeys(), guitarGripKeysHeld() * guitarGripIsInserted(), Turbo::GHGetKeys() * guitarGripIsInserted(), nullptr);
 		Command::g_window.Update();  // Update and draw command window
 		button_commands->Draw();  // Draw [Commands] button
 
 		if(Main::g_window.CheckClick(button_commands))  // If pressed again, break
-			break;							
+			break;
 	}
 
 	Command::g_window.SetVisible(false);
