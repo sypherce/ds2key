@@ -502,7 +502,6 @@ void DrawLetter(uint8_t screen, char letter, uint16_t x, uint16_t y, uint16_t c)
 	}
 	case '.':
 	{
-		DrawLine(screen, "",	x, y+1, c);
 		DrawLine(screen, "   X",	x, y+3, c);
 		break;
 	}
@@ -533,6 +532,112 @@ void DrawLetter(uint8_t screen, char letter, uint16_t x, uint16_t y, uint16_t c)
 		DrawLine(screen, "X",	x, y+2, c);
 		DrawLine(screen, " X",	x, y+3, c);
 		DrawLine(screen, "  X",	x, y+4, c);
+		break;
+	}
+	case '>':
+	{
+		DrawLine(screen, "X",	x, y+0, c);
+		DrawLine(screen, " X",	x, y+1, c);
+		DrawLine(screen, "  X",	x, y+2, c);
+		DrawLine(screen, " X",	x, y+3, c);
+		DrawLine(screen, "X",	x, y+4, c);
+		break;
+	}
+	case '*':
+	{
+		DrawLine(screen, "  X",	x, y+0, c);
+		DrawLine(screen, "X X X",	x, y+1, c);
+		DrawLine(screen, " XXX",	x, y+2, c);
+		DrawLine(screen, "X X X",	x, y+3, c);
+		DrawLine(screen, "  X",	x, y+4, c);
+		break;
+	}
+	case '+':
+	{
+		DrawLine(screen, "  X",	x, y+1, c);
+		DrawLine(screen, " XXX",	x, y+2, c);
+		DrawLine(screen, "  X",	x, y+3, c);
+		break;
+	}
+	case '-':
+	{
+		DrawLine(screen, " XXX",	x, y+2, c);
+		break;
+	}
+	case '=':
+	{
+		DrawLine(screen, " XXX",	x, y+1, c);
+		DrawLine(screen, " XXX",	x, y+4, c);
+		break;
+	}
+	case '\'':
+	{
+		DrawLine(screen, "  X",	x, y+1, c);
+		DrawLine(screen, "  X",	x, y+2, c);
+		DrawLine(screen, "  X",	x, y+3, c);
+		break;
+	}
+	case '`':
+	{
+		DrawLine(screen, " X",	x, y+1, c);
+		DrawLine(screen, "  X",	x, y+2, c);
+		break;
+	}
+	case '"':
+	{
+		DrawLine(screen, " X X",	x, y+1, c);
+		DrawLine(screen, " X X",	x, y+2, c);
+		DrawLine(screen, " X X",	x, y+3, c);
+		break;
+	}
+	case ';':
+	{
+		DrawLine(screen, "  X",	x, y+1, c);
+		DrawLine(screen, "  X",	x, y+3, c);
+		DrawLine(screen, " X",	x, y+4, c);
+		break;
+	}
+	case '^':
+	{
+		DrawLine(screen, "  X",	x, y+0, c);
+		DrawLine(screen, " X X",	x, y+1, c);
+		DrawLine(screen, "X   X",	x, y+2, c);
+		break;
+	}
+	case '/':
+	{
+		DrawLine(screen, "    X",x, y+0, c);
+		DrawLine(screen, "   X", x, y+1, c);
+		DrawLine(screen, "  X",  x, y+2, c);
+		DrawLine(screen, " X",   x, y+3, c);
+		DrawLine(screen, "X",    x, y+4, c);
+		break;
+	}
+	case '\\':
+	{
+		DrawLine(screen, "X",    x, y+0, c);
+		DrawLine(screen, " X",   x, y+1, c);
+		DrawLine(screen, "  X",  x, y+2, c);
+		DrawLine(screen, "   X", x, y+3, c);
+		DrawLine(screen, "    X",x, y+4, c);
+		break;
+	}
+	case '[':
+	{
+		DrawLine(screen, "XX",x, y+0, c);
+		DrawLine(screen, "X", x, y+1, c);
+		DrawLine(screen, "X", x, y+2, c);
+		DrawLine(screen, "X", x, y+3, c);
+		DrawLine(screen, "XX",x, y+4, c);
+		break;
+	}
+	case ']':
+	{
+		DrawLine(screen, "XX",x, y+0, c);
+		DrawLine(screen, " X",x, y+1, c);
+		DrawLine(screen, " X",x, y+2, c);
+		DrawLine(screen, " X",x, y+3, c);
+		DrawLine(screen, "XX",x, y+4, c);
 		break;
 	}
 	}
