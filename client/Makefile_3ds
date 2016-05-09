@@ -32,7 +32,11 @@ BUILD		:=	build_3ds
 SOURCES		:=	source source/gui source/windows ../common ../common/iniparser/src
 DATA		:=	data
 INCLUDES	:=	source source/gui source/windows ..
-#ROMFS		:=	romfs
+
+APP_TITLE		:=	$(TARGET)
+APP_DESCRIPTION	:=
+APP_AUTHOR		:=	sypherce
+#ICON			:=	icon.png
 
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -43,7 +47,7 @@ CFLAGS	:=	-g -Wall -O2 -mword-relocations \
 			-fomit-frame-pointer -ffunction-sections \
 			$(ARCH)
 
-CFLAGS	+=	$(INCLUDE) -DARM11 -D_3DS -DD2KCLIENT -DEMULATOR=0
+CFLAGS	+=	$(INCLUDE) -DARM11 -D_3DS -DD2KCLIENT -DNULL_VALUE=0 -DEMULATOR=0
 
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=c++11
 
@@ -159,7 +163,17 @@ else
 $(OUTPUT).3dsx	:	$(OUTPUT).elf
 endif
 
+$(OUTPUT).3ds	:	$(OUTPUT)stripped.elf
+	makerom -f cci -o $(OUTPUT).3ds -rsf "$(TOPDIR)/cxi/gw_workaround.rsf" -target d -exefslogo -elf $(OUTPUT)stripped.elf -icon "$(TOPDIR)/cxi/icon.icn" -banner "$(TOPDIR)/cxi/banner.bnr"
+
+$(OUTPUT).cia	:	$(OUTPUT)stripped.elf
+	makerom -f cia -o $(OUTPUT).cia -elf $(OUTPUT)stripped.elf -rsf "$(TOPDIR)/cxi/build_cia.rsf" -icon "$(TOPDIR)/cxi/icon.icn" -banner "$(TOPDIR)/cxi/banner.bnr" -exefslogo -target t
+
 $(OUTPUT).elf	:	$(OFILES)
+
+$(OUTPUT)stripped.elf : $(OUTPUT).elf
+	cp -f $(OUTPUT).elf $(OUTPUT)stripped.elf
+	@arm-none-eabi-strip $(OUTPUT)stripped.elf
 
 #---------------------------------------------------------------------------------
 # you need a rule like this for each extension you use as binary data

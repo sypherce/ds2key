@@ -15,17 +15,17 @@
 
 int main()
 {
-	if(D2K::Init())                            // DS hardware setup
+	if(D2K::Init() && !EMULATOR)               // DS hardware setup
 	{
 		D2K::DeInit();
 
-		return 1;                          // halt on error
+		return 1;                              // halt on error
 	}
 	D2K::GUI::Main::g_window.SetVisible(true); // Show main window
 
 	while(D2K::Loop())                         // DS hardware loop
 	{
-		D2K::UDP::Update(D2K::g_keys_held, // Update ds2key network
+		D2K::UDP::Update(D2K::g_keys_held,     // Update ds2key network
 			    D2K::GUI::Turbo::GetKeys(),
 			    guitarGripKeysHeld() * guitarGripIsInserted(),
 			    D2K::GUI::Turbo::GHGetKeys() * guitarGripIsInserted(),

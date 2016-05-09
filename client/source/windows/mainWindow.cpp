@@ -198,8 +198,6 @@ void ButtonTurboFunction()
 
 		if(Main::g_window.CheckClick(button_turbo))  // If pressed again, break
 			break;
-
-		Main::g_window.Update();
 	}
 
 	Turbo::g_window.SetVisible(false);

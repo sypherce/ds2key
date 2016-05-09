@@ -33,7 +33,7 @@
 #include <fcntl.h>
 #endif
 
-// shared (linux, nds) defines
+// shared (linux, nds, 3ds) defines
 #if defined(__linux__) || defined(_NDS) || defined(_3DS)
 #define NETerrno errno
 #define NETEADDRINUSE EADDRINUSE

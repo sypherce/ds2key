@@ -212,11 +212,11 @@ bool Init()
 	gfxInitDefault(); //Graphics
 	gspLcdInit();     //Backlight
 	ptmuInit();       //Lid
-	consoleInit(GFX_TOP, NULL);
+	consoleInit(GFX_TOP, NULL_VALUE);
 	gfxSetDoubleBuffering(GFX_BOTTOM, false);
 
 	//Get the bottom screen's frame buffer
-	D2K::GUI::g_screen[0] = (uint16_t*)gfxGetFramebuffer(GFX_BOTTOM, GFX_LEFT, NULL, NULL);
+	D2K::GUI::g_screen[0] = (uint16_t*)gfxGetFramebuffer(GFX_BOTTOM, GFX_LEFT, NULL_VALUE, NULL_VALUE);
 #elif defined(_NDS)
 	// PowerOff(PM_BACKLIGHT_TOP);
 	videoSetModeSub(MODE_0_2D);
@@ -232,6 +232,8 @@ bool Init()
 	lcdSwap();
 
 	consoleClear();
+	
+	irqSet(IRQ_VBLANK, VBlankFunction); // Setup vblank function
 #endif
 
 	if(EMULATOR)  // If we're running in emulator mode, let the user know
@@ -240,19 +242,16 @@ bool Init()
 	std::cout << "\n-\n";
 
 #ifdef _NDS
-	if(!EMULATOR
-	&& !fatInitDefault())
+	if(fatInitDefault())
 		std::clog << "Error (fatInitDefault): Failed to access storage\n";
 
 	std::cout << "Connecting via WFC data\n";
-	if(!EMULATOR
-	&& !Wifi_InitDefault(WFC_CONNECT))
+	if(EMULATOR
+	|| !Wifi_InitDefault(WFC_CONNECT))
 	{
 		std::clog << "Error (Wifi_InitDefault): Failed to connect\n";
 		return true;                // Return with error
 	}
-	
-	irqSet(IRQ_VBLANK, VBlankFunction); // Setup vblank function
 
 #endif
 
