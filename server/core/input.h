@@ -21,7 +21,7 @@ void Press(uint16_t key, unsigned char joy);
 
 //Sends a virtual key release, or a virtual gamepad button release
 //@param Key Platform specific key or gamepad button value
-//@param Joy (ppjoy) device number. Value ranges 0-15. Ignored if (key) is not a gamepad button value.
+//@param Joy (vjoy) device number. Value ranges 0-15. Ignored if (key) is not a gamepad button value.
 void Release(uint16_t key, unsigned char joy);
 
 //Moves cursor relative to it's current position
