@@ -5,7 +5,6 @@
 #include "windows/keypadWindow.h"
 #include "windows/commandWindow.h"
 #include "windows/turboWindow.h"
-#include "apsearch.h"
 #include "core.h"
 #include "config.h"
 
