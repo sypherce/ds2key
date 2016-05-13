@@ -25,6 +25,12 @@ static const uint32_t DS2KEY_LID = (1 << (13));
 
 static const uint32_t DS2KEY_ZL = (1 << (14));
 static const uint32_t DS2KEY_ZR = (1 << (15));
+
+static const uint32_t DS2KEY_BLUE = (1 << (16));
+static const uint32_t DS2KEY_YELLOW = (1 << (17));
+static const uint32_t DS2KEY_RED = (1 << (18));
+static const uint32_t DS2KEY_GREEN = (1 << (19));
+
 static const uint32_t DS2KEY_CSTICK_RIGHT = (1 << (24));
 static const uint32_t DS2KEY_CSTICK_LEFT = (1 << (25));
 static const uint32_t DS2KEY_CSTICK_UP = (1 << (26));
@@ -34,10 +40,6 @@ static const uint32_t DS2KEY_CPAD_LEFT = (1 << (29));
 static const uint32_t DS2KEY_CPAD_UP = (1 << (30));
 static const uint32_t DS2KEY_CPAD_DOWN = (1 << (31));
 
-static const uint8_t DS2KEY_BLUE = (1 << (3));
-static const uint8_t DS2KEY_YELLOW = (1 << (4));
-static const uint8_t DS2KEY_RED = (1 << (5));
-static const uint8_t DS2KEY_GREEN = (1 << (6));
 
 //this represents each value in a Keys Profile array. Example: Profile[KEYS::UP] is defined as KEY_UP by default
 enum KEYS
@@ -49,12 +51,13 @@ enum KEYS
 	DUP, DDOWN, DLEFT, DRIGHT, A, B, X, Y, L, R, START, SELECT, LID,
 
 	ZL, ZR,
+
+	BLUE, YELLOW, RED, GREEN,
+
 	CSTICK_UP, CSTICK_DOWN, CSTICK_LEFT, CSTICK_RIGHT,
 	CPAD_UP, CPAD_DOWN, CPAD_LEFT, CPAD_RIGHT, 
 
 	_END_OF_BUTTONS_,
-
-	BLUE, YELLOW, RED, GREEN,
 	TOUCH_00, TOUCH_01, TOUCH_02, TOUCH_03, TOUCH_04, TOUCH_05, TOUCH_06, TOUCH_07, TOUCH_08, TOUCH_09, TOUCH_10, TOUCH_11,
 	TOUCH_STRING_00, TOUCH_STRING_01, TOUCH_STRING_02, TOUCH_STRING_03, TOUCH_STRING_04, TOUCH_STRING_05, TOUCH_STRING_06, TOUCH_STRING_07, TOUCH_STRING_08, TOUCH_STRING_09, TOUCH_STRING_10, TOUCH_STRING_11,
 	TOUCH_00X, TOUCH_01X, TOUCH_02X, TOUCH_03X, TOUCH_04X, TOUCH_05X, TOUCH_06X, TOUCH_07X, TOUCH_08X, TOUCH_09X, TOUCH_10X, TOUCH_11X,
@@ -157,7 +160,7 @@ public:
 	Client();
 	~Client();
 
-	//Updates current button state after calls made to Press, Release, GHPress, and GHRelease
+	//Updates current button state after calls made to Press, Release
 	void Scan(void);
 
 	//@return Pointer to Profile array
@@ -171,17 +174,10 @@ public:
 	//@return true if (key) has Turbo mode enabled
 	bool Turbo(uint32_t key);
 
-	bool GHHeld(uint8_t key);
-	bool GHDown(uint8_t key);
-	bool GHUp(uint8_t key);
-
-	//@return true if (key) has Turbo mode enabled
-	bool GHTurbo(uint8_t key);
-
 	//@return Stylus current X Position. Values range 0-255(NDS), 0-319(3DS)
 	uint16_t GetX();
 
-	//@return Stylus current X Position. Values range 0-191(NDS), 0-239(3DS)
+	//@return Stylus current Y Position. Values range 0-191(NDS), 0-239(3DS)
 	uint16_t GetY();
 
 private:
@@ -189,16 +185,11 @@ private:
 	void Press(uint32_t key);
 	void Release(uint32_t key);
 
-	void GHPress(uint8_t key);
-	void GHRelease(uint8_t key);
-
 	UDP::DS2KeyPacket m_packet;
 	ProfileData m_profile_data;
 
 	uint32_t m_keys;
 	uint32_t m_keys_old;
-	uint8_t m_gh_keys;
-	uint8_t m_gh_keys_old;
 };
 
 extern Client* g_client_array[256];

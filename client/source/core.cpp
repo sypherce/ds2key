@@ -137,22 +137,25 @@ void UpdateInputs()
 	if(input_changed)
 	{
 		input_changed = false;
+
 		scanKeys();
-#ifdef _NDS
-		if(guitarGripIsInserted())
-		{
-			guitarGripScanKeys();
-		}
-#endif
-#if defined(_3DS)
-		ScanLid();
-		g_keys_held = keysHeld() | LidHeld();
-		g_keys_down = keysDown() | LidDown();
-		g_keys_up = keysUp() | LidUp();
-#elif defined(_NDS)
 		g_keys_held = keysHeld();
 		g_keys_down = keysDown();
-		g_keys_up = keysUp();
+		g_keys_up   = keysUp();
+
+#if defined(_3DS)
+		ScanLid();
+		g_keys_held |= LidHeld();
+		g_keys_down |= LidDown();
+		g_keys_up   |= LidUp();
+#elif defined(_NDS)
+		guitarGripScanKeys();
+		if(guitarGripIsInserted())
+		{
+			g_keys_held |= (guitarGripKeysHeld() << 24) >> 13;
+			g_keys_down |= (guitarGripKeysDown() << 24) >> 13;
+			g_keys_up   |= (guitarGripKeysUp()   << 24) >> 13;
+		}
 #endif
 
 		if(!(g_keys_up&KEY_TOUCH))
@@ -167,7 +170,7 @@ void UpdateLid()
 {
 	static uint32_t s_vblank_count = 0;
 	static const uint32_t VBLANK_MAX = (60 * 4); // 4 seconds
-
+	
 	if(g_keys_up&KEY_LID                         // If lid just opened OR
 	|| g_keys_held&KEY_TOUCH)                    // Screen is touched
 	{
@@ -242,7 +245,7 @@ bool Init()
 	std::cout << "\n-\n";
 
 #ifdef _NDS
-	if(fatInitDefault())
+	if(!fatInitDefault())
 		std::clog << "Error (fatInitDefault): Failed to access storage\n";
 
 	std::cout << "Connecting via WFC data\n";

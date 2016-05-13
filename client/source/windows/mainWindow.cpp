@@ -172,10 +172,11 @@ void ButtonTouchFunction()
 
 	while(D2K::Loop())
 	{
-		if(Main::g_window.CheckClick(button_touch))  // If pressed again, break
+		// If pressed again, break
+		if(Main::g_window.CheckClick(button_touch))
 			break;
 
-		UDP::Update(g_keys_held, 0, guitarGripKeysHeld() * guitarGripIsInserted(), Turbo::GHGetKeys() * guitarGripIsInserted(), &D2K::g_stylus_position);
+		UDP::Update(g_keys_held, 0, &D2K::g_stylus_position);
 
 		Main::g_window.Update();
 	}
@@ -192,11 +193,12 @@ void ButtonTurboFunction()
 
 	while(D2K::Loop())
 	{
-		UDP::Update(g_keys_held, Turbo::GetKeys(), guitarGripKeysHeld() * guitarGripIsInserted(), Turbo::GHGetKeys() * guitarGripIsInserted(), nullptr);
+		UDP::Update(g_keys_held, Turbo::GetKeys(), nullptr);
 		Turbo::g_window.Update();
 		button_turbo->Draw();
 
-		if(Main::g_window.CheckClick(button_turbo))  // If pressed again, break
+		// If pressed again, break
+		if(Main::g_window.CheckClick(button_turbo))
 			break;
 	}
 
@@ -217,11 +219,12 @@ void ButtonCommandsFunction()
 
 	while(D2K::Loop())
 	{
-		UDP::Update(g_keys_held, Turbo::GetKeys(), guitarGripKeysHeld() * guitarGripIsInserted(), Turbo::GHGetKeys() * guitarGripIsInserted(), nullptr);
+		UDP::Update(g_keys_held, Turbo::GetKeys(), nullptr);
 		Command::g_window.Update();  // Update and draw command window
 		button_commands->Draw();  // Draw [Commands] button
-
-		if(Main::g_window.CheckClick(button_commands))  // If pressed again, break
+		
+		// If pressed again, break
+		if(Main::g_window.CheckClick(button_commands))
 			break;
 	}
 

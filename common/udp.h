@@ -85,7 +85,7 @@ void SetConfigPort(unsigned int port);
 void SendCommand(uint8_t command);
 
 //updates current button and touch screen status
-void Update(uint32_t keys, uint32_t keysTurbo, uint32_t gripKeys, uint32_t gripKeysTurbo, touchPosition* pos);
+void Update(uint32_t keys, uint32_t keysTurbo, touchPosition* touch_position);
 
 //searches for running servers on current port
 //todo: this should actually just return any found ip and not change our currently connected IP

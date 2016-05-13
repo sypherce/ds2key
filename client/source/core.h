@@ -10,18 +10,10 @@
 #include <nds/touch.h>// touchPosition
 #endif
 
-//TODO get rid of these
-//guitar grip dummy defines
-#ifdef _3DS
-#define guitarGripKeysHeld() ((uint8_t)0) 
-#define guitarGripIsInserted() ((bool)false)
-#endif
-
 namespace D2K {
 
-extern touchPosition g_stylus_position;
-
 extern uint32_t g_keys_held, g_keys_down, g_keys_up;
+extern touchPosition g_stylus_position;
 
 // @return The current time
 extern char* GetTime();

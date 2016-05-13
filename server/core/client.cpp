@@ -297,9 +297,7 @@ Client::Client()
 {
 	m_packet = UDP::DS2KeyPacket{ };
 	m_keys =
-	m_keys_old =
-	m_gh_keys =
-	m_gh_keys_old = 0;
+	m_keys_old = 0;
 }
 
 Client::~Client()
@@ -311,9 +309,6 @@ void Client::Scan(void)
 {
 	m_keys_old = m_keys;
 	m_keys = m_packet.keys;
-
-	m_gh_keys_old = m_gh_keys;
-	m_gh_keys = m_packet.gh_keys;
 }
 
 ProfileData* Client::GetProfileDataPointer()
@@ -360,36 +355,6 @@ bool Client::Up(uint32_t key)
 bool Client::Turbo(uint32_t key)
 {
 	return (m_packet.keys_turbo&key) != 0;
-}
-
-void Client::GHPress(uint8_t key)
-{
-	m_packet.gh_keys |= key != 0;
-}
-
-void Client::GHRelease(uint8_t key)
-{
-	m_packet.gh_keys &= ~key != 0;
-}
-
-bool Client::GHHeld(uint8_t key)
-{
-	return (m_gh_keys&key) != 0;
-}
-
-bool Client::GHDown(uint8_t key)
-{
-	return ((m_gh_keys &~ m_gh_keys_old)&key) != 0;
-}
-
-bool Client::GHUp(uint8_t key)
-{
-	return (((m_gh_keys ^ m_gh_keys_old) & (~m_gh_keys))&key) != 0;
-}
-
-bool Client::GHTurbo(uint8_t key)
-{
-	return (m_packet.gh_keys_turbo&key) != 0;
 }
 
 uint16_t Client::GetX()

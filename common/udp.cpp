@@ -349,26 +349,24 @@ void SendCommand(uint8_t command)
 	Send(&packet, sizeof(DS2KeyPacket));            // Send packet
 }
 
-void Update(uint32_t keys, uint32_t keysTurbo, uint32_t gripKeys, uint32_t gripKeysTurbo, touchPosition* pos)
+void Update(uint32_t keys, uint32_t keysTurbo, touchPosition* touch_position)
 {
 	if(EMULATOR)                         // Skip if emulating
-		return;					
+		return;
 	packet = DS2KeyPacket{ };            // Clear the packet
 	packet.type = UDP::PACKET::NORMAL;
 	packet.profile = GetProfile();
 	packet.keys = keys;
 	packet.keys_turbo = keysTurbo;
-	if(pos != nullptr)                   // Touch status is active
+	if(touch_position != nullptr)                   // Touch status is active
 	{
-		packet.touch_x = pos->px;        // Update x
-		packet.touch_y = pos->py;        // Update y
+		packet.touch_x = touch_position->px;        // Update x
+		packet.touch_y = touch_position->py;        // Update y
 	}
 	else                                 // Touch status is inactive
 	{
 		packet.keys &= ~KEY_TOUCH;       // Clear touch status
 	}
-	packet.gh_keys = gripKeys;
-	packet.gh_keys_turbo = gripKeysTurbo;
 
 	Send(&packet, sizeof(DS2KeyPacket)); // Send packet
 }
@@ -376,7 +374,7 @@ void Update(uint32_t keys, uint32_t keysTurbo, uint32_t gripKeys, uint32_t gripK
 void ServerLookup()
 {
 	if(EMULATOR)                                        // Skip if emulating
-		return;					
+		return;
 	unsigned long saved_remote_ip = GetRemoteIP();      // Save the remote IP
 	unsigned long LocalIP = GetLocalIP();               // Get the local IP
 	SetRemoteIP(((LocalIP) & 0xFF) |                    // Setup the broadcast IP

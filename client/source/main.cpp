@@ -27,8 +27,6 @@ int main()
 	{
 		D2K::UDP::Update(D2K::g_keys_held,     // Update ds2key network
 			    D2K::GUI::Turbo::GetKeys(),
-			    guitarGripKeysHeld() * guitarGripIsInserted(),
-			    D2K::GUI::Turbo::GHGetKeys() * guitarGripIsInserted(),
 			    nullptr);
 
 		D2K::GUI::Main::g_window.Update(); // Update the window

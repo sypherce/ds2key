@@ -14,8 +14,6 @@ typedef struct DS2KeyPacket final
 	uint8_t profile;
 	uint32_t keys;
 	uint32_t keys_turbo;       //Enabled Turbo keys
-	uint8_t gh_keys;
-	uint8_t gh_keys_turbo;     //Enabled GuitarGrip Turbo keys
 	uint16_t touch_keys;
 	uint16_t touch_keys_turbo; //Enabled Touch Turbo keys
 	uint16_t touch_x;

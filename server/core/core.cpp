@@ -41,6 +41,7 @@ void ExecuteCommand(std::string Command)
 #endif
 	}
 }
+
 void ProcessPacket(D2K::Client* Client)
 {
 	//static values
@@ -83,36 +84,6 @@ void ProcessPacket(D2K::Client* Client)
 		}
 		//pressed
 		else if(Client->Down(DSButton))
-		{
-			std::string Command = Profile->GetCommand(enum_key);
-			ExecuteCommand(Command);
-		}
-	}
-	//gh buttons
-	for(int enum_key = KEYS::BLUE; enum_key <= KEYS::GREEN; enum_key++)
-	{
-		//all the guitar hero buttons are 8bit values, type casting EnumKeyToNDSKeypadBit should be fine
-		uint8_t DSButton = (uint8_t)EnumKeyToNDSKeypadBit(enum_key);
-		uint8_t Joystick = Profile->GetValue8(KEYS::JOY);
-		uint16_t PCButton = Profile->GetVirtualKey(enum_key);
-
-		if(PCButton)
-		{
-			// Pressed
-			if(Client->GHDown(DSButton))
-				Input::Press(PCButton, Joystick);
-			// Released, even in turbo mode
-			else if(Client->GHUp(DSButton))
-				Input::Release(PCButton, Joystick);
-			// Turbo set, button enabled for turbo and pressed
-			else if(turbo && Client->GHTurbo(DSButton))
-				Input::Press(PCButton, Joystick);
-			// Turbo UNSET, button enabled for turbo and pressed
-			else if(Client->GHTurbo(DSButton))
-				//we release because turbo is UNSET
-				Input::Release(PCButton, Joystick);
-		}
-		else
 		{
 			std::string Command = Profile->GetCommand(enum_key);
 			ExecuteCommand(Command);
