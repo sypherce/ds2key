@@ -11,7 +11,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\apsearch.cpp" />
     <ClCompile Include="source\config.cpp" />
     <ClCompile Include="source\core.cpp" />
     <ClCompile Include="source\gui\button.cpp" />
@@ -38,7 +37,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="source\apsearch.h" />
     <ClInclude Include="source\config.h" />
     <ClInclude Include="source\core.h" />
     <ClInclude Include="source\gui\button.h" />

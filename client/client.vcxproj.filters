@@ -30,9 +30,6 @@
     <ClCompile Include="..\common\udp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\apsearch.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\config.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -61,9 +58,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\gui\window.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\main9.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\windows\commandWindow.cpp">
@@ -105,9 +99,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\common\udp.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\apsearch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\config.h">
