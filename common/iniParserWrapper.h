@@ -1,10 +1,7 @@
 #pragma once
 
 #include <string>//std::string
-extern "C"
-{
 #include "iniparser/src/dictionary.h"
-}
 
 namespace D2K {namespace iniParser {
 extern void dump(dictionary* d, FILE* f);
