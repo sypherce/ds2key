@@ -1,26 +1,16 @@
 //Joystick emulation for windows
 
-/*#include <iostream>//std::cout, std::clog
-#include <windows.h>
-#include <winioctl.h>
-#include <sstream>//ostringstream*/
 #include <iostream>//std::cout, std::clog
 #include "VJoy.h"
 #include "vjoy/inc/vjoyinterface.h"
-
-//TODO remove printfs
-#include <stdio.h>
-#define wprintf printf
-#define _tprintf printf
-
 
 namespace D2K {
 namespace Input {
 namespace Joystick {
 
 //We use MAX_JOYSTICKS+1 because vJoy's joysticks are 1-based.
-//joystick_position[0] is unused, but it makes the rest of the code not need
-//joystick_position[device+1]
+//joystick_position[0] is unused, but it makes the rest of the
+//code not need joystick_position[device+1].
 JOYSTICK_POSITION joystick_position[MAX_JOYSTICKS+1]{ };
 const int CONTINUOUS_UP = 0;
 const int CONTINUOUS_UP_RIGHT = 4500;
@@ -39,26 +29,14 @@ bool hat_right[MAX_JOYSTICKS+1]{ };
 //return false/0 if successful
 bool Init(uint8_t device)
 {
-	//if(IsActive(device))
-	//{
-	//	std::clog << "vJoy device " << device << " is already owned by this feeder\n";
-	//	return true;
-	//}
-
 	// Get the driver attributes (Vendor ID, Product ID, Version Number)
 	if(!vJoyEnabled())
 	{
-		_tprintf("Function vJoyEnabled Failed - make sure that vJoy is installed and enabled\n");
+		std::clog << "Function vJoyEnabled Failed - make sure that vJoy is installed and enabled\n";
 		for(int i = 1; i <= MAX_JOYSTICKS; i++)
 			DeInit(i);
 		return true;
 	}
-	else
-	{
-		//std::clog << "Vendor: " << GetvJoyManufacturerString() << "\n"
-		//	<< "Product :" << GetvJoyProductString() << "\n"
-		//	;//	          << "nVersion Number :" << GetvJoySerialNumberString() << "\n";
-	};
 
 	// Get the status of the vJoy device before trying to acquire it
 	VjdStat status = GetVJDStatus(device);
@@ -66,30 +44,31 @@ bool Init(uint8_t device)
 	switch(status)
 	{
 	case VJD_STAT_OWN:
-	_tprintf("vJoy device %d is already owned by this feeder\n", device);
-	break;
+		std::clog << "vJoy device " << device << " is already owned by this feeder\n";
+		break;
 	case VJD_STAT_FREE:
-	_tprintf("vJoy device %d is free\n", device);
-	break;
+		std::clog << "vJoy device " << device << " is free\n";
+		break;
 	case VJD_STAT_BUSY:
-	_tprintf("vJoy device %d is already owned by another feeder\nCannot continue\n", device);
-	return true;
+		std::clog << "vJoy device " << device << " is already owned by another feeder\nCannot continue\n";
+		return true;
 	case VJD_STAT_MISS:
-	_tprintf("vJoy device %d is not installed or disabled\nCannot continue\n", device);
-	return true;
+		std::clog << "vJoy device " << device << " is not installed or disabled\nCannot continue\n";
+		return true;
 	default:
-	_tprintf("vJoy device %d general error\nCannot continue\n", device);
-	return true;
+		std::clog << "vJoy device " << device << " general error\nCannot continue\n";
+		return true;
 	};
 
 	// Acquire the vJoy device
 	if(!AcquireVJD(device))
 	{
-		_tprintf("Failed to acquire vJoy device number %d.\n", device);
+		std::clog << "Failed to acquire vJoy device number " << device << ".\n";
 		return true;
 	}
 	else
-		_tprintf("Acquired device number %d - OK\n", device);
+		std::clog << "Acquired device number " << device << " - OK\n";
+
 	joystick_position[device].bDevice = device;
 
 	return false;
@@ -124,7 +103,7 @@ int Update(uint8_t device)
 	bool return_status = UpdateVJD(device, (void*)&joystick_position[device]) != 0;
 	if(!return_status)
 	{
-		printf("Feeding vJoy device number %d failed\n", device);
+		std::clog << "Feeding vJoy device number " << device << " failed\n";
 		DeInit(device);
 	}
 
@@ -161,11 +140,12 @@ void SetHat(uint8_t device, uint8_t hat, bool value)
 		hat_left[device] = value;
 	else if(hat == 3)
 		hat_right[device] = value;
+
 	UpdateHat(device);
 }
 void UpdateHat(uint8_t device)
 {
-	     if( hat_up[device] && !hat_down[device] && !hat_left[device] && !hat_right[device])
+	if     ( hat_up[device] && !hat_down[device] && !hat_left[device] && !hat_right[device])
 		joystick_position[device].bHats = CONTINUOUS_UP;
 	else if( hat_up[device] && !hat_down[device] && !hat_left[device] &&  hat_right[device])
 		joystick_position[device].bHats = CONTINUOUS_UP_RIGHT;
