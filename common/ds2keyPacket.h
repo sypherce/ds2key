@@ -12,6 +12,7 @@ typedef struct DS2KeyPacket final
 {
 	uint8_t type;
 	uint8_t profile;
+	uint32_t ip_address;
 	uint32_t keys;
 	uint32_t keys_turbo;       //Enabled Turbo keys
 	uint16_t touch_keys;

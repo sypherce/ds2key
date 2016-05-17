@@ -27,6 +27,7 @@ enum PACKET : uint8_t
 	NORMAL = ('/' + 1),
 	COMMAND,
 	COMMAND_SETTINGS,
+	ALIVE,
 	LOOKUP = 0xFF,
 };
 
@@ -86,6 +87,9 @@ void SendCommand(uint8_t command);
 
 //updates current button and touch screen status
 void Update(uint32_t keys, uint32_t keysTurbo, touchPosition* touch_position);
+
+//listens for anything from the server and deals with it
+void ListenForServer();
 
 //searches for running servers on current port
 //todo: this should actually just return any found ip and not change our currently connected IP

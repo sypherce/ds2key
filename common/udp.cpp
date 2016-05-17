@@ -351,41 +351,49 @@ void SendCommand(uint8_t command)
 
 void Update(uint32_t keys, uint32_t keysTurbo, touchPosition* touch_position)
 {
-	if(EMULATOR)                         // Skip if emulating
+	if(EMULATOR)                                 // Skip if emulating
 		return;
-	packet = DS2KeyPacket{ };            // Clear the packet
+
+	ListenForServer();                           // Listen for the server
+
+	packet = DS2KeyPacket{ };                    // Clear the packet
 	packet.type = UDP::PACKET::NORMAL;
 	packet.profile = GetProfile();
 	packet.keys = keys;
 	packet.keys_turbo = keysTurbo;
-	if(touch_position != nullptr)                   // Touch status is active
+	if(touch_position != nullptr)                // Touch status is active
 	{
-		packet.touch_x = touch_position->px;        // Update x
-		packet.touch_y = touch_position->py;        // Update y
+		packet.touch_x = touch_position->px; // Update x
+		packet.touch_y = touch_position->py; // Update y
 	}
-	else                                 // Touch status is inactive
+	else                                         // Touch status is inactive
 	{
-		packet.keys &= ~KEY_TOUCH;       // Clear touch status
+		packet.keys &= ~KEY_TOUCH;           // Clear touch status
 	}
 
-	Send(&packet, sizeof(DS2KeyPacket)); // Send packet
+	Send(&packet, sizeof(DS2KeyPacket));         // Send packet
+}
+
+void SendLoopupPacket()
+{
+	packet = DS2KeyPacket{ };            // Clear the packet
+	packet.type = UDP::PACKET::LOOKUP;   // Set as a lookup packet
+
+	Send(&packet, sizeof(DS2KeyPacket)); // Send the packet out
 }
 
 void ServerLookup()
 {
-	if(EMULATOR)                                        // Skip if emulating
+	if(EMULATOR)                                   // Skip if emulating
 		return;
-	unsigned long saved_remote_ip = GetRemoteIP();      // Save the remote IP
-	unsigned long LocalIP = GetLocalIP();               // Get the local IP
-	SetRemoteIP(((LocalIP) & 0xFF) |                    // Setup the broadcast IP
+	unsigned long saved_remote_ip = GetRemoteIP(); // Save the remote IP
+	unsigned long LocalIP = GetLocalIP();          // Get the local IP
+	SetRemoteIP(((LocalIP) & 0xFF) |               // Setup the broadcast IP
 		   (((LocalIP >> 8) & 0xFF) << 8) |
 		   (((LocalIP >> 16) & 0xFF) << 16) |
 		   (0xFF << 24));
 
-	packet = DS2KeyPacket{ };                           // Clear the packet
-	packet.type = UDP::PACKET::LOOKUP;                  // Set as a lookup packet
-
-	Send(&packet, sizeof(DS2KeyPacket));                // Send the packet out
+	SendLoopupPacket();                            // Send the lookup packet
 	
 	//wait for 1 second
 	for(int i = 0; i < 60; i++)
@@ -395,12 +403,33 @@ void ServerLookup()
 
 	if(Recv((char*)&packet, sizeof(DS2KeyPacket)) != 0) // Didn't receive anything
 	{
-		SetRemoteIP(saved_remote_ip);                   // Reset the remote IP
+		SetRemoteIP(saved_remote_ip);               // Reset the remote IP
 	}
 	else if(packet.type == UDP::PACKET::LOOKUP)         // Received a lookup packet
 	{
-		if(GetLocalIP() == GetRemoteIP())               // If it's from the local IP
-			SetRemoteIP(saved_remote_ip);               // Reset the remote IP
+		if(GetLocalIP() == GetRemoteIP())           // If it's from the local IP
+			SetRemoteIP(saved_remote_ip);       // Reset the remote IP
+	}
+}
+
+void ListenForServer()
+{
+	if(EMULATOR)                        // Skip if emulating
+		return;
+
+	packet = DS2KeyPacket{ };           // Clear the packet
+
+	if(UDP::IsConnected()               // Received something
+	   && UDP::Recv(&packet, sizeof(DS2KeyPacket)) == 0)
+	{
+		switch(packet.type)
+		{
+		default:
+		//case UDP::PACKET::ALIVE:  // Received a status query
+			SendLoopupPacket(); // Send the lookup packet
+			
+			break;
+		}
 	}
 }
 

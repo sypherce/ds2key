@@ -6,8 +6,7 @@
 #include <sstream>  // std::stringstream
 
 namespace D2K {
-
-Client* g_client_array[256] = { };
+Client* g_client_array[CLIENT_MAX] = { };
 
 uint32_t EnumKeyToNDSKeypadBit(int enum_key)
 {
@@ -298,6 +297,7 @@ Client::Client()
 	m_packet = UDP::DS2KeyPacket{ };
 	m_keys =
 	m_keys_old = 0;
+	SetAlive(CLIENT_STATUS::ALIVE);
 }
 
 Client::~Client()
@@ -357,6 +357,11 @@ bool Client::Turbo(uint32_t key)
 	return (m_packet.keys_turbo&key) != 0;
 }
 
+uint32_t Client::GetIP()
+{
+	return m_packet.ip_address;
+}
+
 uint16_t Client::GetX()
 {
 	return m_packet.touch_x;
@@ -365,6 +370,16 @@ uint16_t Client::GetX()
 uint16_t Client::GetY()
 {
 	return m_packet.touch_y;
+}
+
+bool Client::IsAlive()
+{
+	return m_alive;
+}
+
+void Client::SetAlive(bool client_status)
+{
+	m_alive = client_status;
 }
 
 }//namespace D2K

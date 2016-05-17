@@ -6,6 +6,7 @@
 
 
 namespace D2K {
+static const int CLIENT_MAX = 256;
 static const char* D2K_COMMAND = "*";
 static const int D2K_COMMAND_LENGTH = 1;
 static const uint32_t DS2KEY_A = (1 << (0));
@@ -153,6 +154,12 @@ private:
 	std::string VirtualKeyToString(uint16_t button);
 };
 
+enum CLIENT_STATUS : bool
+{
+	ALIVE = true,
+	CHECKING = false,
+};
+
 //Contains a client's current state
 class Client final
 {
@@ -173,12 +180,21 @@ public:
 
 	//@return true if (key) has Turbo mode enabled
 	bool Turbo(uint32_t key);
+	
+	//@return IP address. 0 if not assigned
+	uint32_t GetIP();
 
 	//@return Stylus current X Position. Values range 0-255(NDS), 0-319(3DS)
 	uint16_t GetX();
 
 	//@return Stylus current Y Position. Values range 0-191(NDS), 0-239(3DS)
 	uint16_t GetY();
+
+	//@return CLIENT_STATUS::ALIVE if confirmed, CLIENT_STATUS::CHECKING if not
+	bool IsAlive();
+
+	//@return CLIENT_STATUS::ALIVE if confirmed, CLIENT_STATUS::CHECKING if not
+	void SetAlive(bool client_status);
 
 private:
 	void SetTouchPos(uint16_t x, uint16_t y);
@@ -188,10 +204,12 @@ private:
 	UDP::DS2KeyPacket m_packet;
 	ProfileData m_profile_data;
 
+	bool m_alive;
+
 	uint32_t m_keys;
 	uint32_t m_keys_old;
 };
 
-extern Client* g_client_array[256];
+extern Client* g_client_array[CLIENT_MAX];
 
 }//namespace D2K

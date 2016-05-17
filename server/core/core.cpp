@@ -3,6 +3,8 @@
 #include <iostream>  // std::cout, std::clog
 #include <algorithm>  // std::max, std::min
 #include <sstream>  // ostringstream
+#include <chrono>
+#include <thread>
 #ifdef _WIN32
 #define NOMINMAX
 #include <windows.h>
@@ -12,9 +14,6 @@
 #endif
 #elif defined(__linux__)
 #include <cstring>
-#include <chrono>
-#include <thread>
-#define Sleep(a) std::this_thread::sleep_for(std::chrono::milliseconds(a))
 #endif
 
 #include "common/udp.h"
@@ -162,6 +161,64 @@ void ProcessPacket(D2K::Client* Client)
 	}
 }
 
+//TODO this needs tested with multiple devices connected
+void ReleaseDeadClient(D2K::Client* Client)
+{
+	ProfileData* Profile = Client->GetProfileDataPointer();
+
+	//buttons
+	for(int enum_key = _START_OF_BUTTONS_ + 1; enum_key < KEYS::_END_OF_BUTTONS_; enum_key++)
+	{
+		uint32_t DSButton = EnumKeyToNDSKeypadBit(enum_key);
+		uint8_t Joystick = Profile->GetValue8(KEYS::JOY);
+		uint16_t PCButton = Profile->GetVirtualKey(enum_key);
+
+		if(PCButton)
+		{
+			// Held
+			if(Client->Held(DSButton))
+			{
+				Input::Release(PCButton, Joystick);
+				//TODO:log std::clog << "press:" << PCButton << "\n";
+			}
+		}
+	}
+}
+
+void CheckForDeadClients()
+{
+	static std::chrono::steady_clock::time_point time_previous = std::chrono::high_resolution_clock::now();
+	       std::chrono::steady_clock::time_point time_current  = std::chrono::high_resolution_clock::now();
+	long time_difference =std::chrono::duration_cast<std::chrono::milliseconds>(time_current - time_previous).count();
+	if(time_difference >= 1000)
+	{
+		std::clog << time_difference << "\n";
+		time_previous = time_current;
+
+		UDP::DS2KeyPacket Packet{ };
+		Packet.type = UDP::PACKET::ALIVE;
+
+		for(int i = 0; i < D2K::CLIENT_MAX; i++)
+		{
+			if(g_client_array[i] != nullptr)
+			{
+				if(g_client_array[i]->IsAlive() == CLIENT_STATUS::CHECKING)
+				{
+					ReleaseDeadClient(g_client_array[i]);
+					delete(g_client_array[i]);
+					g_client_array[i] = nullptr;
+					std::cout << "\nClient #:" << i << " removed from inactivity.\n";
+				}
+				else
+				{
+					g_client_array[i]->SetAlive(CLIENT_STATUS::CHECKING);
+					UDP::Send(&Packet, sizeof(UDP::DS2KeyPacket));
+				}
+			}
+		}
+	}
+}
+
 bool g_running = false;
 
 // Setup everything, handle command arguments, and return 0 if UDP connected
@@ -205,16 +262,23 @@ int Setup(int argc, char* argv[])
 
 void Loop()
 {
-	UDP::DS2KeyPacket Packet;
+	UDP::DS2KeyPacket Packet{ };
 
 	//if we  are running, connected, and receive something without error
 	if(g_running
 	&& UDP::IsConnected()
 	&& UDP::Recv(&Packet, sizeof(UDP::DS2KeyPacket)) == 0)
 	{
+		// If profile is active
+		if(g_client_array[Packet.profile] != nullptr)
+		{
+			//Set Alive Status
+			g_client_array[Packet.profile]->SetAlive(CLIENT_STATUS::ALIVE);
+		}
 		switch(Packet.type)
 		{
 		case UDP::PACKET::LOOKUP:
+		case UDP::PACKET::ALIVE:
 		{
 			UDP::Send(&Packet, sizeof(UDP::DS2KeyPacket));
 			break;
@@ -270,7 +334,7 @@ void Loop()
 			{
 				Input::Press(virtual_key, virtual_joystick_id);
 				// Sleep so the Press is recognised
-				Sleep(100);
+				std::this_thread::sleep_for(std::chrono::milliseconds(100));
 				Input::Release(virtual_key, virtual_joystick_id);
 			}
 			else
@@ -283,8 +347,10 @@ void Loop()
 		}
 	}
 
+	CheckForDeadClients();
+
 	// Sleep to avoid 99% cpu when not using -O2
-	Sleep(1);
+	std::this_thread::sleep_for(std::chrono::milliseconds(1));
 	#ifdef WIN32GUI
 	//Take care of GUI stuff
 	D2K::GUI::GetMessages();
@@ -294,7 +360,7 @@ void Destroy()
 {
 	g_running = false;
 
-	for(int i = 0; i < 255; i++)
+	for(int i = 0; i < D2K::CLIENT_MAX; i++)
 	{
 		if(g_client_array[i] != nullptr)
 		{
