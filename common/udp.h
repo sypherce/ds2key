@@ -78,7 +78,7 @@ void SetRemoteIP(unsigned long ip);
 
 void SetConfigPort(const std::string& port);
 void SetConfigPort(char* port);
-void SetConfigPort(unsigned int port);
+void SetConfigPort(uint16_t port);
 
 #ifdef D2KCLIENT
 //sends a command packet

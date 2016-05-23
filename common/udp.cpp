@@ -128,7 +128,7 @@ int Connect(bool non_blocking, uint16_t port)
 #if defined(D2KCLIENT)
 	remote_sockaddr.sin_family = AF_INET;
 	remote_sockaddr.sin_port = htons(GetPort());
-#elif defined(D2KSERVER) || defined(_WIN32)
+#elif defined(D2KSERVER)
 	int sockaddrlength = sizeof(struct sockaddr_in);
 	local_sockaddr = sockaddr_in{ };
 	local_sockaddr.sin_family = AF_INET;
@@ -156,6 +156,7 @@ int Connect(bool non_blocking, uint16_t port)
 		else
 			std::clog << "Error (bind): " << strerror(err) << "\n";
 		Disconnect();
+
 		return err;
 	}
 #endif
@@ -173,11 +174,9 @@ int Connect(bool non_blocking, uint16_t port)
 		int err = NETerrno;
 		std::clog << "Error (NETioctlsocket): " << strerror(err) << "\n";
 #endif
-#if defined(_NDS) | defined (_3DS)//TODO check if this needs done for everything
 		Disconnect();
 
 		return err;
-#endif
 	}
 	connected = true;
 
@@ -223,7 +222,7 @@ int Send(const void* buffer, unsigned int length)
 	}
 	else // Successful
 	{
-		int sockaddrlength = sizeof(remote_sockaddr);
+		int sockaddrlength = sizeof(struct sockaddr_in);
 		if(sendto(socket_id, (const char*)buffer, length, 0, (struct sockaddr*)&remote_sockaddr, sockaddrlength) == SOCKET_ERROR)
 		{
 			int err = NETerrno;
@@ -254,7 +253,7 @@ int Recv(void* buffer, unsigned int length)
 	}
 	else // Successful
 	{
-		socklen_t sockaddrlength = sizeof(remote_sockaddr);
+		socklen_t sockaddrlength = sizeof(struct sockaddr_in);
 		if(recvfrom(socket_id, (char*)buffer, length, 0, (struct sockaddr*)&remote_sockaddr, &sockaddrlength) == SOCKET_ERROR)
 		{
 			int err = NETerrno;
@@ -291,6 +290,7 @@ std::string GetLocalIPString()
 	return IP;
 }
 
+#if defined(D2KCLIENT)
 unsigned long GetRemoteIP()
 {
 	return remote_sockaddr.sin_addr.s_addr;
@@ -301,6 +301,16 @@ std::string GetRemoteIPString()
 	return IP;
 }
 
+void SetRemoteIP(const std::string& text)
+{
+	remote_sockaddr.sin_addr.s_addr = inet_addr(text.c_str());
+}
+void SetRemoteIP(unsigned long ip)
+{
+	remote_sockaddr.sin_addr.s_addr = ip;
+}
+#endif
+
 uint16_t GetPort()
 {
 	return port;
@@ -310,24 +320,15 @@ std::string GetPortString()
 	return ltos(GetPort());
 }
 
-void SetRemoteIP(const std::string& text)
-{
-	remote_sockaddr.sin_addr.s_addr = inet_addr(text.c_str());
-}
-void SetRemoteIP(unsigned long ip)
-{
-	remote_sockaddr.sin_addr.s_addr = ip;
-}
-
 void SetConfigPort(const std::string& port)
 {
-	SetConfigPort(D2K::stol(port));
+	SetConfigPort((uint16_t)D2K::stol(port));
 }
 void SetConfigPort(char* port)
 {
 	SetConfigPort(atoi(port));
 }
-void SetConfigPort(unsigned int port)
+void SetConfigPort(uint16_t port)
 {
 	if(port == 0)                 // If port 0
 		UDP::port = DEFAULT_PORT; // Use default port 9501
@@ -374,7 +375,7 @@ void Update(uint32_t keys, uint32_t keysTurbo, touchPosition* touch_position)
 	Send(&packet, sizeof(DS2KeyPacket));         // Send packet
 }
 
-void SendLoopupPacket()
+void SendLookupPacket()
 {
 	packet = DS2KeyPacket{ };            // Clear the packet
 	packet.type = UDP::PACKET::LOOKUP;   // Set as a lookup packet
@@ -393,7 +394,7 @@ void ServerLookup()
 		   (((LocalIP >> 16) & 0xFF) << 16) |
 		   (0xFF << 24));
 
-	SendLoopupPacket();                            // Send the lookup packet
+	SendLookupPacket();                            // Send the lookup packet
 	
 	//wait for 1 second
 	for(int i = 0; i < 60; i++)
@@ -420,13 +421,13 @@ void ListenForServer()
 	packet = DS2KeyPacket{ };           // Clear the packet
 
 	if(UDP::IsConnected()               // Received something
-	   && UDP::Recv(&packet, sizeof(DS2KeyPacket)) == 0)
+	&& UDP::Recv(&packet, sizeof(DS2KeyPacket)) == 0)
 	{
 		switch(packet.type)
 		{
 		default:
 		//case UDP::PACKET::ALIVE:  // Received a status query
-			SendLoopupPacket(); // Send the lookup packet
+			SendLookupPacket(); // Send the lookup packet
 			
 			break;
 		}
@@ -462,8 +463,8 @@ DS2KeySettingsPacket GetCommandSettings()
 	packet.profile = GetProfile();
 	Send(&packet, sizeof(DS2KeyPacket));  // Send the packet out
 
-	// Try 3 times
-	const int SEND_SETTINGS_MAX = 3;
+	// Try for 2 to 3 seconds
+	const int SEND_SETTINGS_MAX = 60;
 	for(int i = 0; i < SEND_SETTINGS_MAX; i++)
 	{
 		if(Recv((char*)&settings, sizeof(DS2KeySettingsPacket)) == 0)  // Received something
@@ -472,7 +473,7 @@ DS2KeySettingsPacket GetCommandSettings()
 			{
 				return settings;
 			}
-			std::clog << "Error (GetCommandSettings): Received invalid packet\n";
+			//TODO: std::clog << "Error (GetCommandSettings): Received invalid packet #" << (int)settings.type << "\n";
 		}
 		
 		// Wait a second before trying again
