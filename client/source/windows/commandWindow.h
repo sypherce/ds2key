@@ -1,6 +1,7 @@
 #pragma once
 
 #include "gui/window.h"
+#include "common/udp.h"
 
 namespace D2K {namespace GUI {namespace Command {
 
@@ -12,6 +13,7 @@ public:
 
 	void SetVisible(bool visible);
 };
+void ProcessCommandSettingsPacket(UDP::DS2KeyCommandSettingsPacket settings);
 extern GUI::Command::WindowClass g_window;
 
 }}}//namespace D2K::GUI::Command

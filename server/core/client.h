@@ -172,6 +172,10 @@ public:
 	//@return CLIENT_STATUS::ALIVE if confirmed, CLIENT_STATUS::CHECKING if not
 	void SetAlive(bool client_status);
 
+	//TODO finish/update comment... 
+	//@return DS KeyboardPress, currently only uint8_t values come through (1-255), 0 = no press
+	uint16_t GetKeyboardPress();
+
 private:
 	void SetTouchPos(uint16_t x, uint16_t y);
 	void Press(uint32_t key);

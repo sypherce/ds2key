@@ -62,6 +62,7 @@ typedef int socklen_t;
 
 #if defined(_NDS) || defined(_3DS)
 #include "core.h"
+#include "commandWindow.h"
 #endif
 
 #include "udp.h"
@@ -78,10 +79,10 @@ DS2KeyPacket packet = DS2KeyPacket{ };
 uint8_t profile = 0;
 std::string remote_ip = "";
 #endif
-#if defined(D2KSERVER) || defined(_WIN32)
+#if defined(D2KSERVER)
 struct sockaddr_in local_sockaddr = { };
 #endif
-struct sockaddr_in remote_sockaddr = { };
+struct sockaddr_in g_remote_sockaddr = { };
 
 void Init()
 {
@@ -125,10 +126,10 @@ int Connect(bool non_blocking, uint16_t port)
 	SetConfigPort(port);  // Set port
 
 	UDP::non_blocking = non_blocking;
-#if defined(D2KCLIENT)
-	remote_sockaddr.sin_family = AF_INET;
-	remote_sockaddr.sin_port = htons(GetPort());
-#elif defined(D2KSERVER)
+	
+	g_remote_sockaddr.sin_family = AF_INET;
+	g_remote_sockaddr.sin_port = htons(GetPort());
+#if defined(D2KSERVER)
 	int sockaddrlength = sizeof(struct sockaddr_in);
 	local_sockaddr = sockaddr_in{ };
 	local_sockaddr.sin_family = AF_INET;
@@ -223,7 +224,7 @@ int Send(const void* buffer, unsigned int length)
 	else // Successful
 	{
 		int sockaddrlength = sizeof(struct sockaddr_in);
-		if(sendto(socket_id, (const char*)buffer, length, 0, (struct sockaddr*)&remote_sockaddr, sockaddrlength) == SOCKET_ERROR)
+		if(sendto(socket_id, (const char*)buffer, length, 0, (struct sockaddr*)&g_remote_sockaddr, sockaddrlength) == SOCKET_ERROR)
 		{
 			int err = NETerrno;
 			std::clog << "Error #" << err << " (sendto): " << strerror(err) << "\n";
@@ -235,6 +236,11 @@ int Send(const void* buffer, unsigned int length)
 }
 
 int Recv(void* buffer, unsigned int length)
+{
+	return Recv(buffer, length, (struct sockaddr*)&g_remote_sockaddr);
+}
+
+int Recv(void* buffer, unsigned int length, struct sockaddr* remote_sockaddr)
 {
 	if(!IsConnected())
 	{
@@ -251,14 +257,19 @@ int Recv(void* buffer, unsigned int length)
 		std::clog << "Error (UDP::Recv) Invalid pointer\n";
 		return -3;
 	}
+	else if(remote_sockaddr == nullptr)
+	{
+		std::clog << "Error (UDP::Recv) g_remote_sockaddr is NULL\n";
+		return -4;
+	}
 	else // Successful
 	{
 		socklen_t sockaddrlength = sizeof(struct sockaddr_in);
-		if(recvfrom(socket_id, (char*)buffer, length, 0, (struct sockaddr*)&remote_sockaddr, &sockaddrlength) == SOCKET_ERROR)
+		if(recvfrom(socket_id, (char*)buffer, length, 0, remote_sockaddr, &sockaddrlength) == SOCKET_ERROR)
 		{
 			int err = NETerrno;
 			if(err != NETEWOULDBLOCK)
-				std::clog << "Error #" << err << " (recvfrom): " << strerror(err) << "\n";
+				std::clog << "Error #" << err << " (Error (recvfrom): " << strerror(err) << "\n";
 			return err;
 		}
 	}
@@ -293,23 +304,23 @@ std::string GetLocalIPString()
 #if defined(D2KCLIENT)
 unsigned long GetRemoteIP()
 {
-	return remote_sockaddr.sin_addr.s_addr;
+	return g_remote_sockaddr.sin_addr.s_addr;
 }
 std::string GetRemoteIPString()
 {
-	std::string IP = inet_ntoa(remote_sockaddr.sin_addr);
+	std::string IP = inet_ntoa(g_remote_sockaddr.sin_addr);
 	return IP;
 }
+#endif
 
 void SetRemoteIP(const std::string& text)
 {
-	remote_sockaddr.sin_addr.s_addr = inet_addr(text.c_str());
+	g_remote_sockaddr.sin_addr.s_addr = inet_addr(text.c_str());
 }
 void SetRemoteIP(unsigned long ip)
 {
-	remote_sockaddr.sin_addr.s_addr = ip;
+	g_remote_sockaddr.sin_addr.s_addr = ip;
 }
-#endif
 
 uint16_t GetPort()
 {
@@ -337,6 +348,11 @@ void SetConfigPort(uint16_t port)
 }
 
 #if defined(D2KCLIENT)
+
+void SendNormalSetting(DS2KeyNormalSettingsPacket setting)
+{
+	Send(&setting, sizeof(DS2KeyNormalSettingsPacket));
+}
 void SendCommand(uint8_t command)
 {
 	if(command >= UDP::SETTINGS_PACKET_MAX_BUTTONS) // Valid range is 0 - 11
@@ -344,13 +360,14 @@ void SendCommand(uint8_t command)
 
 	packet = DS2KeyPacket{ };                       // Clear the packet
 	packet.type = UDP::PACKET::COMMAND;
+	packet.ip_address = UDP::GetLocalIP();
 	packet.profile = GetProfile();
 	packet.keys = command;
 
 	Send(&packet, sizeof(DS2KeyPacket));            // Send packet
 }
 
-void Update(uint32_t keys, uint32_t keysTurbo, touchPosition* touch_position)
+void Update(uint32_t keys, uint32_t keysTurbo, touchPosition* touch_position, uint16_t keyboard)
 {
 	if(EMULATOR)                                 // Skip if emulating
 		return;
@@ -359,6 +376,7 @@ void Update(uint32_t keys, uint32_t keysTurbo, touchPosition* touch_position)
 
 	packet = DS2KeyPacket{ };                    // Clear the packet
 	packet.type = UDP::PACKET::NORMAL;
+	packet.ip_address = UDP::GetLocalIP();
 	packet.profile = GetProfile();
 	packet.keys = keys;
 	packet.keys_turbo = keysTurbo;
@@ -371,6 +389,7 @@ void Update(uint32_t keys, uint32_t keysTurbo, touchPosition* touch_position)
 	{
 		packet.keys &= ~KEY_TOUCH;           // Clear touch status
 	}
+	packet.keyboard = keyboard;
 
 	Send(&packet, sizeof(DS2KeyPacket));         // Send packet
 }
@@ -379,8 +398,20 @@ void SendLookupPacket()
 {
 	packet = DS2KeyPacket{ };            // Clear the packet
 	packet.type = UDP::PACKET::LOOKUP;   // Set as a lookup packet
+	packet.ip_address = UDP::GetLocalIP();
 
 	Send(&packet, sizeof(DS2KeyPacket)); // Send the packet out
+}
+
+
+void RequestSettingsCommand()
+{
+	packet = UDP::DS2KeyPacket{ };                  // Clear the packet
+	packet.type = UDP::PACKET::COMMAND_SETTINGS;    // Set as command settings packet
+	packet.profile = UDP::GetProfile();             // Set profile
+	packet.ip_address = UDP::GetLocalIP();
+
+	UDP::Send(&packet, sizeof(UDP::DS2KeyPacket));  // Send the packet out
 }
 
 void ServerLookup()
@@ -418,17 +449,20 @@ void ListenForServer()
 	if(EMULATOR)                        // Skip if emulating
 		return;
 
-	packet = DS2KeyPacket{ };           // Clear the packet
+	DS2KeyCommandSettingsPacket command_settings_packet = DS2KeyCommandSettingsPacket{ }; // Large packet
 
 	if(UDP::IsConnected()               // Received something
-	&& UDP::Recv(&packet, sizeof(DS2KeyPacket)) == 0)
+	&& UDP::Recv(&command_settings_packet, sizeof(DS2KeyCommandSettingsPacket)) == 0)
 	{
-		switch(packet.type)
+		switch(command_settings_packet.type)
 		{
-		default:
-		//case UDP::PACKET::ALIVE:  // Received a status query
+		case UDP::PACKET::ALIVE:  // Received a status query
 			SendLookupPacket(); // Send the lookup packet
-			
+			break;
+		case UDP::PACKET::COMMAND_SETTINGS: //Received Command Settings
+			GUI::Command::ProcessCommandSettingsPacket(command_settings_packet);
+			break;
+		default:
 			break;
 		}
 	}
@@ -455,39 +489,10 @@ void SetProfile(unsigned int profile)
 {
 	UDP::profile = profile;
 }
-DS2KeySettingsPacket GetCommandSettings()
-{
-	DS2KeySettingsPacket settings = DS2KeySettingsPacket{ };
-	packet = DS2KeyPacket{ };// Clear the packet
-	packet.type = UDP::PACKET::COMMAND_SETTINGS;
-	packet.profile = GetProfile();
-	Send(&packet, sizeof(DS2KeyPacket));  // Send the packet out
-
-	// Try for 2 to 3 seconds
-	const int SEND_SETTINGS_MAX = 60;
-	for(int i = 0; i < SEND_SETTINGS_MAX; i++)
-	{
-		if(Recv((char*)&settings, sizeof(DS2KeySettingsPacket)) == 0)  // Received something
-		{
-			if(settings.type == UDP::PACKET::COMMAND_SETTINGS)  // Received a lookup packet
-			{
-				return settings;
-			}
-			//TODO: std::clog << "Error (GetCommandSettings): Received invalid packet #" << (int)settings.type << "\n";
-		}
-		
-		// Wait a second before trying again
-		WaitForVBlank();
-	}
-	// If we didn't receive anything, or something invalid we return NULL_VALUE
-	settings = DS2KeySettingsPacket{ };
-	std::clog << "Error (GetCommandSettings): Failed to receive packet\n";
-	return settings;
-}
 #elif defined(D2KSERVER)
-void SendCommandSettings(DS2KeySettingsPacket settings)
+void SendCommandSettings(DS2KeyCommandSettingsPacket settings)
 {
-	Send(&settings, sizeof(DS2KeySettingsPacket));
+	Send(&settings, sizeof(DS2KeyCommandSettingsPacket));
 }
 #endif
 

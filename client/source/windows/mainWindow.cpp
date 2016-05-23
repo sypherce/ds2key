@@ -3,7 +3,9 @@
 //windows
 #include "mainWindow.h"
 #include "keypadWindow.h"
+#include "keyboardWindow.h"
 #include "turboWindow.h"
+#include "configWindow.h"
 #include "commandWindow.h"
 
 //controls
@@ -29,6 +31,7 @@ extern void EditPortFunction();
 extern void EditProfileFunction();
 extern void ButtonTouchFunction();
 extern void ButtonTurboFunction();
+extern void ButtonConfigWindowFunction();
 extern void ButtonIPFunction();
 extern void ButtonCommandsFunction();
 
@@ -46,6 +49,7 @@ Edit* edit_profile;
 
 Button* button_touch;
 Button* button_turbo;
+Button* button_config;
 Button* button_ip;
 Button* button_commands;
 
@@ -79,6 +83,7 @@ WindowClass::WindowClass() : Window()
 	AppendObject(edit_port             = new Edit(m_screen, Rect(112,48,79,10), UDP::GetPortString(), &EditPortFunction));
 	AppendObject(edit_profile          = new Edit(m_screen, Rect(136,72,55,10), UDP::GetProfileString(), &EditProfileFunction));
 	AppendObject(button_turbo          = new Button(m_screen, Rect(0,177,35,10), "Turbo", &ButtonTurboFunction));
+	AppendObject(button_config         = new Button(m_screen, Rect(0,157,35,10), "Config", &ButtonConfigWindowFunction));
 	AppendObject(button_commands       = new Button(m_screen, Rect(95,177,35,10), "Commands", &ButtonCommandsFunction));
 	AppendObject(button_touch          = new Button(m_screen, Rect(217,177,35,10), "Touch", &ButtonTouchFunction));
 }
@@ -176,7 +181,7 @@ void ButtonTouchFunction()
 		if(Main::g_window.CheckClick(button_touch))
 			break;
 
-		UDP::Update(g_keys_held, 0, &D2K::g_stylus_position);
+		UDP::Update(g_keys_held, 0, &D2K::g_stylus_position, NULL_VALUE);
 
 		Main::g_window.Update();
 	}
@@ -193,7 +198,7 @@ void ButtonTurboFunction()
 
 	while(D2K::Loop())
 	{
-		UDP::Update(g_keys_held, Turbo::GetKeys(), nullptr);
+		UDP::Update(g_keys_held, Turbo::GetKeys(), nullptr, NULL_VALUE);
 		Turbo::g_window.Update();
 		button_turbo->Draw();
 
@@ -203,6 +208,27 @@ void ButtonTurboFunction()
 	}
 
 	Turbo::g_window.SetVisible(false);
+	Main::g_window.SetVisible(true);
+}
+void ButtonConfigWindowFunction()
+{
+	Main::g_window.SetVisible(false);                    // Hide main window
+	button_config->SetVisible(true);
+	ConfigWindow::g_window.SetVisible(true);
+
+	while(D2K::Loop()
+	   && ConfigWindow::g_window.IsVisible())
+	{
+		ConfigWindow::g_window.Update();
+		UDP::Update(keysHeld(), Turbo::GetKeys(), nullptr, NULL_VALUE);
+		ConfigWindow::current_pressed_key = NULL_VALUE;
+		button_config->Draw();
+
+		if(Main::g_window.CheckClick(button_config)) // If pressed again, break
+			break;
+	}
+
+	ConfigWindow::g_window.SetVisible(false);
 	Main::g_window.SetVisible(true);
 }
 void ButtonIPFunction()
@@ -218,7 +244,7 @@ void ButtonCommandsFunction()
 
 	while(D2K::Loop())
 	{
-		UDP::Update(g_keys_held, Turbo::GetKeys(), nullptr);
+		UDP::Update(g_keys_held, Turbo::GetKeys(), nullptr, NULL_VALUE);
 		Command::g_window.Update();  // Update and draw command window
 		button_commands->Draw();  // Draw [Commands] button
 		

@@ -34,43 +34,39 @@ Button* button_11;
 Button* button_12;
 
 // Request a settings packet, use the info if we get any
-void RequestSettingsCommand()
+
+void ProcessCommandSettingsPacket(UDP::DS2KeyCommandSettingsPacket settings)
 {
 	Rect button_rects[12];
-	UDP::DS2KeySettingsPacket settings = UDP::GetCommandSettings();
-
-	if(settings.type == UDP::PACKET::COMMAND_SETTINGS)  // If settings packet was received
+	for(int i = 0; i <= 11; i++)
 	{
-		for(int i = 0; i <= 11; i++)
-		{
-			button_rects[i] = Rect(settings.x_1[i], settings.y_1[i], settings.x_2[i], settings.y_2[i]);
-		}
-		button_1->SetRect(button_rects[0]);
-		button_2->SetRect(button_rects[1]);
-		button_3->SetRect(button_rects[2]);
-		button_4->SetRect(button_rects[3]);
-		button_5->SetRect(button_rects[4]);
-		button_6->SetRect(button_rects[5]);
-		button_7->SetRect(button_rects[6]);
-		button_8->SetRect(button_rects[7]);
-		button_9->SetRect(button_rects[8]);
-		button_10->SetRect(button_rects[9]);
-		button_11->SetRect(button_rects[10]);
-		button_12->SetRect(button_rects[11]);
-
-		button_1->SetText(settings.text[0]);
-		button_2->SetText(settings.text[1]);
-		button_3->SetText(settings.text[2]);
-		button_4->SetText(settings.text[3]);
-		button_5->SetText(settings.text[4]);
-		button_6->SetText(settings.text[5]);
-		button_7->SetText(settings.text[6]);
-		button_8->SetText(settings.text[7]);
-		button_9->SetText(settings.text[8]);
-		button_10->SetText(settings.text[9]);
-		button_11->SetText(settings.text[10]);
-		button_12->SetText(settings.text[11]);
+		button_rects[i] = Rect(settings.x_1[i], settings.y_1[i], settings.x_2[i], settings.y_2[i]);
 	}
+	button_1->SetRect(button_rects[0]);
+	button_2->SetRect(button_rects[1]);
+	button_3->SetRect(button_rects[2]);
+	button_4->SetRect(button_rects[3]);
+	button_5->SetRect(button_rects[4]);
+	button_6->SetRect(button_rects[5]);
+	button_7->SetRect(button_rects[6]);
+	button_8->SetRect(button_rects[7]);
+	button_9->SetRect(button_rects[8]);
+	button_10->SetRect(button_rects[9]);
+	button_11->SetRect(button_rects[10]);
+	button_12->SetRect(button_rects[11]);
+
+	button_1->SetText(settings.text[0]);
+	button_2->SetText(settings.text[1]);
+	button_3->SetText(settings.text[2]);
+	button_4->SetText(settings.text[3]);
+	button_5->SetText(settings.text[4]);
+	button_6->SetText(settings.text[5]);
+	button_7->SetText(settings.text[6]);
+	button_8->SetText(settings.text[7]);
+	button_9->SetText(settings.text[8]);
+	button_10->SetText(settings.text[9]);
+	button_11->SetText(settings.text[10]);
+	button_12->SetText(settings.text[11]);
 }
 
 WindowClass::WindowClass() : Window()
@@ -125,13 +121,12 @@ WindowClass::WindowClass() : Window()
 	AppendObject(button_10 = new Button(m_screen, button_rects[9], "Command 9", &button10Function));
 	AppendObject(button_11 = new Button(m_screen, button_rects[10], "Command 10", &button11Function));
 	AppendObject(button_12 = new Button(m_screen, button_rects[11], "Command 11", &button12Function));
-	
-	RequestSettingsCommand();
 }
 WindowClass::~WindowClass() { }
 void WindowClass::SetVisible(bool visible)
 {
-	RequestSettingsCommand();
+	if(visible)
+		UDP::RequestSettingsCommand();
 
 	return Window::SetVisible(visible);
 }

@@ -27,6 +27,7 @@ enum PACKET : uint8_t
 	NORMAL = ('/' + 1),
 	COMMAND,
 	COMMAND_SETTINGS,
+	NORMAL_SETTING,
 	ALIVE,
 	LOOKUP = 0xFF,
 };
@@ -57,13 +58,15 @@ int Disconnect();
 //@return (0) without error, (-1) not connected, (-2) invalid length, (-3) invalid pointer, else (errno)
 int Send(const void* buffer, unsigned int length);
 
+int Recv(void* buffer, unsigned int length);
 //Receives contents into (buffer) up to (length) in size
 //@param buffer Pointer to data.
 //(buffer) must be allocated before calling.
 //(buffer) is only modified up to (length) if recvfrom is successful, otherwise it should be left un modified.
 //@param length Length of data to receive
-//@return (0) without error, (-1) not connected, (-2) invalid length, (-3) invalid pointer, else (errno)
-int Recv(void* buffer, unsigned int length);
+//@param remote_sockaddr Container for recvfrom to fill in with remote address
+//@return (0) without error, (-1) not connected, (-2) invalid length, (-3) invalid pointer, (-4) NULL remote_sockaddr, else (errno)
+int Recv(void* buffer, unsigned int length, struct sockaddr* remote_sockaddr);
 
 unsigned long GetLocalIP();
 unsigned long GetRemoteIP();
@@ -85,8 +88,11 @@ void SetConfigPort(uint16_t port);
 //@param command Value between 0 - 11, 12 - 255 are ignored
 void SendCommand(uint8_t command);
 
+//TODO:: this will change
+void SendNormalSetting(DS2KeyNormalSettingsPacket setting);
+
 //updates current button and touch screen status
-void Update(uint32_t keys, uint32_t keysTurbo, touchPosition* touch_position);
+void Update(uint32_t keys, uint32_t keysTurbo, touchPosition* touch_position, uint16_t keyboard);
 
 //listens for anything from the server and deals with it
 void ListenForServer();
@@ -95,6 +101,9 @@ void ListenForServer();
 //todo: this should actually just return any found ip and not change our currently connected IP
 void ServerLookup();
 
+//sends a blank COMMAND_SETTINGS packet afterwards the server replys with a real one
+void RequestSettingsCommand();
+
 uint8_t GetProfile();
 std::string GetProfileString();
 
@@ -102,10 +111,10 @@ void SetProfile(const std::string& profile);
 void SetProfile(char* profile);
 void SetProfile(unsigned int profile);
 
-DS2KeySettingsPacket GetCommandSettings();
+DS2KeyCommandSettingsPacket GetCommandSettings();
 
 #elif defined(D2KSERVER)
-void SendCommandSettings(DS2KeySettingsPacket settings);
+void SendCommandSettings(DS2KeyCommandSettingsPacket settings);
 #endif
 
 }}//namespace D2K::UDP

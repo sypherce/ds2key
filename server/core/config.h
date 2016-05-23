@@ -26,6 +26,9 @@ namespace D2K {namespace Config{
 	//@return (0) upon success, else (errno)
 	int SaveProfile(ProfileData* profile, uint8_t profile_number);
 
+	//TODO: this will change
+	int SetProfileSetting(ProfileData* Profile, uint8_t profileNumber, uint16_t setting, uint16_t value);
+
 	//@return Currently assigned port number, values range from 1 - 65535
 	uint16_t GetPort();
 

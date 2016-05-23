@@ -159,6 +159,12 @@ void ProcessPacket(D2K::Client* Client)
 		last_x = last_y = 0;
 		last_screen_touched = false;
 	}
+	uint16_t keyboard_press = Client->GetKeyboardPress();
+	if(keyboard_press != NULL_VALUE)
+	{
+		Input::Press(keyboard_press, NULL_VALUE);
+		Input::Release(keyboard_press, NULL_VALUE);
+	}
 }
 
 //TODO this needs tested with multiple devices connected
@@ -192,7 +198,7 @@ void CheckForDeadClients()
 	long long time_difference =std::chrono::duration_cast<std::chrono::milliseconds>(time_current - time_previous).count();
 	if(time_difference >= 1000)
 	{
-		std::clog << time_difference << "\n";
+//TODO::std::clog << time_difference << "\n";
 		time_previous = time_current;
 
 		UDP::DS2KeyPacket Packet{ };
@@ -214,6 +220,7 @@ void CheckForDeadClients()
 			else
 			{
 				g_client_array[i]->SetAlive(CLIENT_STATUS::CHECKING);
+				UDP::SetRemoteIP(g_client_array[i]->GetIP());
 				UDP::Send(&Packet, sizeof(UDP::DS2KeyPacket));
 			}
 		}
@@ -263,12 +270,12 @@ int Setup(int argc, char* argv[])
 
 void Loop()
 {
-	UDP::DS2KeyPacket Packet{ };
+	UDP::DS2KeyCommandSettingsPacket Packet{ };
 
 	//if we  are running, connected, and receive something without error
 	if(g_running
 	&& UDP::IsConnected()
-	&& UDP::Recv(&Packet, sizeof(UDP::DS2KeyPacket)) == 0)
+	&& UDP::Recv(&Packet, sizeof(UDP::DS2KeyCommandSettingsPacket)) == 0)
 	{
 		// If profile is active
 		if(g_client_array[Packet.profile] != nullptr)
@@ -282,7 +289,8 @@ void Loop()
 		case UDP::PACKET::LOOKUP:
 		case UDP::PACKET::ALIVE:
 		{
-			UDP::Send(&Packet, sizeof(UDP::DS2KeyPacket));
+			UDP::DS2KeyPacket* normal_packet = (UDP::DS2KeyPacket*)&Packet;
+			UDP::Send(&normal_packet, sizeof(UDP::DS2KeyPacket));
 			break;
 		}
 		case UDP::PACKET::COMMAND_SETTINGS:
@@ -290,7 +298,8 @@ void Loop()
 			// If profile is active
 			if(g_client_array[Packet.profile] != nullptr)
 			{
-				UDP::DS2KeySettingsPacket settings = UDP::DS2KeySettingsPacket{ };
+				UDP::DS2KeyCommandSettingsPacket settings = UDP::DS2KeyCommandSettingsPacket{ };
+
 				settings.type = UDP::PACKET::COMMAND_SETTINGS;
 
 				// Make a pointer to the profile
@@ -305,7 +314,7 @@ void Loop()
 					strncpy(settings.text[i],
 						profile_data->m_touch_string[i].c_str(),
 						UDP::SETTINGS_PACKET_MAX_TEXT);
-					// TODO: This shouldn't be needed?
+// TODO: This shouldn't be needed?
 					settings.text[i][UDP::SETTINGS_PACKET_MAX_TEXT] = 0;
 				}
 
@@ -316,20 +325,35 @@ void Loop()
 		}
 		case UDP::PACKET::NORMAL:
 		{
-			D2K::Client* pClient = Config::GetClient(Packet.profile);
+			UDP::DS2KeyPacket* normal_packet = (UDP::DS2KeyPacket*)&Packet;
+
+			D2K::Client* pClient = Config::GetClient(normal_packet->profile);
 			//insert packet data
-			pClient->SetPacket(Packet);
+			pClient->SetPacket(*normal_packet);
 			//update
 			pClient->Scan();
 			ProcessPacket(pClient);
 			break;
 		}
+		case UDP::PACKET::NORMAL_SETTING:
+		{
+			UDP::DS2KeyNormalSettingsPacket* normal_setting_packet = (UDP::DS2KeyNormalSettingsPacket*)&Packet;
+			// If profile is active
+			if(g_client_array[normal_setting_packet->profile] != nullptr)
+			{
+				ProfileData* profile_data = g_client_array[normal_setting_packet->profile]->GetProfileDataPointer();
+				Config::SetProfileSetting(profile_data, normal_setting_packet->profile, normal_setting_packet->setting, normal_setting_packet->value);
+			}
+			break;
+		}
 		case UDP::PACKET::COMMAND:
 		{
-			D2K::Client* client_pointer = Config::GetClient(Packet.profile);
+			UDP::DS2KeyPacket* normal_packet = (UDP::DS2KeyPacket*)&Packet;
+
+			D2K::Client* client_pointer = Config::GetClient(normal_packet->profile);
 			ProfileData* data_pointer = client_pointer->GetProfileDataPointer();
 			uint8_t virtual_joystick_id = data_pointer->GetValue8(KEYS::JOY);
-			int touch_screen_button = KEYS::TOUCH_00 + Packet.keys;
+			int touch_screen_button = KEYS::TOUCH_00 + normal_packet->keys;
 			uint16_t virtual_key = data_pointer->GetVirtualKey(touch_screen_button);
 
 			if(virtual_key)

@@ -35,6 +35,77 @@ int Load()
 	return 0;
 }
 
+void NewProfile(ProfileData* profile_data, uint8_t profile_number)
+{
+	profile_data->m_mouse = "Relative";
+	profile_data->m_joy = "0";
+
+	profile_data->SetVirtualKey(KEYS::DUP, KEY_UP);
+	profile_data->SetVirtualKey(KEYS::DDOWN, KEY_DOWN);
+	profile_data->SetVirtualKey(KEYS::DLEFT, KEY_LEFT);
+	profile_data->SetVirtualKey(KEYS::DRIGHT, KEY_RIGHT);
+	profile_data->SetVirtualKey(KEYS::A, KEY_F);
+	profile_data->SetVirtualKey(KEYS::B, KEY_D);
+	profile_data->SetVirtualKey(KEYS::X, KEY_S);
+	profile_data->SetVirtualKey(KEYS::Y, KEY_A);
+	profile_data->SetVirtualKey(KEYS::L, KEY_W);
+	profile_data->SetVirtualKey(KEYS::R, KEY_E);
+	profile_data->SetVirtualKey(KEYS::START, KEY_RETURN);
+	profile_data->SetVirtualKey(KEYS::SELECT, KEY_RSHIFT);
+	profile_data->SetVirtualKey(KEYS::LID, KEY_ESCAPE);
+		
+	profile_data->SetVirtualKey(KEYS::ZL, KEY_Q);
+	profile_data->SetVirtualKey(KEYS::ZR, KEY_R);
+
+	profile_data->SetVirtualKey(KEYS::CSTICK_UP, KEY_NUMPAD8);
+	profile_data->SetVirtualKey(KEYS::CSTICK_DOWN, KEY_NUMPAD2);
+	profile_data->SetVirtualKey(KEYS::CSTICK_LEFT, KEY_NUMPAD4);
+	profile_data->SetVirtualKey(KEYS::CSTICK_RIGHT, KEY_NUMPAD6);
+
+	profile_data->SetVirtualKey(KEYS::CPAD_UP, KEY_HOME);
+	profile_data->SetVirtualKey(KEYS::CPAD_DOWN, KEY_END);
+	profile_data->SetVirtualKey(KEYS::CPAD_LEFT, KEY_DELETE);
+	profile_data->SetVirtualKey(KEYS::CPAD_RIGHT, KEY_NEXT);
+
+	profile_data->SetVirtualKey(KEYS::BLUE, KEY_NUMPAD1);
+	profile_data->SetVirtualKey(KEYS::YELLOW, KEY_NUMPAD3);
+	profile_data->SetVirtualKey(KEYS::RED, KEY_NUMPAD7);
+	profile_data->SetVirtualKey(KEYS::GREEN, KEY_NUMPAD9);
+
+	profile_data->SetVirtualKey(KEYS::TOUCH_00, KEY_0);
+	profile_data->SetVirtualKey(KEYS::TOUCH_01, KEY_1);
+	profile_data->SetVirtualKey(KEYS::TOUCH_02, KEY_2);
+	profile_data->SetVirtualKey(KEYS::TOUCH_03, KEY_3);
+	profile_data->SetVirtualKey(KEYS::TOUCH_04, KEY_4);
+	profile_data->SetVirtualKey(KEYS::TOUCH_05, KEY_5);
+	profile_data->SetVirtualKey(KEYS::TOUCH_06, KEY_6);
+	profile_data->SetVirtualKey(KEYS::TOUCH_07, KEY_7);
+	profile_data->SetVirtualKey(KEYS::TOUCH_08, KEY_8);
+	profile_data->SetVirtualKey(KEYS::TOUCH_09, KEY_9);
+	profile_data->SetVirtualKey(KEYS::TOUCH_10, KEY_OEM_MINUS);
+	profile_data->SetVirtualKey(KEYS::TOUCH_11, KEY_OEM_PLUS);
+
+	for(int i = 0; i < UDP::SETTINGS_PACKET_MAX_BUTTONS; i++)
+	{
+		profile_data->m_touch_string[i] = "Command ";
+		profile_data->m_touch_string[i].append(ltos(i));
+		profile_data->m_touch_string[i].resize(10);
+	}
+
+	const int screenW = 256;
+	const int screenH = 192;
+	int TouchButton = 0;
+	for(int y = 0; y < screenH; y += screenH / 3)
+		for(int x = 0; x < screenW; x += screenW / 4)
+			profile_data->SetTouchPos(
+				TouchButton++, // buttons 0 - 11
+				x,             // x
+				y,             // y
+				screenW / 4,   // w
+				screenH / 3    // h
+			);
+	SaveProfile(profile_data, profile_number);
+}
 int LoadProfile(ProfileData* profile_data, uint8_t profile_number)
 {
 	std::ostringstream ssfilename;
@@ -47,75 +118,8 @@ int LoadProfile(ProfileData* profile_data, uint8_t profile_number)
 		int err = errno;
 		std::clog << "Error (iniParser::load): #" << err << "\n" << 
 		             "Failed to open file: " << INI_FILENAME << "\n";
-		profile_data->m_mouse = "Relative";
-		profile_data->m_joy = "0";
-
-		profile_data->SetVirtualKey(KEYS::DUP, KEY_UP);
-		profile_data->SetVirtualKey(KEYS::DDOWN, KEY_DOWN);
-		profile_data->SetVirtualKey(KEYS::DLEFT, KEY_LEFT);
-		profile_data->SetVirtualKey(KEYS::DRIGHT, KEY_RIGHT);
-		profile_data->SetVirtualKey(KEYS::A, KEY_F);
-		profile_data->SetVirtualKey(KEYS::B, KEY_D);
-		profile_data->SetVirtualKey(KEYS::X, KEY_S);
-		profile_data->SetVirtualKey(KEYS::Y, KEY_A);
-		profile_data->SetVirtualKey(KEYS::L, KEY_W);
-		profile_data->SetVirtualKey(KEYS::R, KEY_E);
-		profile_data->SetVirtualKey(KEYS::START, KEY_RETURN);
-		profile_data->SetVirtualKey(KEYS::SELECT, KEY_RSHIFT);
-		profile_data->SetVirtualKey(KEYS::LID, KEY_ESCAPE);
 		
-		profile_data->SetVirtualKey(KEYS::ZL, KEY_Q);
-		profile_data->SetVirtualKey(KEYS::ZR, KEY_R);
-
-		profile_data->SetVirtualKey(KEYS::CSTICK_UP, KEY_NUMPAD8);
-		profile_data->SetVirtualKey(KEYS::CSTICK_DOWN, KEY_NUMPAD2);
-		profile_data->SetVirtualKey(KEYS::CSTICK_LEFT, KEY_NUMPAD4);
-		profile_data->SetVirtualKey(KEYS::CSTICK_RIGHT, KEY_NUMPAD6);
-
-		profile_data->SetVirtualKey(KEYS::CPAD_UP, KEY_HOME);
-		profile_data->SetVirtualKey(KEYS::CPAD_DOWN, KEY_END);
-		profile_data->SetVirtualKey(KEYS::CPAD_LEFT, KEY_DELETE);
-		profile_data->SetVirtualKey(KEYS::CPAD_RIGHT, KEY_NEXT);
-
-		profile_data->SetVirtualKey(KEYS::BLUE, KEY_NUMPAD1);
-		profile_data->SetVirtualKey(KEYS::YELLOW, KEY_NUMPAD3);
-		profile_data->SetVirtualKey(KEYS::RED, KEY_NUMPAD7);
-		profile_data->SetVirtualKey(KEYS::GREEN, KEY_NUMPAD9);
-
-		profile_data->SetVirtualKey(KEYS::TOUCH_00, KEY_0);
-		profile_data->SetVirtualKey(KEYS::TOUCH_01, KEY_1);
-		profile_data->SetVirtualKey(KEYS::TOUCH_02, KEY_2);
-		profile_data->SetVirtualKey(KEYS::TOUCH_03, KEY_3);
-		profile_data->SetVirtualKey(KEYS::TOUCH_04, KEY_4);
-		profile_data->SetVirtualKey(KEYS::TOUCH_05, KEY_5);
-		profile_data->SetVirtualKey(KEYS::TOUCH_06, KEY_6);
-		profile_data->SetVirtualKey(KEYS::TOUCH_07, KEY_7);
-		profile_data->SetVirtualKey(KEYS::TOUCH_08, KEY_8);
-		profile_data->SetVirtualKey(KEYS::TOUCH_09, KEY_9);
-		profile_data->SetVirtualKey(KEYS::TOUCH_10, KEY_OEM_MINUS);
-		profile_data->SetVirtualKey(KEYS::TOUCH_11, KEY_OEM_PLUS);
-
-		for(int i = 0; i < UDP::SETTINGS_PACKET_MAX_BUTTONS; i++)
-		{
-			profile_data->m_touch_string[i] = "Command ";
-			profile_data->m_touch_string[i].append(ltos(i));
-			profile_data->m_touch_string[i].resize(10);
-		}
-
-		const int screenW = 256;
-		const int screenH = 192;
-		int TouchButton = 0;
-		for(int y = 0; y < screenH; y += screenH / 3)
-			for(int x = 0; x < screenW; x += screenW / 4)
-			profile_data->SetTouchPos(
-				TouchButton++, // buttons 0 - 11
-										x,              //x
-										y,              //y
-										screenW / 4,	//w
-										screenH / 3     //h
-										);
-
-		SaveProfile(profile_data, profile_number);
+		NewProfile(profile_data, profile_number);
 
 		return 1;
 	}
@@ -336,6 +340,15 @@ int SaveProfile(ProfileData* Profile, uint8_t profileNumber)
 	}
 
 	fclose(file);
+
+	return 0;
+}
+
+int SetProfileSetting(ProfileData* Profile, uint8_t profileNumber, uint16_t setting, uint16_t value)
+{
+	LoadProfile(Profile, profileNumber);
+	Profile->SetCommand(setting, Key::GetString(value));
+	SaveProfile(Profile, profileNumber);
 
 	return 0;
 }

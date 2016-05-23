@@ -35,6 +35,7 @@ void DeInit()
 #endif
 }
 
+//TODO check and verify for every extended key
 //Checks if (key) is an "extended" key
 //@param key Platform specific value
 //@return true if (key) is an "extended" key
@@ -49,9 +50,15 @@ bool IsExtended(uint16_t key)
 	case VK_PRIOR:
 	case VK_NEXT:
 	case VK_NUMLOCK:
-	case VK_PAUSE:
 	case VK_PRINT:
+	case VK_SCROLL:
+	case VK_PAUSE:
 	case VK_DIVIDE:
+	case VK_LMENU:
+	case VK_RMENU:
+	case VK_LWIN:
+	case VK_RWIN:
+	case VK_LCONTROL:
 	case VK_RCONTROL:
 	case VK_UP:
 	case VK_DOWN:
