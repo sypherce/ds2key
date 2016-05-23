@@ -112,6 +112,9 @@
     <ClInclude Include="core\vjoy\inc\vjoyinterface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\common\enum_keys.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\common\iniParserWrapper.cpp">

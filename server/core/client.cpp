@@ -103,7 +103,7 @@ std::string ProfileData::VirtualKeyToString(uint16_t button)
 }
 ProfileData::ProfileData()
 {
-
+	m_null = std::string("");
 }
 ProfileData::~ProfileData()
 {
@@ -224,7 +224,7 @@ std::string& ProfileData::GetStringReference(int enum_key)
 	case KEYS::TOUCH_STRING_11:
 		return m_touch_string[11];
 	default:
-		return std::string("");
+		return m_null;
 	}
 }
 
@@ -290,7 +290,7 @@ const std::string& ProfileData::GetCommand(int enum_key)
 	if(!isVirtualKey(pointer))
 		return pointer;
 
-	return std::string("");
+	return m_null;
 }
 
 Client::Client()

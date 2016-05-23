@@ -3,7 +3,7 @@
 #include <string>   //std::string
 #include <cstdint>  //uint8_t, etc
 #include "common/ds2keyPacket.h"
-
+#include "common/enum_keys.h"
 
 namespace D2K {
 
@@ -42,32 +42,6 @@ static const uint32_t DS2KEY_CPAD_LEFT = (1 << (29));
 static const uint32_t DS2KEY_CPAD_UP = (1 << (30));
 static const uint32_t DS2KEY_CPAD_DOWN = (1 << (31));
 
-
-//this represents each value in a Keys Profile array. Example: Profile[KEYS::UP] is defined as KEY_UP by default
-enum KEYS
-{
-	Profile, MOUSE, JOY,
-
-	_START_OF_BUTTONS_,
-
-	DUP, DDOWN, DLEFT, DRIGHT, A, B, X, Y, L, R, START, SELECT, LID,
-
-	ZL, ZR,
-
-	BLUE, YELLOW, RED, GREEN,
-
-	CSTICK_UP, CSTICK_DOWN, CSTICK_LEFT, CSTICK_RIGHT,
-	CPAD_UP, CPAD_DOWN, CPAD_LEFT, CPAD_RIGHT, 
-
-	_END_OF_BUTTONS_,
-	TOUCH_00, TOUCH_01, TOUCH_02, TOUCH_03, TOUCH_04, TOUCH_05, TOUCH_06, TOUCH_07, TOUCH_08, TOUCH_09, TOUCH_10, TOUCH_11,
-	TOUCH_STRING_00, TOUCH_STRING_01, TOUCH_STRING_02, TOUCH_STRING_03, TOUCH_STRING_04, TOUCH_STRING_05, TOUCH_STRING_06, TOUCH_STRING_07, TOUCH_STRING_08, TOUCH_STRING_09, TOUCH_STRING_10, TOUCH_STRING_11,
-	TOUCH_00X, TOUCH_01X, TOUCH_02X, TOUCH_03X, TOUCH_04X, TOUCH_05X, TOUCH_06X, TOUCH_07X, TOUCH_08X, TOUCH_09X, TOUCH_10X, TOUCH_11X,
-	TOUCH_00Y, TOUCH_01Y, TOUCH_02Y, TOUCH_03Y, TOUCH_04Y, TOUCH_05Y, TOUCH_06Y, TOUCH_07Y, TOUCH_08Y, TOUCH_09Y, TOUCH_10Y, TOUCH_11Y,
-	TOUCH_00W, TOUCH_01W, TOUCH_02W, TOUCH_03W, TOUCH_04W, TOUCH_05W, TOUCH_06W, TOUCH_07W, TOUCH_08W, TOUCH_09W, TOUCH_10W, TOUCH_11W,
-	TOUCH_00H, TOUCH_01H, TOUCH_02H, TOUCH_03H, TOUCH_04H, TOUCH_05H, TOUCH_06H, TOUCH_07H, TOUCH_08H, TOUCH_09H, TOUCH_10H, TOUCH_11H,
-	END
-};
 extern uint32_t EnumKeyToNDSKeypadBit(int enum_key);
 
 class ProfileData final
@@ -147,6 +121,7 @@ public:
 	uint8_t m_touch_y[12];
 	uint8_t m_touch_w[12];
 	uint8_t m_touch_h[12];
+	std::string m_null;
 
 private:
 	//returns true if `button` is a virtual keypress, false otherwise

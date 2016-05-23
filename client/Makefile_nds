@@ -7,7 +7,7 @@ endif
 
 include $(DEVKITARM)/ds_rules
 
-export TARGET		:=	DS2Key
+export TARGET		:=	ds2key
 export TOPDIR		:=	$(CURDIR)
 
 
@@ -35,3 +35,7 @@ clean:
 	$(MAKE) -f Makefile_arm9 clean
 	$(MAKE) -f Makefile_arm7 clean
 	rm -f $(TARGET).nds $(TARGET).arm7 $(TARGET).arm9
+#---------------------------------------------------------------------------------
+run:
+	@echo launching via dslink
+	@$(DEVKITARM)/bin/dslink $(TARGET).nds

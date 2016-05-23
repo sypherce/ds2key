@@ -146,5 +146,8 @@
     <ClInclude Include="source\windows\turboWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\common\enum_keys.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

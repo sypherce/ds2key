@@ -107,7 +107,8 @@ int LoadProfile(ProfileData* profile_data, uint8_t profile_number)
 		int TouchButton = 0;
 		for(int y = 0; y < screenH; y += screenH / 3)
 			for(int x = 0; x < screenW; x += screenW / 4)
-				profile_data->SetTouchPos(	TouchButton++,                  //buttons 0 - 11
+			profile_data->SetTouchPos(
+				TouchButton++, // buttons 0 - 11
 										x,              //x
 										y,              //y
 										screenW / 4,	//w
