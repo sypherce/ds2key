@@ -51,36 +51,36 @@ Button* button_commands;
 
 WindowClass::WindowClass() : Window()
 {
-	Color[COLOR_BACKGROUND] 		= ARGB16(1, 19, 22, 25);
+	Color[COLOR_BACKGROUND]            = ARGB16(1, 19, 22, 25);
 
-	Color[COLOR_LABEL_TEXT] 		= ARGB16(1, 0, 0, 0);
-	Color[COLOR_LABEL_BACKGROUND]		= Color[COLOR_BACKGROUND];
+	Color[COLOR_LABEL_TEXT]            = ARGB16(1, 0, 0, 0);
+	Color[COLOR_LABEL_BACKGROUND]      = Color[COLOR_BACKGROUND];
 
-	Color[COLOR_BUTTON_TEXT]		= Color[COLOR_LABEL_TEXT];
-	Color[COLOR_BUTTON_BACKGROUND]		= ARGB16(1, 31, 30, 15);
-	Color[COLOR_BUTTON_OUTLINE]		= Color[COLOR_BUTTON_TEXT];
-	Color[COLOR_BUTTON_OUTLINE_ACTIVE]	= ARGB16(1, 31, 0, 0);
+	Color[COLOR_BUTTON_TEXT]           = Color[COLOR_LABEL_TEXT];
+	Color[COLOR_BUTTON_BACKGROUND]     = ARGB16(1, 31, 30, 15);
+	Color[COLOR_BUTTON_OUTLINE]        = Color[COLOR_BUTTON_TEXT];
+	Color[COLOR_BUTTON_OUTLINE_ACTIVE] = ARGB16(1, 31, 0, 0);
 
-	Color[COLOR_EDIT_TEXT]			= Color[COLOR_LABEL_TEXT];
-	Color[COLOR_EDIT_BACKGROUND]		= ARGB16(1, 31, 31, 31);
-	Color[COLOR_EDIT_OUTLINE]		= Color[COLOR_EDIT_TEXT];
-	Color[COLOR_EDIT_OUTLINE_ACTIVE]	= Color[COLOR_BUTTON_OUTLINE_ACTIVE];
+	Color[COLOR_EDIT_TEXT]             = Color[COLOR_LABEL_TEXT];
+	Color[COLOR_EDIT_BACKGROUND]       = ARGB16(1, 31, 31, 31);
+	Color[COLOR_EDIT_OUTLINE]          = Color[COLOR_EDIT_TEXT];
+	Color[COLOR_EDIT_OUTLINE_ACTIVE]   = Color[COLOR_BUTTON_OUTLINE_ACTIVE];
 
 	m_screen = 0;
 
-	AppendObject(label_title		= new Label(m_screen, Rect(24,0+3,128,10), D2K::VERSION_STRING));
-	AppendObject(label_clock		= new Label(m_screen, Rect(160,0+3,70,10), D2K::GetTime()));
-	AppendObject(label_ip			= new Label(m_screen, Rect(64,24+3,10,10), "IP:"));
-	AppendObject(label_port			= new Label(m_screen, Rect(64,48+3,10,10), "Port:"));
-	AppendObject(label_profile		= new Label(m_screen, Rect(64,72+3,10,10), "Profile:"));
+	AppendObject(label_title           = new Label(m_screen, Rect(24,0+3,128,10), D2K::VERSION_STRING));
+	AppendObject(label_clock           = new Label(m_screen, Rect(160,0+3,70,10), D2K::GetTime()));
+	AppendObject(label_ip              = new Label(m_screen, Rect(64,24+3,10,10), "IP:"));
+	AppendObject(label_port            = new Label(m_screen, Rect(64,48+3,10,10), "Port:"));
+	AppendObject(label_profile         = new Label(m_screen, Rect(64,72+3,10,10), "Profile:"));
 
-	AppendObject(edit_ip			= new Edit(m_screen, Rect(96,24,95,10), UDP::GetRemoteIPString(), &EditIPFunction));
-	AppendObject(button_ip			= new Button(m_screen, Rect(204,24,35,10), "Find IP", &ButtonIPFunction));
-	AppendObject(edit_port			= new Edit(m_screen, Rect(112,48,79,10), UDP::GetPortString(), &EditPortFunction));
-	AppendObject(edit_profile		= new Edit(m_screen, Rect(136,72,55,10), UDP::GetProfileString(), &EditProfileFunction));
-	AppendObject(button_turbo		= new Button(m_screen, Rect(0,177,35,10), "Turbo", &ButtonTurboFunction));
-	AppendObject(button_commands		= new Button(m_screen, Rect(95,177,35,10), "Commands", &ButtonCommandsFunction));
-	AppendObject(button_touch		= new Button(m_screen, Rect(217,177,35,10), "Touch", &ButtonTouchFunction));
+	AppendObject(edit_ip               = new Edit(m_screen, Rect(96,24,95,10), UDP::GetRemoteIPString(), &EditIPFunction));
+	AppendObject(button_ip             = new Button(m_screen, Rect(204,24,35,10), "Find IP", &ButtonIPFunction));
+	AppendObject(edit_port             = new Edit(m_screen, Rect(112,48,79,10), UDP::GetPortString(), &EditPortFunction));
+	AppendObject(edit_profile          = new Edit(m_screen, Rect(136,72,55,10), UDP::GetProfileString(), &EditProfileFunction));
+	AppendObject(button_turbo          = new Button(m_screen, Rect(0,177,35,10), "Turbo", &ButtonTurboFunction));
+	AppendObject(button_commands       = new Button(m_screen, Rect(95,177,35,10), "Commands", &ButtonCommandsFunction));
+	AppendObject(button_touch          = new Button(m_screen, Rect(217,177,35,10), "Touch", &ButtonTouchFunction));
 }
 WindowClass::~WindowClass() { }
 bool WindowClass::Update()
@@ -212,7 +212,6 @@ void ButtonIPFunction()
 }
 void ButtonCommandsFunction()
 {
-	UDP::GetCommandSettings();
 	Main::g_window.SetVisible(false);  // Hide main window
 	button_commands->SetVisible(true);  // Keep [Commands] button visible
 	Command::g_window.SetVisible(true);  // Show command window
