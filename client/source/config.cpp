@@ -22,7 +22,7 @@ int Load()
 	if(ini == nullptr)
 	{
 		int err = errno;
-		std::clog << "Error (iniParser::load): " << strerror(err) << "\n" <<
+		std::clog << "Error #" << err << " (iniParser::load): " << strerror(err) << "\n" <<
 		             "Failed to open file: " << INI_FILENAME << "\n";
 		UDP::SetRemoteIP(DEFAULT_IP);
 		UDP::SetConfigPort(D2K::DEFAULT_PORT);
@@ -53,7 +53,7 @@ int Save()
 	if(file == nullptr)
 	{
 		int err = errno;
-		std::clog << "Error (fopen): " << strerror(err) << "\n" <<
+		std::clog << "Error #" << err << " (fopen): " << strerror(err) << "\n" <<
 		             "Failed to open file: " << INI_FILENAME << "\n";
 
 		return err;
