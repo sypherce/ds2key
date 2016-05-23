@@ -9,8 +9,6 @@
 #include <iostream>//std::cout, std::clog
 #include "vjoy.h"
 #include "key.h"
-#elif defined(__linux__)
-#define NUM_DIGITAL 20
 #endif
 
 #include "input.h"

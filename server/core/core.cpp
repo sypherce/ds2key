@@ -52,11 +52,11 @@ void ProcessPacket(D2K::Client* Client)
 
 	ProfileData* Profile = Client->GetProfileDataPointer();
 
+	uint8_t Joystick = Profile->GetValue8(KEYS::JOY);
 	//buttons
 	for(int enum_key = _START_OF_BUTTONS_ + 1; enum_key < KEYS::_END_OF_BUTTONS_; enum_key++)
 	{
 		uint32_t DSButton = EnumKeyToNDSKeypadBit(enum_key);
-		uint8_t Joystick = Profile->GetValue8(KEYS::JOY);
 		uint16_t PCButton = Profile->GetVirtualKey(enum_key);
 
 		if(PCButton)

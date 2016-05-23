@@ -4,9 +4,7 @@
 #include "VJoy.h"
 #include "vjoy/inc/vjoyinterface.h"
 
-namespace D2K {
-namespace Input {
-namespace Joystick {
+namespace D2K {namespace Input {namespace Joystick {
 
 //We use MAX_JOYSTICKS+1 because vJoy's joysticks are 1-based.
 //joystick_position[0] is unused, but it makes the rest of the

@@ -6,6 +6,7 @@
 #include <sstream>  // std::stringstream
 
 namespace D2K {
+
 Client* g_client_array[CLIENT_MAX] = { };
 
 uint32_t EnumKeyToNDSKeypadBit(int enum_key)

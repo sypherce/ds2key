@@ -6,6 +6,7 @@
 
 
 namespace D2K {
+
 static const int CLIENT_MAX = 256;
 static const char* D2K_COMMAND = "*";
 static const int D2K_COMMAND_LENGTH = 1;

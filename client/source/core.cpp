@@ -93,8 +93,8 @@ enum
 	KEY_LID = BIT(13)
 };
 
-static uint8_t lid_open{};
-uint8_t old_lid_open{};
+static uint8_t lid_open{ };
+uint8_t old_lid_open{ };
 
 void ScanLid()
 {
@@ -170,24 +170,24 @@ void UpdateLid()
 {
 	static uint32_t s_vblank_count = 0;
 	static const uint32_t VBLANK_MAX = (60 * 4); // 4 seconds
-	
-	if(g_keys_up&KEY_LID                         // If lid just opened OR
-	|| g_keys_held&KEY_TOUCH)                    // Screen is touched
+
+	if(g_keys_up&KEY_LID                     // If lid just opened OR
+	|| g_keys_held&KEY_TOUCH)                // Screen is touched
 	{
 		s_vblank_count = 0;                  // Reset timer
 		BacklightsOn();                      // Backlights on
 	}
-	else if(g_keys_down                          // A button pressed, possibly the lid OR
-	|| s_vblank_count == VBLANK_MAX)             // Enough time passed
+	else if(g_keys_down                      // A button pressed, possibly the lid OR
+	|| s_vblank_count == VBLANK_MAX)         // Enough time passed
 	{
 		BacklightsOff();                     // Backlights off
 	}
 
 	if(s_vblank_count < VBLANK_MAX)
 		s_vblank_count++;                    // Increment timer
-	if(!enable_input_timeout)                    // This avoids the screen turning off after 4 seconds
+	if(!enable_input_timeout)                // This avoids the screen turning off after 4 seconds
 		s_vblank_count = 0;
-	//while(g_keys_held&KEY_LID)                  // Wait here while the lid is closed
+	//while(g_keys_held&KEY_LID)             // Wait here while the lid is closed
 	//	WaitForVBlank();
 }
 
@@ -304,6 +304,7 @@ void DeInit()
 int Loop()
 {
 #if defined(_3DS)
+//TODO: we should send a release of all keys if we knowingly disconnect
 	if(!aptMainLoop())
 		return 0;
 

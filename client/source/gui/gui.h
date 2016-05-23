@@ -9,10 +9,10 @@ namespace D2K {namespace GUI {
 //TODO Clean up SCREEN_WIDTH, _3DS_SCREEN_WIDTH 
 //when I know what I am wanting as a standard
 #ifdef _3DS
-#define SCREEN_HEIGHT 192
-#define SCREEN_WIDTH 256
-#define _3DS_SCREEN_WIDTH 320
-#define _3DS_SCREEN_HEIGHT 240
+const uint16_t SCREEN_HEIGHT      = 192;
+const uint16_t SCREEN_WIDTH       = 256;
+const uint16_t _3DS_SCREEN_WIDTH  = 320;
+const uint16_t _3DS_SCREEN_HEIGHT = 240;
 #define ARGB16(a, r, g, b) (((a) << 15) | (r) | ((g) << 5) | ((b) << 10))
 #endif
 
