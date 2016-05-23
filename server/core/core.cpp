@@ -193,8 +193,8 @@ void ReleaseDeadClient(D2K::Client* Client)
 
 void CheckForDeadClients()
 {
-	static std::chrono::steady_clock::time_point time_previous = std::chrono::high_resolution_clock::now();
-	       std::chrono::steady_clock::time_point time_current  = std::chrono::high_resolution_clock::now();
+	static std::chrono::high_resolution_clock::time_point time_previous = std::chrono::high_resolution_clock::now();
+	       std::chrono::high_resolution_clock::time_point time_current  = std::chrono::high_resolution_clock::now();
 	long long time_difference =std::chrono::duration_cast<std::chrono::milliseconds>(time_current - time_previous).count();
 	if(time_difference >= 1000)
 	{

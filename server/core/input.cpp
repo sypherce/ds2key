@@ -8,8 +8,8 @@
 #include <winuser.h>
 #include <iostream>//std::cout, std::clog
 #include "vjoy.h"
-#include "key.h"
 #endif
+#include "key.h"
 
 #include "input.h"
 
@@ -43,6 +43,7 @@ bool IsExtended(uint16_t key)
 {
 	switch(key)
 	{
+#ifdef _WIN32
 	case VK_INSERT:
 	case VK_DELETE:
 	case VK_HOME:
@@ -65,6 +66,7 @@ bool IsExtended(uint16_t key)
 	case VK_LEFT:
 	case VK_RIGHT:
 		return true;
+#endif
 	default:
 		return false;
 	}
@@ -72,14 +74,8 @@ bool IsExtended(uint16_t key)
 
 enum KeyState
 {
-#ifdef _WIN32
 	pressed = false,
 	released = true,
-#elif defined(__linux__)
-	//these linux values have not been tested
-	pressed = true,
-	released = false,
-#endif
 };
 
 //Presses or releases (key) depending on (state)
@@ -149,8 +145,8 @@ void Keyboard(uint16_t key, KeyState state)
 
 		SendInput(1, (LPINPUT)&input, sizeof(INPUT));
 #elif defined(__linux__)
-		int code = XKeysymToKeycode(g_display, key);
-		XTestFakeKeyEvent(g_display, code, state, 0);
+		unsigned long int code = XKeysymToKeycode(g_display, key);
+		XTestFakeKeyEvent(g_display, code, !state, 0);
 		XFlush(g_display);
 #endif
 	}
@@ -180,18 +176,18 @@ void Mouse(bool type, signed long int x, signed long int y)
 	SendInput(1, (LPINPUT)&input, sizeof(INPUT));
 #elif defined(__linux__)
 	Window dummyWin;
-	unsigned int dummyInt;
-	unsigned int width, height;
+	int dummySignedInt;
+	unsigned int width, height, dummyInt;
 
 	int screen = DefaultScreen(g_display);
 	Window rootwindow = RootWindow(g_display, screen);
 
-	if(XGetGeometry(g_display, rootwindow, &dummyWin, &dummyInt, &dummyInt, &width, &height, &dummyInt, &dummyInt))
+	if(XGetGeometry(g_display, rootwindow, &dummyWin, &dummySignedInt, &dummySignedInt, &width, &height, &dummyInt, &dummyInt))
 	{
 		if(type)
-			XTestFakeMotionEvent(g_display, screen, (m_x * width) / 65535, (m_y * height) / 65535, 0);
+			XTestFakeMotionEvent(g_display, screen, (x * width) / 65535, (y * height) / 65535, 0);
 		else
-			XTestFakeRelativeMotionEvent(g_display, m_x, m_y, 0);
+			XTestFakeRelativeMotionEvent(g_display, x, y, 0);
 	}
 #endif
 }

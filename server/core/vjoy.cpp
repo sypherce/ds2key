@@ -1,15 +1,23 @@
 //Joystick emulation for windows
 
 #include <iostream>//std::cout, std::clog
+#ifdef _WIN32
 #include "VJoy.h"
 #include "vjoy/inc/vjoyinterface.h"
+#endif
 
 namespace D2K {namespace Input {namespace Joystick {
 
 //We use MAX_JOYSTICKS+1 because vJoy's joysticks are 1-based.
 //joystick_position[0] is unused, but it makes the rest of the
 //code not need joystick_position[device+1].
+#ifdef _WIN32
 JOYSTICK_POSITION joystick_position[MAX_JOYSTICKS+1]{ };
+bool hat_up[MAX_JOYSTICKS+1]{ };
+bool hat_down[MAX_JOYSTICKS+1]{ };
+bool hat_left[MAX_JOYSTICKS+1]{ };
+bool hat_right[MAX_JOYSTICKS+1]{ };
+#endif
 const int CONTINUOUS_UP = 0;
 const int CONTINUOUS_UP_RIGHT = 4500;
 const int CONTINUOUS_RIGHT = 9000;
@@ -19,14 +27,11 @@ const int CONTINUOUS_DOWN_LEFT = 22500;
 const int CONTINUOUS_LEFT = 27000;
 const int CONTINUOUS_UP_LEFT = 31500;
 const int CONTINUOUS_NEUTRAL = -1;
-bool hat_up[MAX_JOYSTICKS+1]{ };
-bool hat_down[MAX_JOYSTICKS+1]{ };
-bool hat_left[MAX_JOYSTICKS+1]{ };
-bool hat_right[MAX_JOYSTICKS+1]{ };
 
 //return false/0 if successful
 bool Init(uint8_t device)
 {
+#ifdef _WIN32
 	// Get the driver attributes (Vendor ID, Product ID, Version Number)
 	if(!vJoyEnabled())
 	{
@@ -68,12 +73,14 @@ bool Init(uint8_t device)
 		std::clog << "Acquired device number " << device << " - OK\n";
 
 	joystick_position[device].bDevice = device;
+#endif
 
 	return false;
 }
 
 bool DeInit(uint8_t device)
 {
+#ifdef _WIN32
 	if(!IsActive(device))
 	{
 		std::clog << "vJoy device " << device << " is already inactive\n";
@@ -82,6 +89,7 @@ bool DeInit(uint8_t device)
 	
 	joystick_position[device].bDevice = 0;
 	RelinquishVJD(device);
+#endif
 
 	return true;
 }
@@ -89,12 +97,17 @@ bool DeInit(uint8_t device)
 
 bool IsActive(uint8_t device)
 {
+#ifdef _WIN32
 	return joystick_position[device].bDevice == device;
+#else
+	return false;
+#endif
 }
 
 //Returns true if device updated
 int Update(uint8_t device)
 {
+#ifdef _WIN32
 	if(!IsActive(device))
 		return false;
 
@@ -106,9 +119,13 @@ int Update(uint8_t device)
 	}
 
 	return return_status;
+#else
+	return false;
+#endif
 }
 void SetButton(uint8_t device, uint8_t button, bool value)
 {
+#ifdef _WIN32
 	if(!IsActive(device)
 	&&  Init(device))
 		return;
@@ -117,9 +134,11 @@ void SetButton(uint8_t device, uint8_t button, bool value)
 		joystick_position[device].lButtons |= 1 << button;
 	else      //release
 		joystick_position[device].lButtons &= ~(1 << button);
+#endif
 }
 void SetHat(uint8_t device, uint8_t hat, bool value)
 {	
+#ifdef _WIN32
 	if(!IsActive(device)
 	&&  Init(device))
 		return;
@@ -140,9 +159,11 @@ void SetHat(uint8_t device, uint8_t hat, bool value)
 		hat_right[device] = value;
 
 	UpdateHat(device);
+#endif
 }
 void UpdateHat(uint8_t device)
 {
+#ifdef _WIN32
 	if     ( hat_up[device] && !hat_down[device] && !hat_left[device] && !hat_right[device])
 		joystick_position[device].bHats = CONTINUOUS_UP;
 	else if( hat_up[device] && !hat_down[device] && !hat_left[device] &&  hat_right[device])
@@ -161,9 +182,11 @@ void UpdateHat(uint8_t device)
 		joystick_position[device].bHats = CONTINUOUS_UP_LEFT;
 	else
 		joystick_position[device].bHats = CONTINUOUS_NEUTRAL;
+#endif
 }
 void SetAxisPercent(uint8_t device, uint8_t axis, uint8_t value)
 {
+#ifdef _WIN32
 	static LONG percent_axis_scale = 8000 / 100;
 	
 	if(!IsActive(device)
@@ -203,14 +226,19 @@ void SetAxisPercent(uint8_t device, uint8_t axis, uint8_t value)
 	default:
 		break;
 	}
+#endif
 }
 bool GetButton(uint8_t device, uint8_t button)
 {
+#ifdef _WIN32
 	if(!IsActive(device))
 		return false;
 
 	uint16_t bit_shift_button = 1 << button;
 	return (joystick_position[device].lButtons&bit_shift_button) != 0;
+#else
+	return false;
+#endif
 }
 
 }}}//namespace D2K::Input
