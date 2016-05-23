@@ -189,7 +189,7 @@ void CheckForDeadClients()
 {
 	static std::chrono::steady_clock::time_point time_previous = std::chrono::high_resolution_clock::now();
 	       std::chrono::steady_clock::time_point time_current  = std::chrono::high_resolution_clock::now();
-	long time_difference =std::chrono::duration_cast<std::chrono::milliseconds>(time_current - time_previous).count();
+	long long time_difference =std::chrono::duration_cast<std::chrono::milliseconds>(time_current - time_previous).count();
 	if(time_difference >= 1000)
 	{
 		std::clog << time_difference << "\n";
@@ -200,20 +200,21 @@ void CheckForDeadClients()
 
 		for(int i = 0; i < D2K::CLIENT_MAX; i++)
 		{
-			if(g_client_array[i] != nullptr)
+			if(g_client_array[i] == nullptr)
 			{
-				if(g_client_array[i]->IsAlive() == CLIENT_STATUS::CHECKING)
-				{
-					ReleaseDeadClient(g_client_array[i]);
-					delete(g_client_array[i]);
-					g_client_array[i] = nullptr;
-					std::cout << "\nClient #:" << i << " removed from inactivity.\n";
-				}
-				else
-				{
-					g_client_array[i]->SetAlive(CLIENT_STATUS::CHECKING);
-					UDP::Send(&Packet, sizeof(UDP::DS2KeyPacket));
-				}
+				// don't do anything, the array is empty
+			}
+			else if(g_client_array[i]->IsAlive() == CLIENT_STATUS::CHECKING)
+			{
+				ReleaseDeadClient(g_client_array[i]);
+				delete(g_client_array[i]);
+				g_client_array[i] = nullptr;
+				std::cout << "\nClient #:" << i << " removed from inactivity.\n";
+			}
+			else
+			{
+				g_client_array[i]->SetAlive(CLIENT_STATUS::CHECKING);
+				UDP::Send(&Packet, sizeof(UDP::DS2KeyPacket));
 			}
 		}
 	}
@@ -275,6 +276,7 @@ void Loop()
 			//Set Alive Status
 			g_client_array[Packet.profile]->SetAlive(CLIENT_STATUS::ALIVE);
 		}
+
 		switch(Packet.type)
 		{
 		case UDP::PACKET::LOOKUP:
