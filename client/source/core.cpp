@@ -76,13 +76,24 @@ char* GetTime()
 	int hour = time_struct->tm_hour;
 	int minute = time_struct->tm_min;
 	int second = time_struct->tm_sec;
-
-	if(hour == 0)
-		hour = 12;
-	else if(hour > 12)
-		hour = hour - 12;
+	bool am = false;
 	
-	sprintf(s_time_char, "%02i:%02i:%02i AM", hour, minute, second);
+	if(hour < 12)
+		am = true;
+	if(hour == 0)
+	{
+		hour = 12;
+	}
+	else if(hour > 12)
+	{
+		hour = hour - 12;
+	}
+
+	
+	if(am)
+		sprintf(s_time_char, "%02i:%02i:%02i AM", hour, minute, second);
+	else
+		sprintf(s_time_char, "%02i:%02i:%02i PM", hour, minute, second);
 
 	return s_time_char;
 }
