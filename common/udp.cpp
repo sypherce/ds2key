@@ -140,7 +140,7 @@ int Connect(bool non_blocking, uint16_t port)
 	if(socket_id == INVALID_SOCKET)
 	{
 		int err = NETerrno;
-		std::clog << "Error (socket): " << strerror(err) << "\n";
+		std::clog << "Error #" << err << " (socket): " << strerror(err) << "\n";
 		Disconnect();
 
 		return err;
@@ -154,7 +154,7 @@ int Connect(bool non_blocking, uint16_t port)
 		if(err == NETEADDRINUSE)
 			std::clog << "Error (bind) port #" << GetPort() << " currently in use\n";
 		else
-			std::clog << "Error (bind): " << strerror(err) << "\n";
+			std::clog << "Error #" << err << " (bind): " << strerror(err) << "\n";
 		Disconnect();
 
 		return err;
@@ -166,13 +166,13 @@ int Connect(bool non_blocking, uint16_t port)
 	if(non_blocking && fcntl(socket_id, F_SETFL, flags | O_NONBLOCK))
 	{
 		int err = NETerrno;
-		std::clog << "Error (fcntl): " << strerror(err) << "\n";
+		std::clog << "Error #" << err << " (fcntl): " << strerror(err) << "\n";
 #else
 	// set blocking mode
 	if(NETioctlsocket(socket_id, FIONBIO, (unsigned long*)&UDP::non_blocking) == SOCKET_ERROR)
 	{
 		int err = NETerrno;
-		std::clog << "Error (NETioctlsocket): " << strerror(err) << "\n";
+		std::clog << "Error #" << err << " (NETioctlsocket): " << strerror(err) << "\n";
 #endif
 		Disconnect();
 
@@ -194,7 +194,7 @@ int Disconnect()
 		if(NETclosesocket(socket_id) == SOCKET_ERROR)
 		{
 			int err = NETerrno;
-			std::clog << "Error (NETclosesocket): " << strerror(err) << "\n";
+			std::clog << "Error #" << err << " (NETclosesocket): " << strerror(err) << "\n";
 
 			return err;
 		}
@@ -226,7 +226,7 @@ int Send(const void* buffer, unsigned int length)
 		if(sendto(socket_id, (const char*)buffer, length, 0, (struct sockaddr*)&remote_sockaddr, sockaddrlength) == SOCKET_ERROR)
 		{
 			int err = NETerrno;
-			std::clog << "Error (sendto): " << strerror(err) << "\n";
+			std::clog << "Error #" << err << " (sendto): " << strerror(err) << "\n";
 			return err;
 		}
 	}
@@ -258,7 +258,7 @@ int Recv(void* buffer, unsigned int length)
 		{
 			int err = NETerrno;
 			if(err != NETEWOULDBLOCK)
-				std::clog << "Error (recvfrom): " << strerror(err) << "\n";
+				std::clog << "Error #" << err << " (recvfrom): " << strerror(err) << "\n";
 			return err;
 		}
 	}
