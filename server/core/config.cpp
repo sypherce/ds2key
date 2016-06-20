@@ -355,20 +355,20 @@ int SetProfileSetting(ProfileData* Profile, uint8_t profileNumber, uint16_t sett
 
 //private
 //Currently assigned port
-uint16_t port = DEFAULT_PORT;
+uint16_t g_port = DEFAULT_PORT;
 
 //public
 uint16_t GetPort()
 {
-	return Config::port;
+	return Config::g_port;
 }
 
 void SetConfigPort(uint16_t port)
 {
 	if(port == 0)
-		Config::port = DEFAULT_PORT;
+		Config::g_port = DEFAULT_PORT;
 	else
-		Config::port = port;
+		Config::g_port = port;
 }
 
 Client* GetClient(uint8_t profile)

@@ -10,37 +10,37 @@ namespace D2K {
 static const int CLIENT_MAX = 256;
 static const char* D2K_COMMAND = "*";
 static const int D2K_COMMAND_LENGTH = 1;
-static const uint32_t DS2KEY_A = (1 << (0));
-static const uint32_t DS2KEY_B = (1 << (1));
-static const uint32_t DS2KEY_SELECT = (1 << (2));
-static const uint32_t DS2KEY_START = (1 << (3));
-static const uint32_t DS2KEY_DRIGHT = (1 << (4)); 
-static const uint32_t DS2KEY_DLEFT = (1 << (5)); 
-static const uint32_t DS2KEY_DUP = (1 << (6)); 
-static const uint32_t DS2KEY_DDOWN = (1 << (7)); 
-static const uint32_t DS2KEY_R = (1 << (8));
-static const uint32_t DS2KEY_L = (1 << (9));
-static const uint32_t DS2KEY_X = (1 << (10));
-static const uint32_t DS2KEY_Y = (1 << (11));
-static const uint32_t DS2KEY_TOUCH = (1 << (12)) | (1 << (20));
-static const uint32_t DS2KEY_LID = (1 << (13));
+static const uint32_t DS2KEY_A = (1U << (0));
+static const uint32_t DS2KEY_B = (1U << (1));
+static const uint32_t DS2KEY_SELECT = (1U << (2));
+static const uint32_t DS2KEY_START = (1U << (3));
+static const uint32_t DS2KEY_DRIGHT = (1U << (4)); 
+static const uint32_t DS2KEY_DLEFT = (1U << (5)); 
+static const uint32_t DS2KEY_DUP = (1U << (6)); 
+static const uint32_t DS2KEY_DDOWN = (1U << (7)); 
+static const uint32_t DS2KEY_R = (1U << (8));
+static const uint32_t DS2KEY_L = (1U << (9));
+static const uint32_t DS2KEY_X = (1U << (10));
+static const uint32_t DS2KEY_Y = (1U << (11));
+static const uint32_t DS2KEY_TOUCH = (1U << (12)) | (1 << (20));
+static const uint32_t DS2KEY_LID = (1U << (13));
 
-static const uint32_t DS2KEY_ZL = (1 << (14));
-static const uint32_t DS2KEY_ZR = (1 << (15));
+static const uint32_t DS2KEY_ZL = (1U << (14));
+static const uint32_t DS2KEY_ZR = (1U << (15));
 
-static const uint32_t DS2KEY_BLUE = (1 << (16));
-static const uint32_t DS2KEY_YELLOW = (1 << (17));
-static const uint32_t DS2KEY_RED = (1 << (18));
-static const uint32_t DS2KEY_GREEN = (1 << (19));
+static const uint32_t DS2KEY_BLUE = (1U << (16));
+static const uint32_t DS2KEY_YELLOW = (1U << (17));
+static const uint32_t DS2KEY_RED = (1U << (18));
+static const uint32_t DS2KEY_GREEN = (1U << (19));
 
-static const uint32_t DS2KEY_CSTICK_RIGHT = (1 << (24));
-static const uint32_t DS2KEY_CSTICK_LEFT = (1 << (25));
-static const uint32_t DS2KEY_CSTICK_UP = (1 << (26));
-static const uint32_t DS2KEY_CSTICK_DOWN = (1 << (27));
-static const uint32_t DS2KEY_CPAD_RIGHT = (1 << (28));
-static const uint32_t DS2KEY_CPAD_LEFT = (1 << (29));
-static const uint32_t DS2KEY_CPAD_UP = (1 << (30));
-static const uint32_t DS2KEY_CPAD_DOWN = (1 << (31));
+static const uint32_t DS2KEY_CSTICK_RIGHT = (1U << (24));
+static const uint32_t DS2KEY_CSTICK_LEFT = (1U << (25));
+static const uint32_t DS2KEY_CSTICK_UP = (1U << (26));
+static const uint32_t DS2KEY_CSTICK_DOWN = (1U << (27));
+static const uint32_t DS2KEY_CPAD_RIGHT = (1U << (28));
+static const uint32_t DS2KEY_CPAD_LEFT = (1U << (29));
+static const uint32_t DS2KEY_CPAD_UP = (1U << (30));
+static const uint32_t DS2KEY_CPAD_DOWN = (1U << (31));
 
 extern uint32_t EnumKeyToNDSKeypadBit(int enum_key);
 

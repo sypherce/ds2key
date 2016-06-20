@@ -29,7 +29,7 @@ void Init()
 void DeInit()
 {
 #ifdef _WIN32
-	for(int i = 1; i < Joystick::MAX_JOYSTICKS; i++)
+	for(uint8_t i = 1; i < Joystick::MAX_JOYSTICKS; i++)
 		if(Joystick::IsActive(i))
 			Joystick::DeInit(i);
 #endif
@@ -89,7 +89,7 @@ void Keyboard(uint16_t key, KeyState state)
 	|| (s_press_counter[key] == 1 && state == KeyState::released))
 	{
 #ifdef _WIN32
-		INPUT input = { };
+		INPUT input{ };
 		switch(key)
 		{
 		case VK_LBUTTON:
@@ -136,9 +136,7 @@ void Keyboard(uint16_t key, KeyState state)
 			if(state == KeyState::released)
 				input.ki.dwFlags |= KEYEVENTF_KEYUP;
 
-			input.ki.wScan = MapVirtualKey(key, 0);
-			//input.ki.time = 0;
-			//input.ki.dwExtraInfo = 0;
+			input.ki.wScan = MapVirtualKey(key, MAPVK_VK_TO_VSC);
 			break;
 		}
 		}
@@ -163,12 +161,12 @@ void Keyboard(uint16_t key, KeyState state)
 void Mouse(bool type, signed long int x, signed long int y)
 {
 #ifdef _WIN32
-	INPUT input;
+	INPUT input{ };
 
 	input.type = INPUT_MOUSE;
 	input.mi.dx = x;//-16 border
 	input.mi.dy = y;//-16 border
-	input.mi.dwFlags = (type * MOUSEEVENTF_ABSOLUTE) | MOUSEEVENTF_MOVE;
+	input.mi.dwFlags = (type ? MOUSEEVENTF_ABSOLUTE : 0) | MOUSEEVENTF_MOVE;
 	input.mi.dwExtraInfo = 0;
 	input.mi.mouseData = 0;
 	input.mi.time = 0;

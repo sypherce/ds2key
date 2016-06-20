@@ -27,8 +27,10 @@ namespace D2K {
 
 touchPosition g_stylus_position;
 bool input_changed = false;
-bool enable_input_timeout = true;
-bool toggle_both_lights = true;
+//TODO: this should be configurable?
+const bool enable_input_timeout = true;
+//TODO: this should be configurable?
+const bool toggle_both_lights = true;
 
 void BacklightsOn()
 {
@@ -71,7 +73,7 @@ char* GetTime()
 {
 	static char s_time_char[12];
 
-	time_t unix_time = time(0);
+	time_t unix_time = time(nullptr);
 	struct tm* time_struct = gmtime((const time_t*)&unix_time);
 	int hour = time_struct->tm_hour;
 	int minute = time_struct->tm_min;
@@ -226,11 +228,11 @@ bool Init()
 	gfxInitDefault(); //Graphics
 	gspLcdInit();     //Backlight
 	ptmuInit();       //Lid
-	consoleInit(GFX_TOP, NULL_VALUE);
+	consoleInit(GFX_TOP, nullptr);
 	gfxSetDoubleBuffering(GFX_BOTTOM, false);
 
 	//Get the bottom screen's frame buffer
-	D2K::GUI::g_screen[0] = (uint16_t*)gfxGetFramebuffer(GFX_BOTTOM, GFX_LEFT, NULL_VALUE, NULL_VALUE);
+	D2K::GUI::g_screen[0] = (uint16_t*)gfxGetFramebuffer(GFX_BOTTOM, GFX_LEFT, nullptr, nullptr);
 #elif defined(_NDS)
 	// PowerOff(PM_BACKLIGHT_TOP);
 	videoSetModeSub(MODE_0_2D);

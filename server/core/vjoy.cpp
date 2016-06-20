@@ -18,15 +18,15 @@ bool hat_down[MAX_JOYSTICKS+1]{ };
 bool hat_left[MAX_JOYSTICKS+1]{ };
 bool hat_right[MAX_JOYSTICKS+1]{ };
 #endif
-const int CONTINUOUS_UP = 0;
-const int CONTINUOUS_UP_RIGHT = 4500;
-const int CONTINUOUS_RIGHT = 9000;
-const int CONTINUOUS_DOWN_RIGHT = 13500;
-const int CONTINUOUS_DOWN = 18000;
-const int CONTINUOUS_DOWN_LEFT = 22500;
-const int CONTINUOUS_LEFT = 27000;
-const int CONTINUOUS_UP_LEFT = 31500;
-const int CONTINUOUS_NEUTRAL = -1;
+const DWORD CONTINUOUS_UP = 0;
+const DWORD CONTINUOUS_UP_RIGHT = 4500;
+const DWORD CONTINUOUS_RIGHT = 9000;
+const DWORD CONTINUOUS_DOWN_RIGHT = 13500;
+const DWORD CONTINUOUS_DOWN = 18000;
+const DWORD CONTINUOUS_DOWN_LEFT = 22500;
+const DWORD CONTINUOUS_LEFT = 27000;
+const DWORD CONTINUOUS_UP_LEFT = 31500;
+const DWORD CONTINUOUS_NEUTRAL = 0xFFFFFFFF;
 
 //return false/0 if successful
 bool Init(uint8_t device)
@@ -36,7 +36,7 @@ bool Init(uint8_t device)
 	if(!vJoyEnabled())
 	{
 		std::clog << "Function vJoyEnabled Failed - make sure that vJoy is installed and enabled\n";
-		for(int i = 1; i <= MAX_JOYSTICKS; i++)
+		for(uint8_t i = 1; i <= MAX_JOYSTICKS; i++)
 			DeInit(i);
 		return true;
 	}

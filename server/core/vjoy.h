@@ -18,5 +18,4 @@ void UpdateHat(uint8_t device);
 void SetAxisPercent(uint8_t device, uint8_t axis, uint8_t value);
 bool GetButton(uint8_t device, uint8_t button);
 
-
 }}}//namespace D2K::Input::Joystick

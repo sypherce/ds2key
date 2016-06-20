@@ -70,9 +70,9 @@ typedef int socklen_t;
 
 namespace D2K {namespace UDP {
 
-bool non_blocking = true;
+bool g_non_blocking = true;
 bool connected = false;
-uint16_t port = DEFAULT_PORT;
+uint16_t g_port = DEFAULT_PORT;
 SOCKET socket_id = INVALID_SOCKET;
 #ifdef D2KCLIENT
 DS2KeyPacket packet = DS2KeyPacket{ };
@@ -107,12 +107,12 @@ bool IsConnected()
 
 int Connect()
 {
-	return Connect(non_blocking, port);
+	return Connect(g_non_blocking, g_port);
 }
 
 int Connect(uint16_t port)
 {
-	return Connect(non_blocking, port);
+	return Connect(g_non_blocking, port);
 }
 
 int Connect(bool non_blocking, uint16_t port)
@@ -125,7 +125,7 @@ int Connect(bool non_blocking, uint16_t port)
 
 	SetConfigPort(port);  // Set port
 
-	UDP::non_blocking = non_blocking;
+	UDP::g_non_blocking = non_blocking;
 	
 	g_remote_sockaddr.sin_family = AF_INET;
 	g_remote_sockaddr.sin_port = htons(GetPort());
@@ -170,7 +170,7 @@ int Connect(bool non_blocking, uint16_t port)
 		std::clog << "Error #" << err << " (fcntl): " << strerror(err) << "\n";
 #else
 	// set blocking mode
-	if(NETioctlsocket(socket_id, FIONBIO, (unsigned long*)&UDP::non_blocking) == SOCKET_ERROR)
+	if(NETioctlsocket(socket_id, FIONBIO, (unsigned long*)&UDP::g_non_blocking) == SOCKET_ERROR)
 	{
 		int err = NETerrno;
 		std::clog << "Error #" << err << " (NETioctlsocket): " << strerror(err) << "\n";
@@ -286,7 +286,6 @@ unsigned long GetLocalIP()
 #elif defined(_WIN32) || defined(__linux__)
 	return local_sockaddr.sin_addr.s_addr;
 #endif
-	return 0;
 }
 std::string GetLocalIPString()
 {
@@ -324,7 +323,7 @@ void SetRemoteIP(unsigned long ip)
 
 uint16_t GetPort()
 {
-	return port;
+	return g_port;
 }
 std::string GetPortString()
 {
@@ -333,7 +332,7 @@ std::string GetPortString()
 
 void SetConfigPort(const std::string& port)
 {
-	SetConfigPort((uint16_t)D2K::stol(port));
+	SetConfigPort(D2K::stol(port));
 }
 void SetConfigPort(char* port)
 {
@@ -342,9 +341,9 @@ void SetConfigPort(char* port)
 void SetConfigPort(uint16_t port)
 {
 	if(port == 0)                 // If port 0
-		UDP::port = DEFAULT_PORT; // Use default port 9501
+		UDP::g_port = DEFAULT_PORT; // Use default port 9501
 	else
-		UDP::port = port;
+		UDP::g_port = port;
 }
 
 #if defined(D2KCLIENT)

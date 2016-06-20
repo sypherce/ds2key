@@ -20,7 +20,7 @@ Rect::Rect()
 	m_x =
 	m_y =
 	m_w =
-	m_h = 0;
+	m_h = { };
 }
 Rect::Rect(uint16_t x, uint16_t y, uint16_t w, uint16_t h)
 {
