@@ -25,9 +25,12 @@ int main()
 	while(D2K::Loop())                         // DS hardware loop
 	{
 		D2K::UDP::Update(D2K::g_keys_held, // Update ds2key network
-			    D2K::GUI::Turbo::GetKeys(),
-			    nullptr,
-			    NULL_VALUE);
+		                 D2K::GUI::Turbo::GetKeys(),
+		                 nullptr,
+		                 &D2K::g_circle_position,
+		                 &D2K::g_accel_status,
+		                 &D2K::g_gyro_status,
+		                 NULL_VALUE);
 
 		D2K::GUI::Main::g_window.Update(); // Update the window
 	}

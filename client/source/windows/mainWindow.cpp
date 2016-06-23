@@ -181,7 +181,8 @@ void ButtonTouchFunction()
 		if(Main::g_window.CheckClick(button_touch))
 			break;
 
-		UDP::Update(g_keys_held, 0, &D2K::g_stylus_position, NULL_VALUE);
+		UDP::Update(g_keys_held, 0, &D2K::g_stylus_position,
+		            &D2K::g_circle_position, &D2K::g_accel_status, &D2K::g_gyro_status, NULL_VALUE);
 
 		Main::g_window.Update();
 	}
@@ -198,7 +199,8 @@ void ButtonTurboFunction()
 
 	while(D2K::Loop())
 	{
-		UDP::Update(g_keys_held, Turbo::GetKeys(), nullptr, NULL_VALUE);
+		UDP::Update(g_keys_held, Turbo::GetKeys(), nullptr,
+		            &D2K::g_circle_position, &D2K::g_accel_status, &D2K::g_gyro_status, NULL_VALUE);
 		Turbo::g_window.Update();
 		button_turbo->Draw();
 
@@ -220,7 +222,8 @@ void ButtonConfigWindowFunction()
 	   && ConfigWindow::g_window.IsVisible())
 	{
 		ConfigWindow::g_window.Update();
-		UDP::Update(keysHeld(), Turbo::GetKeys(), nullptr, NULL_VALUE);
+		UDP::Update(keysHeld(), Turbo::GetKeys(), nullptr,
+		            nullptr, nullptr, nullptr, NULL_VALUE);
 		ConfigWindow::current_pressed_key = NULL_VALUE;
 		button_config->Draw();
 
@@ -244,7 +247,8 @@ void ButtonCommandsFunction()
 
 	while(D2K::Loop())
 	{
-		UDP::Update(g_keys_held, Turbo::GetKeys(), nullptr, NULL_VALUE);
+		UDP::Update(g_keys_held, Turbo::GetKeys(), nullptr, 
+		            &D2K::g_circle_position, &D2K::g_accel_status, &D2K::g_gyro_status, NULL_VALUE);
 		Command::g_window.Update();  // Update and draw command window
 		button_commands->Draw();  // Draw [Commands] button
 		

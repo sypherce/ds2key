@@ -6,6 +6,7 @@
 #include <sstream>  // std::stringstream
 
 namespace D2K {
+
 Client* g_client_array[CLIENT_MAX] = { };
 
 uint32_t EnumKeyToNDSKeypadBit(int enum_key)
@@ -380,6 +381,46 @@ bool Client::IsAlive()
 void Client::SetAlive(bool client_status)
 {
 	m_alive = client_status;
+}
+
+int16_t Client::GetCircleX()
+{
+	return m_packet.circle_x;
+}
+
+int16_t Client::GetCircleY()
+{
+	return m_packet.circle_y;
+}
+
+int16_t Client::GetGyroX()
+{
+	return m_packet.gyro_x;
+}
+
+int16_t Client::GetGyroY()
+{
+	return m_packet.gyro_y;
+}
+
+int16_t Client::GetGyroZ()
+{
+	return m_packet.gyro_z;
+}
+
+int16_t Client::GetAccelX()
+{
+	return m_packet.accel_x;
+}
+
+int16_t Client::GetAccelY()
+{
+	return m_packet.accel_y;
+}
+
+int16_t Client::GetAccelZ()
+{
+	return m_packet.accel_z;
 }
 
 uint16_t Client::GetKeyboardPress()

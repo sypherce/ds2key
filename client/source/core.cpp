@@ -25,7 +25,16 @@
 
 namespace D2K {
 
-touchPosition g_stylus_position;
+#ifdef _3DS
+//TODO: is this filter needed? possibly on server instead? is 8 right?
+#define FILTER_SIZE 8
+static accelVector accel[FILTER_SIZE] {};
+static angularRate gyro[FILTER_SIZE] {};
+#endif
+circlePosition g_circle_position {};
+accelVector g_accel_status {};
+angularRate g_gyro_status {};
+touchPosition g_stylus_position {};
 bool input_changed = false;
 //TODO: this should be configurable?
 const bool enable_input_timeout = true;
@@ -142,6 +151,61 @@ uint32_t LidUp()
 //no event for still being opened
 #endif
 
+#ifdef _3DS
+//debug printing
+//#include <cstdio>
+void UpdateGyroAccel()
+{
+//TODO: is raw usable?
+	const bool raw = false;
+	if(raw)
+	{
+		hidAccelRead(&g_accel_status);
+		hidGyroRead(&g_gyro_status);
+	}
+	else
+	{
+		static size_t array_pos = 0;
+		static u32 delay = 0;
+
+		hidAccelRead(&accel[array_pos]);
+		hidGyroRead(&gyro[array_pos]);
+		array_pos = (array_pos + 1) % FILTER_SIZE;
+
+		if(!delay)
+		{
+			float accel_x = 0, accel_y = 0, accel_z = 0;
+			float gyro_x = 0, gyro_y = 0, gyro_z = 0;
+			for(size_t i = 0; i < FILTER_SIZE; ++i)
+			{
+//TODO: why are we scaling this? should we use float or decimal?
+				float scale = 0.1f / FILTER_SIZE;
+				accel_x += accel[i].x * scale;
+				accel_y += accel[i].y * scale;
+				accel_z += accel[i].z * scale;
+				gyro_x += gyro[i].x * scale;
+				gyro_y += gyro[i].y * scale;
+				gyro_z += gyro[i].z * scale;
+			}
+			g_accel_status.x = accel_x;
+			g_accel_status.y = accel_y;
+			g_accel_status.z = accel_z;
+			g_gyro_status.x = gyro_x;
+			g_gyro_status.y = gyro_y;
+			g_gyro_status.z = gyro_z;
+
+			//debug printing
+			//printf("\x1b[0;0HAccelerometer:\nx = %9.2f\ny = %9.2f\nz = %9.2f", accel_x, accel_y, accel_z);
+			//printf("\x1b[5;0H    Gyroscope:\nx = %9.2f\nz = %9.2f\ny = %9.2f", gyro_x, gyro_z, gyro_y);
+
+//TODO: delay was 8 before I changed it
+			delay = 1;
+		}
+		delay--;
+	}
+}
+#endif
+
 uint32_t g_keys_held, g_keys_down, g_keys_up{ };
 
 ///updates input values
@@ -157,6 +221,8 @@ void UpdateInputs()
 		g_keys_up   = keysUp();
 
 #if defined(_3DS)
+		UpdateGyroAccel();
+		hidCircleRead(&g_circle_position);
 		ScanLid();
 		g_keys_held |= LidHeld();
 		g_keys_down |= LidDown();
@@ -228,6 +294,9 @@ bool Init()
 	gfxInitDefault();              //Graphics
 	gspLcdInit();                  //Backlight
 	ptmuInit();                    //Lid
+//TODO: these should only be enabled when used?
+	HIDUSER_EnableAccelerometer(); //Accelerometer
+	HIDUSER_EnableGyroscope();     //Gyroscope
 	consoleInit(GFX_TOP, nullptr);
 	gfxSetDoubleBuffering(GFX_BOTTOM, false);
 
@@ -307,6 +376,10 @@ bool Init()
 void DeInit()
 {
 #ifdef _3DS
+//TODO: these should only be enabled when used?
+	HIDUSER_DisableGyroscope();     //Gyroscope
+	HIDUSER_DisableAccelerometer(); //Accelerometer
+
 	ptmuExit();                     //Lid
 	GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_BOTH);
 	gspLcdExit();

@@ -172,6 +172,30 @@ public:
 	//@return CLIENT_STATUS::ALIVE if confirmed, CLIENT_STATUS::CHECKING if not
 	void SetAlive(bool client_status);
 
+	//@return Circle current X Position. Values range //TODO
+	int16_t GetCircleX();
+
+	//@return Circle current Y Position. Values range //TODO
+	int16_t GetCircleY();
+
+	//@return Gyro current X Position. Values range //TODO
+	int16_t GetGyroX();
+
+	//@return Gyro current Y Position. Values range //TODO
+	int16_t GetGyroY();
+
+	//@return Gyro current Z Position. Values range //TODO
+	int16_t GetGyroZ();
+
+	//@return Accel current X Position. Values range //TODO
+	int16_t GetAccelX();
+
+	//@return Accel current Y Position. Values range //TODO
+	int16_t GetAccelY();
+
+	//@return Accel current Z Position. Values range //TODO
+	int16_t GetAccelZ();
+
 	//TODO finish/update comment... 
 	//@return DS KeyboardPress, currently only uint8_t values come through (1-255), 0 = no press
 	uint16_t GetKeyboardPress();

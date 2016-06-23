@@ -19,6 +19,14 @@ typedef struct DS2KeyPacket final
 	uint16_t touch_keys_turbo; // Enabled Touch Turbo keys
 	uint16_t touch_x;
 	uint16_t touch_y;
+	int16_t circle_x;
+	int16_t circle_y;
+	int16_t accel_x;
+	int16_t accel_y;
+	int16_t accel_z;
+	int16_t gyro_x;
+	int16_t gyro_y;
+	int16_t gyro_z;
 	uint16_t keyboard;         // Keyboard Key Pressed
 } __attribute__((packed)) DS2KeyPacket;
 

@@ -9,10 +9,11 @@
 #include <netdb.h>
 #elif defined(_NDS)
 #include <nds.h>
-#include <netinet/in.h>//sockaddr_in
+#include <netinet/in.h>  // sockaddr_in
+#include "dummy_types.h" // 3ds types: circlePosition, etc
 #elif defined(_3DS)
 #include <3ds.h>
-#include <netinet/in.h>//sockaddr_in
+#include <netinet/in.h>  // sockaddr_in
 #endif
 
 #ifndef _WIN32
@@ -92,7 +93,9 @@ void SendCommand(uint8_t command);
 void SendNormalSetting(DS2KeyNormalSettingsPacket setting);
 
 //updates current button and touch screen status
-void Update(uint32_t keys, uint32_t keysTurbo, touchPosition* touch_position, uint16_t keyboard);
+void Update(uint32_t keys, uint32_t keysTurbo, touchPosition* touch_position,
+            circlePosition* circle_position, accelVector* g_accel_status,
+            angularRate* gyro_status, uint16_t keyboard);
 
 //listens for anything from the server and deals with it
 void ListenForServer();

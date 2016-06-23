@@ -409,24 +409,25 @@ std::string GetString(Label* label, Edit* edit, std::string text, int maxLength)
 	Buffer = text;
 	BufferLen = maxLength;
 
-	ConfigWindow::g_window.SetVisible(false);                   // Hide config window
-	Keyboard::g_window.SetVisible(true);                        // Show keyboard
+	ConfigWindow::g_window.SetVisible(false);                       // Hide config window
+	Keyboard::g_window.SetVisible(true);                            // Show keyboard
 
-	Keyboard::g_window.Draw();                                  // And actually draw it
+	Keyboard::g_window.Draw();                                      // And actually draw it
 	while(D2K::Loop()
 	   && Keyboard::g_window.IsVisible())
 	{
-		if(Keyboard::g_window.Update())                     // If pressed
+		if(Keyboard::g_window.Update())                         // If pressed
 		{
-			UDP::Update(keysHeld(), NULL_VALUE, nullptr,
-				ConfigWindow::current_pressed_key); // Update keys and press active keyboard key
+			UDP::Update(keysHeld(),
+			            NULL_VALUE, nullptr, nullptr, nullptr, nullptr,
+			            ConfigWindow::current_pressed_key); // Update keys and press active keyboard key
 			ConfigWindow::current_pressed_key = NULL_VALUE;
-			Keyboard::edit_entry->SetText(Buffer);      // Set text
+			Keyboard::edit_entry->SetText(Buffer);          // Set text
 		}
 	}
-	Keyboard::g_window.SetVisible(false);                       // Hide keyboard
+	Keyboard::g_window.SetVisible(false);                           // Hide keyboard
 
-	ConfigWindow::g_window.SetVisible(true);                    // Go back to config window
+	ConfigWindow::g_window.SetVisible(true);                        // Go back to config window
 	return Buffer;
 }
 
