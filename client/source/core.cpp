@@ -225,9 +225,9 @@ bool Init()
 {
 	// Screen setup
 #if defined(_3DS)
-	gfxInitDefault(); //Graphics
-	gspLcdInit();     //Backlight
-	ptmuInit();       //Lid
+	gfxInitDefault();              //Graphics
+	gspLcdInit();                  //Backlight
+	ptmuInit();                    //Lid
 	consoleInit(GFX_TOP, nullptr);
 	gfxSetDoubleBuffering(GFX_BOTTOM, false);
 
@@ -307,6 +307,7 @@ bool Init()
 void DeInit()
 {
 #ifdef _3DS
+	ptmuExit();                     //Lid
 	GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_BOTH);
 	gspLcdExit();
 	socExit();
