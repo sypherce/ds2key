@@ -18,6 +18,7 @@ bool hat_down[MAX_JOYSTICKS+1]{ };
 bool hat_left[MAX_JOYSTICKS+1]{ };
 bool hat_right[MAX_JOYSTICKS+1]{ };
 #endif
+const LONG MAX_AXIS_VALUE = 32767;
 const DWORD CONTINUOUS_UP = 0;
 const DWORD CONTINUOUS_UP_RIGHT = 4500;
 const DWORD CONTINUOUS_RIGHT = 9000;
@@ -187,45 +188,78 @@ void UpdateHat(uint8_t device)
 void SetAxisPercent(uint8_t device, uint8_t axis, uint8_t value)
 {
 #ifdef _WIN32
-	static LONG percent_axis_scale = 8000 / 100;
+	static LONG percent_axis_scale = MAX_AXIS_VALUE / 100;
 	
 	if(!IsActive(device)
 	&&  Init(device))
 		return;
 
-	LONG percent = percent_axis_scale * axis;
+	SetAxisRaw(device, axis, percent_axis_scale * axis);
+#endif
+}
+void SetAxisRaw(uint8_t device, uint8_t axis, LONG value)
+{
+#ifdef _WIN32
+	if(!IsActive(device)
+	&&  Init(device))
+		return;
+
 	switch(axis)
 	{
 	case HID_USAGE_X:   // X Axis
-		joystick_position[device].wAxisX = percent;
+		joystick_position[device].wAxisX = value;
 		break;
 	case HID_USAGE_Y:   // Y Axis
-		joystick_position[device].wAxisY = percent;
+		joystick_position[device].wAxisY = value;
 		break;
 	case HID_USAGE_Z:   // Z Axis
-		joystick_position[device].wAxisZ = percent;
+		joystick_position[device].wAxisZ = value;
 		break;
 	case HID_USAGE_RX:  // Rx Axis
-		joystick_position[device].wAxisXRot = percent;
+		joystick_position[device].wAxisXRot = value;
 		break;
 	case HID_USAGE_RY:  // Ry Axis
-		joystick_position[device].wAxisYRot = percent;
+		joystick_position[device].wAxisYRot = value;
 		break;
 	case HID_USAGE_RZ:  // Rz Axis
-		joystick_position[device].wAxisZRot = percent;
+		joystick_position[device].wAxisZRot = value;
 		break;
 	case HID_USAGE_SL0: // Slider 0
-		joystick_position[device].wSlider = percent;
+		joystick_position[device].wSlider = value;
 		break;
 	case HID_USAGE_SL1: // Slider 1
-		joystick_position[device].wDial = percent;
+		joystick_position[device].wDial = value;
 		break;
 	case HID_USAGE_WHL: // Wheel
-		joystick_position[device].wWheel = percent;
+		joystick_position[device].wWheel = value;
 		break;
 	default:
 		break;
 	}
+#endif
+}
+
+void SetAxisSignedMax(uint8_t device, uint8_t axis, LONG value, LONG max)
+{
+#ifdef _WIN32
+	if(!IsActive(device)
+	&&  Init(device))
+		return;
+
+	double axis_scale = MAX_AXIS_VALUE / (max * 2);
+
+	value = value < -max ? -max :
+	       (value >  max ?  max :
+	        value);
+//TODO: above is supposedly faster.
+	/*if(value < -max)
+		value = -max;
+	else if(value > max)
+		value = max;*/
+	value += max;
+	value = (LONG)(value * axis_scale);
+
+	SetAxisRaw(device, axis, value);
 #endif
 }
 bool GetButton(uint8_t device, uint8_t button)
