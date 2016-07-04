@@ -78,82 +78,73 @@ enum KeyState
 	released = true,
 };
 
+static uint16_t s_press_counter[65535] = { };//this allows 1 or more profile to press the same key, instead of going crazy
+static uint16_t s_turbo_status [65535] = { };
+
 //Presses or releases (key) depending on (state)
 //@param key Platform specific value
 //@param state true = released, false = pressed
 void Keyboard(uint16_t key, KeyState state)
 {
-	static uint16_t s_press_counter[65535] = { };//this allows 1 or more profile to press the same key, instead of going crazy
-
-	if((s_press_counter[key] == 0 && state == KeyState::pressed)
-	|| (s_press_counter[key] == 1 && state == KeyState::released))
-	{
 #ifdef _WIN32
-		INPUT input{ };
-		switch(key)
-		{
-		case VK_LBUTTON:
-		{
-			input.type = INPUT_MOUSE;
-			input.mi.dwFlags = MOUSEEVENTF_MOVE;
+	INPUT input{ };
+	switch(key)
+	{
+	case VK_LBUTTON:
+	{
+		input.type = INPUT_MOUSE;
+		input.mi.dwFlags = MOUSEEVENTF_MOVE;
 
-			if(state == KeyState::released)
-				input.mi.dwFlags |= MOUSEEVENTF_LEFTUP;
-			else
-				input.mi.dwFlags |= MOUSEEVENTF_LEFTDOWN;
-			break;
-		}
-		case VK_RBUTTON:
-		{
-			input.type = INPUT_MOUSE;
-			input.mi.dwFlags = MOUSEEVENTF_MOVE;
+		if(state == KeyState::released)
+			input.mi.dwFlags |= MOUSEEVENTF_LEFTUP;
+		else
+			input.mi.dwFlags |= MOUSEEVENTF_LEFTDOWN;
+		break;
+	}
+	case VK_RBUTTON:
+	{
+		input.type = INPUT_MOUSE;
+		input.mi.dwFlags = MOUSEEVENTF_MOVE;
 
-			if(state == KeyState::released)
-				input.mi.dwFlags |= MOUSEEVENTF_RIGHTUP;
-			else
-				input.mi.dwFlags |= MOUSEEVENTF_RIGHTDOWN;
-			break;
-		}
-		case VK_MBUTTON:
-		{
-			input.type = INPUT_MOUSE;
-			input.mi.dwFlags = MOUSEEVENTF_MOVE;
-			if(state == KeyState::released)
-				input.mi.dwFlags |= MOUSEEVENTF_MIDDLEUP;
-			else
-				input.mi.dwFlags |= MOUSEEVENTF_MIDDLEDOWN;
-			break;
-		}
-		default:
-		{
-			input.type = INPUT_KEYBOARD;
-			input.ki.wVk = key;
-			input.ki.dwFlags = KEYEVENTF_SCANCODE;
+		if(state == KeyState::released)
+			input.mi.dwFlags |= MOUSEEVENTF_RIGHTUP;
+		else
+			input.mi.dwFlags |= MOUSEEVENTF_RIGHTDOWN;
+		break;
+	}
+	case VK_MBUTTON:
+	{
+		input.type = INPUT_MOUSE;
+		input.mi.dwFlags = MOUSEEVENTF_MOVE;
+		if(state == KeyState::released)
+			input.mi.dwFlags |= MOUSEEVENTF_MIDDLEUP;
+		else
+			input.mi.dwFlags |= MOUSEEVENTF_MIDDLEDOWN;
+		break;
+	}
+	default:
+	{
+		input.type = INPUT_KEYBOARD;
+		input.ki.wVk = key;
+		input.ki.dwFlags = KEYEVENTF_SCANCODE;
 
-			if(IsExtended(key))
-				input.ki.dwFlags |= KEYEVENTF_EXTENDEDKEY;
+		if(IsExtended(key))
+			input.ki.dwFlags |= KEYEVENTF_EXTENDEDKEY;
 
-			if(state == KeyState::released)
-				input.ki.dwFlags |= KEYEVENTF_KEYUP;
+		if(state == KeyState::released)
+			input.ki.dwFlags |= KEYEVENTF_KEYUP;
 
-			input.ki.wScan = MapVirtualKey(key, MAPVK_VK_TO_VSC);
-			break;
-		}
-		}
-
-		SendInput(1, (LPINPUT)&input, sizeof(INPUT));
-#elif defined(__linux__)
-		unsigned long int code = XKeysymToKeycode(g_display, key);
-		XTestFakeKeyEvent(g_display, code, !state, 0);
-		XFlush(g_display);
-#endif
+		input.ki.wScan = MapVirtualKey(key, MAPVK_VK_TO_VSC);
+		break;
+	}
 	}
 
-	//doesn't check boundaries
-	if(state == false)
-		s_press_counter[key]++;
-	else
-		s_press_counter[key]--;
+	SendInput(1, (LPINPUT)&input, sizeof(INPUT));
+#elif defined(__linux__)
+	unsigned long int code = XKeysymToKeycode(g_display, key);
+	XTestFakeKeyEvent(g_display, code, !state, 0);
+	XFlush(g_display);
+#endif
 }
 
 //Moves cursor position
@@ -190,49 +181,79 @@ void Mouse(bool type, signed long int x, signed long int y)
 #endif
 }
 
-void Press(uint16_t key, uint8_t joy)
+void Tap(uint16_t key, uint8_t joy)
 {
-	if(key >= KEY_JOY && key < KEY_JOY_MAX) //virtual gamepad buttons
+	if(s_press_counter[key] == 0)
 	{
-#ifdef _WIN32
-		Joystick::SetButton(joy + 1, key - KEY_JOY, true);
-		Joystick::Update(joy + 1);
-#endif
-	}
-	else if(key >= KEY_JOY_HAT && key <= KEY_JOY_HAT_MAX) //virtual gamepad buttons
-	{
-#ifdef _WIN32
-		Joystick::SetHat(joy + 1, key - KEY_JOY_HAT, true);
-		Joystick::Update(joy + 1);
-#endif
+		if(!s_turbo_status[key])
+			Press(key, joy);
+		else
+			Release(key, joy);
 	}
 	else
 	{
-		Keyboard(key, KeyState::pressed);
-		//TODO:log std::cout << "key" << key << "\n";
+		if(!s_turbo_status[key])
+			Release(key, joy);
+		else
+			Press(key, joy);
 	}
+}
+
+void Press(uint16_t key, uint8_t joy)
+{
+	if(s_press_counter[key] == 0)
+	{
+		if(key >= KEY_JOY && key < KEY_JOY_MAX) //virtual gamepad buttons
+		{
+#ifdef _WIN32
+			Joystick::SetButton(joy + 1, key - KEY_JOY, true);
+			Joystick::Update(joy + 1);
+#endif
+		}
+		else if(key >= KEY_JOY_HAT && key <= KEY_JOY_HAT_MAX) //virtual gamepad buttons
+		{
+#ifdef _WIN32
+			Joystick::SetHat(joy + 1, key - KEY_JOY_HAT, true);
+			Joystick::Update(joy + 1);
+#endif
+		}
+		else
+		{
+			Keyboard(key, KeyState::pressed);
+			//TODO:log std::cout << "key" << key << "\n";
+		}
+	}
+
+	if(s_press_counter[key] < 65535)
+		s_press_counter[key]++;
 }
 
 void Release(uint16_t key, uint8_t joy)
 {
-	if(key >= KEY_JOY && key < KEY_JOY_MAX) //virtual gamepad buttons
+	if(s_press_counter[key] == 1)
 	{
+		if(key >= KEY_JOY && key < KEY_JOY_MAX) //virtual gamepad buttons
+		{
 #ifdef _WIN32
-		Joystick::SetButton(joy + 1, key - KEY_JOY, false);
-		Joystick::Update(joy + 1);
+			Joystick::SetButton(joy + 1, key - KEY_JOY, false);
+			Joystick::Update(joy + 1);
 #endif
-	}
-	else if(key >= KEY_JOY_HAT && key <= KEY_JOY_HAT_MAX) //virtual gamepad buttons
-	{
+		}
+		else if(key >= KEY_JOY_HAT && key <= KEY_JOY_HAT_MAX) //virtual gamepad buttons
+		{
 #ifdef _WIN32
-		Joystick::SetHat(joy + 1, key - KEY_JOY_HAT, false);
-		Joystick::Update(joy + 1);
+			Joystick::SetHat(joy + 1, key - KEY_JOY_HAT, false);
+			Joystick::Update(joy + 1);
 #endif
+		}
+		else
+		{
+			Keyboard(key, KeyState::released);
+		}
 	}
-	else
-	{
-		Keyboard(key, KeyState::released);
-	}
+
+	if(s_press_counter[key] > 0)
+		s_press_counter[key]--;
 }
 
 void Move(signed long int x, signed long int y)

@@ -47,9 +47,6 @@ void ProcessPacket(D2K::Client* Client)
 	static uint16_t last_x = 0, last_y = 0;
 	static bool last_screen_touched = false;
 
-	//turbo status, true == press, false == release
-	static bool turbo = false;
-
 	ProfileData* Profile = Client->GetProfileDataPointer();
 
 	uint8_t Joystick = Profile->GetValue8(KEYS::JOY);
@@ -61,8 +58,14 @@ void ProcessPacket(D2K::Client* Client)
 
 		if(PCButton)
 		{
+			// button enabled for turbo and pressed
+			if(Client->Turbo(DSButton))
+			{
+				Input::Tap(PCButton, Joystick);
+				//TODO:log std::clog << "tap:" << PCButton << "\n";
+			}
 			// Pressed
-			if(Client->Down(DSButton))
+			else if(Client->Down(DSButton))
 			{
 				Input::Press(PCButton, Joystick);
 				//TODO:log std::clog << "press:" << PCButton << "\n";
@@ -73,13 +76,6 @@ void ProcessPacket(D2K::Client* Client)
 				Input::Release(PCButton, Joystick);
 				//TODO:log std::clog << "release:" << PCButton << "\n";
 			}
-			// Turbo set, button enabled for turbo and pressed
-			else if(turbo && Client->Turbo(DSButton))
-				Input::Press(PCButton, Joystick);
-			//turbo UNSET, button enabled for turbo and pressed
-			else if(Client->Turbo(DSButton))
-				//we release because turbo is UNSET
-				Input::Release(PCButton, Joystick);
 		}
 		//pressed
 		else if(Client->Down(DSButton))
@@ -88,9 +84,6 @@ void ProcessPacket(D2K::Client* Client)
 			ExecuteCommand(Command);
 		}
 	}
-
-	// Toggle turbo status
-	turbo = !turbo;
 
 	// Touch screen
 	uint16_t x = Client->GetX();

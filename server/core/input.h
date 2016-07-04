@@ -14,6 +14,11 @@ void Init();
 //Deletes each active VJoy joystick (in windows)
 void DeInit();
 
+//Sends a virtual key press and release, or a virtual gamepad button press and release
+//@param Key Platform specific key or gamepad button value
+//@param Joy (vjoy) device number. Value ranges 0-15. Ignored if (key) is not a gamepad button value.
+void Tap(uint16_t key, unsigned char joy);
+
 //Sends a virtual key press, or a virtual gamepad button press
 //@param Key Platform specific key or gamepad button value
 //@param Joy (vjoy) device number. Value ranges 0-15. Ignored if (key) is not a gamepad button value.
