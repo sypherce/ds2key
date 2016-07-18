@@ -44,7 +44,7 @@ uint8_t string_to_uint8_t(std::string str)
 	|| return_value < 0)
 		return_value = 0;
 
-	return (uint8_t)D2K::stol(str);
+	return (uint8_t)return_value;
 }
 
 uint16_t string_to_uint16_t(std::string str)
@@ -55,7 +55,7 @@ uint16_t string_to_uint16_t(std::string str)
 	|| return_value < 0)
 		return_value = 0;
 
-	return (uint16_t)D2K::stol(str);
+	return (uint16_t)return_value;
 }
 
 }//namespace D2K
