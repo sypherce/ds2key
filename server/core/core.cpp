@@ -1,8 +1,8 @@
 // DS2Key Core functions
 
 #include <iostream>  // std::cout, std::clog
-#include <algorithm>  // std::max, std::min
-#include <sstream>  // ostringstream
+#include <algorithm> // std::max, std::min
+#include <sstream>   // ostringstream
 #include <chrono>
 #include <thread>
 #ifdef _WIN32
@@ -22,6 +22,7 @@
 #include "config.h"
 #include "client.h"
 #include "core.h"
+#include "vjoy.h"
 
 namespace D2K{
 
@@ -53,8 +54,10 @@ void ProcessPacket(D2K::Client* Client)
 	//buttons
 	for(int enum_key = _START_OF_BUTTONS_ + 1; enum_key < KEYS::_END_OF_BUTTONS_; enum_key++)
 	{
-		uint32_t DSButton = EnumKeyToNDSKeypadBit(enum_key);
-		uint16_t PCButton = Profile->GetVirtualKey(enum_key);
+		uint32_t DSButton   = EnumKeyToNDSKeypadBit(enum_key);
+		uint16_t PCButton   = Profile->GetVirtualKey(enum_key);
+		std::string DSAxis  = Profile->GetAxis(enum_key);
+		std::string Command = Profile->GetCommand(enum_key);
 
 		if(PCButton)
 		{
@@ -77,13 +80,59 @@ void ProcessPacket(D2K::Client* Client)
 				//TODO:log std::clog << "release:" << PCButton << "\n";
 			}
 		}
-		//pressed
-		else if(Client->Down(DSButton))
+		else if(DSAxis != "")
 		{
-			std::string Command = Profile->GetCommand(enum_key);
+			//crop off the D2K_AXIS char
+			DSAxis = DSAxis.substr(D2K_AXIS_LENGTH);
+
+			int16_t input_value = 1;
+			if(DSAxis.at(0) == '-')
+				input_value = -1;
+			//crop off the '-' or '+' char
+			DSAxis = DSAxis.substr(1);
+
+			if(DSButton == DS2KEY_CPAD_LEFT || DSButton == DS2KEY_CPAD_RIGHT)
+				input_value *= Client->GetCircleX();
+			else if(DSButton == DS2KEY_CPAD_UP || DSButton == DS2KEY_CPAD_DOWN)
+				input_value *= Client->GetCircleY();
+			else if(DSButton == DS2KEY_CSTICK_LEFT || DSButton == DS2KEY_CSTICK_RIGHT)
+				input_value *= Client->GetCstickX();
+			else if(DSButton == DS2KEY_CSTICK_UP || DSButton == DS2KEY_CSTICK_DOWN)
+				input_value *= Client->GetCstickY();
+			
+			uint8_t output_axis = 0;
+			if(DSAxis == "X")
+				output_axis = HID_USAGE_X;
+			else if(DSAxis == "Y")
+				output_axis = HID_USAGE_Y;
+			else if(DSAxis == "Z")
+				output_axis = HID_USAGE_Z;
+			else if(DSAxis == "RX")
+				output_axis = HID_USAGE_RX;
+			else if(DSAxis == "RZ")
+				output_axis = HID_USAGE_RZ;
+			else if(DSAxis == "SL0")
+				output_axis = HID_USAGE_SL0;
+			else if(DSAxis == "SL1")
+				output_axis = HID_USAGE_SL1;
+			else if(DSAxis == "WHL")
+				output_axis = HID_USAGE_WHL;
+			else if(DSAxis == "POV")
+				output_axis = HID_USAGE_POV;
+
+			if(output_axis != 0)
+			{
+				int16_t axis_max_value = 60;
+				D2K::Input::Joystick::SetAxisSignedMax(Joystick, output_axis, input_value, axis_max_value);
+			}
+		}
+		else if(Command != ""
+		&& Client->Down(DSButton))
+		{
 			ExecuteCommand(Command);
 		}
 	}
+	D2K::Input::Joystick::Update(Joystick);
 
 	// Touch screen
 	uint16_t x = Client->GetX();
@@ -182,6 +231,9 @@ void ReleaseDeadClient(D2K::Client* Client)
 			}
 		}
 	}
+
+	uint8_t Joystick = Profile->GetValue8(KEYS::JOY);
+	D2K::Input::Joystick::DeInit(Joystick);
 }
 
 void CheckForDeadClients()

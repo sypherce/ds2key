@@ -9,7 +9,9 @@ namespace D2K {
 
 static const int CLIENT_MAX = 256;
 static const char* D2K_COMMAND = "*";
+static const char* D2K_AXIS = "&";
 static const int D2K_COMMAND_LENGTH = 1;
+static const int D2K_AXIS_LENGTH = 1;
 static const uint32_t DS2KEY_A = (1U << (0));
 static const uint32_t DS2KEY_B = (1U << (1));
 static const uint32_t DS2KEY_SELECT = (1U << (2));
@@ -89,6 +91,7 @@ public:
 	//@return system specific uint16_t (0-65535)
 	uint16_t GetVirtualKey(int enum_key);
 	
+//TODO:: Update comment
 	//Currently only used in config.cpp as of 3-30-16.
 	//Checks that enum_key DOES NOT qualify as a button, we assume IT IS a command after that
 	//If it is a button, it returns ""
@@ -98,9 +101,11 @@ public:
 	//@param enum_key (enum KEYS) Example: KEYS::A, KEYS::UP, KEYS::GREEN
 	//@return (std::string) containing command info, if enum_key is a button it returns "".
 	const std::string& GetCommand(int enum_key);
+	const std::string& GetAxis(int enum_key);
+	
+	bool SetValue(int enum_key, std::string value);
+	bool SetVirtualKey(int enum_key, uint16_t value);
 
-	void SetVirtualKey(int enum_key, uint16_t value);
-	void SetCommand(int enum_key, std::string value);
 	void SetTouchPos(uint8_t i, uint8_t x, uint8_t y, uint8_t w, uint8_t h);
 
 	uint8_t m_id;//TODO:Is this just garbage?
@@ -124,6 +129,16 @@ public:
 	std::string m_null;
 
 private:
+	
+	bool SetVirtualKey(int enum_key, std::string value);
+	bool SetRaw(int enum_key, std::string value);
+	bool SetCommand(int enum_key, std::string value);
+	bool SetAxis(int enum_key, std::string value);
+
+	//returns true if `button` is a command, false otherwise
+	bool isCommand(std::string button);
+	//returns true if `button` is an axis, false otherwise
+	bool isAxis(std::string button);
 	//returns true if `button` is a virtual keypress, false otherwise
 	bool isVirtualKey(std::string button);
 	uint16_t StringToVirtualKey(std::string button);

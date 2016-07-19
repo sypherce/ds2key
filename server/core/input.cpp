@@ -203,20 +203,83 @@ void Press(uint16_t key, uint8_t joy)
 {
 	if(s_press_counter[key] == 0)
 	{
-		if(key >= KEY_JOY && key < KEY_JOY_MAX) //virtual gamepad buttons
+		// GamePad Buttons
+		if(key >= Key::JOY && key <= Key::JOY_MAX) //virtual gamepad buttons
 		{
 #ifdef _WIN32
-			Joystick::SetButton(joy + 1, key - KEY_JOY, true);
-			Joystick::Update(joy + 1);
+			Joystick::SetButton(joy, key - Key::JOY, true);
+			Joystick::Update(joy);
 #endif
 		}
-		else if(key >= KEY_JOY_HAT && key <= KEY_JOY_HAT_MAX) //virtual gamepad buttons
+		// GamePad DPad
+		else if(key >= Key::JOY_HAT && key <= Key::JOY_HAT_MAX) //virtual gamepad buttons
 		{
 #ifdef _WIN32
-			Joystick::SetHat(joy + 1, key - KEY_JOY_HAT, true);
-			Joystick::Update(joy + 1);
+			Joystick::SetHat(joy, key - Key::JOY_HAT, true);
+			Joystick::Update(joy);
 #endif
 		}
+		// Analog Axis
+		else if(key >= Key::JOY_AXIS1 && key <= Key::JOY_AXIS4_MAX) //virtual analog axis
+		{
+#ifdef _WIN32
+			switch(key)
+			{
+			case Key::JOY_AXIS1_LEFT:
+				Joystick::SetAxisPercent(joy, HID_USAGE_X, 0);
+				break;
+			case Key::JOY_AXIS1_RIGHT:
+				Joystick::SetAxisPercent(joy, HID_USAGE_X, 100);
+				break;
+			case Key::JOY_AXIS1_UP:
+				Joystick::SetAxisPercent(joy, HID_USAGE_Y, 0);
+				break;
+			case Key::JOY_AXIS1_DOWN:
+				Joystick::SetAxisPercent(joy, HID_USAGE_Y, 100);
+				break;
+			case Key::JOY_AXIS2_LEFT:
+				Joystick::SetAxisPercent(joy, HID_USAGE_Z, 0);
+				break;
+			case Key::JOY_AXIS2_RIGHT:
+				Joystick::SetAxisPercent(joy, HID_USAGE_Z, 100);
+				break;
+			case Key::JOY_AXIS2_UP:
+				Joystick::SetAxisPercent(joy, HID_USAGE_RX, 0);
+				break;
+			case Key::JOY_AXIS2_DOWN:
+				Joystick::SetAxisPercent(joy, HID_USAGE_RX, 100);
+				break;
+			case Key::JOY_AXIS3_LEFT:
+				Joystick::SetAxisPercent(joy, HID_USAGE_RZ, 0);
+				break;
+			case Key::JOY_AXIS3_RIGHT:
+				Joystick::SetAxisPercent(joy, HID_USAGE_RZ, 100);
+				break;
+			case Key::JOY_AXIS3_UP:
+				Joystick::SetAxisPercent(joy, HID_USAGE_SL0, 0);
+				break;
+			case Key::JOY_AXIS3_DOWN:
+				Joystick::SetAxisPercent(joy, HID_USAGE_SL0, 100);
+				break;
+			case Key::JOY_AXIS4_LEFT:
+				Joystick::SetAxisPercent(joy, HID_USAGE_SL1, 0);
+				break;
+			case Key::JOY_AXIS4_RIGHT:
+				Joystick::SetAxisPercent(joy, HID_USAGE_SL1, 100);
+				break;
+			case Key::JOY_AXIS4_UP:
+				Joystick::SetAxisPercent(joy, HID_USAGE_WHL, 0);
+				break;
+			case Key::JOY_AXIS4_DOWN:
+				Joystick::SetAxisPercent(joy, HID_USAGE_WHL, 100);
+				break;
+			default:
+				break;
+			}
+			Joystick::Update(joy);
+#endif
+		}
+		// Keyboard
 		else
 		{
 			Keyboard(key, KeyState::pressed);
@@ -232,20 +295,67 @@ void Release(uint16_t key, uint8_t joy)
 {
 	if(s_press_counter[key] == 1)
 	{
-		if(key >= KEY_JOY && key < KEY_JOY_MAX) //virtual gamepad buttons
+		// GamePad Buttons
+		if(key >= Key::JOY && key <= Key::JOY_MAX)
 		{
 #ifdef _WIN32
-			Joystick::SetButton(joy + 1, key - KEY_JOY, false);
-			Joystick::Update(joy + 1);
+			Joystick::SetButton(joy, key - Key::JOY, false);
+			Joystick::Update(joy);
 #endif
 		}
-		else if(key >= KEY_JOY_HAT && key <= KEY_JOY_HAT_MAX) //virtual gamepad buttons
+		// GamePad DPad
+		else if(key >= Key::JOY_HAT && key <= Key::JOY_HAT_MAX)
 		{
 #ifdef _WIN32
-			Joystick::SetHat(joy + 1, key - KEY_JOY_HAT, false);
-			Joystick::Update(joy + 1);
+			Joystick::SetHat(joy, key - Key::JOY_HAT, false);
+			Joystick::Update(joy);
 #endif
 		}
+		// Analog Axis
+		else if(key >= Key::JOY_AXIS1 && key <= Key::JOY_AXIS4_MAX)
+		{
+#ifdef _WIN32
+			switch(key)
+			{
+			case Key::JOY_AXIS1_LEFT:
+			case Key::JOY_AXIS1_RIGHT:
+				Joystick::SetAxisPercent(joy, HID_USAGE_X, 50);
+				break;
+			case Key::JOY_AXIS1_UP:
+			case Key::JOY_AXIS1_DOWN:
+				Joystick::SetAxisPercent(joy, HID_USAGE_Y, 50);
+				break;
+			case Key::JOY_AXIS2_LEFT:
+			case Key::JOY_AXIS2_RIGHT:
+				Joystick::SetAxisPercent(joy, HID_USAGE_Z, 50);
+				break;
+			case Key::JOY_AXIS2_UP:
+			case Key::JOY_AXIS2_DOWN:
+				Joystick::SetAxisPercent(joy, HID_USAGE_RX, 50);
+				break;
+			case Key::JOY_AXIS3_LEFT:
+			case Key::JOY_AXIS3_RIGHT:
+				Joystick::SetAxisPercent(joy, HID_USAGE_RZ, 50);
+				break;
+			case Key::JOY_AXIS3_UP:
+			case Key::JOY_AXIS3_DOWN:
+				Joystick::SetAxisPercent(joy, HID_USAGE_SL0, 50);
+				break;
+			case Key::JOY_AXIS4_LEFT:
+			case Key::JOY_AXIS4_RIGHT:
+				Joystick::SetAxisPercent(joy, HID_USAGE_SL1, 50);
+				break;
+			case Key::JOY_AXIS4_UP:
+			case Key::JOY_AXIS4_DOWN:
+				Joystick::SetAxisPercent(joy, HID_USAGE_WHL, 50);
+				break;
+			default:
+				break;
+			}
+			Joystick::Update(joy);
+#endif
+		}
+		// Keyboard
 		else
 		{
 			Keyboard(key, KeyState::released);

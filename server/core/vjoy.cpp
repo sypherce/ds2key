@@ -13,11 +13,11 @@ namespace D2K {namespace Input {namespace Joystick {
 //code not need joystick_position[device+1].
 #ifdef _WIN32
 JOYSTICK_POSITION joystick_position[MAX_JOYSTICKS+1]{ };
+#endif
 bool hat_up[MAX_JOYSTICKS+1]{ };
 bool hat_down[MAX_JOYSTICKS+1]{ };
 bool hat_left[MAX_JOYSTICKS+1]{ };
 bool hat_right[MAX_JOYSTICKS+1]{ };
-#endif
 const LONG MAX_AXIS_VALUE = 32767;
 const DWORD CONTINUOUS_UP = 0;
 const DWORD CONTINUOUS_UP_RIGHT = 4500;
@@ -29,9 +29,33 @@ const DWORD CONTINUOUS_LEFT = 27000;
 const DWORD CONTINUOUS_UP_LEFT = 31500;
 const DWORD CONTINUOUS_NEUTRAL = 0xFFFFFFFF;
 
-//return false/0 if successful
+bool IsIDValid(uint8_t device)
+{
+#ifdef _WIN32
+	if(device == 0 || device > MAX_JOYSTICKS)
+		return false;
+	return true;
+#else
+	return false;
+#endif
+}
+
+//return false if successful
 bool Init(uint8_t device)
 {
+	// If Device ID is Invalid, return failure
+	if(!IsIDValid(device))
+	{
+		if(device > 0)
+			std::clog << "vJoy device " << (int)device << " out of valid range. (1-" << (int)MAX_JOYSTICKS << ")\n";
+
+		return true;
+	}
+	
+	// If Device is Active, return success
+	if(IsActive(device))
+		return false;
+
 #ifdef _WIN32
 	// Get the driver attributes (Vendor ID, Product ID, Version Number)
 	if(!vJoyEnabled())
@@ -48,30 +72,30 @@ bool Init(uint8_t device)
 	switch(status)
 	{
 	case VJD_STAT_OWN:
-		std::clog << "vJoy device " << device << " is already owned by this feeder\n";
+		std::clog << "vJoy device " << (int)device << " is already owned by this feeder\n";
 		break;
 	case VJD_STAT_FREE:
-		std::clog << "vJoy device " << device << " is free\n";
+		std::clog << "vJoy device " << (int)device << " is free\n";
 		break;
 	case VJD_STAT_BUSY:
-		std::clog << "vJoy device " << device << " is already owned by another feeder\nCannot continue\n";
+		std::clog << "vJoy device " << (int)device << " is already owned by another feeder\nCannot continue\n";
 		return true;
 	case VJD_STAT_MISS:
-		std::clog << "vJoy device " << device << " is not installed or disabled\nCannot continue\n";
+		std::clog << "vJoy device " << (int)device << " is not installed or disabled\nCannot continue\n";
 		return true;
 	default:
-		std::clog << "vJoy device " << device << " general error\nCannot continue\n";
+		std::clog << "vJoy device " << (int)device << " general error\nCannot continue\n";
 		return true;
 	};
 
 	// Acquire the vJoy device
 	if(!AcquireVJD(device))
 	{
-		std::clog << "Failed to acquire vJoy device number " << device << ".\n";
+		std::clog << "Failed to acquire vJoy device number " << (int)device << ".\n";
 		return true;
 	}
 	else
-		std::clog << "Acquired device number " << device << " - OK\n";
+		std::clog << "Acquired device number " << (int)device << " - OK\n";
 
 	joystick_position[device].bDevice = device;
 #endif
@@ -81,13 +105,30 @@ bool Init(uint8_t device)
 
 bool DeInit(uint8_t device)
 {
+	if(!IsIDValid(device))
+		return false;
+
 #ifdef _WIN32
 	if(!IsActive(device))
 	{
-		std::clog << "vJoy device " << device << " is already inactive\n";
+		std::clog << "vJoy device " << (int)device << " is already inactive\n";
 		return false;
 	}
 	
+	// Release all buttons
+	joystick_position[device].lButtons = 0;
+	// Release dpad
+	for(int hat = 0; hat <= 3; hat++)
+		SetHat(device, hat, false);
+
+	// Release all axis
+	for(int axis = HID_USAGE_X; axis <= HID_USAGE_WHL; axis++)
+		SetAxisPercent(device, axis, 50);
+
+	// Actually perform all releases
+	Update(device);
+
+	// Then we actually destroy the joystick
 	joystick_position[device].bDevice = 0;
 	RelinquishVJD(device);
 #endif
@@ -96,8 +137,12 @@ bool DeInit(uint8_t device)
 }
 
 
+//Returns true if device is active
 bool IsActive(uint8_t device)
 {
+	if(!IsIDValid(device))
+		return false;
+
 #ifdef _WIN32
 	return joystick_position[device].bDevice == device;
 #else
@@ -115,7 +160,7 @@ int Update(uint8_t device)
 	bool return_status = UpdateVJD(device, (void*)&joystick_position[device]) != 0;
 	if(!return_status)
 	{
-		std::clog << "Feeding vJoy device number " << device << " failed\n";
+		std::clog << "Feeding vJoy device number " << (int)device << " failed\n";
 		DeInit(device);
 	}
 
@@ -127,8 +172,7 @@ int Update(uint8_t device)
 void SetButton(uint8_t device, uint8_t button, bool value)
 {
 #ifdef _WIN32
-	if(!IsActive(device)
-	&&  Init(device))
+	if(Init(device) != 0)
 		return;
 
 	if(value) //press
@@ -137,34 +181,12 @@ void SetButton(uint8_t device, uint8_t button, bool value)
 		joystick_position[device].lButtons &= ~(1 << button);
 #endif
 }
-void SetHat(uint8_t device, uint8_t hat, bool value)
-{	
-#ifdef _WIN32
-	if(!IsActive(device)
-	&&  Init(device))
-		return;
-
-	if(hat >= 4)
-	{
-		std::clog << "vJoy device " << device << " invalid hat value of: " << hat << "\n";
-		return;
-	}
-	
-	if(hat == 0)
-		hat_up[device] = value;
-	else if(hat == 1)
-		hat_down[device] = value;
-	else if(hat == 2)
-		hat_left[device] = value;
-	else if(hat == 3)
-		hat_right[device] = value;
-
-	UpdateHat(device);
-#endif
-}
 void UpdateHat(uint8_t device)
 {
 #ifdef _WIN32
+	if(Init(device) != 0)
+		return;
+
 	if     ( hat_up[device] && !hat_down[device] && !hat_left[device] && !hat_right[device])
 		joystick_position[device].bHats = CONTINUOUS_UP;
 	else if( hat_up[device] && !hat_down[device] && !hat_left[device] &&  hat_right[device])
@@ -185,23 +207,44 @@ void UpdateHat(uint8_t device)
 		joystick_position[device].bHats = CONTINUOUS_NEUTRAL;
 #endif
 }
+void SetHat(uint8_t device, uint8_t hat, bool value)
+{
+#ifdef _WIN32
+	if(Init(device) != 0)
+		return;
+
+	if(hat == 0)
+		hat_up[device] = value;
+	else if(hat == 1)
+		hat_down[device] = value;
+	else if(hat == 2)
+		hat_left[device] = value;
+	else if(hat == 3)
+		hat_right[device] = value;
+	else
+	{
+		std::clog << "vJoy device " << (int)device << " invalid hat value of: " << (int)hat << "\n";
+		return;
+	}
+
+	UpdateHat(device);
+#endif
+}
 void SetAxisPercent(uint8_t device, uint8_t axis, uint8_t value)
 {
 #ifdef _WIN32
 	static LONG percent_axis_scale = MAX_AXIS_VALUE / 100;
 	
-	if(!IsActive(device)
-	&&  Init(device))
+	if(Init(device) != 0)
 		return;
 
-	SetAxisRaw(device, axis, percent_axis_scale * axis);
+	SetAxisRaw(device, axis, percent_axis_scale * value);
 #endif
 }
 void SetAxisRaw(uint8_t device, uint8_t axis, LONG value)
 {
 #ifdef _WIN32
-	if(!IsActive(device)
-	&&  Init(device))
+	if(Init(device) != 0)
 		return;
 
 	switch(axis)
@@ -242,8 +285,7 @@ void SetAxisRaw(uint8_t device, uint8_t axis, LONG value)
 void SetAxisSignedMax(uint8_t device, uint8_t axis, LONG value, LONG max)
 {
 #ifdef _WIN32
-	if(!IsActive(device)
-	&&  Init(device))
+	if(Init(device) != 0)
 		return;
 
 	double axis_scale = MAX_AXIS_VALUE / (max * 2);
@@ -251,11 +293,6 @@ void SetAxisSignedMax(uint8_t device, uint8_t axis, LONG value, LONG max)
 	value = value < -max ? -max :
 	       (value >  max ?  max :
 	        value);
-//TODO: above is supposedly faster.
-	/*if(value < -max)
-		value = -max;
-	else if(value > max)
-		value = max;*/
 	value += max;
 	value = (LONG)(value * axis_scale);
 
@@ -264,6 +301,9 @@ void SetAxisSignedMax(uint8_t device, uint8_t axis, LONG value, LONG max)
 }
 bool GetButton(uint8_t device, uint8_t button)
 {
+	if(!IsIDValid(device))
+		return false;
+
 #ifdef _WIN32
 	if(!IsActive(device))
 		return false;

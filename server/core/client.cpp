@@ -79,13 +79,33 @@ uint32_t EnumKeyToNDSKeypadBit(int enum_key)
 	}
 }
 
+bool ProfileData::isCommand(std::string button)
+{
+	if(button.substr(0, D2K_COMMAND_LENGTH) == D2K_COMMAND)
+		return true;
+
+	return false;
+}
+
+bool ProfileData::isAxis(std::string button)
+{
+	if(button.substr(0, D2K_AXIS_LENGTH) == D2K_AXIS)
+		return true;
+
+	return false;
+}
+
 bool ProfileData::isVirtualKey(std::string button)
 {
-	if(button.substr(0, D2K_COMMAND_LENGTH) != D2K_COMMAND)	//if button
-		return true;
-	//if command
+	if(button == "" 
+	|| button == "0"
+	|| isCommand(button)
+	|| isAxis(button))
 		return false;
+
+	return true;
 }
+
 uint16_t ProfileData::StringToVirtualKey(std::string button)
 {
 	if(isVirtualKey(button))
@@ -238,41 +258,80 @@ std::string ProfileData::GetButtonString(int enum_key)
 uint8_t ProfileData::GetValue8(int enum_key)
 {
 	std::string& pointer = GetStringReference(enum_key);
-	if(pointer == "")
-		return 0;
-	else
-		return D2K::string_to_uint8_t(pointer);
+
+	return D2K::string_to_uint8_t(pointer);
 }
 uint16_t ProfileData::GetValue16(int enum_key)
 {
 	std::string& pointer = GetStringReference(enum_key);
-	if(pointer == "")
-		return 0;
-	else
-		return D2K::string_to_uint16_t(pointer);
+
+	return D2K::string_to_uint16_t(pointer);
 }
 uint16_t ProfileData::GetVirtualKey(int enum_key)
 {
 	std::string& pointer = GetStringReference(enum_key);
-	if(pointer == "" || pointer == "0")
-		return 0;
-	else
-		return StringToVirtualKey(pointer);
+
+	return StringToVirtualKey(pointer);
 }
 
-void ProfileData::SetVirtualKey(int enum_key, uint16_t value)
+bool ProfileData::SetRaw(int enum_key, std::string value)
 {
 	std::string& pointer = GetStringReference(enum_key);
-	pointer = VirtualKeyToString(value);
+	if(&pointer == &m_null)
+		return false;
+	pointer = value;
+
+	return true;
 }
 
-void ProfileData::SetCommand(int enum_key, std::string value)
+bool ProfileData::SetVirtualKey(int enum_key, std::string value)
 {
-	std::string& Pointer = GetStringReference(enum_key);
 	if(isVirtualKey(value))
-		SetVirtualKey(enum_key, Key::GetNumber(value.c_str()));
-	else
-		Pointer = value;
+	{
+		SetRaw(enum_key, VirtualKeyToString(Key::GetNumber(value.c_str())));
+
+		return true;
+	}
+	return false;
+}
+
+bool ProfileData::SetCommand(int enum_key, std::string value)
+{
+	if(isCommand(value))
+	{
+		SetRaw(enum_key, value);
+
+		return true;
+	}
+	return false;
+}
+
+bool ProfileData::SetAxis(int enum_key, std::string value)
+{
+	if(isAxis(value))
+	{
+		SetRaw(enum_key, value);
+
+		return true;
+	}
+	return false;
+}
+
+bool ProfileData::SetVirtualKey(int enum_key, uint16_t value)
+{
+	return SetRaw(enum_key, VirtualKeyToString(value));
+}
+
+bool ProfileData::SetValue(int enum_key, std::string value)
+{
+	if(SetCommand(enum_key, value))
+	   return true;
+	if(SetVirtualKey(enum_key, value))
+	   return true;
+	if(SetAxis(enum_key, value))
+	   return true;
+
+	return false;
 }
 void ProfileData::SetTouchPos(uint8_t i, uint8_t x, uint8_t y, uint8_t w, uint8_t h)
 {
@@ -287,7 +346,15 @@ void ProfileData::SetTouchPos(uint8_t i, uint8_t x, uint8_t y, uint8_t w, uint8_
 const std::string& ProfileData::GetCommand(int enum_key)
 {
 	std::string& pointer = GetStringReference(enum_key);
-	if(!isVirtualKey(pointer))
+	if(isCommand(pointer))
+		return pointer;
+
+	return m_null;
+}
+const std::string& ProfileData::GetAxis(int enum_key)
+{
+	std::string& pointer = GetStringReference(enum_key);
+	if(isAxis(pointer))
 		return pointer;
 
 	return m_null;

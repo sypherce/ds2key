@@ -134,50 +134,50 @@ int LoadProfile(ProfileData* profile_data, uint8_t profile_number)
 		profile_data->m_mouse = "Relative";
 
 	profile_data->m_joy = iniParser::getstring(ini, "profile:joy", "0");
-	profile_data->SetCommand(KEYS::DUP, iniParser::getstring(ini, "profile:dpadup", "Key_None"));
-	profile_data->SetCommand(KEYS::DDOWN, iniParser::getstring(ini, "profile:dpaddown", "Key_None"));
-	profile_data->SetCommand(KEYS::DLEFT, iniParser::getstring(ini, "profile:dpadleft", "Key_None"));
-	profile_data->SetCommand(KEYS::DRIGHT, iniParser::getstring(ini, "profile:dpadright", "Key_None"));
-	profile_data->SetCommand(KEYS::A, iniParser::getstring(ini, "profile:a", "Key_None"));
-	profile_data->SetCommand(KEYS::B, iniParser::getstring(ini, "profile:b", "Key_None"));
-	profile_data->SetCommand(KEYS::X, iniParser::getstring(ini, "profile:x", "Key_None"));
-	profile_data->SetCommand(KEYS::Y, iniParser::getstring(ini, "profile:y", "Key_None"));
-	profile_data->SetCommand(KEYS::L, iniParser::getstring(ini, "profile:l", "Key_None"));
-	profile_data->SetCommand(KEYS::R, iniParser::getstring(ini, "profile:r", "Key_None"));
-	profile_data->SetCommand(KEYS::START, iniParser::getstring(ini, "profile:start", "Key_None"));
-	profile_data->SetCommand(KEYS::SELECT, iniParser::getstring(ini, "profile:select", "Key_None"));
-	profile_data->SetCommand(KEYS::LID, iniParser::getstring(ini, "profile:lid", "Key_None"));
+	profile_data->SetValue(KEYS::DUP, iniParser::getstring(ini, "profile:dpadup", "Key_None"));
+	profile_data->SetValue(KEYS::DDOWN, iniParser::getstring(ini, "profile:dpaddown", "Key_None"));
+	profile_data->SetValue(KEYS::DLEFT, iniParser::getstring(ini, "profile:dpadleft", "Key_None"));
+	profile_data->SetValue(KEYS::DRIGHT, iniParser::getstring(ini, "profile:dpadright", "Key_None"));
+	profile_data->SetValue(KEYS::A, iniParser::getstring(ini, "profile:a", "Key_None"));
+	profile_data->SetValue(KEYS::B, iniParser::getstring(ini, "profile:b", "Key_None"));
+	profile_data->SetValue(KEYS::X, iniParser::getstring(ini, "profile:x", "Key_None"));
+	profile_data->SetValue(KEYS::Y, iniParser::getstring(ini, "profile:y", "Key_None"));
+	profile_data->SetValue(KEYS::L, iniParser::getstring(ini, "profile:l", "Key_None"));
+	profile_data->SetValue(KEYS::R, iniParser::getstring(ini, "profile:r", "Key_None"));
+	profile_data->SetValue(KEYS::START, iniParser::getstring(ini, "profile:start", "Key_None"));
+	profile_data->SetValue(KEYS::SELECT, iniParser::getstring(ini, "profile:select", "Key_None"));
+	profile_data->SetValue(KEYS::LID, iniParser::getstring(ini, "profile:lid", "Key_None"));
 
-	profile_data->SetCommand(KEYS::ZL, iniParser::getstring(ini, "profile:zl", "Key_None"));
-	profile_data->SetCommand(KEYS::ZR, iniParser::getstring(ini, "profile:zr", "Key_None"));
+	profile_data->SetValue(KEYS::ZL, iniParser::getstring(ini, "profile:zl", "Key_None"));
+	profile_data->SetValue(KEYS::ZR, iniParser::getstring(ini, "profile:zr", "Key_None"));
 
-	profile_data->SetCommand(KEYS::CSTICK_UP, iniParser::getstring(ini, "profile:cstickup", "Key_None"));
-	profile_data->SetCommand(KEYS::CSTICK_DOWN, iniParser::getstring(ini, "profile:cstickdown", "Key_None"));
-	profile_data->SetCommand(KEYS::CSTICK_LEFT, iniParser::getstring(ini, "profile:cstickleft", "Key_None"));
-	profile_data->SetCommand(KEYS::CSTICK_RIGHT, iniParser::getstring(ini, "profile:cstickright", "Key_None"));
+	profile_data->SetValue(KEYS::CSTICK_UP, iniParser::getstring(ini, "profile:cstickup", "Key_None"));
+	profile_data->SetValue(KEYS::CSTICK_DOWN, iniParser::getstring(ini, "profile:cstickdown", "Key_None"));
+	profile_data->SetValue(KEYS::CSTICK_LEFT, iniParser::getstring(ini, "profile:cstickleft", "Key_None"));
+	profile_data->SetValue(KEYS::CSTICK_RIGHT, iniParser::getstring(ini, "profile:cstickright", "Key_None"));
 
-	profile_data->SetCommand(KEYS::CPAD_UP, iniParser::getstring(ini, "profile:cpadup", "Key_None"));
-	profile_data->SetCommand(KEYS::CPAD_DOWN, iniParser::getstring(ini, "profile:cpaddown", "Key_None"));
-	profile_data->SetCommand(KEYS::CPAD_LEFT, iniParser::getstring(ini, "profile:cpadleft", "Key_None"));
-	profile_data->SetCommand(KEYS::CPAD_RIGHT, iniParser::getstring(ini, "profile:cpadright", "Key_None"));
+	profile_data->SetValue(KEYS::CPAD_UP, iniParser::getstring(ini, "profile:cpadup", "Key_None"));
+	profile_data->SetValue(KEYS::CPAD_DOWN, iniParser::getstring(ini, "profile:cpaddown", "Key_None"));
+	profile_data->SetValue(KEYS::CPAD_LEFT, iniParser::getstring(ini, "profile:cpadleft", "Key_None"));
+	profile_data->SetValue(KEYS::CPAD_RIGHT, iniParser::getstring(ini, "profile:cpadright", "Key_None"));
 	
-	profile_data->SetCommand(KEYS::BLUE, iniParser::getstring(ini, "profile:blue", "Key_None"));
-	profile_data->SetCommand(KEYS::YELLOW, iniParser::getstring(ini, "profile:yellow", "Key_None"));
-	profile_data->SetCommand(KEYS::RED, iniParser::getstring(ini, "profile:red", "Key_None"));
-	profile_data->SetCommand(KEYS::GREEN, iniParser::getstring(ini, "profile:green", "Key_None"));
+	profile_data->SetValue(KEYS::BLUE, iniParser::getstring(ini, "profile:blue", "Key_None"));
+	profile_data->SetValue(KEYS::YELLOW, iniParser::getstring(ini, "profile:yellow", "Key_None"));
+	profile_data->SetValue(KEYS::RED, iniParser::getstring(ini, "profile:red", "Key_None"));
+	profile_data->SetValue(KEYS::GREEN, iniParser::getstring(ini, "profile:green", "Key_None"));
 
-	profile_data->SetCommand(KEYS::TOUCH_00, iniParser::getstring(ini, "profile:touch00", "Key_None"));
-	profile_data->SetCommand(KEYS::TOUCH_01, iniParser::getstring(ini, "profile:touch01", "Key_None"));
-	profile_data->SetCommand(KEYS::TOUCH_02, iniParser::getstring(ini, "profile:touch02", "Key_None"));
-	profile_data->SetCommand(KEYS::TOUCH_03, iniParser::getstring(ini, "profile:touch03", "Key_None"));
-	profile_data->SetCommand(KEYS::TOUCH_04, iniParser::getstring(ini, "profile:touch04", "Key_None"));
-	profile_data->SetCommand(KEYS::TOUCH_05, iniParser::getstring(ini, "profile:touch05", "Key_None"));
-	profile_data->SetCommand(KEYS::TOUCH_06, iniParser::getstring(ini, "profile:touch06", "Key_None"));
-	profile_data->SetCommand(KEYS::TOUCH_07, iniParser::getstring(ini, "profile:touch07", "Key_None"));
-	profile_data->SetCommand(KEYS::TOUCH_08, iniParser::getstring(ini, "profile:touch08", "Key_None"));
-	profile_data->SetCommand(KEYS::TOUCH_09, iniParser::getstring(ini, "profile:touch09", "Key_None"));
-	profile_data->SetCommand(KEYS::TOUCH_10, iniParser::getstring(ini, "profile:touch10", "Key_None"));
-	profile_data->SetCommand(KEYS::TOUCH_11, iniParser::getstring(ini, "profile:touch11", "Key_None"));
+	profile_data->SetValue(KEYS::TOUCH_00, iniParser::getstring(ini, "profile:touch00", "Key_None"));
+	profile_data->SetValue(KEYS::TOUCH_01, iniParser::getstring(ini, "profile:touch01", "Key_None"));
+	profile_data->SetValue(KEYS::TOUCH_02, iniParser::getstring(ini, "profile:touch02", "Key_None"));
+	profile_data->SetValue(KEYS::TOUCH_03, iniParser::getstring(ini, "profile:touch03", "Key_None"));
+	profile_data->SetValue(KEYS::TOUCH_04, iniParser::getstring(ini, "profile:touch04", "Key_None"));
+	profile_data->SetValue(KEYS::TOUCH_05, iniParser::getstring(ini, "profile:touch05", "Key_None"));
+	profile_data->SetValue(KEYS::TOUCH_06, iniParser::getstring(ini, "profile:touch06", "Key_None"));
+	profile_data->SetValue(KEYS::TOUCH_07, iniParser::getstring(ini, "profile:touch07", "Key_None"));
+	profile_data->SetValue(KEYS::TOUCH_08, iniParser::getstring(ini, "profile:touch08", "Key_None"));
+	profile_data->SetValue(KEYS::TOUCH_09, iniParser::getstring(ini, "profile:touch09", "Key_None"));
+	profile_data->SetValue(KEYS::TOUCH_10, iniParser::getstring(ini, "profile:touch10", "Key_None"));
+	profile_data->SetValue(KEYS::TOUCH_11, iniParser::getstring(ini, "profile:touch11", "Key_None"));
 
 	profile_data->m_touch_string[0] = iniParser::getstring(ini, "profile:touchstring00", "Command 0");
 	profile_data->m_touch_string[1] = iniParser::getstring(ini, "profile:touchstring01", "Command 1");
@@ -347,7 +347,7 @@ int SaveProfile(ProfileData* Profile, uint8_t profileNumber)
 int SetProfileSetting(ProfileData* Profile, uint8_t profileNumber, uint16_t setting, uint16_t value)
 {
 	LoadProfile(Profile, profileNumber);
-	Profile->SetCommand(setting, Key::GetString(value));
+	Profile->SetValue(setting, Key::GetString(value));
 	SaveProfile(Profile, profileNumber);
 
 	return 0;
