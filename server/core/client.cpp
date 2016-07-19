@@ -383,6 +383,16 @@ void Client::SetAlive(bool client_status)
 	m_alive = client_status;
 }
 
+int16_t Client::GetCstickX()
+{
+	return m_packet.cstick_x;
+}
+
+int16_t Client::GetCstickY()
+{
+	return m_packet.cstick_y;
+}
+
 int16_t Client::GetCircleX()
 {
 	return m_packet.circle_x;

@@ -21,6 +21,8 @@ typedef struct DS2KeyPacket final
 	uint16_t touch_y;
 	int16_t circle_x;
 	int16_t circle_y;
+	int16_t cstick_x;
+	int16_t cstick_y;
 	int16_t accel_x;
 	int16_t accel_y;
 	int16_t accel_z;

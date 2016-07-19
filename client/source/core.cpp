@@ -32,6 +32,7 @@ static accelVector accel[FILTER_SIZE] {};
 static angularRate gyro[FILTER_SIZE] {};
 #endif
 circlePosition g_circle_position {};
+circlePosition g_cstick_position {};
 accelVector g_accel_status {};
 angularRate g_gyro_status {};
 touchPosition g_stylus_position {};
@@ -223,6 +224,7 @@ void UpdateInputs()
 #if defined(_3DS)
 		UpdateGyroAccel();
 		hidCircleRead(&g_circle_position);
+		hidCstickRead(&g_cstick_position);
 		ScanLid();
 		g_keys_held |= LidHeld();
 		g_keys_down |= LidDown();

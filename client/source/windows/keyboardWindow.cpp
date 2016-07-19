@@ -419,7 +419,7 @@ std::string GetString(Label* label, Edit* edit, std::string text, int maxLength)
 		if(Keyboard::g_window.Update())                         // If pressed
 		{
 			UDP::Update(keysHeld(),
-			            NULL_VALUE, nullptr, nullptr, nullptr, nullptr,
+			            NULL_VALUE, nullptr, nullptr, nullptr, nullptr, nullptr,
 			            ConfigWindow::current_pressed_key); // Update keys and press active keyboard key
 			ConfigWindow::current_pressed_key = NULL_VALUE;
 			Keyboard::edit_entry->SetText(Buffer);          // Set text

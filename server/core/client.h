@@ -178,6 +178,12 @@ public:
 	//@return Circle current Y Position. Values range //TODO
 	int16_t GetCircleY();
 
+	//@return Cstick current X Position. Values range //TODO
+	int16_t GetCstickX();
+
+	//@return Cstick current Y Position. Values range //TODO
+	int16_t GetCstickY();
+
 	//@return Gyro current X Position. Values range //TODO
 	int16_t GetGyroX();
 

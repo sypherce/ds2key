@@ -94,8 +94,8 @@ void SendNormalSetting(DS2KeyNormalSettingsPacket setting);
 
 //updates current button and touch screen status
 void Update(uint32_t keys, uint32_t keysTurbo, touchPosition* touch_position,
-            circlePosition* circle_position, accelVector* g_accel_status,
-            angularRate* gyro_status, uint16_t keyboard);
+	    circlePosition* circle_position, circlePosition* cstick_position,
+	    accelVector* g_accel_status, angularRate* gyro_status, uint16_t keyboard);
 
 //listens for anything from the server and deals with it
 void ListenForServer();

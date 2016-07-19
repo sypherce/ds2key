@@ -367,8 +367,8 @@ void SendCommand(uint8_t command)
 }
 
 void Update(uint32_t keys, uint32_t keysTurbo, touchPosition* touch_position,
-            circlePosition* circle_position, accelVector* g_accel_status,
-            angularRate* gyro_status, uint16_t keyboard)
+            circlePosition* circle_position, circlePosition* cstick_position, 
+            accelVector* g_accel_status, angularRate* gyro_status, uint16_t keyboard)
 {
 	if(EMULATOR)                                 // Skip if emulating
 		return;
@@ -394,6 +394,11 @@ void Update(uint32_t keys, uint32_t keysTurbo, touchPosition* touch_position,
 	{
 		packet.circle_x = circle_position->dx; // Update x
 		packet.circle_y = circle_position->dy; // Update y
+	}
+	if(cstick_position != nullptr)             // Circle status is active
+	{
+		packet.cstick_x = cstick_position->dx; // Update x
+		packet.cstick_y = cstick_position->dy; // Update y
 	}
 	if(g_accel_status != nullptr)              // Circle status is active
 	{
