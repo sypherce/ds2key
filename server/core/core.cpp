@@ -9,6 +9,8 @@
 #define NOMINMAX
 #include <windows.h>
 #include <shellapi.h>
+#include <mmdeviceapi.h>
+#include <endpointvolume.h>
 #ifdef WIN32GUI
 #include "gui/gui.h"
 #endif
@@ -40,6 +42,79 @@ void ExecuteCommand(std::string Command)
 		system(stringStream.str().c_str());
 #endif
 	}
+}
+
+
+// Changes master volume to (volume)
+//  (volume) ranges from 0.0f, 1.0f. 
+void ChangeVolume(float volume)
+{
+#ifdef _WIN32
+	HRESULT hresult{ };
+
+	//Initialize the COM library 
+	CoInitialize(nullptr);
+
+	//Creates a single uninitialized object
+	IMMDeviceEnumerator *device_enumerator{ }; 
+	hresult = CoCreateInstance(__uuidof(MMDeviceEnumerator),
+	              NULL, CLSCTX_INPROC_SERVER, __uuidof(IMMDeviceEnumerator),
+	              (LPVOID *)&device_enumerator);
+	if(hresult != S_OK)
+	{
+		std::clog << "Error (CoCreateInstance): #" << hresult << "\n";
+		//Uninitialize the COM library 
+		CoUninitialize();
+
+		return;
+	}
+
+	//Retrieve the default audio endpoint using (device_enumerator)
+	IMMDevice *default_audio_endpoint{ };
+	hresult = device_enumerator->GetDefaultAudioEndpoint(eRender, eConsole,
+	              &default_audio_endpoint);
+	//we're done with device_enumerator
+	device_enumerator->Release();
+	if(hresult != S_OK)
+	{
+		std::clog << "Error (GetDefaultAudioEndpoint): #" << hresult << "\n";
+		//Uninitialize the COM library 
+		CoUninitialize();
+
+		return;
+	}
+
+	//Retrieve the volume controls using (default_audio_endpoint)
+	IAudioEndpointVolume *endpoint_volume{ };
+	hresult = default_audio_endpoint->Activate(__uuidof(IAudioEndpointVolume),
+	              CLSCTX_INPROC_SERVER, nullptr, (LPVOID*)&endpoint_volume);
+	//we're done with default_audio_endpoint
+	default_audio_endpoint->Release();
+	if(hresult != S_OK)
+	{
+		std::clog << "Error (IAudioEndpointVolume->Activate): #" << hresult << "\n";
+		//Uninitialize the COM library 
+		CoUninitialize();
+
+		return;
+	}
+
+	//Change the volume
+	hresult = endpoint_volume->SetMasterVolumeLevelScalar(volume, nullptr);	
+	//we're done with endpoint_volume
+	endpoint_volume->Release();
+	if(hresult != S_OK)
+	{
+		std::clog << "Error (SetMasterVolumeLevelScalar): #" << hresult << "\n";
+		//Uninitialize the COM library 
+		CoUninitialize();
+
+		return;
+	}
+
+	//Uninitialize the COM library 
+	CoUninitialize();
+#endif
 }
 
 void ProcessPacket(D2K::Client* Client)
@@ -99,6 +174,10 @@ void ProcessPacket(D2K::Client* Client)
 				input_value *= Client->GetCstickX();
 			else if(DSButton == DS2KEY_CSTICK_UP || DSButton == DS2KEY_CSTICK_DOWN)
 				input_value *= Client->GetCstickY();
+			else if(DSButton == DS2KEY_SLIDER_VOLUME)
+				input_value = (Client->GetSliderVolume() * 1.2) - 60;
+			else if(DSButton == DS2KEY_SLIDER_3D)
+				input_value = (Client->GetSlider3D() * 1.2) - 60;
 			
 			uint8_t output_axis = 0;
 			if(DSAxis == "X")
@@ -120,7 +199,19 @@ void ProcessPacket(D2K::Client* Client)
 			else if(DSAxis == "POV")
 				output_axis = HID_USAGE_POV;
 
-			if(output_axis != 0)
+			if(DSAxis == "VOL")
+			{
+				// this variable stops us from changing the volume every second
+				// the user can now also manually change the volume
+				static int16_t last_volume_input{ };
+				if(input_value != last_volume_input)
+				{
+					last_volume_input = input_value;
+
+					ChangeVolume((input_value + 60) / 120.0f);
+				}
+			}
+			else if(output_axis != 0)
 			{
 				int16_t axis_max_value = 60;
 				D2K::Input::Joystick::SetAxisSignedMax(Joystick, output_axis, input_value, axis_max_value);
@@ -201,6 +292,40 @@ void ProcessPacket(D2K::Client* Client)
 		last_x = last_y = 0;
 		last_screen_touched = false;
 	}
+
+#ifdef false
+	//gyro/accel test stuff
+	{
+		uint8_t device = 1;
+		int16_t scale = 64;
+		int16_t value = Client->GetGyroX();
+		int16_t diff_value = (int16_t)1.3*scale;
+		int16_t axis_max_value = 60;
+		static int16_t adjustment_value_x = 0;
+		static int16_t adjustment_value_y = 0;
+		static int16_t adjustment_value_z = 0;
+		if(value > -diff_value && value < diff_value)
+		{
+			adjustment_value_x = -Client->GetAccelX();
+			adjustment_value_z = Client->GetAccelZ();
+		}
+		int16_t accelX = Client->GetAccelX();
+		int16_t accelY = Client->GetAccelY();
+		int16_t accelZ = Client->GetAccelZ();
+		int16_t gyroX = Client->GetGyroX();
+		int16_t gyroY = Client->GetGyroY();
+		int16_t gyroZ = Client->GetGyroZ();
+		/*D2K::Input::joystick_id::SetAxisSignedMax(device, HID_USAGE_X,  client->GetAccelX() + adjustment_value_x, axis_max_value);
+		D2K::Input::joystick_id::SetAxisSignedMax(device, HID_USAGE_Y, -client->GetAccelY() + adjustment_value_y, axis_max_value);
+		D2K::Input::joystick_id::SetAxisSignedMax(device, HID_USAGE_Z, -client->GetAccelZ() + adjustment_value_z, axis_max_value);
+		D2K::Input::joystick_id::SetAxisSignedMax(device, HID_USAGE_RX,  client->GetGyroX()  + adjustment_value_x, axis_max_value);
+		D2K::Input::joystick_id::SetAxisSignedMax(device, HID_USAGE_RY, -client->GetGyroY()  + adjustment_value_y, axis_max_value);
+		D2K::Input::joystick_id::SetAxisSignedMax(device, HID_USAGE_RZ, -client->GetGyroZ()  + adjustment_value_z, axis_max_value);
+
+		D2K::Input::joystick_id::Update(device);*/
+	}
+#endif
+
 	uint16_t keyboard_press = Client->GetKeyboardPress();
 	if(keyboard_press != NULL_VALUE)
 	{

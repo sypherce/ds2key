@@ -22,6 +22,8 @@ public:
 	bool GetChecked();
 	//sets state to (checked) and forces update
 	void SetChecked(bool checked);
+	//toggles checked state forces update
+	void ToggleChecked();
 
 private:
 	bool m_checked;

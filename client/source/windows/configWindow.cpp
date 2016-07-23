@@ -41,6 +41,8 @@ Button* button_y;
 Button* button_start;
 Button* button_select;
 Button* button_enable;
+Button* button_slider_volume;
+Button* button_slider_3d;
 Button* button_blue;
 Button* button_yellow;
 Button* button_red;
@@ -59,6 +61,13 @@ void SendNewSetting(uint16_t setting, uint16_t value)
 	UDP::SendNormalSetting(settings);
 }
 
+void SendNewSetting(uint16_t setting)
+{
+	char value = Keyboard::GetKey();
+	if(value != 0)
+		SendNewSetting(setting, value);
+}
+
 void ButtonCloseFunction()
 {
 	ConfigWindow::g_window.SetVisible(false);
@@ -66,168 +75,120 @@ void ButtonCloseFunction()
 
 void ButtonLFunction()
 {
-	//std::string entry = Keyboard::GetString(label_l, edit_l, "L", 5);
-	char value = Keyboard::GetKey();
-	if(value != 0)
-		SendNewSetting(KEYS::L, value);
+	SendNewSetting(KEYS::L);
 }
 
 void ButtonZLFunction()
 {
-	//std::string entry = Keyboard::GetString(label_l, edit_l, "L", 5);
-	char value = Keyboard::GetKey();
-	if(value != 0)
-		SendNewSetting(KEYS::ZL, value);
+	SendNewSetting(KEYS::ZL);
 }
 void ButtonRFunction()
 {
-	char value = Keyboard::GetKey();
-	if(value != 0)
-		SendNewSetting(KEYS::R, value);
+	SendNewSetting(KEYS::R);
 }
 void ButtonZRFunction()
 {
-	char value = Keyboard::GetKey();
-	if(value != 0)
-		SendNewSetting(KEYS::ZR, value);
+	SendNewSetting(KEYS::ZR);
 }
 void ButtonLeftFunction()
 {
-	char value = Keyboard::GetKey();
-	if(value != 0)
-		SendNewSetting(KEYS::DLEFT, value);
+	SendNewSetting(KEYS::DLEFT);
 }
 void ButtonRightFunction()
 {
-	char value = Keyboard::GetKey();
-	if(value != 0)
-		SendNewSetting(KEYS::DRIGHT, value);
+	SendNewSetting(KEYS::DRIGHT);
 }
 void ButtonUpFunction()
 {
-	char value = Keyboard::GetKey();
-	if(value != 0)
-		SendNewSetting(KEYS::DUP, value);
+	SendNewSetting(KEYS::DUP);
 }
 void ButtonDownFunction()
 {
-	char value = Keyboard::GetKey();
-	if(value != 0)
-		SendNewSetting(KEYS::DDOWN, value);
+	SendNewSetting(KEYS::DDOWN);
 }
 void ButtonLeftCPadFunction()
 {
-	char value = Keyboard::GetKey();
-	if(value != 0)
-		SendNewSetting(KEYS::CPAD_LEFT, value);
+	SendNewSetting(KEYS::CPAD_LEFT);
 }
 void ButtonRightCPadFunction()
 {
-	char value = Keyboard::GetKey();
-	if(value != 0)
-		SendNewSetting(KEYS::CPAD_RIGHT, value);
+	SendNewSetting(KEYS::CPAD_RIGHT);
 }
 void ButtonUpCPadFunction()
 {
-	char value = Keyboard::GetKey();
-	if(value != 0)
-		SendNewSetting(KEYS::CPAD_UP, value);
+	SendNewSetting(KEYS::CPAD_UP);
 }
 void ButtonDownCPadFunction()
 {
-	char value = Keyboard::GetKey();
-	if(value != 0)
-		SendNewSetting(KEYS::CPAD_DOWN, value);
+	SendNewSetting(KEYS::CPAD_DOWN);
 }
 void ButtonLeftCStickFunction()
 {
-	char value = Keyboard::GetKey();
-	if(value != 0)
-		SendNewSetting(KEYS::CSTICK_LEFT, value);
+	SendNewSetting(KEYS::CSTICK_LEFT);
 }
 void ButtonRightCStickFunction()
 {
-	char value = Keyboard::GetKey();
-	if(value != 0)
-		SendNewSetting(KEYS::CSTICK_RIGHT, value);
+	SendNewSetting(KEYS::CSTICK_RIGHT);
 }
 void ButtonUpCStickFunction()
 {
-	char value = Keyboard::GetKey();
-	if(value != 0)
-		SendNewSetting(KEYS::CSTICK_UP, value);
+	SendNewSetting(KEYS::CSTICK_UP);
 }
 void ButtonDownCStickFunction()
 {
-	char value = Keyboard::GetKey();
-	if(value != 0)
-		SendNewSetting(KEYS::CSTICK_DOWN, value);
+	SendNewSetting(KEYS::CSTICK_DOWN);
 }
 void ButtonAFunction()
 {
-	char value = Keyboard::GetKey();
-	if(value != 0)
-		SendNewSetting(KEYS::A, value);
+	SendNewSetting(KEYS::A);
 }
 void ButtonBFunction()
 {
-	char value = Keyboard::GetKey();
-	if(value != 0)
-		SendNewSetting(KEYS::B, value);
+	SendNewSetting(KEYS::B);
 }
 void ButtonXFunction()
 {
-	char value = Keyboard::GetKey();
-	if(value != 0)
-		SendNewSetting(KEYS::X, value);
+	SendNewSetting(KEYS::X);
 }
 void ButtonYFunction()
 {
-	char value = Keyboard::GetKey();
-	if(value != 0)
-		SendNewSetting(KEYS::Y, value);
+	SendNewSetting(KEYS::Y);
 }
 void ButtonStartFunction()
 {
-	char value = Keyboard::GetKey();
-	if(value != 0)
-		SendNewSetting(KEYS::START, value);
+	SendNewSetting(KEYS::START);
 }
 void ButtonSelectFunction()
 {
-	char value = Keyboard::GetKey();
-	if(value != 0)
-		SendNewSetting(KEYS::SELECT, value);
+	SendNewSetting(KEYS::SELECT);
 }
 void ButtonBlueFunction()
 {
-	char value = Keyboard::GetKey();
-	if(value != 0)
-		SendNewSetting(KEYS::BLUE, value);
+	SendNewSetting(KEYS::BLUE);
 }
 void ButtonYellowFunction()
 {
-	char value = Keyboard::GetKey();
-	if(value != 0)
-		SendNewSetting(KEYS::YELLOW, value);
+	SendNewSetting(KEYS::YELLOW);
 }
 void ButtonGreenFunction()
 {
-	char value = Keyboard::GetKey();
-	if(value != 0)
-		SendNewSetting(KEYS::GREEN, value);
+	SendNewSetting(KEYS::GREEN);
+}
+void ButtonSliderVolumeFunction()
+{
+	SendNewSetting(KEYS::SLIDER_VOLUME);
+}
+void ButtonSlider3DFunction()
+{
+	SendNewSetting(KEYS::SLIDER_3D);
 }
 void ButtonLidFunction()
 {
-	char value = Keyboard::GetKey();
-	if(value != 0)
-		SendNewSetting(KEYS::LID, value);
+	SendNewSetting(KEYS::LID);
 }
 void ButtonRedFunction()
 {
-	char value = Keyboard::GetKey();
-	if(value != 0)
-		SendNewSetting(KEYS::RED, value);
+	SendNewSetting(KEYS::RED);
 }
 
 WindowClass::WindowClass() : Window()
@@ -242,13 +203,17 @@ WindowClass::WindowClass() : Window()
 	lx = 9;
 	ly = 15;
 	AppendObject(button_l  = new Button(m_screen, Rect(lx,ly,10,10), "L", &ButtonLFunction));
+#ifdef _3DS
 	AppendObject(button_zl = new Button(m_screen, Rect(lx,ly+13,10,10), "ZL", &ButtonZLFunction));
+#endif
 		
 	static uint16_t rx, ry;
 	rx = 235;
 	ry = ly;
 	AppendObject(button_r  = new Button(m_screen, Rect(rx,ry,10,10), "R", &ButtonRFunction));
+#ifdef _3DS
 	AppendObject(button_zr = new Button(m_screen, Rect(rx,ry+13,10,10), "ZR", &ButtonZRFunction));
+#endif
 
 	static uint16_t dpad_x, dpad_y;
 	dpad_x = 9;
@@ -258,6 +223,7 @@ WindowClass::WindowClass() : Window()
 	AppendObject(button_up    = new Button(m_screen, Rect(dpad_x + 30, dpad_y,      10, 10), "^", &ButtonUpFunction));
 	AppendObject(button_down  = new Button(m_screen, Rect(dpad_x + 30, dpad_y + 30, 10, 10), "v", &ButtonDownFunction));
 	
+#ifdef _3DS
 	static uint16_t cpad_x, cpad_y;
 	cpad_x = 30;
 	cpad_y = 15;
@@ -273,7 +239,7 @@ WindowClass::WindowClass() : Window()
 	AppendObject(button_right = new Button(m_screen, Rect(cstick_x + 60, cstick_y + 15, 10, 10), "CS >", &ButtonRightCStickFunction));
 	AppendObject(button_up    = new Button(m_screen, Rect(cstick_x + 30, cstick_y,      10, 10), "CS ^", &ButtonUpCStickFunction));
 	AppendObject(button_down  = new Button(m_screen, Rect(cstick_x + 30, cstick_y + 30, 10, 10), "CS v", &ButtonDownCStickFunction));
-	
+#endif
 	
 	static uint16_t abxy_x, abxy_y;
 	abxy_x = 175;
@@ -289,6 +255,13 @@ WindowClass::WindowClass() : Window()
 	AppendObject(button_start  = new Button(m_screen, Rect(start_select_x + 60, start_select_y, 10, 10), "Start", &ButtonStartFunction));
 	AppendObject(button_select = new Button(m_screen, Rect(start_select_x,     start_select_y, 10, 10), "Select", &ButtonSelectFunction));
 	
+#if defined(_3DS)
+	static uint16_t sliders_x, sliders_y;
+	sliders_x = 40;
+	sliders_y = 130;
+	AppendObject(button_slider_volume = new Button(m_screen, Rect(sliders_x,       sliders_y, 10, 10), "Volume", &ButtonSliderVolumeFunction));
+	AppendObject(button_slider_3d     = new Button(m_screen, Rect(sliders_x + 100, sliders_y, 10, 10), "3D Slider", &ButtonSlider3DFunction));
+#elif defined(_NDS)
 	static uint16_t byrg_x, byrg_y;
 	byrg_x = 40;
 	byrg_y = 130;
@@ -296,6 +269,7 @@ WindowClass::WindowClass() : Window()
 	AppendObject(button_yellow = new Button(m_screen, Rect(byrg_x + 50,  byrg_y, 10, 10), "Yellow", &ButtonYellowFunction));
 	AppendObject(button_red    = new Button(m_screen, Rect(byrg_x + 100, byrg_y, 10, 10), "Red", &ButtonRedFunction));
 	AppendObject(button_green  = new Button(m_screen, Rect(byrg_x + 150, byrg_y, 10, 10), "Green", &ButtonGreenFunction));
+#endif
 
 	static uint16_t lid_x, lid_y;
 	lid_x = 115;

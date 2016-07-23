@@ -29,6 +29,8 @@ typedef struct DS2KeyPacket final
 	int16_t gyro_x;
 	int16_t gyro_y;
 	int16_t gyro_z;
+	int16_t slider_volume;
+	int16_t slider_3d;
 	uint16_t keyboard;         // Keyboard Key Pressed
 } __attribute__((packed)) DS2KeyPacket;
 

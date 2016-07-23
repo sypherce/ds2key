@@ -36,9 +36,13 @@ circlePosition g_cstick_position {};
 accelVector g_accel_status {};
 angularRate g_gyro_status {};
 touchPosition g_stylus_position {};
+float g_slider_3d_status {};
+uint8_t g_slider_volume_status {};
 bool input_changed = false;
 //TODO: this should be configurable?
-const bool enable_input_timeout = true;
+bool enable_input_timeout = true;
+//TODO: this should be configurable?
+bool force_backlights_on = false;
 //TODO: this should be configurable?
 const bool toggle_both_lights = true;
 
@@ -78,6 +82,12 @@ void BacklightsOff()
 	}
 }
 
+void ForceBacklightsOn(bool value)
+{
+	if(value)
+		BacklightsOn();
+	force_backlights_on = value;
+}
 
 char* GetTime()
 {
@@ -225,6 +235,8 @@ void UpdateInputs()
 		UpdateGyroAccel();
 		hidCircleRead(&g_circle_position);
 		hidCstickRead(&g_cstick_position);
+		g_slider_3d_status = osGet3DSliderState();
+		HIDUSER_GetSoundVolume(&g_slider_volume_status);
 		ScanLid();
 		g_keys_held |= LidHeld();
 		g_keys_down |= LidDown();
@@ -255,17 +267,18 @@ void UpdateLid()
 	if(g_keys_up&KEY_LID                     // If lid just opened OR
 	|| g_keys_held&KEY_TOUCH)                // Screen is touched
 	{
-		s_vblank_count = 0;                  // Reset timer
-		BacklightsOn();                      // Backlights on
+		s_vblank_count = 0;              // Reset timer
+		BacklightsOn();                  // Backlights on
 	}
 	else if(g_keys_down                      // A button pressed, possibly the lid OR
 	|| s_vblank_count == VBLANK_MAX)         // Enough time passed
 	{
-		BacklightsOff();                     // Backlights off
+		if(!force_backlights_on)         // If Backlights are NOT forced on
+			BacklightsOff();         // Backlights off
 	}
 
 	if(s_vblank_count < VBLANK_MAX)
-		s_vblank_count++;                    // Increment timer
+		s_vblank_count++;                // Increment timer
 	if(!enable_input_timeout)                // This avoids the screen turning off after 4 seconds
 		s_vblank_count = 0;
 	//while(g_keys_held&KEY_LID)             // Wait here while the lid is closed

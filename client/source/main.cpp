@@ -31,6 +31,8 @@ int main()
 		                 &D2K::g_cstick_position,
 		                 &D2K::g_accel_status,
 		                 &D2K::g_gyro_status,
+		                 &D2K::g_slider_volume_status,
+		                 &D2K::g_slider_3d_status,
 		                 NULL_VALUE);
 
 		D2K::GUI::Main::g_window.Update(); // Update the window

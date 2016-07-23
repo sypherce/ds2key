@@ -49,26 +49,26 @@ WindowClass::WindowClass() : Window()
 	int h = 15;
 	int gap = 6;
 
-	AppendObject(label_entry = new Label(m_screen, Rect(64,24+3,40,10), ""));
-	AppendObject(edit_entry = new Edit(m_screen, Rect(96,24,95,10), "", &VoidFunction));
+	AppendObject(label_entry      = new Label(m_screen, Rect(64,24+3,40,10), ""));
+	AppendObject(edit_entry       = new Edit(m_screen, Rect(96,24,95,10), "", &VoidFunction));
 
-	AppendObject(button_1 = new Button(m_screen, Rect(x + 0, y, w, h), "1", &Button1Function));
-	AppendObject(button_2 = new Button(m_screen, Rect(x + w + gap, y, w, h), "2", &Button2Function));
-	AppendObject(button_3 = new Button(m_screen, Rect(x + (w * 2) + (gap * 2), y, w, h), "3", &Button3Function));
+	AppendObject(button_1         = new Button(m_screen, Rect(x + 0, y, w, h), "1", &Button1Function));
+	AppendObject(button_2         = new Button(m_screen, Rect(x + w + gap, y, w, h), "2", &Button2Function));
+	AppendObject(button_3         = new Button(m_screen, Rect(x + (w * 2) + (gap * 2), y, w, h), "3", &Button3Function));
 	y += h + gap;
-	AppendObject(button_4 = new Button(m_screen, Rect(x + 0, y, w, h), "4", &Button4Function));
-	AppendObject(button_5 = new Button(m_screen, Rect(x + w + gap, y, w, h), "5", &Button5Function));
-	AppendObject(button_6 = new Button(m_screen, Rect(x + (w * 2) + (gap * 2), y, w, h), "6", &Button6Function));
+	AppendObject(button_4         = new Button(m_screen, Rect(x + 0, y, w, h), "4", &Button4Function));
+	AppendObject(button_5         = new Button(m_screen, Rect(x + w + gap, y, w, h), "5", &Button5Function));
+	AppendObject(button_6         = new Button(m_screen, Rect(x + (w * 2) + (gap * 2), y, w, h), "6", &Button6Function));
 	y += h + gap;
-	AppendObject(button_7 = new Button(m_screen, Rect(x + 0, y, w, h), "7", &Button7Function));
-	AppendObject(button_8 = new Button(m_screen, Rect(x + w + gap, y, w, h), "8", &Button8Function));
-	AppendObject(button_9 = new Button(m_screen, Rect(x + (w * 2) + (gap * 2), y, w, h), "9", &Button9Function));
+	AppendObject(button_7         = new Button(m_screen, Rect(x + 0, y, w, h), "7", &Button7Function));
+	AppendObject(button_8         = new Button(m_screen, Rect(x + w + gap, y, w, h), "8", &Button8Function));
+	AppendObject(button_9         = new Button(m_screen, Rect(x + (w * 2) + (gap * 2), y, w, h), "9", &Button9Function));
 	y += h + gap;
-	AppendObject(button_period = new Button(m_screen, Rect(x + 0, y, w, h), ".", &ButtonPeriodFunction));
-	AppendObject(button_0 = new Button(m_screen, Rect(x + w + gap, y, w, h), "0", &Button0Function));
+	AppendObject(button_period    = new Button(m_screen, Rect(x + 0, y, w, h), ".", &ButtonPeriodFunction));
+	AppendObject(button_0         = new Button(m_screen, Rect(x + w + gap, y, w, h), "0", &Button0Function));
 	AppendObject(button_backspace = new Button(m_screen, Rect(x + (w * 2) + (gap * 2), y, w, h), "<", &ButtonBackspaceFunction));
 	y += h + gap;
-	AppendObject(button_enter = new Button(m_screen, Rect(x + 0, y, 42, h), "Enter", &ButtonEnterFunction));
+	AppendObject(button_enter     = new Button(m_screen, Rect(x + 0, y, 42, h), "Enter", &ButtonEnterFunction));
 }
 WindowClass::~WindowClass() { }
 
@@ -105,6 +105,7 @@ void ButtonBackspaceFunction()
 
 std::string Entry(Label* label, Edit* edit, std::string text, int maxLength)
 {
+	ForceBacklightsOn(true);                             // Lock backlights on
 	Keypad::label_entry->SetRect(label->GetRect());
 	Keypad::label_entry->SetText(label->GetText());
 

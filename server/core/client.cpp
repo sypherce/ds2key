@@ -74,6 +74,12 @@ uint32_t EnumKeyToNDSKeypadBit(int enum_key)
 		return DS2KEY_RED;
 	case KEYS::GREEN:
 		return DS2KEY_GREEN;
+
+	case KEYS::SLIDER_VOLUME:
+		return DS2KEY_SLIDER_VOLUME;
+	case KEYS::SLIDER_3D:
+		return DS2KEY_SLIDER_3D;
+
 	default:
 		return 0;
 	}
@@ -163,6 +169,12 @@ std::string& ProfileData::GetStringReference(int enum_key)
 		return m_select;
 	case KEYS::LID:
 		return m_lid;
+
+	case KEYS::SLIDER_VOLUME:
+		return m_slider_volume;
+	case KEYS::SLIDER_3D:
+		return m_slider_3d;
+
 	case KEYS::BLUE:
 		return m_blue;
 	case KEYS::YELLOW:
@@ -498,6 +510,15 @@ int16_t Client::GetAccelY()
 int16_t Client::GetAccelZ()
 {
 	return m_packet.accel_z;
+}
+
+uint8_t Client::GetSliderVolume()
+{
+	return m_packet.slider_volume;
+}
+uint8_t Client::GetSlider3D()
+{
+	return m_packet.slider_3d;
 }
 
 uint16_t Client::GetKeyboardPress()

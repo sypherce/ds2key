@@ -35,6 +35,9 @@ static const uint32_t DS2KEY_YELLOW = (1U << (17));
 static const uint32_t DS2KEY_RED = (1U << (18));
 static const uint32_t DS2KEY_GREEN = (1U << (19));
 
+static const uint32_t DS2KEY_SLIDER_VOLUME = (1U << (21));
+static const uint32_t DS2KEY_SLIDER_3D = (1U << (22));
+
 static const uint32_t DS2KEY_CSTICK_RIGHT = (1U << (24));
 static const uint32_t DS2KEY_CSTICK_LEFT = (1U << (25));
 static const uint32_t DS2KEY_CSTICK_UP = (1U << (26));
@@ -120,6 +123,9 @@ public:
 	std::string m_cpad_up, m_cpad_down, m_cpad_left, m_cpad_right;
 
 	std::string m_blue, m_yellow, m_red, m_green;
+
+	std::string m_slider_volume, m_slider_3d;
+
 	std::string m_touch_command[12];
 	std::string m_touch_string[12];
 	uint8_t m_touch_x[12];
@@ -216,6 +222,12 @@ public:
 
 	//@return Accel current Z Position. Values range //TODO
 	int16_t GetAccelZ();
+
+	//@return Volume Slider current Position. Values range //TODO
+	uint8_t GetSliderVolume();
+
+	//@return 3D Slider current Position. Values range //TODO
+	uint8_t GetSlider3D();
 
 	//TODO finish/update comment... 
 	//@return DS KeyboardPress, currently only uint8_t values come through (1-255), 0 = no press

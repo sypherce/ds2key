@@ -97,6 +97,9 @@ bool WindowClass::Update()
 	static int update_counter = 0;
 
 	const int UPDATE_COUNTER_MAX = 30;
+
+	ForceBacklightsOn(false); // Let backlights timeout
+
 	if(update_counter >= UPDATE_COUNTER_MAX)
 	{
 		update_counter = 0;
@@ -183,7 +186,8 @@ void ButtonTouchFunction()
 
 		UDP::Update(g_keys_held, 0, &D2K::g_stylus_position,
 		            &D2K::g_circle_position, &D2K::g_cstick_position,
-		            &D2K::g_accel_status, &D2K::g_gyro_status, NULL_VALUE);
+		            &D2K::g_accel_status, &D2K::g_gyro_status,
+		            &D2K::g_slider_volume_status, &D2K::g_slider_3d_status, NULL_VALUE);
 
 		Main::g_window.Update();
 	}
@@ -197,11 +201,14 @@ void ButtonTurboFunction()
 	Main::g_window.SetVisible(false);  // Hide main window
 	button_turbo->SetVisible(true);
 	Turbo::g_window.SetVisible(true);
+	ForceBacklightsOn(true);           // Lock backlights on
 
 	while(D2K::Loop())
 	{
 		UDP::Update(g_keys_held, Turbo::GetKeys(), nullptr,
-		            &D2K::g_circle_position, &D2K::g_cstick_position, &D2K::g_accel_status, &D2K::g_gyro_status, NULL_VALUE);
+		            &D2K::g_circle_position, &D2K::g_cstick_position,
+		            &D2K::g_accel_status, &D2K::g_gyro_status,
+		            &D2K::g_slider_volume_status, &D2K::g_slider_3d_status, NULL_VALUE);
 		Turbo::g_window.Update();
 		button_turbo->Draw();
 
@@ -218,13 +225,14 @@ void ButtonConfigWindowFunction()
 	Main::g_window.SetVisible(false);                    // Hide main window
 	button_config->SetVisible(true);
 	ConfigWindow::g_window.SetVisible(true);
+	ForceBacklightsOn(true);                             // Lock backlights on
 
 	while(D2K::Loop()
 	   && ConfigWindow::g_window.IsVisible())
 	{
 		ConfigWindow::g_window.Update();
 		UDP::Update(keysHeld(), Turbo::GetKeys(), nullptr, nullptr,
-		            nullptr, nullptr, nullptr, NULL_VALUE);
+		            nullptr, nullptr, nullptr, nullptr, nullptr, NULL_VALUE);
 		ConfigWindow::current_pressed_key = NULL_VALUE;
 		button_config->Draw();
 
@@ -242,17 +250,19 @@ void ButtonIPFunction()
 }
 void ButtonCommandsFunction()
 {
-	Main::g_window.SetVisible(false);  // Hide main window
+	Main::g_window.SetVisible(false);   // Hide main window
 	button_commands->SetVisible(true);  // Keep [Commands] button visible
-	Command::g_window.SetVisible(true);  // Show command window
+	Command::g_window.SetVisible(true); // Show command window
+	ForceBacklightsOn(true);            // Lock backlights on
 
 	while(D2K::Loop())
 	{
 		UDP::Update(g_keys_held, Turbo::GetKeys(), nullptr, 
 		            &D2K::g_circle_position, &D2K::g_cstick_position,
-		            &D2K::g_accel_status, &D2K::g_gyro_status, NULL_VALUE);
-		Command::g_window.Update();  // Update and draw command window
-		button_commands->Draw();  // Draw [Commands] button
+		            &D2K::g_accel_status, &D2K::g_gyro_status,
+		            &D2K::g_slider_volume_status, &D2K::g_slider_3d_status, NULL_VALUE);
+		Command::g_window.Update(); // Update and draw command window
+		button_commands->Draw();    // Draw [Commands] button
 		
 		// If pressed again, break
 		if(Main::g_window.CheckClick(button_commands))
@@ -260,7 +270,7 @@ void ButtonCommandsFunction()
 	}
 
 	Command::g_window.SetVisible(false);
-	Main::g_window.SetVisible(true);  // Show main window
+	Main::g_window.SetVisible(true);    // Show main window
 }
 
 }}}//namespace D2K::GUI::Main

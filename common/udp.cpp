@@ -368,49 +368,58 @@ void SendCommand(uint8_t command)
 
 void Update(uint32_t keys, uint32_t keysTurbo, touchPosition* touch_position,
             circlePosition* circle_position, circlePosition* cstick_position, 
-            accelVector* g_accel_status, angularRate* gyro_status, uint16_t keyboard)
+            accelVector* accel_status, angularRate* gyro_status,
+            uint8_t* slider_volume, float* slider_3d, uint16_t keyboard)
 {
-	if(EMULATOR)                                 // Skip if emulating
+	if(EMULATOR)                                   // Skip if emulating
 		return;
 
-	ListenForServer();                           // Listen for the server
+	ListenForServer();                             // Listen for the server
 
-	packet = DS2KeyPacket{ };                    // Clear the packet
+	packet = DS2KeyPacket{ };                      // Clear the packet
 	packet.type = UDP::PACKET::NORMAL;
 	packet.ip_address = UDP::GetLocalIP();
 	packet.profile = GetProfile();//this was before ip_address. I'm not sure why.
 	packet.keys = keys;
 	packet.keys_turbo = keysTurbo;
-	if(touch_position != nullptr)                // Touch status is active
+	if(touch_position != nullptr)                  // Touch status is active
 	{
-		packet.touch_x = touch_position->px; // Update x
-		packet.touch_y = touch_position->py; // Update y
+		packet.touch_x = touch_position->px;   // Update x
+		packet.touch_y = touch_position->py;   // Update y
 	}
-	else                                         // Touch status is inactive
+	else                                           // Touch status is inactive
 	{
-		packet.keys &= ~KEY_TOUCH;           // Clear touch status
+		packet.keys &= ~KEY_TOUCH;             // Clear touch status
 	}
-	if(circle_position != nullptr)             // Circle status is active
+	if(circle_position != nullptr)                 // Circle status is active
 	{
 		packet.circle_x = circle_position->dx; // Update x
 		packet.circle_y = circle_position->dy; // Update y
 	}
-	if(cstick_position != nullptr)             // Circle status is active
+	if(cstick_position != nullptr)                 // Cstick status is active
 	{
 		packet.cstick_x = cstick_position->dx; // Update x
 		packet.cstick_y = cstick_position->dy; // Update y
 	}
-	if(g_accel_status != nullptr)              // Circle status is active
+	if(accel_status != nullptr)                    // Cccel status is active
 	{
-		packet.accel_x = g_accel_status->x;    // Update x
-		packet.accel_y = g_accel_status->y;    // Update y
-		packet.accel_z = g_accel_status->z;    // Update z
+		packet.accel_x = accel_status->x;      // Update x
+		packet.accel_y = accel_status->y;      // Update y
+		packet.accel_z = accel_status->z;      // Update z
 	}
-	if(gyro_status != nullptr)                 // Circle status is active
+	if(gyro_status != nullptr)                     // Gyro status is active
 	{
 		packet.gyro_x = gyro_status->x;        // Update x
 		packet.gyro_y = gyro_status->y;        // Update y
 		packet.gyro_z = gyro_status->z;        // Update z
+	}
+	if(slider_volume != nullptr)                   // Volume slider is active
+	{
+		packet.slider_volume = (uint8_t)((*slider_volume * 100) / 63);
+	}
+	if(slider_3d != nullptr)                       // 3D slider is active
+	{
+		packet.slider_3d = (uint8_t)(*slider_3d * 100);
 	}
 	packet.keyboard = keyboard;
 

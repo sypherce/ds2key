@@ -39,5 +39,9 @@ void CheckButton::SetChecked(bool checked)
 	SetUpdate(true);
 	m_checked = checked;
 }
+void CheckButton::ToggleChecked()
+{
+	SetChecked(!GetChecked());
+}
 
 }}//namespace D2K::GUI

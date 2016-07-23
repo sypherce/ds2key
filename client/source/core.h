@@ -15,6 +15,8 @@ extern circlePosition g_circle_position;
 extern circlePosition g_cstick_position;
 extern accelVector g_accel_status;
 extern angularRate g_gyro_status;
+extern float g_slider_3d_status;
+extern uint8_t g_slider_volume_status;
 
 // @return The current time
 char* GetTime();
@@ -32,5 +34,8 @@ void DeInit();
 // Loop function that calls VBlankFunction()
 // @return false on system shutdown
 int Loop();
+
+// Force backlights on if (value) == true
+void ForceBacklightsOn(bool value);
 
 }//namespace D2K

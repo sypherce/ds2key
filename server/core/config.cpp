@@ -72,6 +72,9 @@ void NewProfile(ProfileData* profile_data, uint8_t profile_number)
 	profile_data->SetVirtualKey(KEYS::RED, KEY_NUMPAD7);
 	profile_data->SetVirtualKey(KEYS::GREEN, KEY_NUMPAD9);
 
+	profile_data->SetVirtualKey(KEYS::SLIDER_VOLUME, KEY_NUMPAD1);
+	profile_data->SetVirtualKey(KEYS::SLIDER_3D, KEY_NUMPAD3);
+
 	profile_data->SetVirtualKey(KEYS::TOUCH_00, KEY_0);
 	profile_data->SetVirtualKey(KEYS::TOUCH_01, KEY_1);
 	profile_data->SetVirtualKey(KEYS::TOUCH_02, KEY_2);
@@ -165,6 +168,9 @@ int LoadProfile(ProfileData* profile_data, uint8_t profile_number)
 	profile_data->SetValue(KEYS::YELLOW, iniParser::getstring(ini, "profile:yellow", "Key_None"));
 	profile_data->SetValue(KEYS::RED, iniParser::getstring(ini, "profile:red", "Key_None"));
 	profile_data->SetValue(KEYS::GREEN, iniParser::getstring(ini, "profile:green", "Key_None"));
+	
+	profile_data->SetValue(KEYS::SLIDER_VOLUME, iniParser::getstring(ini, "profile:slidervolume", "Key_None"));
+	profile_data->SetValue(KEYS::SLIDER_3D, iniParser::getstring(ini, "profile:slider3d", "Key_None"));
 
 	profile_data->SetValue(KEYS::TOUCH_00, iniParser::getstring(ini, "profile:touch00", "Key_None"));
 	profile_data->SetValue(KEYS::TOUCH_01, iniParser::getstring(ini, "profile:touch01", "Key_None"));
@@ -328,6 +334,9 @@ int SaveProfile(ProfileData* Profile, uint8_t profileNumber)
 	fprintf(file, "Yellow=%s\n", Profile->GetButtonString(KEYS::YELLOW).c_str());
 	fprintf(file, "Red=%s\n", Profile->GetButtonString(KEYS::RED).c_str());
 	fprintf(file, "Green=%s\n", Profile->GetButtonString(KEYS::GREEN).c_str());
+
+	fprintf(file, "SliderVolume=%s\n", Profile->GetButtonString(KEYS::SLIDER_VOLUME).c_str());
+	fprintf(file, "Slider3D=%s\n", Profile->GetButtonString(KEYS::SLIDER_3D).c_str());
 
 	for(int i = 0; i < UDP::SETTINGS_PACKET_MAX_BUTTONS; i++)
 	{
