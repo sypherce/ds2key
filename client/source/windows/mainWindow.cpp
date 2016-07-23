@@ -86,6 +86,7 @@ WindowClass::WindowClass() : Window()
 	AppendObject(button_config         = new Button(m_screen, Rect(0,157,35,10), "Config", &ButtonConfigWindowFunction));
 	AppendObject(button_commands       = new Button(m_screen, Rect(95,177,35,10), "Commands", &ButtonCommandsFunction));
 	AppendObject(button_touch          = new Button(m_screen, Rect(217,177,35,10), "Touch", &ButtonTouchFunction));
+
 }
 WindowClass::~WindowClass() { }
 bool WindowClass::Update()
@@ -102,6 +103,13 @@ bool WindowClass::Update()
 
 	if(update_counter >= UPDATE_COUNTER_MAX)
 	{
+		static bool first_loop = true;
+		if(first_loop)
+		{
+			first_loop = false;
+			// Search for server on start
+			ButtonIPFunction();
+		}
 		update_counter = 0;
 		
 		if(edit_ip->IsVisible())
