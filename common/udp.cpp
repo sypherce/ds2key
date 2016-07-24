@@ -415,15 +415,17 @@ void Update(uint32_t keys, uint32_t keysTurbo, touchPosition* touch_position,
 	}
 	if(slider_volume != nullptr)                   // Volume slider is active
 	{
+		//raw value is 0-63, we convert to 0-100
 		packet.slider_volume = (uint8_t)((*slider_volume * 100) / 63);
 	}
 	if(slider_3d != nullptr)                       // 3D slider is active
 	{
+		//raw value is 0.0f-1.0f, we convert to 0-100
 		packet.slider_3d = (uint8_t)(*slider_3d * 100);
 	}
 	packet.keyboard = keyboard;
 
-	Send(&packet, sizeof(DS2KeyPacket));         // Send packet
+	Send(&packet, sizeof(DS2KeyPacket));           // Send packet
 }
 
 void SendLookupPacket()
