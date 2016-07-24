@@ -9,9 +9,10 @@ namespace D2K {
 
 static const int CLIENT_MAX = 256;
 static const char* D2K_COMMAND = "*";
-static const char* D2K_AXIS = "&";
 static const int D2K_COMMAND_LENGTH = 1;
+static const char* D2K_AXIS = "&";
 static const int D2K_AXIS_LENGTH = 1;
+
 static const uint32_t DS2KEY_A = (1U << (0));
 static const uint32_t DS2KEY_B = (1U << (1));
 static const uint32_t DS2KEY_SELECT = (1U << (2));
@@ -35,8 +36,14 @@ static const uint32_t DS2KEY_YELLOW = (1U << (17));
 static const uint32_t DS2KEY_RED = (1U << (18));
 static const uint32_t DS2KEY_GREEN = (1U << (19));
 
+//previously defined
+//static const uint32_t DS2KEY_TOUCH = (1U << (12)) | (1 << (20));
+
 static const uint32_t DS2KEY_SLIDER_VOLUME = (1U << (21));
 static const uint32_t DS2KEY_SLIDER_3D = (1U << (22));
+
+//unused value
+//static const uint32_t DS2KEY_VALUE_23_PLACE_HOLDER = (1U << (23));
 
 static const uint32_t DS2KEY_CSTICK_RIGHT = (1U << (24));
 static const uint32_t DS2KEY_CSTICK_LEFT = (1U << (25));
@@ -111,7 +118,7 @@ public:
 
 	void SetTouchPos(uint8_t i, uint8_t x, uint8_t y, uint8_t w, uint8_t h);
 
-	uint8_t m_id;//TODO:Is this just garbage?
+	uint32_t m_ip_address;
 	std::string m_mouse;
 	std::string m_joy;
 	std::string m_dpad_up, m_dpad_down, m_dpad_left, m_dpad_right, m_a, m_b, m_x, m_y, m_l, m_r, m_start, m_select, m_lid;
@@ -181,6 +188,9 @@ public:
 	//@return IP address. 0 if not assigned
 	uint32_t GetIP();
 
+	//Sets the client's IP
+	void SetIP(uint32_t ip_address);
+
 	//@return Stylus current X Position. Values range 0-255(NDS), 0-319(3DS)
 	uint16_t GetX();
 
@@ -190,7 +200,7 @@ public:
 	//@return CLIENT_STATUS::ALIVE if confirmed, CLIENT_STATUS::CHECKING if not
 	bool IsAlive();
 
-	//@return CLIENT_STATUS::ALIVE if confirmed, CLIENT_STATUS::CHECKING if not
+	//Sets the client's status
 	void SetAlive(bool client_status);
 
 	//@return Circle current X Position. Values range //TODO

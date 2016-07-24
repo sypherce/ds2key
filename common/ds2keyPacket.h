@@ -12,11 +12,8 @@ typedef struct DS2KeyPacket final
 {
 	uint8_t type;              // byte [0] has to by `type` across all packets
 	uint8_t profile;           // byte [1] has to by `profile` across all packets
-	uint32_t ip_address;
 	uint32_t keys;
 	uint32_t keys_turbo;       // Enabled Turbo keys
-	uint16_t touch_keys;
-	uint16_t touch_keys_turbo; // Enabled Touch Turbo keys
 	uint16_t touch_x;
 	uint16_t touch_y;
 	int16_t circle_x;

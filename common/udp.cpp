@@ -300,7 +300,6 @@ std::string GetLocalIPString()
 	return IP;
 }
 
-#if defined(D2KCLIENT)
 unsigned long GetRemoteIP()
 {
 	return g_remote_sockaddr.sin_addr.s_addr;
@@ -310,7 +309,6 @@ std::string GetRemoteIPString()
 	std::string IP = inet_ntoa(g_remote_sockaddr.sin_addr);
 	return IP;
 }
-#endif
 
 void SetRemoteIP(const std::string& text)
 {
@@ -359,7 +357,6 @@ void SendCommand(uint8_t command)
 
 	packet = DS2KeyPacket{ };                       // Clear the packet
 	packet.type = UDP::PACKET::COMMAND;
-	packet.ip_address = UDP::GetLocalIP();
 	packet.profile = GetProfile();
 	packet.keys = command;
 
@@ -378,8 +375,7 @@ void Update(uint32_t keys, uint32_t keysTurbo, touchPosition* touch_position,
 
 	packet = DS2KeyPacket{ };                      // Clear the packet
 	packet.type = UDP::PACKET::NORMAL;
-	packet.ip_address = UDP::GetLocalIP();
-	packet.profile = GetProfile();//this was before ip_address. I'm not sure why.
+	packet.profile = GetProfile();
 	packet.keys = keys;
 	packet.keys_turbo = keysTurbo;
 	if(touch_position != nullptr)                  // Touch status is active
@@ -432,7 +428,6 @@ void SendLookupPacket()
 {
 	packet = DS2KeyPacket{ };            // Clear the packet
 	packet.type = UDP::PACKET::LOOKUP;   // Set as a lookup packet
-	packet.ip_address = UDP::GetLocalIP();
 
 	Send(&packet, sizeof(DS2KeyPacket)); // Send the packet out
 }
@@ -443,7 +438,6 @@ void RequestSettingsCommand()
 	packet = UDP::DS2KeyPacket{ };                  // Clear the packet
 	packet.type = UDP::PACKET::COMMAND_SETTINGS;    // Set as command settings packet
 	packet.profile = UDP::GetProfile();             // Set profile
-	packet.ip_address = UDP::GetLocalIP();
 
 	UDP::Send(&packet, sizeof(UDP::DS2KeyPacket));  // Send the packet out
 }

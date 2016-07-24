@@ -497,12 +497,14 @@ void Loop()
 		{
 			UDP::DS2KeyPacket* normal_packet = (UDP::DS2KeyPacket*)&Packet;
 
-			D2K::Client* pClient = Config::GetClient(normal_packet->profile);
+			D2K::Client* client_pointer = Config::GetClient(normal_packet->profile);
+			if(client_pointer->GetIP() == 0)
+				client_pointer->SetIP(UDP::GetRemoteIP());
 			//insert packet data
-			pClient->SetPacket(*normal_packet);
+			client_pointer->SetPacket(*normal_packet);
 			//update
-			pClient->Scan();
-			ProcessPacket(pClient);
+			client_pointer->Scan();
+			ProcessPacket(client_pointer);
 			break;
 		}
 		case UDP::PACKET::NORMAL_SETTING:
@@ -521,6 +523,8 @@ void Loop()
 			UDP::DS2KeyPacket* normal_packet = (UDP::DS2KeyPacket*)&Packet;
 
 			D2K::Client* client_pointer = Config::GetClient(normal_packet->profile);
+			if(client_pointer->GetIP() == 0)
+				client_pointer->SetIP(UDP::GetRemoteIP());
 			ProfileData* data_pointer = client_pointer->GetProfileDataPointer();
 			uint8_t virtual_joystick_id = data_pointer->GetValue8(KEYS::JOY);
 			int touch_screen_button = KEYS::TOUCH_00 + normal_packet->keys;

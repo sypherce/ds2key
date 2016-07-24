@@ -439,7 +439,12 @@ bool Client::Turbo(uint32_t key)
 
 uint32_t Client::GetIP()
 {
-	return m_packet.ip_address;
+	return m_profile_data.m_ip_address;
+}
+
+void Client::SetIP(uint32_t ip_address)
+{
+	m_profile_data.m_ip_address = ip_address;
 }
 
 uint16_t Client::GetX()
