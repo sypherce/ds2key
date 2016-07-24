@@ -29,8 +29,8 @@ typedef struct DS2KeyPacket final
 	int16_t gyro_x;
 	int16_t gyro_y;
 	int16_t gyro_z;
-	int8_t slider_volume;      // Range is between 0-100%
-	int8_t slider_3d;          // Range is between 0-100%
+	uint8_t slider_volume;     // Range is between 0-100%
+	uint8_t slider_3d;         // Range is between 0-100%
 	uint16_t keyboard;         // Keyboard Key Pressed
 } __attribute__((packed)) DS2KeyPacket;
 
