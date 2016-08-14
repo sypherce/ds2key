@@ -11,10 +11,12 @@
 #include "gui/gui.h"
 #endif
 #include "keyboardWindow.h"
+#include "gamepadWindow.h"
 
 namespace D2K {namespace GUI {namespace ConfigWindow {
 
 uint16_t current_pressed_key = NULL_VALUE;
+bool g_config_type{ };
 
 WindowClass g_window;
 Label* label_title;
@@ -50,7 +52,7 @@ Button* button_green;
 Button* button_lid;
 
 void SendNewSetting(uint16_t setting, uint16_t value)
-{//temp udp stuff
+{
 	UDP::DS2KeyNormalSettingsPacket settings = UDP::DS2KeyNormalSettingsPacket{ };
 	settings.profile = UDP::GetProfile();
 	settings.type = UDP::PACKET::NORMAL_SETTING;
@@ -63,7 +65,11 @@ void SendNewSetting(uint16_t setting, uint16_t value)
 
 void SendNewSetting(uint16_t setting)
 {
-	char value = Keyboard::GetKey();
+	uint16_t value{ };
+	if(g_config_type)
+		value = Gamepad::GetKey();
+	else
+		value = Keyboard::GetKey();
 	if(value != 0)
 		SendNewSetting(setting, value);
 }

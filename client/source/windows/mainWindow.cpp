@@ -31,7 +31,8 @@ extern void EditPortFunction();
 extern void EditProfileFunction();
 extern void ButtonTouchFunction();
 extern void ButtonTurboFunction();
-extern void ButtonConfigWindowFunction();
+extern void ButtonConfigKeyboardWindowFunction();
+extern void ButtonConfigGamepadWindowFunction();
 extern void ButtonIPFunction();
 extern void ButtonCommandsFunction();
 
@@ -49,7 +50,8 @@ Edit* edit_profile;
 
 Button* button_touch;
 Button* button_turbo;
-Button* button_config;
+Button* button_config_keyboard;
+Button* button_config_gamepad;
 Button* button_ip;
 Button* button_commands;
 
@@ -83,7 +85,8 @@ WindowClass::WindowClass() : Window()
 	AppendObject(edit_port             = new Edit(m_screen, Rect(112,48,79,10), UDP::GetPortString(), &EditPortFunction));
 	AppendObject(edit_profile          = new Edit(m_screen, Rect(136,72,55,10), UDP::GetProfileString(), &EditProfileFunction));
 	AppendObject(button_turbo          = new Button(m_screen, Rect(0,177,35,10), "Turbo", &ButtonTurboFunction));
-	AppendObject(button_config         = new Button(m_screen, Rect(0,157,35,10), "Config", &ButtonConfigWindowFunction));
+	AppendObject(button_config_gamepad = new Button(m_screen, Rect(0,137,35,10), "ConfigG", &ButtonConfigGamepadWindowFunction));
+	AppendObject(button_config_keyboard= new Button(m_screen, Rect(0,157,35,10), "ConfigK", &ButtonConfigKeyboardWindowFunction));
 	AppendObject(button_commands       = new Button(m_screen, Rect(95,177,35,10), "Commands", &ButtonCommandsFunction));
 	AppendObject(button_touch          = new Button(m_screen, Rect(217,177,35,10), "Touch", &ButtonTouchFunction));
 
@@ -228,10 +231,12 @@ void ButtonTurboFunction()
 	Turbo::g_window.SetVisible(false);
 	Main::g_window.SetVisible(true);
 }
-void ButtonConfigWindowFunction()
+void ButtonConfigGamepadWindowFunction()
 {
+	ConfigWindow::g_config_type = true;//true = gamepad;
+
 	Main::g_window.SetVisible(false);                    // Hide main window
-	button_config->SetVisible(true);
+	button_config_gamepad->SetVisible(true);
 	ConfigWindow::g_window.SetVisible(true);
 	ForceBacklightsOn(true);                             // Lock backlights on
 
@@ -239,12 +244,43 @@ void ButtonConfigWindowFunction()
 	   && ConfigWindow::g_window.IsVisible())
 	{
 		ConfigWindow::g_window.Update();
-		UDP::Update(keysHeld(), Turbo::GetKeys(), nullptr, nullptr,
-		            nullptr, nullptr, nullptr, nullptr, nullptr, NULL_VALUE);
+			UDP::Update(g_keys_held, Turbo::GetKeys(), nullptr, 
+			            &g_circle_position, &g_cstick_position,
+			            &g_accel_status, &g_gyro_status,
+			            &g_slider_volume_status, &g_slider_3d_status,
+			            NULL_VALUE);
 		ConfigWindow::current_pressed_key = NULL_VALUE;
-		button_config->Draw();
+		button_config_gamepad->Draw();
 
-		if(Main::g_window.CheckClick(button_config)) // If pressed again, break
+		if(Main::g_window.CheckClick(button_config_gamepad)) // If pressed again, break
+			break;
+	}
+
+	ConfigWindow::g_window.SetVisible(false);
+	Main::g_window.SetVisible(true);
+}
+void ButtonConfigKeyboardWindowFunction()
+{
+	ConfigWindow::g_config_type = false;//false = keyboard;
+
+	Main::g_window.SetVisible(false);                    // Hide main window
+	button_config_keyboard->SetVisible(true);
+	ConfigWindow::g_window.SetVisible(true);
+	ForceBacklightsOn(true);                             // Lock backlights on
+
+	while(D2K::Loop()
+	   && ConfigWindow::g_window.IsVisible())
+	{
+		ConfigWindow::g_window.Update();
+			UDP::Update(g_keys_held, Turbo::GetKeys(), nullptr, 
+			            &g_circle_position, &g_cstick_position,
+			            &g_accel_status, &g_gyro_status,
+			            &g_slider_volume_status, &g_slider_3d_status,
+			            NULL_VALUE);
+		ConfigWindow::current_pressed_key = NULL_VALUE;
+		button_config_keyboard->Draw();
+
+		if(Main::g_window.CheckClick(button_config_keyboard)) // If pressed again, break
 			break;
 	}
 
