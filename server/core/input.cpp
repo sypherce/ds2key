@@ -220,57 +220,63 @@ void Press(uint16_t key, uint8_t joy)
 #endif
 		}
 		// Analog Axis
-		else if(key >= Key::JOY_AXIS1 && key <= Key::JOY_AXIS4_MAX) //virtual analog axis
+		else if(key >= Key::JOY_AXIS1 && key <= Key::JOY_AXIS5_MAX) //virtual analog axis
 		{
 #ifdef _WIN32
 			switch(key)
 			{
-			case Key::JOY_AXIS1_LEFT:
+			case Key::JOY_AXIS_X_MINUS:
 				Joystick::SetAxisPercent(joy, HID_USAGE_X, 0);
 				break;
-			case Key::JOY_AXIS1_RIGHT:
+			case Key::JOY_AXIS_X_PLUS:
 				Joystick::SetAxisPercent(joy, HID_USAGE_X, 100);
 				break;
-			case Key::JOY_AXIS1_UP:
+			case Key::JOY_AXIS_Y_MINUS:
 				Joystick::SetAxisPercent(joy, HID_USAGE_Y, 0);
 				break;
-			case Key::JOY_AXIS1_DOWN:
+			case Key::JOY_AXIS_Y_PLUS:
 				Joystick::SetAxisPercent(joy, HID_USAGE_Y, 100);
 				break;
-			case Key::JOY_AXIS2_LEFT:
+			case Key::JOY_AXIS_Z_MINUS:
 				Joystick::SetAxisPercent(joy, HID_USAGE_Z, 0);
 				break;
-			case Key::JOY_AXIS2_RIGHT:
+			case Key::JOY_AXIS_Z_PLUS:
 				Joystick::SetAxisPercent(joy, HID_USAGE_Z, 100);
 				break;
-			case Key::JOY_AXIS2_UP:
+			case Key::JOY_AXIS_RX_MINUS:
 				Joystick::SetAxisPercent(joy, HID_USAGE_RX, 0);
 				break;
-			case Key::JOY_AXIS2_DOWN:
+			case Key::JOY_AXIS_RX_PLUS:
 				Joystick::SetAxisPercent(joy, HID_USAGE_RX, 100);
 				break;
-			case Key::JOY_AXIS3_LEFT:
+			case Key::JOY_AXIS_RY_MINUS:
+				Joystick::SetAxisPercent(joy, HID_USAGE_RY, 0);
+				break;
+			case Key::JOY_AXIS_RY_PLUS:
+				Joystick::SetAxisPercent(joy, HID_USAGE_RY, 100);
+				break;
+			case Key::JOY_AXIS_RZ_MINUS:
 				Joystick::SetAxisPercent(joy, HID_USAGE_RZ, 0);
 				break;
-			case Key::JOY_AXIS3_RIGHT:
+			case Key::JOY_AXIS_RZ_PLUS:
 				Joystick::SetAxisPercent(joy, HID_USAGE_RZ, 100);
 				break;
-			case Key::JOY_AXIS3_UP:
+			case Key::JOY_AXIS_SL0_MINUS:
 				Joystick::SetAxisPercent(joy, HID_USAGE_SL0, 0);
 				break;
-			case Key::JOY_AXIS3_DOWN:
+			case Key::JOY_AXIS_SL0_PLUS:
 				Joystick::SetAxisPercent(joy, HID_USAGE_SL0, 100);
 				break;
-			case Key::JOY_AXIS4_LEFT:
+			case Key::JOY_AXIS_SL1_MINUS:
 				Joystick::SetAxisPercent(joy, HID_USAGE_SL1, 0);
 				break;
-			case Key::JOY_AXIS4_RIGHT:
+			case Key::JOY_AXIS_SL1_PLUS:
 				Joystick::SetAxisPercent(joy, HID_USAGE_SL1, 100);
 				break;
-			case Key::JOY_AXIS4_UP:
+			case Key::JOY_AXIS_WHL_MINUS:
 				Joystick::SetAxisPercent(joy, HID_USAGE_WHL, 0);
 				break;
-			case Key::JOY_AXIS4_DOWN:
+			case Key::JOY_AXIS_WHL_PLUS:
 				Joystick::SetAxisPercent(joy, HID_USAGE_WHL, 100);
 				break;
 			default:
@@ -312,41 +318,45 @@ void Release(uint16_t key, uint8_t joy)
 #endif
 		}
 		// Analog Axis
-		else if(key >= Key::JOY_AXIS1 && key <= Key::JOY_AXIS4_MAX)
+		else if(key >= Key::JOY_AXIS1 && key <= Key::JOY_AXIS5_MAX)
 		{
 #ifdef _WIN32
 			switch(key)
 			{
-			case Key::JOY_AXIS1_LEFT:
-			case Key::JOY_AXIS1_RIGHT:
+			case Key::JOY_AXIS_X_MINUS:
+			case Key::JOY_AXIS_X_PLUS:
 				Joystick::SetAxisPercent(joy, HID_USAGE_X, 50);
 				break;
-			case Key::JOY_AXIS1_UP:
-			case Key::JOY_AXIS1_DOWN:
+			case Key::JOY_AXIS_Y_MINUS:
+			case Key::JOY_AXIS_Y_PLUS:
 				Joystick::SetAxisPercent(joy, HID_USAGE_Y, 50);
 				break;
-			case Key::JOY_AXIS2_LEFT:
-			case Key::JOY_AXIS2_RIGHT:
+			case Key::JOY_AXIS_Z_MINUS:
+			case Key::JOY_AXIS_Z_PLUS:
 				Joystick::SetAxisPercent(joy, HID_USAGE_Z, 50);
 				break;
-			case Key::JOY_AXIS2_UP:
-			case Key::JOY_AXIS2_DOWN:
+			case Key::JOY_AXIS_RX_MINUS:
+			case Key::JOY_AXIS_RX_PLUS:
 				Joystick::SetAxisPercent(joy, HID_USAGE_RX, 50);
 				break;
-			case Key::JOY_AXIS3_LEFT:
-			case Key::JOY_AXIS3_RIGHT:
+			case Key::JOY_AXIS_RY_MINUS:
+			case Key::JOY_AXIS_RY_PLUS:
+				Joystick::SetAxisPercent(joy, HID_USAGE_RY, 50);
+				break;
+			case Key::JOY_AXIS_RZ_MINUS:
+			case Key::JOY_AXIS_RZ_PLUS:
 				Joystick::SetAxisPercent(joy, HID_USAGE_RZ, 50);
 				break;
-			case Key::JOY_AXIS3_UP:
-			case Key::JOY_AXIS3_DOWN:
+			case Key::JOY_AXIS_SL0_MINUS:
+			case Key::JOY_AXIS_SL0_PLUS:
 				Joystick::SetAxisPercent(joy, HID_USAGE_SL0, 50);
 				break;
-			case Key::JOY_AXIS4_LEFT:
-			case Key::JOY_AXIS4_RIGHT:
+			case Key::JOY_AXIS_SL1_MINUS:
+			case Key::JOY_AXIS_SL1_PLUS:
 				Joystick::SetAxisPercent(joy, HID_USAGE_SL1, 50);
 				break;
-			case Key::JOY_AXIS4_UP:
-			case Key::JOY_AXIS4_DOWN:
+			case Key::JOY_AXIS_WHL_MINUS:
+			case Key::JOY_AXIS_WHL_PLUS:
 				Joystick::SetAxisPercent(joy, HID_USAGE_WHL, 50);
 				break;
 			default:
