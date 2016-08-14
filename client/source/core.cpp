@@ -38,6 +38,9 @@ angularRate g_gyro_status {};
 touchPosition g_stylus_position {};
 float g_slider_3d_status {};
 uint8_t g_slider_volume_status {};
+uint32_t wifi_status {};
+uint8_t battery_level {};
+uint8_t charging_status {};
 bool input_changed = false;
 //TODO: this should be configurable?
 bool enable_input_timeout = true;
@@ -288,6 +291,11 @@ void UpdateLid()
 ///vblank function we assign in Init()
 void VBlankFunction()
 {
+#ifdef _3DS
+	ACU_GetWifiStatus(&wifi_status);
+	PTMU_GetBatteryLevel(&battery_level);
+	PTMU_GetBatteryChargeState(&charging_status);
+#endif
 	UpdateInputs();
 	UpdateLid();
 }
