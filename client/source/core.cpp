@@ -19,6 +19,10 @@
 
 #include "gui/gui.h"//D2K::GUI::Screen
 
+// This looks wrong because it's a macro
+#include "common/easylogging++Wrapper.h"
+INITIALIZE_EASYLOGGINGPP
+
 #include "common/udp.h"
 #include "common/misc.h"
 #include "config.h"
@@ -310,7 +314,7 @@ void WaitForVBlank()
 #endif
 }
 
-bool Init()
+bool Init(int argc, char* argv[])
 {
 	// Screen setup
 #if defined(_3DS)
@@ -344,20 +348,22 @@ bool Init()
 	irqSet(IRQ_VBLANK, VBlankFunction); // Setup vblank function
 #endif
 
-	if(EMULATOR)  // If we're running in emulator mode, let the user know
-		std::cout << " - Emulator Mode";
+	D2K::InitLogging(argc, argv);
 
-	std::cout << "\n-\n";
+	if(EMULATOR)  // If we're running in emulator mode, let the user know
+		LOG(DEBUG) << " - Emulator Mode";
+
+	LOG(INFO) << "\n-";
 
 #ifdef _NDS
 	if(!fatInitDefault())
-		std::clog << "Error (fatInitDefault): Failed to access storage\n";
-
-	std::cout << "Connecting via WFC data\n";
+		LOG(ERROR) << "Error (fatInitDefault): Failed to access storage\n";
+	
+	LOG(INFO) << "Connecting via WFC data\n";
 	if(EMULATOR
 	|| !Wifi_InitDefault(WFC_CONNECT))
 	{
-		std::clog << "Error (Wifi_InitDefault): Failed to connect\n";
+		LOG(ERROR) << "Error (Wifi_InitDefault): Failed to connect\n";
 		return true;                // Return with error
 	}
 
@@ -371,7 +377,7 @@ bool Init()
 	static uint32_t *SOC_buffer = (uint32_t*)memalign(SOC_ALIGN, SOC_BUFFERSIZE);
 
 	if(SOC_buffer == nullptr) {
-		std::clog << "memalign: failed to allocate\n";
+		LOG(ERROR) << "memalign: failed to allocate";
 		return true;
 	}
 
@@ -379,7 +385,7 @@ bool Init()
 	// Now intialise soc:u service
 	if(soc_init != 0)
 	{
-    		std::clog << "socInit: " << (unsigned int)soc_init << "\n";
+		LOG(ERROR) << "socInit: " << (unsigned int)soc_init;
 		return true;
 	}
 #endif
@@ -398,6 +404,7 @@ bool Init()
 
 void DeInit()
 {
+	D2K::DeInitLogging();
 #ifdef _3DS
 //TODO: these should only be enabled when used?
 	HIDUSER_DisableGyroscope();     //Gyroscope

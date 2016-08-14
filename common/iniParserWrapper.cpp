@@ -1,6 +1,7 @@
 // ini file parser C++ wrapper
 
 #include <string>//std::string
+#include "easylogging++Wrapper.h"
 #include "iniparser/src/iniparser.h"
 
 
@@ -8,7 +9,9 @@ namespace D2K {namespace iniParser {
 
 void dump(dictionary* d, FILE* f)
 {
-	return iniparser_dump(d, f);
+#ifdef D2K_DUMP_CONFIGS
+	iniparser_dump(d, f);
+#endif
 }
 std::string getstring(dictionary* d, std::string key, std::string def)
 {

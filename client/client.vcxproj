@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\common\easylogging++Wrapper.cpp" />
     <ClCompile Include="source\config.cpp" />
     <ClCompile Include="source\core.cpp" />
     <ClCompile Include="source\gui\button.cpp" />
@@ -40,6 +41,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\common\easylogging++.h" />
+    <ClInclude Include="..\common\easylogging++Wrapper.h" />
     <ClInclude Include="..\common\enum_keys.h" />
     <ClInclude Include="source\config.h" />
     <ClInclude Include="source\core.h" />

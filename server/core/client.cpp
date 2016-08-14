@@ -442,6 +442,13 @@ uint32_t Client::GetIP()
 {
 	return m_profile_data.m_ip_address;
 }
+std::string Client::GetIPString()
+{
+	struct in_addr sin_addr;
+	sin_addr.s_addr = GetIP();
+
+	return inet_ntoa(sin_addr);
+}
 
 void Client::SetIP(uint32_t ip_address)
 {

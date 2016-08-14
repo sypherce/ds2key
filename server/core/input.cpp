@@ -6,10 +6,11 @@
 #endif
 #include <windows.h>
 #include <winuser.h>
-#include <iostream>//std::cout, std::clog
 #include "vjoy.h"
 #endif
 #include "key.h"
+
+#include "common/easylogging++Wrapper.h"
 
 #include "input.h"
 
@@ -296,7 +297,7 @@ void Press(uint16_t key, uint8_t joy)
 		else
 		{
 			Keyboard(key, KeyState::pressed);
-			//TODO:log std::cout << "key" << key << "\n";
+			LOG(TRACE) << "Key Pressed:" << key;
 		}
 	}
 

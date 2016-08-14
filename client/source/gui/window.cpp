@@ -1,6 +1,7 @@
 #include <iostream>
 #include "window.h"
 #include "gui.h"
+#include "common/easylogging++Wrapper.h"
 #include "common/udp.h"
 #include "../core.h"
 
@@ -43,7 +44,7 @@ void Window::Draw()
 	{
 		if(m_objects.at(i)->Draw()                           //draw if object AND/OR gui updated
 		&& EMULATOR)
-			std::cout << "button draw " << i << ": " << m_objects.at(i)->GetText() << "\n";
+			LOG(DEBUG) << "button draw " << i << ": " << m_objects.at(i)->GetText();
 	}
 	GUI::SetUpdate(false);                                       //gui all updated
 }

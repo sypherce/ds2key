@@ -1,6 +1,5 @@
 // DS2Key Core functions
 
-#include <iostream>  // std::cout, std::clog
 #include <algorithm> // std::max, std::min
 #include <sstream>   // ostringstream
 #include <chrono>
@@ -17,6 +16,10 @@
 #elif defined(__linux__)
 #include <cstring>
 #endif
+
+// This looks wrong because it's a macro
+#include "common/easylogging++Wrapper.h"
+INITIALIZE_EASYLOGGINGPP
 
 #include "common/udp.h"
 #include "key.h"
@@ -62,7 +65,7 @@ void SetMasterVolume(float volume)
 	              (LPVOID *)&device_enumerator);
 	if(hresult != S_OK)
 	{
-		std::clog << "Error (CoCreateInstance): #" << hresult << "\n";
+		LOG(ERROR) << "Error (CoCreateInstance): #" << hresult;
 		//Uninitialize the COM library 
 		CoUninitialize();
 
@@ -77,7 +80,7 @@ void SetMasterVolume(float volume)
 	device_enumerator->Release();
 	if(hresult != S_OK)
 	{
-		std::clog << "Error (GetDefaultAudioEndpoint): #" << hresult << "\n";
+		LOG(ERROR) << "Error (GetDefaultAudioEndpoint): #" << hresult;
 		//Uninitialize the COM library 
 		CoUninitialize();
 
@@ -92,7 +95,7 @@ void SetMasterVolume(float volume)
 	default_audio_endpoint->Release();
 	if(hresult != S_OK)
 	{
-		std::clog << "Error (IAudioEndpointVolume->Activate): #" << hresult << "\n";
+		LOG(ERROR) << "Error (IAudioEndpointVolume->Activate): #" << hresult;
 		//Uninitialize the COM library 
 		CoUninitialize();
 
@@ -105,7 +108,7 @@ void SetMasterVolume(float volume)
 	endpoint_volume->Release();
 	if(hresult != S_OK)
 	{
-		std::clog << "Error (SetMasterVolumeLevelScalar): #" << hresult << "\n";
+		LOG(ERROR) << "Error (SetMasterVolumeLevelScalar): #" << hresult;
 		//Uninitialize the COM library 
 		CoUninitialize();
 
@@ -307,19 +310,19 @@ void ProcessButtons(D2K::Client* client)
 			if(client->Turbo(ds_button_bit))
 			{
 				Input::Tap(pc_key, joystick);
-				//TODO:log std::clog << "tap:" << PCButton << "\n";
+				LOG(TRACE) << client->GetIPString() << ": tap:" << pc_key;
 			}
 			// Pressed
 			else if(client->Down(ds_button_bit))
 			{
 				Input::Press(pc_key, joystick);
-				//TODO:log std::clog << "press:" << PCButton << "\n";
+				LOG(TRACE) << client->GetIPString() << ": press:" << pc_key;
 			}
 			// Released, even in turbo mode
 			else if(client->Up(ds_button_bit))
 			{
 				Input::Release(pc_key, joystick);
-				//TODO:log std::clog << "release:" << PCButton << "\n";
+				LOG(TRACE) << client->GetIPString() << ": release:" << pc_key;
 			}
 		}
 		//if (enum_key) is a command button AND was just pressed
@@ -497,13 +500,14 @@ void CheckForDeadClients()
 				ReleaseDeadClient(g_client_array[i]);
 				delete(g_client_array[i]);
 				g_client_array[i] = nullptr;
-				std::cout << "\nClient #:" << i << " removed from inactivity.\n";
+				LOG(INFO) << "Client #:" << i << " removed from inactivity.";
 			}
 			else
 			{
 				g_client_array[i]->SetAlive(CLIENT_STATUS::CHECKING);
 				UDP::SetRemoteIP(g_client_array[i]->GetIP());
 				UDP::Send(&Packet, sizeof(UDP::DS2KeyPacket));
+				LOG_EVERY_N(10,DEBUG) << "Client #:" << i << " is active.";
 			}
 		}
 	}
@@ -519,6 +523,8 @@ bool g_running = false;
 // return (0) if connected, else (errno)
 int Setup(int argc, char* argv[])
 {
+	D2K::InitLogging(argc, argv);
+
 	bool non_blocking = true;
 	Config::Load();
 	UDP::Init();
@@ -543,7 +549,6 @@ int Setup(int argc, char* argv[])
 		else if(strncmp(argv[arg], "--port=", 7) == 0)
 		{
 			Config::SetConfigPort(atoi(&argv[arg][7]));
-			std::cout << "\nPort: " << Config::GetPort() << "\n";
 		}
 	}
 
@@ -573,10 +578,12 @@ void Loop()
 		{
 			UDP::DS2KeyPacket* normal_packet = (UDP::DS2KeyPacket*)&Packet;
 			UDP::Send(&normal_packet, sizeof(UDP::DS2KeyPacket));
+			LOG_EVERY_N(10, TRACE) << "Received UDP::PACKET::LOOKUP";
 			break;
 		}
 		case UDP::PACKET::COMMAND_SETTINGS:
 		{
+			LOG(TRACE) << "Received UDP::PACKET::COMMAND_SETTINGS";
 			// If profile is active
 			if(g_client_array[Packet.profile] != nullptr)
 			{
@@ -617,14 +624,17 @@ void Loop()
 			//update
 			client_pointer->Scan();
 			ProcessPacket(client_pointer);
+			LOG_EVERY_N(300, TRACE) << client_pointer->GetIPString() << ":Received UDP::PACKET::NORMAL";
 			break;
 		}
 		case UDP::PACKET::NORMAL_SETTING:
 		{
+			LOG(TRACE) << "Received UDP::PACKET::NORMAL_SETTING";
 			UDP::DS2KeyNormalSettingsPacket* normal_setting_packet = (UDP::DS2KeyNormalSettingsPacket*)&Packet;
 			// If profile is active
 			if(g_client_array[normal_setting_packet->profile] != nullptr)
 			{
+				LOG(TRACE) << "Profile is active";
 				ProfileData* profile_data = g_client_array[normal_setting_packet->profile]->GetProfileDataPointer();
 				Config::SetProfileSetting(profile_data, normal_setting_packet->profile, normal_setting_packet->setting, normal_setting_packet->value);
 			}
@@ -654,6 +664,7 @@ void Loop()
 				std::string Command = data_pointer->GetCommand(touch_screen_button);
 				ExecuteCommand(Command);
 			}
+			LOG(TRACE) << "Received UDP::PACKET::COMMAND";
 			break;
 		}
 		}
@@ -683,6 +694,7 @@ void Destroy()
 	UDP::DeInit();
 	Input::DeInit();
 	Config::Save();
+	D2K::DeInitLogging();
 }
 
 }//namespace D2K

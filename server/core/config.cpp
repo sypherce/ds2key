@@ -1,9 +1,9 @@
 // configuration loading/saving
 
-#include <iostream>//std::cout, std::clog
 #include <sstream> //ostringstream
 #include "config.h"
 #include "key.h"
+#include "common/easylogging++Wrapper.h"
 #include "common/iniParserWrapper.h"
 #include "common/misc.h"
 #include "client.h"
@@ -19,8 +19,8 @@ int Load()
 	if(ini == nullptr)
 	{
 		int err = errno;
-		std::clog << "Error (iniParser::load): #" << err << "\n" << 
-		             "Failed to open file: " << INI_FILENAME << "\n";
+		LOG(ERROR) << "Error (iniParser::load): #" << err << "\n" << 
+		             "Failed to open file: " << INI_FILENAME;
 		SetConfigPort(DEFAULT_PORT);
 		Save();
 
@@ -115,12 +115,11 @@ int LoadProfile(ProfileData* profile_data, uint8_t profile_number)
 	ssfilename << "ds2key.p" << (int)profile_number << ".ini";
 
 	dictionary* ini = iniParser::load(ssfilename.str());
-	iniParser::dump(ini, stderr);
 	if(ini == nullptr)
 	{
 		int err = errno;
-		std::clog << "Error (iniParser::load): #" << err << "\n" << 
-		             "Failed to open file: " << INI_FILENAME << "\n";
+		LOG(ERROR) << "Error (iniParser::load): #" << err << "\n" << 
+		             "Failed to open file: " << INI_FILENAME;
 		
 		NewProfile(profile_data, profile_number);
 
@@ -269,8 +268,8 @@ int Save()
 	if(file == nullptr)
 	{
 		int err = errno;
-		std::clog << "Error (fopen): #" << err << "\n" <<
-		             "Failed to open file: " << INI_FILENAME << "\n";
+		LOG(ERROR) << "Error (fopen): #" << err << "\n" <<
+		             "Failed to open file: " << INI_FILENAME;
 
 		return err;
 	}
@@ -293,8 +292,8 @@ int SaveProfile(ProfileData* Profile, uint8_t profileNumber)
 	if(file == nullptr)
 	{
 		int err = errno;
-		std::clog << "Error (fopen): #" << err << "\n" <<
-		             "Failed to save file: " << INI_FILENAME << "\n";
+		LOG(ERROR) << "Error (fopen): #" << err << "\n" <<
+		             "Failed to save file: " << INI_FILENAME;
 
 		return err;
 	}
@@ -386,6 +385,7 @@ Client* GetClient(uint8_t profile)
 	{
 		g_client_array[profile] = new Client();                                         //create it
 		Config::LoadProfile(g_client_array[profile]->GetProfileDataPointer(), profile); //then load it
+		LOG(INFO) << "Client #:" << (int)profile << " has connected.";
 	}
 	return g_client_array[profile];
 }

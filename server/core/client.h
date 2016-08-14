@@ -188,6 +188,9 @@ public:
 	//@return IP address. 0 if not assigned
 	uint32_t GetIP();
 
+	//@return IP address. 0 if not assigned
+	std::string GetIPString();
+
 	//Sets the client's IP
 	void SetIP(uint32_t ip_address);
 

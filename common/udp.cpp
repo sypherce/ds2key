@@ -5,7 +5,6 @@
 #endif
 
 #include <cstdlib>  // atoi
-#include <iostream> // std::cout, std::clog
 #include <sstream>  // std::stringstream
 #include <cstring>  // strerror
 
@@ -59,6 +58,8 @@ typedef int socklen_t;
 #define SOCKET_ERROR -1
 #define NETclosesocket closesocket
 #endif
+
+#include "easylogging++Wrapper.h"
 
 #if defined(_NDS) || defined(_3DS)
 #include "core.h"
@@ -121,7 +122,7 @@ int Connect(bool non_blocking, uint16_t port)
 		return 0;
 
 	if(IsConnected())     // If already connected
-		Disconnect();     // Disconnect first
+		Disconnect(); // Disconnect first
 
 	SetConfigPort(port);  // Set port
 
@@ -141,7 +142,7 @@ int Connect(bool non_blocking, uint16_t port)
 	if(socket_id == INVALID_SOCKET)
 	{
 		int err = NETerrno;
-		std::clog << "Error #" << err << " (socket): " << strerror(err) << "\n";
+		LOG(ERROR) << "Error #" << err << " (socket): " << strerror(err) << "\n";
 		Disconnect();
 
 		return err;
@@ -153,9 +154,9 @@ int Connect(bool non_blocking, uint16_t port)
 	{
 		int err = NETerrno;
 		if(err == NETEADDRINUSE)
-			std::clog << "Error (bind) port #" << GetPort() << " currently in use\n";
+			LOG(ERROR) << "Error (bind) port #" << GetPort() << " currently in use\n";
 		else
-			std::clog << "Error #" << err << " (bind): " << strerror(err) << "\n";
+			LOG(ERROR) << "Error #" << err << " (bind): " << strerror(err) << "\n";
 		Disconnect();
 
 		return err;
@@ -167,19 +168,20 @@ int Connect(bool non_blocking, uint16_t port)
 	if(non_blocking && fcntl(socket_id, F_SETFL, flags | O_NONBLOCK))
 	{
 		int err = NETerrno;
-		std::clog << "Error #" << err << " (fcntl): " << strerror(err) << "\n";
+		LOG(ERROR) << "Error #" << err << " (fcntl): " << strerror(err) << "\n";
 #else
 	// set blocking mode
 	if(NETioctlsocket(socket_id, FIONBIO, (unsigned long*)&UDP::g_non_blocking) == SOCKET_ERROR)
 	{
 		int err = NETerrno;
-		std::clog << "Error #" << err << " (NETioctlsocket): " << strerror(err) << "\n";
+		LOG(ERROR) << "Error #" << err << " (NETioctlsocket): " << strerror(err) << "\n";
 #endif
 		Disconnect();
 
 		return err;
 	}
 	connected = true;
+	LOG(INFO) << "Connected on UDP port #" << GetPort();
 
 	return 0;
 }
@@ -191,14 +193,15 @@ int Disconnect()
 	if(IsConnected())
 	{
 		// udp system disconnects even if NETclosesocket returns error
-		connected = false;	
+		connected = false;
 		if(NETclosesocket(socket_id) == SOCKET_ERROR)
 		{
 			int err = NETerrno;
-			std::clog << "Error #" << err << " (NETclosesocket): " << strerror(err) << "\n";
+			LOG(ERROR) << "Error #" << err << " (NETclosesocket): " << strerror(err) << "\n";
 
 			return err;
 		}
+		LOG(INFO) << "UDP Disconnected";
 	}
 
 	return 0;
@@ -208,17 +211,17 @@ int Send(const void* buffer, unsigned int length)
 {
 	if(!IsConnected())
 	{
-		std::clog << "Error (UDP::Send): Not connected\n";
+		LOG(ERROR) << "Error (UDP::Send): Not connected\n";
 		return -1;
 	}
 	else if(length <= 0)
 	{
-		std::clog << "Error (UDP::Send) length: #" << length << "\n";
+		LOG(ERROR) << "Error (UDP::Send) length: #" << length << "\n";
 		return -2;
 	}
 	else if(buffer == nullptr)
 	{
-		std::clog << "Error (UDP::Send) Invalid pointer\n";
+		LOG(ERROR) << "Error (UDP::Send) Invalid pointer\n";
 		return -3;
 	}
 	else // Successful
@@ -227,9 +230,10 @@ int Send(const void* buffer, unsigned int length)
 		if(sendto(socket_id, (const char*)buffer, length, 0, (struct sockaddr*)&g_remote_sockaddr, sockaddrlength) == SOCKET_ERROR)
 		{
 			int err = NETerrno;
-			std::clog << "Error #" << err << " (sendto): " << strerror(err) << "\n";
+			LOG(ERROR) << "Error #" << err << " (sendto): " << strerror(err) << "\n";
 			return err;
 		}
+		LOG_EVERY_N(300, TRACE) << "Sent " << length << " bytes";
 	}
 
 	return 0;
@@ -244,22 +248,22 @@ int Recv(void* buffer, unsigned int length, struct sockaddr* remote_sockaddr)
 {
 	if(!IsConnected())
 	{
-		std::clog << "Error (UDP::Recv): Not connected\n";
+		LOG(ERROR) << "Error (UDP::Recv): Not connected\n";
 		return -1;
 	}
 	else if(length <= 0)
 	{
-		std::clog << "Error (UDP::Recv) length: #" << length << "\n";
+		LOG(ERROR) << "Error (UDP::Recv) length: #" << length << "\n";
 		return -2;
 	}
 	else if(buffer == nullptr)
 	{
-		std::clog << "Error (UDP::Recv) Invalid pointer\n";
+		LOG(ERROR) << "Error (UDP::Recv) Invalid pointer\n";
 		return -3;
 	}
 	else if(remote_sockaddr == nullptr)
 	{
-		std::clog << "Error (UDP::Recv) g_remote_sockaddr is NULL\n";
+		LOG(ERROR) << "Error (UDP::Recv) g_remote_sockaddr is NULL\n";
 		return -4;
 	}
 	else // Successful
@@ -269,9 +273,10 @@ int Recv(void* buffer, unsigned int length, struct sockaddr* remote_sockaddr)
 		{
 			int err = NETerrno;
 			if(err != NETEWOULDBLOCK)
-				std::clog << "Error #" << err << " (Error (recvfrom): " << strerror(err) << "\n";
+				LOG(ERROR) << "Error #" << err << " (recvfrom): " << strerror(err) << "\n";
 			return err;
 		}
+		LOG_EVERY_N(300, TRACE) << "Received " << length << " bytes";
 	}
 
 	return 0;
@@ -342,6 +347,7 @@ void SetConfigPort(uint16_t port)
 		UDP::g_port = DEFAULT_PORT; // Use default port 9501
 	else
 		UDP::g_port = port;
+	LOG(INFO) << "UDP Port set to #" << UDP::GetPort() << ".";
 }
 
 #if defined(D2KCLIENT)
@@ -349,6 +355,7 @@ void SetConfigPort(uint16_t port)
 void SendNormalSetting(DS2KeyNormalSettingsPacket setting)
 {
 	Send(&setting, sizeof(DS2KeyNormalSettingsPacket));
+	LOG(TRACE) << "SendNormalSetting()";
 }
 void SendCommand(uint8_t command)
 {
@@ -361,6 +368,7 @@ void SendCommand(uint8_t command)
 	packet.keys = command;
 
 	Send(&packet, sizeof(DS2KeyPacket));            // Send packet
+	LOG(TRACE) << "SendCommand(" << (int)command << ")";
 }
 
 void Update(uint32_t keys, uint32_t keysTurbo, touchPosition* touch_position,
@@ -378,43 +386,43 @@ void Update(uint32_t keys, uint32_t keysTurbo, touchPosition* touch_position,
 	packet.profile = GetProfile();
 	packet.keys = keys;
 	packet.keys_turbo = keysTurbo;
-	if(touch_position != nullptr)                  // Touch status is active
+	if(touch_position  != nullptr)                  // Touch status is active
 	{
-		packet.touch_x = touch_position->px;   // Update x
-		packet.touch_y = touch_position->py;   // Update y
+		packet.touch_x = touch_position->px;        // Update x
+		packet.touch_y = touch_position->py;        // Update y
 	}
-	else                                           // Touch status is inactive
+	else                                            // Touch status is inactive
 	{
-		packet.keys &= ~KEY_TOUCH;             // Clear touch status
+		packet.keys &= ~KEY_TOUCH;                  // Clear touch status
 	}
-	if(circle_position != nullptr)                 // Circle status is active
+	if(circle_position != nullptr)                  // Circle status is active
 	{
-		packet.circle_x = circle_position->dx; // Update x
-		packet.circle_y = circle_position->dy; // Update y
+		packet.circle_x = circle_position->dx;      // Update x
+		packet.circle_y = circle_position->dy;      // Update y
 	}
-	if(cstick_position != nullptr)                 // Cstick status is active
+	if(cstick_position != nullptr)                  // Cstick status is active
 	{
-		packet.cstick_x = cstick_position->dx; // Update x
-		packet.cstick_y = cstick_position->dy; // Update y
+		packet.cstick_x = cstick_position->dx;      // Update x
+		packet.cstick_y = cstick_position->dy;      // Update y
 	}
-	if(accel_status != nullptr)                    // Cccel status is active
+	if(accel_status    != nullptr)                  // Accel status is active
 	{
-		packet.accel_x = accel_status->x;      // Update x
-		packet.accel_y = accel_status->y;      // Update y
-		packet.accel_z = accel_status->z;      // Update z
+		packet.accel_x = accel_status->x;           // Update x
+		packet.accel_y = accel_status->y;           // Update y
+		packet.accel_z = accel_status->z;           // Update z
 	}
-	if(gyro_status != nullptr)                     // Gyro status is active
+	if(gyro_status     != nullptr)                  // Gyro status is active
 	{
-		packet.gyro_x = gyro_status->x;        // Update x
-		packet.gyro_y = gyro_status->y;        // Update y
-		packet.gyro_z = gyro_status->z;        // Update z
+		packet.gyro_x = gyro_status->x;             // Update x
+		packet.gyro_y = gyro_status->y;             // Update y
+		packet.gyro_z = gyro_status->z;             // Update z
 	}
-	if(slider_volume != nullptr)                   // Volume slider is active
+	if(slider_volume   != nullptr)                  // Volume slider is active
 	{
 		//raw value is 0-63, we convert to 0-100
 		packet.slider_volume = (uint8_t)((*slider_volume * 100) / 63);
 	}
-	if(slider_3d != nullptr)                       // 3D slider is active
+	if(slider_3d       != nullptr)                  // 3D slider is active
 	{
 		//raw value is 0.0f-1.0f, we convert to 0-100
 		packet.slider_3d = (uint8_t)(*slider_3d * 100);
@@ -422,6 +430,7 @@ void Update(uint32_t keys, uint32_t keysTurbo, touchPosition* touch_position,
 	packet.keyboard = keyboard;
 
 	Send(&packet, sizeof(DS2KeyPacket));           // Send packet
+	LOG_EVERY_N(300, TRACE) << "Sent UDP::Update()";
 }
 
 void SendLookupPacket()
@@ -430,6 +439,7 @@ void SendLookupPacket()
 	packet.type = UDP::PACKET::LOOKUP;   // Set as a lookup packet
 
 	Send(&packet, sizeof(DS2KeyPacket)); // Send the packet out
+	LOG_EVERY_N(10, TRACE) << "SendLookupPacket()";
 }
 
 
@@ -440,6 +450,7 @@ void RequestSettingsCommand()
 	packet.profile = UDP::GetProfile();             // Set profile
 
 	UDP::Send(&packet, sizeof(UDP::DS2KeyPacket));  // Send the packet out
+	LOG(TRACE) << "RequestSettingsCommand()";
 }
 
 void ServerLookup()
@@ -489,6 +500,7 @@ void ListenForServer()
 			break;
 		case UDP::PACKET::COMMAND_SETTINGS: //Received Command Settings
 			GUI::Command::ProcessCommandSettingsPacket(command_settings_packet);
+			LOG(TRACE) << "Received UDP::PACKET::COMMAND_SETTINGS";
 			break;
 		default:
 			break;
@@ -521,6 +533,7 @@ void SetProfile(unsigned int profile)
 void SendCommandSettings(DS2KeyCommandSettingsPacket settings)
 {
 	Send(&settings, sizeof(DS2KeyCommandSettingsPacket));
+	LOG(TRACE) << "SendCommandSettings()";
 }
 #endif
 

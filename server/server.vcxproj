@@ -138,6 +138,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\common\ds2keyPacket.h" />
+    <ClInclude Include="..\common\easylogging++.h" />
+    <ClInclude Include="..\common\easylogging++Wrapper.h" />
     <ClInclude Include="..\common\enum_keys.h" />
     <ClInclude Include="..\common\iniParserWrapper.h" />
     <ClInclude Include="..\common\iniparser\src\dictionary.h" />
@@ -239,6 +241,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\common\easylogging++Wrapper.cpp" />
     <ClCompile Include="..\common\iniParserWrapper.cpp" />
     <ClCompile Include="..\common\iniparser\src\dictionary.c" />
     <ClCompile Include="..\common\iniparser\src\iniparser.c" />

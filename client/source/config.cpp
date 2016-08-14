@@ -4,6 +4,7 @@
 #include <iostream>
 #include <errno.h>
 #include "config.h"
+#include "common/easylogging++Wrapper.h"
 #include "common/udp.h"
 #include "common/iniParserWrapper.h"
 #include "common/misc.h"
@@ -22,7 +23,7 @@ int Load()
 	if(ini == nullptr)
 	{
 		int err = errno;
-		std::clog << "Error #" << err << " (iniParser::load): " << strerror(err) << "\n" <<
+		LOG(ERROR) << "Error #" << err << " (iniParser::load): " << strerror(err) << "\n" <<
 		             "Failed to open file: " << INI_FILENAME << "\n";
 		UDP::SetRemoteIP(DEFAULT_IP);
 		UDP::SetConfigPort(D2K::DEFAULT_PORT);
@@ -33,8 +34,10 @@ int Load()
 		return err;
 	}
 
+#ifndef ELPP_DISABLE_DEBUG_LOGS
 	//display file
 	iniParser::dump(ini, stderr);
+#endif
 
 	UDP::SetRemoteIP(iniParser::getstring(ini, "settings:ip", DEFAULT_IP));
 	UDP::SetConfigPort(iniParser::getstring(ini, "settings:port", D2K::ltos(D2K::DEFAULT_PORT)));
@@ -53,7 +56,7 @@ int Save()
 	if(file == nullptr)
 	{
 		int err = errno;
-		std::clog << "Error #" << err << " (fopen): " << strerror(err) << "\n" <<
+		LOG(ERROR) << "Error #" << err << " (fopen): " << strerror(err) << "\n" <<
 		             "Failed to open file: " << INI_FILENAME << "\n";
 
 		return err;

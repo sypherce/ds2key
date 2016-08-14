@@ -1,6 +1,7 @@
 //Joystick emulation for windows
 
-#include <iostream>//std::cout, std::clog
+#include "common/easylogging++Wrapper.h"
+
 #ifdef _WIN32
 #include "VJoy.h"
 #include "vjoy/inc/vjoyinterface.h"
@@ -47,7 +48,7 @@ bool Init(uint8_t device)
 	if(!IsIDValid(device))
 	{
 		if(device > 0)
-			std::clog << "vJoy device " << (int)device << " out of valid range. (1-" << (int)MAX_JOYSTICKS << ")\n";
+			LOG(ERROR) << "vJoy device " << (int)device << " out of valid range. (1-" << (int)MAX_JOYSTICKS << ")";
 
 		return true;
 	}
@@ -60,7 +61,7 @@ bool Init(uint8_t device)
 	// Get the driver attributes (Vendor ID, Product ID, Version Number)
 	if(!vJoyEnabled())
 	{
-		std::clog << "Function vJoyEnabled Failed - make sure that vJoy is installed and enabled\n";
+		LOG(ERROR) << "Function vJoyEnabled Failed - make sure that vJoy is installed and enabled";
 		for(uint8_t i = 1; i <= MAX_JOYSTICKS; i++)
 			DeInit(i);
 		return true;
@@ -72,30 +73,30 @@ bool Init(uint8_t device)
 	switch(status)
 	{
 	case VJD_STAT_OWN:
-		std::clog << "vJoy device " << (int)device << " is already owned by this feeder\n";
+		LOG(INFO) << "vJoy device " << (int)device << " is already owned by this feeder";
 		break;
 	case VJD_STAT_FREE:
-		std::clog << "vJoy device " << (int)device << " is free\n";
+		LOG(INFO) << "vJoy device " << (int)device << " is free";
 		break;
 	case VJD_STAT_BUSY:
-		std::clog << "vJoy device " << (int)device << " is already owned by another feeder\nCannot continue\n";
+		LOG(ERROR) << "vJoy device " << (int)device << " is already owned by another feeder\nCannot continue";
 		return true;
 	case VJD_STAT_MISS:
-		std::clog << "vJoy device " << (int)device << " is not installed or disabled\nCannot continue\n";
+		LOG(ERROR) << "vJoy device " << (int)device << " is not installed or disabled\nCannot continue";
 		return true;
 	default:
-		std::clog << "vJoy device " << (int)device << " general error\nCannot continue\n";
+		LOG(ERROR) << "vJoy device " << (int)device << " general error\nCannot continue";
 		return true;
 	};
 
 	// Acquire the vJoy device
 	if(!AcquireVJD(device))
 	{
-		std::clog << "Failed to acquire vJoy device number " << (int)device << ".\n";
+		LOG(ERROR) << "Failed to acquire vJoy device number " << (int)device << ".";
 		return true;
 	}
 	else
-		std::clog << "Acquired device number " << (int)device << " - OK\n";
+		LOG(INFO) << "Acquired device number " << (int)device << " - OK";
 
 	joystick_position[device].bDevice = device;
 	
@@ -173,7 +174,7 @@ int Update(uint8_t device)
 	bool return_status = UpdateVJD(device, (void*)&joystick_position[device]) != 0;
 	if(!return_status)
 	{
-		std::clog << "Feeding vJoy device number " << (int)device << " failed\n";
+		LOG(ERROR) << "Feeding vJoy device number " << (int)device << " failed";
 		DeInit(device);
 	}
 
@@ -236,7 +237,7 @@ void SetHat(uint8_t device, uint8_t hat, bool value)
 		hat_right[device] = value;
 	else
 	{
-		std::clog << "vJoy device " << (int)device << " invalid hat value of: " << (int)hat << "\n";
+		LOG(ERROR) << "vJoy device " << (int)device << " invalid hat value of: " << (int)hat;
 		return;
 	}
 

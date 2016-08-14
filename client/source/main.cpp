@@ -12,9 +12,9 @@
 #include "gui.h" // this has guitarGrip stuff in it for now
 #endif
 
-int main()
+int main(int argc, char* argv[])
 {
-	if(D2K::Init() && !EMULATOR)               // DS hardware setup
+	if(D2K::Init(argc, argv) && !EMULATOR)               // DS hardware setup
 	{
 		D2K::DeInit();
 

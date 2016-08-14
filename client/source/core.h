@@ -26,7 +26,7 @@ void WaitForVBlank();
 
 // Setup the nds system. Start fat, wifi, and our udp system.
 // @return (0) upon success, else (1)
-bool Init();
+bool Init(int argc, char* argv[]);
 
 // Shutdown the system. Currently only 3DS.
 void DeInit();
