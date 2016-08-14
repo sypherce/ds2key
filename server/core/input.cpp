@@ -162,7 +162,7 @@ void Keyboard(uint16_t key, KeyState state)
 
 //Moves cursor position
 //@param type true = absolute, false = relative
-void Mouse(bool type, signed long int x, signed long int y)
+void Mouse(MouseMovement type, signed long int x, signed long int y)
 {
 #ifdef _WIN32
 	INPUT input{ };
