@@ -130,6 +130,7 @@ std::string ProfileData::VirtualKeyToString(uint16_t button)
 ProfileData::ProfileData()
 {
 	m_null = std::string("");
+	m_ip_address = 0;
 }
 ProfileData::~ProfileData()
 {
