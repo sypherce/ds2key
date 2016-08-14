@@ -1,6 +1,7 @@
 #include <string>//std::string
 #include "keyboardWindow.h"
 #include "configWindow.h"
+#include "turboWindow.h"
 #include "gui/gui.h"
 #include "common/udp.h"
 #include "config.h"
@@ -416,11 +417,13 @@ std::string GetString(Label* label, Edit* edit, std::string text, int maxLength)
 	while(D2K::Loop()
 	   && Keyboard::g_window.IsVisible())
 	{
+		UDP::Update(g_keys_held, Turbo::GetKeys(), nullptr, 
+			        &D2K::g_circle_position, &D2K::g_cstick_position,
+			        &D2K::g_accel_status, &D2K::g_gyro_status,
+			        &D2K::g_slider_volume_status, &D2K::g_slider_3d_status,
+			        ConfigWindow::current_pressed_key); // Update keys and press active gamepad key
 		if(Keyboard::g_window.Update())                         // If pressed
 		{
-			UDP::Update(keysHeld(),
-			            NULL_VALUE, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-			            ConfigWindow::current_pressed_key); // Update keys and press active keyboard key
 			ConfigWindow::current_pressed_key = NULL_VALUE;
 			Keyboard::edit_entry->SetText(Buffer);          // Set text
 		}
