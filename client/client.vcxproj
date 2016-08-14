@@ -24,6 +24,7 @@
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\windows\commandWindow.cpp" />
     <ClCompile Include="source\windows\configWindow.cpp" />
+    <ClCompile Include="source\windows\gamepadWindow.cpp" />
     <ClCompile Include="source\windows\ipWindow.cpp" />
     <ClCompile Include="source\windows\keyboardWindow.cpp" />
     <ClCompile Include="source\windows\keypadWindow.cpp" />
@@ -52,6 +53,7 @@
     <ClInclude Include="source\gui\window.h" />
     <ClInclude Include="source\windows\commandWindow.h" />
     <ClInclude Include="source\windows\configWindow.h" />
+    <ClInclude Include="source\windows\gamepadWindow.h" />
     <ClInclude Include="source\windows\ipWindow.h" />
     <ClInclude Include="source\windows\keyboardWindow.h" />
     <ClInclude Include="source\windows\keypadWindow.h" />

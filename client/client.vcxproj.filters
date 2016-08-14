@@ -87,6 +87,9 @@
     <ClCompile Include="source\windows\keyboardWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\windows\gamepadWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\ds2keyPacket.h">
@@ -159,6 +162,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\common\enum_keys.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\windows\gamepadWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
