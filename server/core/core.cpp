@@ -47,7 +47,7 @@ void ExecuteCommand(std::string Command)
 
 // Changes master volume to (volume)
 //  (volume) ranges from 0.0f, 1.0f. 
-void ChangeVolume(float volume)
+void SetMasterVolume(float volume)
 {
 #ifdef _WIN32
 	HRESULT hresult{ };
@@ -117,89 +117,173 @@ void ChangeVolume(float volume)
 #endif
 }
 
-void ProcessPacket(D2K::Client* Client)
+//Returns true if (button) is analog
+bool DSButtonIsAnalog(uint32_t button)
+{
+	switch(button)
+	{
+	case DS2KEY_CPAD_LEFT:
+	case DS2KEY_CPAD_RIGHT:
+	case DS2KEY_CPAD_UP:
+	case DS2KEY_CPAD_DOWN:
+	case DS2KEY_CSTICK_LEFT:
+	case DS2KEY_CSTICK_RIGHT:
+	case DS2KEY_CSTICK_UP:
+	case DS2KEY_CSTICK_DOWN:
+	case DS2KEY_SLIDER_VOLUME:
+	case DS2KEY_SLIDER_3D:
+		return true;
+	}
+
+	return false;
+}
+
+//Example: Converts Digital (JOY_AXIS_X_MINUS) into analog (&-X) if (DSButtonIsAnalog) returns true
+std::string ConvertButtonToAxis(ProfileData* profile_data, int enum_key)
+{
+	uint32_t ds_button_bit = EnumKeyToNDSKeypadBit(enum_key);
+	std::string ds_axis    = profile_data->GetAxis(enum_key);
+	uint16_t pc_key        = profile_data->GetVirtualKey(enum_key);
+
+	if((DSButtonIsAnalog(ds_button_bit))
+	&&  (ds_axis == "")
+	&& ((pc_key >= Key::JOY_AXIS1 && pc_key <= Key::JOY_AXIS5_MAX)
+		|| (pc_key == KEY_VOLUME_UP)
+		|| (pc_key == KEY_VOLUME_DOWN)))
+	{
+		switch(pc_key)
+		{
+		case Key::JOY_AXIS_X_MINUS:
+			profile_data->SetValue(enum_key, "&-X");
+			break;
+		case Key::JOY_AXIS_X_PLUS:
+			profile_data->SetValue(enum_key, "&+X");
+			break;
+		case Key::JOY_AXIS_Y_MINUS:
+			profile_data->SetValue(enum_key, "&-Y");
+			break;
+		case Key::JOY_AXIS_Y_PLUS:
+			profile_data->SetValue(enum_key, "&+Y");
+			break;
+		case Key::JOY_AXIS_Z_MINUS:
+			profile_data->SetValue(enum_key, "&-Z");
+			break;
+		case Key::JOY_AXIS_Z_PLUS:
+			profile_data->SetValue(enum_key, "&+Z");
+			break;
+		case Key::JOY_AXIS_RX_MINUS:
+			profile_data->SetValue(enum_key, "&-RX");
+			break;
+		case Key::JOY_AXIS_RX_PLUS:
+			profile_data->SetValue(enum_key, "&+RX");
+			break;
+		case Key::JOY_AXIS_RY_MINUS:
+			profile_data->SetValue(enum_key, "&-RY");
+			break;
+		case Key::JOY_AXIS_RY_PLUS:
+			profile_data->SetValue(enum_key, "&+RY");
+			break;
+		case Key::JOY_AXIS_RZ_MINUS:
+			profile_data->SetValue(enum_key, "&-RZ");
+			break;
+		case Key::JOY_AXIS_RZ_PLUS:
+			profile_data->SetValue(enum_key, "&+RZ");
+			break;
+		case Key::JOY_AXIS_SL0_MINUS:
+			profile_data->SetValue(enum_key, "&-SL0");
+			break;
+		case Key::JOY_AXIS_SL0_PLUS:
+			profile_data->SetValue(enum_key, "&+SL0");
+			break;
+		case Key::JOY_AXIS_SL1_MINUS:
+			profile_data->SetValue(enum_key, "&-SL1");
+			break;
+		case Key::JOY_AXIS_SL1_PLUS:
+			profile_data->SetValue(enum_key, "&+SL1");
+			break;
+		case Key::JOY_AXIS_WHL_MINUS:
+			profile_data->SetValue(enum_key, "&-WHL");
+			break;
+		case Key::JOY_AXIS_WHL_PLUS:
+			profile_data->SetValue(enum_key, "&+WHL");
+			break;
+		case KEY_VOLUME_UP:
+			profile_data->SetValue(enum_key, "&+VOL");
+			break;
+		case KEY_VOLUME_DOWN:
+			profile_data->SetValue(enum_key, "&-VOL");
+			break;
+		default:
+			break;
+		}
+	}
+	return profile_data->GetAxis(enum_key);
+}
+
+void ProcessButtons(D2K::Client* client)
 {
 	//static values
-	static uint16_t last_x = 0, last_y = 0;
-	static bool last_screen_touched = false;
+	static int16_t axis_max_value = 120;
 
-	ProfileData* Profile = Client->GetProfileDataPointer();
-
-	uint8_t Joystick = Profile->GetValue8(KEYS::JOY);
+	ProfileData* profile_data = client->GetProfileDataPointer();
+	
+	uint8_t joystick = profile_data->GetValue8(KEYS::JOY);
 	//buttons
 	for(int enum_key = _START_OF_BUTTONS_ + 1; enum_key < KEYS::_END_OF_BUTTONS_; enum_key++)
 	{
-		uint32_t DSButton   = EnumKeyToNDSKeypadBit(enum_key);
-		uint16_t PCButton   = Profile->GetVirtualKey(enum_key);
-		std::string DSAxis  = Profile->GetAxis(enum_key);
-		std::string Command = Profile->GetCommand(enum_key);
+		uint32_t ds_button_bit = EnumKeyToNDSKeypadBit(enum_key);
+		uint16_t pc_key        = profile_data->GetVirtualKey(enum_key);
+		std::string command    = profile_data->GetCommand(enum_key);
+		std::string ds_axis    = ConvertButtonToAxis(profile_data, enum_key);
 
-		if(PCButton)
-		{
-			// button enabled for turbo and pressed
-			if(Client->Turbo(DSButton))
-			{
-				Input::Tap(PCButton, Joystick);
-				//TODO:log std::clog << "tap:" << PCButton << "\n";
-			}
-			// Pressed
-			else if(Client->Down(DSButton))
-			{
-				Input::Press(PCButton, Joystick);
-				//TODO:log std::clog << "press:" << PCButton << "\n";
-			}
-			// Released, even in turbo mode
-			else if(Client->Up(DSButton))
-			{
-				Input::Release(PCButton, Joystick);
-				//TODO:log std::clog << "release:" << PCButton << "\n";
-			}
-		}
-		else if(DSAxis != "")
+		//if (enum_key) is an analog axis
+		if(ds_axis != "")
 		{
 			//crop off the D2K_AXIS char
-			DSAxis = DSAxis.substr(D2K_AXIS_LENGTH);
+			ds_axis = ds_axis.substr(D2K_AXIS_LENGTH);
 
 			int16_t input_value = 1;
-			if(DSAxis.at(0) == '-')
+			if(ds_axis.at(0) == '-')
 				input_value = -1;
 			//crop off the '-' or '+' char
-			DSAxis = DSAxis.substr(1);
+			ds_axis = ds_axis.substr(1);
 
-			if(DSButton == DS2KEY_CPAD_LEFT || DSButton == DS2KEY_CPAD_RIGHT)
-				input_value *= Client->GetCircleX();
-			else if(DSButton == DS2KEY_CPAD_UP || DSButton == DS2KEY_CPAD_DOWN)
-				input_value *= Client->GetCircleY();
-			else if(DSButton == DS2KEY_CSTICK_LEFT || DSButton == DS2KEY_CSTICK_RIGHT)
-				input_value *= Client->GetCstickX();
-			else if(DSButton == DS2KEY_CSTICK_UP || DSButton == DS2KEY_CSTICK_DOWN)
-				input_value *= Client->GetCstickY();
-			else if(DSButton == DS2KEY_SLIDER_VOLUME)
-				input_value = (Client->GetSliderVolume() * 1.2) - 60;
-			else if(DSButton == DS2KEY_SLIDER_3D)
-				input_value = (Client->GetSlider3D() * 1.2) - 60;
+			if(ds_button_bit == DS2KEY_CPAD_LEFT || ds_button_bit == DS2KEY_CPAD_RIGHT)
+				input_value *= client->GetCircleX();
+			else if(ds_button_bit == DS2KEY_CPAD_UP || ds_button_bit == DS2KEY_CPAD_DOWN)
+				input_value *= client->GetCircleY();
+			else if(ds_button_bit == DS2KEY_CSTICK_LEFT || ds_button_bit == DS2KEY_CSTICK_RIGHT)
+				input_value *= client->GetCstickX();
+			else if(ds_button_bit == DS2KEY_CSTICK_UP || ds_button_bit == DS2KEY_CSTICK_DOWN)
+				input_value *= client->GetCstickY();
+			else if(ds_button_bit == DS2KEY_SLIDER_VOLUME)
+				input_value = (client->GetSliderVolume() * (axis_max_value / 50.0f)) - axis_max_value;
+			else if(ds_button_bit == DS2KEY_SLIDER_3D)
+				input_value = (client->GetSlider3D() * (axis_max_value / 50.0f)) - axis_max_value;
 			
 			uint8_t output_axis = 0;
-			if(DSAxis == "X")
+			if(ds_axis == "X")
 				output_axis = HID_USAGE_X;
-			else if(DSAxis == "Y")
+			else if(ds_axis == "Y")
 				output_axis = HID_USAGE_Y;
-			else if(DSAxis == "Z")
+			else if(ds_axis == "Z")
 				output_axis = HID_USAGE_Z;
-			else if(DSAxis == "RX")
+			else if(ds_axis == "RX")
 				output_axis = HID_USAGE_RX;
-			else if(DSAxis == "RZ")
+			else if(ds_axis == "RY")
+				output_axis = HID_USAGE_RY;
+			else if(ds_axis == "RZ")
 				output_axis = HID_USAGE_RZ;
-			else if(DSAxis == "SL0")
+			else if(ds_axis == "SL0")
 				output_axis = HID_USAGE_SL0;
-			else if(DSAxis == "SL1")
+			else if(ds_axis == "SL1")
 				output_axis = HID_USAGE_SL1;
-			else if(DSAxis == "WHL")
+			else if(ds_axis == "WHL")
 				output_axis = HID_USAGE_WHL;
-			else if(DSAxis == "POV")
+			else if(ds_axis == "POV")
 				output_axis = HID_USAGE_POV;
 
-			if(DSAxis == "VOL")
+			if(ds_axis == "VOL")
 			{
 				// this variable stops us from changing the volume every second
 				// the user can now also manually change the volume
@@ -208,29 +292,53 @@ void ProcessPacket(D2K::Client* Client)
 				{
 					last_volume_input = input_value;
 
-					ChangeVolume((input_value + 60) / 120.0f);
+					SetMasterVolume((input_value + axis_max_value) / (axis_max_value * 2.0f));
 				}
 			}
 			else if(output_axis != 0)
 			{
-				int16_t axis_max_value = 60;
-				D2K::Input::Joystick::SetAxisSignedMax(Joystick, output_axis, input_value, axis_max_value);
+				D2K::Input::Joystick::SetAxisSignedMax(joystick, output_axis, input_value, axis_max_value);
 			}
 		}
-		else if(Command != ""
-		&& Client->Down(DSButton))
+		//if (enum_key) is a digital button
+		else if(pc_key)
 		{
-			ExecuteCommand(Command);
+			// button enabled for turbo and pressed
+			if(client->Turbo(ds_button_bit))
+			{
+				Input::Tap(pc_key, joystick);
+				//TODO:log std::clog << "tap:" << PCButton << "\n";
+			}
+			// Pressed
+			else if(client->Down(ds_button_bit))
+			{
+				Input::Press(pc_key, joystick);
+				//TODO:log std::clog << "press:" << PCButton << "\n";
+			}
+			// Released, even in turbo mode
+			else if(client->Up(ds_button_bit))
+			{
+				Input::Release(pc_key, joystick);
+				//TODO:log std::clog << "release:" << PCButton << "\n";
+			}
+		}
+		//if (enum_key) is a command button AND was just pressed
+		else if(command != ""
+		&& client->Down(ds_button_bit))
+		{
+			ExecuteCommand(command);
 		}
 	}
-	D2K::Input::Joystick::Update(Joystick);
+	D2K::Input::Joystick::Update(joystick);
+}
 
-	// Touch screen
-	uint16_t x = Client->GetX();
-	uint16_t y = Client->GetY();
-	bool screen_touched = Client->Held(DS2KEY_TOUCH);
-	std::string moveType = Profile->m_mouse;
+void ProcessTouchScreen(D2K::Client* client)
+{
+	//static values
+	static uint16_t last_x = 0, last_y = 0;
+	static bool last_screen_touched = false;
 
+	bool screen_touched = client->Held(DS2KEY_TOUCH);
 	//if touched
 	if(screen_touched)
 	{
@@ -240,6 +348,12 @@ void ProcessPacket(D2K::Client* Client)
 		static const int s_sensitivity = 3;
 		// Deadzone Border: This helps the whole screen be accesible with absolute movement
 		static const int s_deadzone = 5;
+		
+
+		uint16_t x = client->GetX();
+		uint16_t y = client->GetY();
+		ProfileData* profile_data = client->GetProfileDataPointer();
+		std::string moveType = profile_data->m_mouse;
 
 		// If newly pressed
 		if(last_screen_touched == false)
@@ -292,13 +406,19 @@ void ProcessPacket(D2K::Client* Client)
 		last_x = last_y = 0;
 		last_screen_touched = false;
 	}
+}
+
+void ProcessPacket(D2K::Client* client)
+{
+	ProcessButtons(client);
+	ProcessTouchScreen(client);
 
 #ifdef false
 	//gyro/accel test stuff
 	{
 		uint8_t device = 1;
 		int16_t scale = 64;
-		int16_t value = Client->GetGyroX();
+		int16_t value = client->GetGyroX();
 		int16_t diff_value = (int16_t)1.3*scale;
 		int16_t axis_max_value = 60;
 		static int16_t adjustment_value_x = 0;
@@ -306,15 +426,15 @@ void ProcessPacket(D2K::Client* Client)
 		static int16_t adjustment_value_z = 0;
 		if(value > -diff_value && value < diff_value)
 		{
-			adjustment_value_x = -Client->GetAccelX();
-			adjustment_value_z = Client->GetAccelZ();
+			adjustment_value_x = -client->GetAccelX();
+			adjustment_value_z = client->GetAccelZ();
 		}
-		int16_t accelX = Client->GetAccelX();
-		int16_t accelY = Client->GetAccelY();
-		int16_t accelZ = Client->GetAccelZ();
-		int16_t gyroX = Client->GetGyroX();
-		int16_t gyroY = Client->GetGyroY();
-		int16_t gyroZ = Client->GetGyroZ();
+		int16_t accelX = client->GetAccelX();
+		int16_t accelY = client->GetAccelY();
+		int16_t accelZ = client->GetAccelZ();
+		int16_t gyroX = client->GetGyroX();
+		int16_t gyroY = client->GetGyroY();
+		int16_t gyroZ = client->GetGyroZ();
 		/*D2K::Input::joystick_id::SetAxisSignedMax(device, HID_USAGE_X,  client->GetAccelX() + adjustment_value_x, axis_max_value);
 		D2K::Input::joystick_id::SetAxisSignedMax(device, HID_USAGE_Y, -client->GetAccelY() + adjustment_value_y, axis_max_value);
 		D2K::Input::joystick_id::SetAxisSignedMax(device, HID_USAGE_Z, -client->GetAccelZ() + adjustment_value_z, axis_max_value);
@@ -326,7 +446,7 @@ void ProcessPacket(D2K::Client* Client)
 	}
 #endif
 
-	uint16_t keyboard_press = Client->GetKeyboardPress();
+	uint16_t keyboard_press = client->GetKeyboardPress();
 	if(keyboard_press != NULL_VALUE)
 	{
 		Input::Press(keyboard_press, NULL_VALUE);
@@ -335,40 +455,32 @@ void ProcessPacket(D2K::Client* Client)
 }
 
 //TODO this needs tested with multiple devices connected
-void ReleaseDeadClient(D2K::Client* Client)
+void ReleaseDeadClient(D2K::Client* client)
 {
-	ProfileData* Profile = Client->GetProfileDataPointer();
+	ProfileData* profile_data = client->GetProfileDataPointer();
+	uint8_t joystick = profile_data->GetValue8(KEYS::JOY);
 
-	//buttons
 	for(int enum_key = _START_OF_BUTTONS_ + 1; enum_key < KEYS::_END_OF_BUTTONS_; enum_key++)
 	{
-		uint32_t DSButton = EnumKeyToNDSKeypadBit(enum_key);
-		uint8_t Joystick = Profile->GetValue8(KEYS::JOY);
-		uint16_t PCButton = Profile->GetVirtualKey(enum_key);
+		uint32_t ds_button_bit = EnumKeyToNDSKeypadBit(enum_key);
+		uint16_t pc_key = profile_data->GetVirtualKey(enum_key);
 
-		if(PCButton)
-		{
-			// Held
-			if(Client->Held(DSButton))
-			{
-				Input::Release(PCButton, Joystick);
-				//TODO:log std::clog << "press:" << PCButton << "\n";
-			}
-		}
+		//if pc_key is valid and ds_button_bit is held
+		if(pc_key && client->Held(ds_button_bit))
+			Input::Release(pc_key, joystick);
 	}
 
-	uint8_t Joystick = Profile->GetValue8(KEYS::JOY);
-	D2K::Input::Joystick::DeInit(Joystick);
+	D2K::Input::Joystick::DeInit(joystick);
 }
 
 void CheckForDeadClients()
 {
-	static std::chrono::high_resolution_clock::time_point time_previous = std::chrono::high_resolution_clock::now();
-	       std::chrono::high_resolution_clock::time_point time_current  = std::chrono::high_resolution_clock::now();
-	long long time_difference =std::chrono::duration_cast<std::chrono::milliseconds>(time_current - time_previous).count();
+	using namespace std::chrono;
+	static high_resolution_clock::time_point time_previous = high_resolution_clock::now();
+	       high_resolution_clock::time_point time_current  = high_resolution_clock::now();
+	long long time_difference = duration_cast<milliseconds>(time_current - time_previous).count();
 	if(time_difference >= 1000)
 	{
-//TODO::std::clog << time_difference << "\n";
 		time_previous = time_current;
 
 		UDP::DS2KeyPacket Packet{ };
@@ -450,7 +562,7 @@ void Loop()
 		// If profile is active
 		if(g_client_array[Packet.profile] != nullptr)
 		{
-			//Set Alive Status
+			// Set Alive Status
 			g_client_array[Packet.profile]->SetAlive(CLIENT_STATUS::ALIVE);
 		}
 
