@@ -219,23 +219,18 @@ void Press(uint16_t key, uint8_t joy)
 		// GamePad Buttons
 		if(key >= Key::JOY && key <= Key::JOY_MAX) //virtual gamepad buttons
 		{
-#ifdef _WIN32
 			Joystick::SetButton(joy, key - Key::JOY, true);
 			Joystick::Update(joy);
-#endif
 		}
 		// GamePad DPad
 		else if(key >= Key::JOY_HAT && key <= Key::JOY_HAT_MAX) //virtual gamepad buttons
 		{
-#ifdef _WIN32
 			Joystick::SetHat(joy, key - Key::JOY_HAT, true);
 			Joystick::Update(joy);
-#endif
 		}
 		// Analog Axis
 		else if(key >= Key::JOY_AXIS1 && key <= Key::JOY_AXIS5_MAX) //virtual analog axis
 		{
-#ifdef _WIN32
 			switch(key)
 			{
 			case Key::JOY_AXIS_X_MINUS:
@@ -296,7 +291,6 @@ void Press(uint16_t key, uint8_t joy)
 				break;
 			}
 			Joystick::Update(joy);
-#endif
 		}
 		// Keyboard
 		else
@@ -317,23 +311,18 @@ void Release(uint16_t key, uint8_t joy)
 		// GamePad Buttons
 		if(key >= Key::JOY && key <= Key::JOY_MAX)
 		{
-#ifdef _WIN32
 			Joystick::SetButton(joy, key - Key::JOY, false);
 			Joystick::Update(joy);
-#endif
 		}
 		// GamePad DPad
 		else if(key >= Key::JOY_HAT && key <= Key::JOY_HAT_MAX)
 		{
-#ifdef _WIN32
 			Joystick::SetHat(joy, key - Key::JOY_HAT, false);
 			Joystick::Update(joy);
-#endif
 		}
 		// Analog Axis
 		else if(key >= Key::JOY_AXIS1 && key <= Key::JOY_AXIS5_MAX)
 		{
-#ifdef _WIN32
 			switch(key)
 			{
 			case Key::JOY_AXIS_X_MINUS:
@@ -376,7 +365,6 @@ void Release(uint16_t key, uint8_t joy)
 				break;
 			}
 			Joystick::Update(joy);
-#endif
 		}
 		// Keyboard
 		else
