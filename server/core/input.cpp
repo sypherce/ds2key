@@ -65,6 +65,14 @@ bool IsExtended(uint16_t key)
 	case VK_DOWN:
 	case VK_LEFT:
 	case VK_RIGHT:
+	case VK_MEDIA_NEXT_TRACK:
+	case VK_MEDIA_PLAY_PAUSE:
+	case VK_MEDIA_PREV_TRACK:
+	case VK_MEDIA_STOP:
+	//next are untested
+	case VK_EXECUTE:
+	case VK_SNAPSHOT:
+	case VK_APPS:
 		return true;
 #endif
 	default:
