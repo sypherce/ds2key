@@ -5,6 +5,8 @@
 #include "gui/edit.h"
 #include "gui/label.h"
 
+namespace D2K {namespace GUI {namespace Keyboard {
+
 const char WINKEY_NONE = 0;
 const char WINKEY_VOID = WINKEY_NONE;
 const char WINKEY_LBUTTON = 0x01;
@@ -176,8 +178,6 @@ const char WINKEY_ZOOM = 0xFB;
 const char WINKEY_NONAME = 0xFC;
 const char WINKEY_PA1 = 0xFD;
 const char WINKEY_OEM_CLEAR = 0xFE;
-
-namespace D2K {namespace GUI {namespace Keyboard {
 
 class WindowClass : public GUI::Window
 {
