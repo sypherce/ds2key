@@ -85,6 +85,11 @@ enum KeyState
 	pressed = false,
 	released = true,
 };
+enum MouseMovement
+{
+	relative = false,
+	absolute = true,
+};
 
 static uint16_t s_press_counter[65535] = { };//this allows 1 or more profile to press the same key, instead of going crazy
 static uint16_t s_turbo_status [65535] = { };
@@ -386,12 +391,12 @@ void Release(uint16_t key, uint8_t joy)
 
 void Move(signed long int x, signed long int y)
 {
-	Mouse(false, x, y);
+	Mouse(MouseMovement::relative, x, y);
 }
 
 void MoveAbsolute(signed long int x, signed long int y)
 {
-	Mouse(true, x, y);
+	Mouse(MouseMovement::absolute, x, y);
 }
 
 }}//namespace D2K::Input
