@@ -29,19 +29,25 @@ bool IsUpdated()
 }
 void DrawFastHorizontleLine(uint8_t screen, uint16_t x, uint16_t y, uint16_t w, uint16_t c)
 {
-	if(x >= MAX_X)
-		return;
-	if(y >= MAX_Y)
+	if(x >= MAX_X
+	|| y >= MAX_Y)
 		return;
 	if(x + w >= MAX_X)
-		w = MAX_X - x;
+	{
+		if(MAX_X - x > 0)
+			w = MAX_X - x;
+		else
+			return;
+	}
 	if(w == 0)
 		return;
 #if defined(_NDS)
 	dmaFillHalfWords(c, &GUI::g_screen[screen][x + (y * SCREEN_WIDTH)], w * 2);
 #elif defined(_3DS)
 	for(int i = 0; i < w; i++)
+	{
 		SetPixel(screen, x + i, y, c);
+	}
 #endif
 }
 
@@ -53,15 +59,17 @@ void SetPixel(uint8_t screen, uint16_t x, uint16_t y, uint16_t c)
 		GUI::g_screen[screen][x + (y * SCREEN_WIDTH)] = c;
 #elif defined(_3DS)
 	{
-		uint8_t* screen_pointer = (uint8_t*)GUI::g_screen[screen];
 
 		unsigned char blue   = (c & 0x7C00) >> 10 << 3;
 		unsigned char green = (c & 0x3E0)  >> 5  << 3;
 		unsigned char red  =  c & 0x001f        << 3;
 
-		screen_pointer[((x * _3DS_SCREEN_HEIGHT + (_3DS_SCREEN_HEIGHT - 1 - y)) * 3) + 0] = blue;
-		screen_pointer[((x * _3DS_SCREEN_HEIGHT + (_3DS_SCREEN_HEIGHT - 1 - y)) * 3) + 1] = green;
-		screen_pointer[((x * _3DS_SCREEN_HEIGHT + (_3DS_SCREEN_HEIGHT - 1 - y)) * 3) + 2] = red;
+		uint8_t* screen_pointer  = (uint8_t*)GUI::g_screen[screen];
+		         screen_pointer += (x * SCREEN_HEIGHT + (SCREEN_HEIGHT - 1 - y)) * 3;
+
+		screen_pointer[0] = blue;
+		screen_pointer[1] = green;
+		screen_pointer[2] = red;
 	}
 #endif
 }
@@ -72,8 +80,12 @@ void ClearScreen(uint8_t screen, uint16_t c)
 	dmaFillHalfWords(c, GUI::g_screen[screen], SCREEN_WIDTH * SCREEN_HEIGHT * 2);
 #elif defined(_3DS)
 	for(int x = 0; x < _3DS_SCREEN_WIDTH; x++)
+	{
 		for(int y = 0; y < _3DS_SCREEN_HEIGHT; y++)
+		{
 			SetPixel(screen, x, y, c);
+		}
+	}
 #endif
 }
 void DrawRect(uint8_t screen, GUI::Rect rect, uint16_t c)
@@ -90,7 +102,9 @@ void DrawRect(uint8_t screen, GUI::Rect rect, uint16_t c)
 void DrawFilledRect(uint8_t screen, GUI::Rect rect, uint16_t c)
 {
 	for(int y = rect.GetY(); y <= rect.GetY2(); y++)
+	{
 		DrawFastHorizontleLine(screen, rect.GetX(), y, rect.GetW(), c);
+	}
 }
 void DrawLine(uint8_t screen, std::string text, uint16_t x, uint16_t y, uint16_t c)
 {
@@ -140,9 +154,9 @@ void DrawLine(uint8_t screen, std::string text, uint16_t x, uint16_t y, uint16_t
 	}
 	else
 	{
-		for (unsigned int i = 0; i < text.length(); i++)
+		for(unsigned int i = 0; i < text.length(); i++)
 		{
-			if (text.at(i) != ' ')
+			if(text.at(i) != ' ')
 				SetPixel(screen, x + i, y, c);
 		}
 	}
