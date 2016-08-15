@@ -32,6 +32,7 @@ BUILD		:=	build_3ds
 SOURCES		:=	source source/gui source/windows ../common ../common/iniparser/src
 DATA		:=	data
 INCLUDES	:=	source source/gui source/windows ..
+PORTLIBS	:=	$(DEVKITPRO)/portlibs/armv6k
 
 APP_TITLE		:=	$(TARGET)
 APP_DESCRIPTION	:=
@@ -46,20 +47,20 @@ CFLAGS	:=	-g -Wall -O2 -mword-relocations \
 			-fomit-frame-pointer -ffunction-sections \
 			$(ARCH)
 
-CFLAGS	+=	$(INCLUDE) -DARM11 -D_3DS -DD2KCLIENT -DNULL_VALUE=0 -DEMULATOR=0
+CFLAGS	+=	$(INCLUDE) -I$(PORTLIBS)/include -DARM11 -D_3DS -DD2KCLIENT -DNULL_VALUE=0 -DEMULATOR=0
 
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -std=c++11
 
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=3dsx.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
-LIBS	:= -lctru -lm
+LIBS	:= -lctru -lm -lpng -lz
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
-LIBDIRS	:= $(CTRULIB)
+LIBDIRS	:= $(CTRULIB) $(PORTLIBS)
 
 
 #---------------------------------------------------------------------------------

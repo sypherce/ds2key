@@ -20,6 +20,7 @@
     <ClCompile Include="source\gui\gui.cpp" />
     <ClCompile Include="source\gui\label.cpp" />
     <ClCompile Include="source\gui\object.cpp" />
+    <ClCompile Include="source\gui\png_format.cpp" />
     <ClCompile Include="source\gui\rect.cpp" />
     <ClCompile Include="source\gui\window.cpp" />
     <ClCompile Include="source\main.cpp" />
@@ -52,6 +53,7 @@
     <ClInclude Include="source\gui\gui.h" />
     <ClInclude Include="source\gui\label.h" />
     <ClInclude Include="source\gui\object.h" />
+    <ClInclude Include="source\gui\png_format.h" />
     <ClInclude Include="source\gui\rect.h" />
     <ClInclude Include="source\gui\window.h" />
     <ClInclude Include="source\windows\commandWindow.h" />
