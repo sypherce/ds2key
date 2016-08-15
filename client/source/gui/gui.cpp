@@ -47,20 +47,21 @@ void DrawFastHorizontleLine(uint8_t screen, uint16_t x, uint16_t y, uint16_t w, 
 
 void SetPixel(uint8_t screen, uint16_t x, uint16_t y, uint16_t c)
 {
-	if(y < MAX_Y)//if we're drawing on screen
+	if((x < MAX_X) // if we're drawing on screen
+	&& (y < MAX_Y))
 #if defined(_NDS)
 		GUI::g_screen[screen][x + (y * SCREEN_WIDTH)] = c;
 #elif defined(_3DS)
 	{
 		uint8_t* screen_pointer = (uint8_t*)GUI::g_screen[screen];
 
-		unsigned char red   = (c & 0x7C00) >> 10 << 3;
+		unsigned char blue   = (c & 0x7C00) >> 10 << 3;
 		unsigned char green = (c & 0x3E0)  >> 5  << 3;
-		unsigned char blue  =  c & 0x001f        << 3;
+		unsigned char red  =  c & 0x001f        << 3;
 
-		screen_pointer[((x * _3DS_SCREEN_HEIGHT + (_3DS_SCREEN_HEIGHT - y)) * 3) + 0] = red;
-		screen_pointer[((x * _3DS_SCREEN_HEIGHT + (_3DS_SCREEN_HEIGHT - y)) * 3) + 1] = green;
-		screen_pointer[((x * _3DS_SCREEN_HEIGHT + (_3DS_SCREEN_HEIGHT - y)) * 3) + 2] = blue;
+		screen_pointer[((x * _3DS_SCREEN_HEIGHT + (_3DS_SCREEN_HEIGHT - 1 - y)) * 3) + 0] = blue;
+		screen_pointer[((x * _3DS_SCREEN_HEIGHT + (_3DS_SCREEN_HEIGHT - 1 - y)) * 3) + 1] = green;
+		screen_pointer[((x * _3DS_SCREEN_HEIGHT + (_3DS_SCREEN_HEIGHT - 1 - y)) * 3) + 2] = red;
 	}
 #endif
 }
