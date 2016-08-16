@@ -104,7 +104,7 @@
     <NMakeOutput>ds2key.nds</NMakeOutput>
     <NMakeCleanCommandLine>C:\devkitPro\msys\bin\make.exe -f Makefile_nds clean</NMakeCleanCommandLine>
     <NMakePreprocessorDefinitions>ARM9;_NDS;D2KCLIENT;EMULATOR=0;</NMakePreprocessorDefinitions>
-    <IncludePath>C:\devkitPro\devkitARM\include;C:\devkitPro\libnds\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <IncludePath>$(ProjectDir)source;$(ProjectDir)..\common;$(ProjectDir)..;C:\devkitPro\portlibs\armv5te\include;C:\devkitPro\devkitARM\include;C:\devkitPro\libnds\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <NMakeReBuildCommandLine>C:\devkitPro\msys\bin\make.exe -f Makefile_nds clean &amp;&amp; C:\devkitPro\msys\bin\make.exe -f Makefile_nds</NMakeReBuildCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='3DS|ARM'">
@@ -112,7 +112,7 @@
     <NMakeOutput>ds2key.3dsx</NMakeOutput>
     <NMakeCleanCommandLine>C:\devkitPro\msys\bin\make.exe -f Makefile_3ds clean</NMakeCleanCommandLine>
     <NMakePreprocessorDefinitions>ARM11;_3DS;D2KCLIENT;EMULATOR=0;</NMakePreprocessorDefinitions>
-    <IncludePath>$(ProjectDir)..;C:\devkitPro\devkitARM\arm-none-eabi\include;C:\devkitPro\devkitARM\arm-none-eabi\include\c++\5.3.0;C:\devkitPro\libctru\include</IncludePath>
+    <IncludePath>$(ProjectDir)source;$(ProjectDir)..\common;$(ProjectDir)..;C:\devkitPro\portlibs\armv6k\include;C:\devkitPro\devkitARM\include;C:\devkitPro\libctru\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <NMakeReBuildCommandLine>C:\devkitPro\msys\bin\make.exe -f Makefile_3ds clean &amp;&amp; C:\devkitPro\msys\bin\make.exe -f Makefile_3ds</NMakeReBuildCommandLine>
   </PropertyGroup>
   <ItemDefinitionGroup>
