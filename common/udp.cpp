@@ -294,13 +294,9 @@ unsigned long GetLocalIP()
 }
 std::string GetLocalIPString()
 {
-#if defined(_NDS) || defined(_3DS)
 	struct in_addr sin_addr;
 	sin_addr.s_addr = GetLocalIP();
 	std::string IP = inet_ntoa(sin_addr);
-#elif defined(_WIN32) || defined(__linux__)
-	std::string IP = inet_ntoa(local_sockaddr.sin_addr);
-#endif
 
 	return IP;
 }
