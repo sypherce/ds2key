@@ -19,6 +19,7 @@ SOURCES		:=	source source/gui source/windows ../common ../common/iniparser/src
 DATA		:=
 INCLUDES	:=	source source/gui source/windows ..
 GRAPHICS	:=	
+PORTLIBS	:=	$(DEVKITPRO)/portlibs/armv5te
 
 
 #---------------------------------------------------------------------------------
@@ -31,7 +32,7 @@ CFLAGS	:=	-g -Wall -O2\
 			-ffast-math \
 			$(ARCH)
 
-CFLAGS	+=	$(INCLUDE) -DARM9 -D_NDS -DD2KCLIENT  -DNULL_VALUE=0 -DEMULATOR=0
+CFLAGS	+=	$(INCLUDE) -I$(PORTLIBS)/include -DARM9 -D_NDS -DD2KCLIENT -DNULL_VALUE=0 -DEMULATOR=0
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -std=c++11
 
 ASFLAGS	:=	-g $(ARCH)
@@ -40,14 +41,14 @@ LDFLAGS	=	-specs=ds_arm9.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project (order is important)
 #---------------------------------------------------------------------------------
-LIBS	:= 	-lfat -ldswifi9 -lnds9
+LIBS	:= 	-lfat -ldswifi9 -lnds9 -lpng -lz
 
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
-LIBDIRS	:=	$(LIBNDS)
+LIBDIRS	:=	$(LIBNDS) $(PORTLIBS)
 
 #---------------------------------------------------------------------------------
 # no real need to edit anything past this point unless you need to add additional

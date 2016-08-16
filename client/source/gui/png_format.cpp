@@ -1,8 +1,6 @@
 #include <string>  // std::string
-#ifdef _3DS
 #include <png.h>
 #include "common/easylogging++Wrapper.h"
-#endif
 #include "edit.h"
 #include "gui.h"
 
@@ -10,7 +8,6 @@ namespace D2K {namespace GUI{
 
 bool LoadPngImage(char *filename, int &width, int &height, unsigned char **output)
 {
-#if defined(_3DS)
 	// Open png file
 	FILE *file = fopen(filename, "rb");
 	if(file == nullptr)
@@ -95,9 +92,6 @@ bool LoadPngImage(char *filename, int &width, int &height, unsigned char **outpu
 
 	LOG(INFO) << "Loaded " << filename << ".";
 	return true;
-#elif defined(_NDS)
-	return false;
-#endif
 }
 
 }}//namespace D2K::GUI
