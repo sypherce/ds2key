@@ -65,7 +65,7 @@ void SetPixel(uint8_t screen, uint16_t x, uint16_t y, uint16_t c)
 		unsigned char red  =  c & 0x001f        << 3;
 
 		uint8_t* screen_pointer  = (uint8_t*)GUI::g_screen[screen];
-		         screen_pointer += (x * SCREEN_HEIGHT + (SCREEN_HEIGHT - 1 - y)) * 3;
+		         screen_pointer += (x * _3DS_SCREEN_HEIGHT + (_3DS_SCREEN_HEIGHT - 1 - y)) * 3;
 
 		screen_pointer[0] = blue;
 		screen_pointer[1] = green;
