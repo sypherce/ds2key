@@ -329,7 +329,7 @@ std::string GetString(Label* label, Edit* edit, std::string text, int maxLength)
 			        ConfigWindow::current_pressed_key); // Update keys and press active gamepad key
 		if(Gamepad::g_window.Update())                         // If pressed
 		{
-			ConfigWindow::current_pressed_key = NULL_VALUE;
+			ConfigWindow::current_pressed_key = 0;
 			Gamepad::edit_entry->SetText(Buffer);          // Set text
 		}
 	}

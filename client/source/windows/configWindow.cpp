@@ -15,7 +15,7 @@
 
 namespace D2K {namespace GUI {namespace ConfigWindow {
 
-uint16_t current_pressed_key = NULL_VALUE;
+uint16_t current_pressed_key = 0;
 bool g_config_type{ };
 
 WindowClass g_window;

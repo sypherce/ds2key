@@ -6,6 +6,7 @@
 
 namespace D2K {namespace Input { namespace Joystick {
 
+const uint8_t NO_JOYSTICK = 0;
 const uint8_t MAX_JOYSTICKS = 4;
 
 //bool Init(uint8_t device);

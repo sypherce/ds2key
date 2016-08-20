@@ -23,10 +23,8 @@ void Tap(uint16_t key, unsigned char joy);
 
 //Sends a virtual key press, or a virtual gamepad button press
 //@param Key Platform specific key or gamepad button value
-//@param Joy (vjoy) device number. Value ranges 0-15. Ignored if (key) is not a gamepad button value.
-//TODO currently if NULL/0 is passed to 'joy' it'll still use joystick 0. This could be replaced with an invalid amount -1, 16? Probably use an value similar to const uint8 JOY_NONE=-1
-//TODO also, we're using unsigned char, and uint8_t elsewhere I believe.
-void Press(uint16_t key, unsigned char joy);
+//@param Joy (vjoy) device number. Value ranges 1-16, or Input::Joystick::NO_JOYSTICK (0). Ignored if (key) is not a gamepad button value.
+void Press(uint16_t key, uint8_t joy);
 
 //Sends a virtual key release, or a virtual gamepad button release
 //@param Key Platform specific key or gamepad button value

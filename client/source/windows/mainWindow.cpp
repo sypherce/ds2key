@@ -198,7 +198,7 @@ void ButtonTouchFunction()
 		UDP::Update(g_keys_held, 0, &D2K::g_stylus_position,
 		            &D2K::g_circle_position, &D2K::g_cstick_position,
 		            &D2K::g_accel_status, &D2K::g_gyro_status,
-		            &D2K::g_slider_volume_status, &D2K::g_slider_3d_status, NULL_VALUE);
+		            &D2K::g_slider_volume_status, &D2K::g_slider_3d_status, 0);
 
 		Main::g_window.Update();
 	}
@@ -219,7 +219,7 @@ void ButtonTurboFunction()
 		UDP::Update(g_keys_held, Turbo::GetKeys(), nullptr,
 		            &D2K::g_circle_position, &D2K::g_cstick_position,
 		            &D2K::g_accel_status, &D2K::g_gyro_status,
-		            &D2K::g_slider_volume_status, &D2K::g_slider_3d_status, NULL_VALUE);
+		            &D2K::g_slider_volume_status, &D2K::g_slider_3d_status, 0);
 		Turbo::g_window.Update();
 		button_turbo->Draw();
 
@@ -248,8 +248,8 @@ void ButtonConfigGamepadWindowFunction()
 			            &g_circle_position, &g_cstick_position,
 			            &g_accel_status, &g_gyro_status,
 			            &g_slider_volume_status, &g_slider_3d_status,
-			            NULL_VALUE);
-		ConfigWindow::current_pressed_key = NULL_VALUE;
+			            0);
+		ConfigWindow::current_pressed_key = 0;
 		button_config_gamepad->Draw();
 
 		if(Main::g_window.CheckClick(button_config_gamepad)) // If pressed again, break
@@ -276,8 +276,8 @@ void ButtonConfigKeyboardWindowFunction()
 			            &g_circle_position, &g_cstick_position,
 			            &g_accel_status, &g_gyro_status,
 			            &g_slider_volume_status, &g_slider_3d_status,
-			            NULL_VALUE);
-		ConfigWindow::current_pressed_key = NULL_VALUE;
+			            0);
+		ConfigWindow::current_pressed_key = 0;
 		button_config_keyboard->Draw();
 
 		if(Main::g_window.CheckClick(button_config_keyboard)) // If pressed again, break
@@ -304,7 +304,7 @@ void ButtonCommandsFunction()
 		UDP::Update(g_keys_held, Turbo::GetKeys(), nullptr, 
 		            &D2K::g_circle_position, &D2K::g_cstick_position,
 		            &D2K::g_accel_status, &D2K::g_gyro_status,
-		            &D2K::g_slider_volume_status, &D2K::g_slider_3d_status, NULL_VALUE);
+		            &D2K::g_slider_volume_status, &D2K::g_slider_3d_status, 0);
 		Command::g_window.Update(); // Update and draw command window
 		button_commands->Draw();    // Draw [Commands] button
 		

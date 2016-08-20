@@ -450,10 +450,10 @@ void ProcessPacket(D2K::Client* client)
 #endif
 
 	uint16_t keyboard_press = client->GetKeyboardPress();
-	if(keyboard_press != NULL_VALUE)
+	if(keyboard_press != 0)
 	{
-		Input::Press(keyboard_press, NULL_VALUE);
-		Input::Release(keyboard_press, NULL_VALUE);
+		Input::Press(keyboard_press, Input::Joystick::NO_JOYSTICK);
+		Input::Release(keyboard_press, Input::Joystick::NO_JOYSTICK);
 	}
 }
 

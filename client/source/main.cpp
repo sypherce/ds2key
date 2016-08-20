@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
 		                 &D2K::g_gyro_status,
 		                 &D2K::g_slider_volume_status,
 		                 &D2K::g_slider_3d_status,
-		                 NULL_VALUE);
+		                 0);
 
 		D2K::GUI::Main::g_window.Update(); // Update the window
 	}
