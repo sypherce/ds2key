@@ -364,7 +364,8 @@ bool Init(int argc, char* argv[])
 	|| !Wifi_InitDefault(WFC_CONNECT))
 	{
 		LOG(ERROR) << "Error (Wifi_InitDefault): Failed to connect\n";
-		return true;                // Return with error
+		if(!EMULATOR)
+			return true;                // Return with error
 	}
 
 #endif
