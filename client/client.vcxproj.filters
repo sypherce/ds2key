@@ -122,6 +122,9 @@
     <ClInclude Include="source\core.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="source\dummy_types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="source\gui\button.h">
       <Filter>Header Files</Filter>
     </ClInclude>

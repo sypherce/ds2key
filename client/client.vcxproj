@@ -47,6 +47,7 @@
     <ClInclude Include="..\common\enum_keys.h" />
     <ClInclude Include="source\config.h" />
     <ClInclude Include="source\core.h" />
+    <ClInclude Include="source\dummy_types.h" />
     <ClInclude Include="source\gui\button.h" />
     <ClInclude Include="source\gui\checkButton.h" />
     <ClInclude Include="source\gui\edit.h" />
@@ -103,15 +104,15 @@
     <NMakeBuildCommandLine>C:\devkitPro\msys\bin\make.exe -f Makefile_nds</NMakeBuildCommandLine>
     <NMakeOutput>ds2key.nds</NMakeOutput>
     <NMakeCleanCommandLine>C:\devkitPro\msys\bin\make.exe -f Makefile_nds clean</NMakeCleanCommandLine>
-    <NMakePreprocessorDefinitions>ARM9;_NDS;D2KCLIENT;EMULATOR=0;</NMakePreprocessorDefinitions>
+    <NMakePreprocessorDefinitions>EMULATOR=0;D2KCLIENT;ARM9;_NDS;</NMakePreprocessorDefinitions>
     <IncludePath>$(ProjectDir)source;$(ProjectDir)..\common;$(ProjectDir)..;C:\devkitPro\portlibs\armv5te\include;C:\devkitPro\devkitARM\include;C:\devkitPro\libnds\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <NMakeReBuildCommandLine>C:\devkitPro\msys\bin\make.exe -f Makefile_nds clean &amp;&amp; C:\devkitPro\msys\bin\make.exe -f Makefile_nds</NMakeReBuildCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='3DS|ARM'">
     <NMakeBuildCommandLine>C:\devkitPro\msys\bin\make.exe -f Makefile_3ds</NMakeBuildCommandLine>
-    <NMakeOutput>ds2key.3dsx</NMakeOutput>
+    <NMakeOutput>3ds2key.3dsx</NMakeOutput>
     <NMakeCleanCommandLine>C:\devkitPro\msys\bin\make.exe -f Makefile_3ds clean</NMakeCleanCommandLine>
-    <NMakePreprocessorDefinitions>ARM11;_3DS;D2KCLIENT;EMULATOR=0;</NMakePreprocessorDefinitions>
+    <NMakePreprocessorDefinitions>EMULATOR=0;D2KCLIENT;ARM11;_3DS;</NMakePreprocessorDefinitions>
     <IncludePath>$(ProjectDir)source;$(ProjectDir)..\common;$(ProjectDir)..;C:\devkitPro\portlibs\armv6k\include;C:\devkitPro\devkitARM\include;C:\devkitPro\libctru\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <NMakeReBuildCommandLine>C:\devkitPro\msys\bin\make.exe -f Makefile_3ds clean &amp;&amp; C:\devkitPro\msys\bin\make.exe -f Makefile_3ds</NMakeReBuildCommandLine>
   </PropertyGroup>
