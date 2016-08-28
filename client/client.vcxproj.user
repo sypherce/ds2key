@@ -10,7 +10,7 @@
     <RemoteDebuggerCommandArguments>
     </RemoteDebuggerCommandArguments>
     <LocalDebuggerCommand>C:\devkitPro\msys\bin\make.exe</LocalDebuggerCommand>
-    <LocalDebuggerCommandArguments> -f Makefile_3ds run</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>-f Makefile_3ds run</LocalDebuggerCommandArguments>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='NDS|ARM'">
     <RemoteDebuggerCommand>
