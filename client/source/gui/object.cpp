@@ -34,7 +34,12 @@ std::string Object::GetText()
 }
 void Object::Clear(uint16_t color)
 {
+	GUI::DrawBackgroundImage(m_screen, m_rect, color);
 	GUI::DrawFilledRect(m_screen, m_rect, color);
+}
+void Object::Clear()
+{
+	GUI::DrawBackgroundImage(m_screen, m_rect, Color[COLOR_BACKGROUND]);
 }
 void Object::SetVisible(bool visible)
 {

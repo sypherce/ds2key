@@ -49,14 +49,16 @@ protected:
 
 	void SetUpdate(bool value);
 	bool IsUpdated();
-	//Clears entire screen with color (color)
+	//Clears entire area with color (color)
 	void Clear(uint16_t color);
+	//Clears entire area with the background image
+	void Clear();
 
 private:
 	bool m_visible;
 	bool m_update;
-	GUI::Rect m_rect;	
-	uint8_t m_screen;	
+	GUI::Rect m_rect;
+	uint8_t m_screen;
 };
 
 }}//namespace D2K::GUI

@@ -26,10 +26,15 @@ extern const uint16_t MAX_Y;
 
 extern void VoidFunction();
 extern uint16_t* g_screen[2];
+void SetBackground(const std::string& text);
+std::string GetBackground();
+bool DrawBackgroundImage(uint8_t screen, uint8_t c);
+bool DrawBackgroundImage(uint8_t screen, GUI::Rect rect, uint8_t c);
 void SetUpdate(bool value);
 bool IsUpdated();
-void SetPixel(uint8_t screen, uint16_t x, uint16_t y, uint16_t c);
-void ClearScreen(uint8_t screen, uint16_t c);
+void SetPixel(uint8_t screen, uint16_t x, uint16_t y, uint16_t color);
+void SetPixel(uint8_t screen, uint16_t x, uint16_t y, uint8_t red, uint8_t green, uint8_t blue);
+void ClearScreen(uint8_t screen, uint16_t color);
 void DrawRect(uint8_t screen, GUI::Rect rect, uint16_t c);
 void DrawFilledRect(uint8_t screen, GUI::Rect rect, uint16_t c);
 void DrawLine(uint8_t screen, std::string text, uint16_t x, uint16_t y, uint16_t c);
