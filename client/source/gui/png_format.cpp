@@ -1,4 +1,6 @@
-#include <string> // std::string
+#include <string>  // std::string
+#include <cstdlib> // malloc
+#include <cstring> // memcpy
 #include <png.h>
 #include "common/easylogging++Wrapper.h"
 
