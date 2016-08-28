@@ -1,19 +1,17 @@
-#include <string>  // std::string
+#include <string> // std::string
 #include <png.h>
 #include "common/easylogging++Wrapper.h"
-#include "edit.h"
-#include "gui.h"
 
 namespace D2K {namespace GUI{
 
-bool LoadPngImage(char *filename, int &width, int &height, unsigned char **output)
+uint32_t LoadPngImage(const std::string filename, int &width, int &height, unsigned char **output)
 {
 	// Open png file
-	FILE *file = fopen(filename, "rb");
+	FILE *file = fopen(filename.c_str(), "rb");
 	if(file == nullptr)
 	{
 		LOG(ERROR) << "Issue reading " << filename << ".";
-		return false;
+		return 0;
 	}
 
 	// Initialize png read struct
@@ -23,7 +21,7 @@ bool LoadPngImage(char *filename, int &width, int &height, unsigned char **outpu
 		// Close file
 		fclose(file);
 		LOG(ERROR) << "Issue initialize png read struct from " << filename << ".";
-		return false;
+		return 0;
 	}
 
 	// Initialize png info struct
@@ -36,7 +34,7 @@ bool LoadPngImage(char *filename, int &width, int &height, unsigned char **outpu
 		fclose(file);
 
 		LOG(ERROR) << "Issue initializing png info struct from " << filename << ".";
-		return false;
+		return 0;
 	}
 
 	// Setup libpng error handling
@@ -49,7 +47,7 @@ bool LoadPngImage(char *filename, int &width, int &height, unsigned char **outpu
 			fclose(file);
 
 			LOG(ERROR) << "Issue reading " << filename << ".";
-			return false;
+			return 0;
 		}
 	}
 
@@ -64,9 +62,8 @@ bool LoadPngImage(char *filename, int &width, int &height, unsigned char **outpu
 	// PNG_TRANSFORM_STRIP_16   : Strip 16-bit samples to 8 bits
 	// PNG_TRANSFORM_PACKING    : Expand 1, 2 and 4-bit samples to bytes
 	// PNG_TRANSFORM_EXPAND     : Expand paletted images to RGB, grayscale to 8-bit images and tRNS chunks to alpha channels
-	// PNG_TRANSFORM_BGR        : Flip RGB to BGR, RGBA to BGRA
 	// PNG_TRANSFORM_STRIP_ALPHA: Discard the alpha channel
-	png_read_png(png_ptr, info_ptr, PNG_TRANSFORM_STRIP_16 | PNG_TRANSFORM_PACKING | PNG_TRANSFORM_EXPAND | PNG_TRANSFORM_BGR | PNG_TRANSFORM_STRIP_ALPHA, nullptr);
+	png_read_png(png_ptr, info_ptr, PNG_TRANSFORM_STRIP_16 | PNG_TRANSFORM_PACKING | PNG_TRANSFORM_EXPAND | PNG_TRANSFORM_STRIP_ALPHA, nullptr);
 
 	// Read some variables, width, height, depth...
 	int bit_depth, color_type, interlace_type;
@@ -75,13 +72,14 @@ bool LoadPngImage(char *filename, int &width, int &height, unsigned char **outpu
 
 	// Allocate the output data
 	uint32_t row_bytes = png_get_rowbytes(png_ptr, info_ptr);
-	*output = (unsigned char*) malloc(row_bytes * height);
+	uint32_t buffer_size = row_bytes * height;
+	*output = (unsigned char*)malloc(buffer_size);
 
 	// Copy the png file to the output
 	png_bytepp row_pointers = png_get_rows(png_ptr, info_ptr);
 	for(int y = 0; y < height; y++)
 	{
-		memcpy(*output+(row_bytes * y), row_pointers[y], row_bytes);
+		memcpy(*output + (row_bytes * y), row_pointers[y], row_bytes);
 	}
 
 	// Deinitialize png read struct
@@ -91,7 +89,7 @@ bool LoadPngImage(char *filename, int &width, int &height, unsigned char **outpu
 	fclose(file);
 
 	LOG(INFO) << "Loaded " << filename << ".";
-	return true;
+	return buffer_size;
 }
 
 }}//namespace D2K::GUI
