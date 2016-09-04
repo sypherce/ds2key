@@ -4,6 +4,7 @@
 #endif
 #include <algorithm>        // std::min, std::max
 #include <cstring>
+#include "common/easylogging++Wrapper.h"
 #include "gui.h"
 #include "png_format.h"
 
@@ -25,7 +26,7 @@ uint16_t Color[colorMax];
 uint8_t alpha_setting = 70;
 void VoidFunction() { }
 
-std::string background_filename{ };
+std::string background_filename{};
 void SetBackground(const std::string& text)
 {
 	background_filename = text;
@@ -35,13 +36,38 @@ std::string GetBackground()
 	return background_filename;
 }
 
+//orientation false = normal, true = rotated -90degrees
+uint32_t GetPixelPosition(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint8_t byte_depth, bool orientation)
+{
+	if(x >= w)
+	{
+		LOG_N_TIMES(15, ERROR) << "GetPixelPosition X:" << x << ".";
+		x = w;
+		//return 0;
+	}
+	else if(y >= h)
+	{
+		LOG_N_TIMES(15, ERROR) << "GetPixelPosition Y:" << y << ".";
+		y = h;
+		//return 0;
+	}
+	if(orientation == false)
+	{
+		return (x + (y * w)) * byte_depth;
+	}
+	else
+	{
+		return (x * h + (h - 1 - y)) * byte_depth;
+	}
+}
+
 uint8_t* GetScreenPointer(uint8_t screen, uint16_t x, uint16_t y)
 {
 	uint8_t* screen_pointer = (uint8_t*)GUI::g_screen[screen];
 #if defined(_NDS)
-	screen_pointer += (x + (y * SCREEN_WIDTH)) * SCREEN_BYTES;
+	screen_pointer += GetPixelPosition(x, y, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BYTES, false);
 #elif defined(_3DS)
-	screen_pointer += (x * _3DS_SCREEN_HEIGHT + (_3DS_SCREEN_HEIGHT - 1 - y)) * SCREEN_BYTES;
+	screen_pointer += GetPixelPosition(x, y, _3DS_SCREEN_WIDTH, _3DS_SCREEN_HEIGHT, SCREEN_BYTES, true);
 #endif
 	return screen_pointer;
 }
@@ -57,60 +83,105 @@ uint16_t RGB24TORGB15(uint8_t red, uint8_t green, uint8_t blue)
 	return ARGB16(1, (red >> 3), (green >> 3), (blue >> 3));
 }
 
-char* background_image{ };
-int background_image_size{ };
+void resize_crop(const char* input_image, char* output_image, uint16_t input_width, uint16_t input_height, uint16_t output_width, uint16_t output_height)
+{
+	int crop_x = 0;
+	int crop_y = 0;
+	if(output_width > input_width)
+		output_width = input_width;
+	if(output_height > input_height)
+		output_height = input_height;
+	if(output_width < input_width)
+		crop_x = (input_width - output_width) / 2;
+	if(output_height < input_height)
+		crop_y = (input_height - output_height) / 2;
+
+	for(int x = 0; x < output_width; x++)
+	{
+		for(int y = 0; y < output_height; y++)
+		{
+			int output_memory_position = GetPixelPosition(x, y, MAX_X, MAX_Y, IMAGE_BYTES, true);
+			int input_memory_position = GetPixelPosition(x + crop_x, y + crop_y, input_width, input_height, IMAGE_BYTES, false);
+			output_image[output_memory_position + 0] = input_image[input_memory_position + 0];
+			output_image[output_memory_position + 1] = input_image[input_memory_position + 1];
+			output_image[output_memory_position + 2] = input_image[input_memory_position + 2];
+		}
+	}
+}
+
+//https://rosettacode.org/wiki/Bilinear_interpolation
+float lerp(float s, float e, float t)
+{
+	return s+(e-s)*t;
+}
+float blerp(float c00, float c10, float c01, float c11, float tx, float ty)
+{
+    return lerp(lerp(c00, c10, tx), lerp(c01, c11, tx), ty);
+}
+void resize_bilinear(const char* input_image, char* output_image, uint16_t input_width, uint16_t input_height, uint16_t output_width, uint16_t output_height) 
+{
+	int x, y;
+	for(x= 0, y=0; y < output_height; x++)
+	{
+		if(x >= output_width)
+		{
+			x = 0; y++;
+		}
+		float gx = x / (float)(output_width ) * (input_width - 1 );
+		float gy = y / (float)(output_height) * (input_height - 1);
+		int gxi = (int)gx;
+		int gyi = (int)gy;
+		const char* c00 = &input_image[GetPixelPosition(gxi + 0, gyi + 0, input_width, input_height, IMAGE_BYTES, false)];
+		const char* c10 = &input_image[GetPixelPosition(gxi + 1, gyi + 0, input_width, input_height, IMAGE_BYTES, false)];
+		const char* c01 = &input_image[GetPixelPosition(gxi + 0, gyi + 1, input_width, input_height, IMAGE_BYTES, false)];
+		const char* c11 = &input_image[GetPixelPosition(gxi + 1, gyi + 1, input_width, input_height, IMAGE_BYTES, false)];
+		char* output_memory_position = &output_image[GetPixelPosition(x, y, MAX_X, MAX_Y, IMAGE_BYTES, true)];
+		for(uint8_t i = 0; i < 3; i++)
+		{
+			output_memory_position[i] = (uint8_t)blerp(c00[i], c10[i], c01[i], c11[i], gx - gxi, gy -gyi);
+		}
+	}
+}
+
+char* background_image{};
 //TODO:handle deallocation of background_image
 //TODO:seperate cropping function
 //TODO:logs
 bool LoadBackgroundImage()
 {
+	const int background_height = MAX_Y;
+	const int background_width  = MAX_X;
+	const int background_image_size = background_width * background_height * IMAGE_BYTES;
 	int png_width, png_height;
-	char* png_image{ };
+	char* png_image{};
 	if(LoadPngImage(GetBackground(), png_width, png_height, (unsigned char**)&png_image))
 	{
-		int background_height = MAX_Y;
-		int background_width  = MAX_X;
-		if(background_width > png_width)
-			background_width = png_width;
-		if(background_height > png_height)
-			background_height = png_height;
 		if(background_image == nullptr)
 		{
-			background_image_size = background_width * background_height * IMAGE_BYTES;
 			background_image = (char*)malloc(background_image_size);
 		}
 		
-		for(int x = 0; x < background_width; x++)
-		{
-			for(int y = 0; y < background_height; y++)
-			{
-				int background_memory_position = (x * MAX_Y + (MAX_Y - 1 - y)) * IMAGE_BYTES;
-				int png_memory_position = (x + (y * png_width)) * IMAGE_BYTES;
-				background_image[background_memory_position + 0] = png_image[png_memory_position + 0];
-				background_image[background_memory_position + 1] = png_image[png_memory_position + 1];
-				background_image[background_memory_position + 2] = png_image[png_memory_position + 2];
-			}
-		}
+		resize_bilinear((const char*)png_image, background_image, png_width, png_height, background_width, background_height);
+		//resize_crop((const char*)png_image, background_image, png_width, png_height, background_width, background_height);
+
 		free(png_image);
 		return true;
 	}
 	else if(background_image == nullptr)
 	{
-		background_image_size = MAX_X * MAX_Y * IMAGE_BYTES;
 		background_image = (char*)malloc(background_image_size);
 
-		for(int x = 0; x < MAX_X; x++)
+		for(int x = 0; x < background_width; x++)
 		{
-			for(int y = 0; y < MAX_Y; y++)
+			for(int y = 0; y < background_height; y++)
 			{
-				int background_memory_position = (x * MAX_Y + (MAX_Y - 1 - y)) * IMAGE_BYTES;
-				int png_memory_position = (x + (y * png_width)) * IMAGE_BYTES;
-				uint8_t blue, green, red = {};
+				int output_memory_position = GetPixelPosition(x, y, MAX_X, MAX_Y, IMAGE_BYTES, true);
+				uint8_t blue, green, red{};
 				RGB15TORGB24(Color[COLOR_BACKGROUND], red, green, blue);
 				
-				background_image[background_memory_position + 0] = red;
-				background_image[background_memory_position + 1] = green;
-				background_image[background_memory_position + 2] = blue;
+				background_image[output_memory_position + 0] = red;
+				background_image[output_memory_position + 1] = green;
+				background_image[output_memory_position + 2] = blue;
 			}
 		}
 	}
@@ -201,13 +272,6 @@ void GetPixel(uint8_t screen, uint16_t x, uint16_t y, uint8_t& red, uint8_t& gre
 #endif
 }
 
-uint8_t AlphaBlend2(uint8_t color_1, uint8_t color_2, uint8_t alpha)
-{
-	if (color_1 >= color_2)
-		return (color_1-color_2) * (alpha*0.01) + color_2;
-	else
-		return (color_2-color_1) * ((100-alpha)*0.01) + color_1;
-}
 uint8_t AlphaBlend(uint8_t color_1, uint8_t color_2, uint8_t alpha)
 {
 	return (alpha  * color_1 + (100 - alpha) * color_2) / 100;
@@ -222,7 +286,7 @@ void SetPixel(uint8_t screen, uint16_t x, uint16_t y, uint16_t color)
 
 		screen_pointer[0] = color;
 #elif defined(_3DS)
-		uint8_t blue, green, red = {};
+		uint8_t blue, green, red{};
 		RGB15TORGB24(color, red, green, blue);
 		
 		SetPixel(screen, x, y, red, green, blue);
@@ -256,13 +320,13 @@ void SetPixel(uint8_t screen, uint16_t x, uint16_t y, uint16_t color, uint8_t al
 		else if(alpha == 0)
 			return;
 
-		uint8_t color_blue, color_green, color_red = {};
+		uint8_t color_blue, color_green, color_red{};
 		RGB15TORGB24(color,
 		             color_red,
 		             color_green,
 		             color_blue);
 
-		uint8_t screen_pointer_blue, screen_pointer_green, screen_pointer_red = {};
+		uint8_t screen_pointer_blue, screen_pointer_green, screen_pointer_red{};
 		GetPixel(screen, x, y,
 		         screen_pointer_red,
 		         screen_pointer_green,

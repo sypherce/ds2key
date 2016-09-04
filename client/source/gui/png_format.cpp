@@ -1,6 +1,7 @@
 #include <string>  // std::string
 #include <cstdlib> // malloc
 #include <cstring> // memcpy
+#include <iomanip> // setprecision
 #include <png.h>
 #include "common/easylogging++Wrapper.h"
 
@@ -15,6 +16,13 @@ uint32_t LoadPngImage(const std::string filename, int &width, int &height, unsig
 		LOG(ERROR) << "Issue reading " << filename << ".";
 		return 0;
 	}
+
+	// Store png file size
+	fseek(file, 0, SEEK_END);
+	long file_size = ftell(file);
+	fseek(file, 0, SEEK_SET);
+
+	LOG(INFO) << "Opening " << filename << " (" << std::fixed << std::setprecision(2) << file_size / 1000.0f / 1000.0f << "MB).";
 
 	// Initialize png read struct
 	png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
