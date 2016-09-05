@@ -53,13 +53,13 @@ void ExecuteCommand(std::string Command)
 void SetMasterVolume(float volume)
 {
 #ifdef _WIN32
-	HRESULT hresult{ };
+	HRESULT hresult{};
 
 	//Initialize the COM library 
 	CoInitialize(nullptr);
 
 	//Creates a single uninitialized object
-	IMMDeviceEnumerator *device_enumerator{ }; 
+	IMMDeviceEnumerator *device_enumerator{}; 
 	hresult = CoCreateInstance(__uuidof(MMDeviceEnumerator),
 	              NULL, CLSCTX_INPROC_SERVER, __uuidof(IMMDeviceEnumerator),
 	              (LPVOID *)&device_enumerator);
@@ -73,7 +73,7 @@ void SetMasterVolume(float volume)
 	}
 
 	//Retrieve the default audio endpoint using (device_enumerator)
-	IMMDevice *default_audio_endpoint{ };
+	IMMDevice *default_audio_endpoint{};
 	hresult = device_enumerator->GetDefaultAudioEndpoint(eRender, eConsole,
 	              &default_audio_endpoint);
 	//we're done with device_enumerator
@@ -88,7 +88,7 @@ void SetMasterVolume(float volume)
 	}
 
 	//Retrieve the volume controls using (default_audio_endpoint)
-	IAudioEndpointVolume *endpoint_volume{ };
+	IAudioEndpointVolume *endpoint_volume{};
 	hresult = default_audio_endpoint->Activate(__uuidof(IAudioEndpointVolume),
 	              CLSCTX_INPROC_SERVER, nullptr, (LPVOID*)&endpoint_volume);
 	//we're done with default_audio_endpoint
@@ -103,7 +103,7 @@ void SetMasterVolume(float volume)
 	}
 
 	//Change the volume
-	hresult = endpoint_volume->SetMasterVolumeLevelScalar(volume, nullptr);	
+	hresult = endpoint_volume->SetMasterVolumeLevelScalar(volume, nullptr);
 	//we're done with endpoint_volume
 	endpoint_volume->Release();
 	if(hresult != S_OK)
@@ -229,7 +229,7 @@ void ProcessButtons(D2K::Client* client)
 	static int16_t axis_max_value = 120;
 
 	ProfileData* profile_data = client->GetProfileDataPointer();
-	
+
 	uint8_t joystick = profile_data->GetValue8(KEYS::JOY);
 	//buttons
 	for(int enum_key = _START_OF_BUTTONS_ + 1; enum_key < KEYS::_END_OF_BUTTONS_; enum_key++)
@@ -263,7 +263,7 @@ void ProcessButtons(D2K::Client* client)
 				input_value = (client->GetSliderVolume() * (axis_max_value / 50.0f)) - axis_max_value;
 			else if(ds_button_bit == DS2KEY_SLIDER_3D)
 				input_value = (client->GetSlider3D() * (axis_max_value / 50.0f)) - axis_max_value;
-			
+
 			uint8_t output_axis = 0;
 			if(ds_axis == "X")
 				output_axis = HID_USAGE_X;
@@ -290,7 +290,7 @@ void ProcessButtons(D2K::Client* client)
 			{
 				// this variable stops us from changing the volume every second
 				// the user can now also manually change the volume
-				static int16_t last_volume_input{ };
+				static int16_t last_volume_input{};
 				if(input_value != last_volume_input)
 				{
 					last_volume_input = input_value;
@@ -351,7 +351,6 @@ void ProcessTouchScreen(D2K::Client* client)
 		static const int s_sensitivity = 3;
 		// Deadzone Border: This helps the whole screen be accesible with absolute movement
 		static const int s_deadzone = 5;
-		
 
 		uint16_t x = client->GetX();
 		uint16_t y = client->GetY();
@@ -486,7 +485,7 @@ void CheckForDeadClients()
 	{
 		time_previous = time_current;
 
-		UDP::DS2KeyPacket Packet{ };
+		UDP::DS2KeyPacket Packet{};
 		Packet.type = UDP::PACKET::ALIVE;
 
 		for(int i = 0; i < D2K::CLIENT_MAX; i++)
@@ -557,7 +556,7 @@ int Setup(int argc, char* argv[])
 
 void Loop()
 {
-	UDP::DS2KeyCommandSettingsPacket Packet{ };
+	UDP::DS2KeyCommandSettingsPacket Packet{};
 
 	//if we  are running, connected, and receive something without error
 	if(g_running
@@ -587,7 +586,7 @@ void Loop()
 			// If profile is active
 			if(g_client_array[Packet.profile] != nullptr)
 			{
-				UDP::DS2KeyCommandSettingsPacket settings = UDP::DS2KeyCommandSettingsPacket{ };
+				UDP::DS2KeyCommandSettingsPacket settings = UDP::DS2KeyCommandSettingsPacket{};
 
 				settings.type = UDP::PACKET::COMMAND_SETTINGS;
 

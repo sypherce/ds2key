@@ -7,7 +7,7 @@
 
 namespace D2K {
 
-Client* g_client_array[CLIENT_MAX] = { };
+Client* g_client_array[CLIENT_MAX]{};
 
 uint32_t EnumKeyToNDSKeypadBit(int enum_key)
 {
@@ -47,7 +47,7 @@ uint32_t EnumKeyToNDSKeypadBit(int enum_key)
 		return DS2KEY_ZL;
 	case KEYS::ZR:
 		return DS2KEY_ZR;
-	
+
 	case KEYS::CSTICK_UP:
 		return DS2KEY_CSTICK_UP;
 	case KEYS::CSTICK_DOWN:
@@ -129,8 +129,7 @@ std::string ProfileData::VirtualKeyToString(uint16_t button)
 }
 ProfileData::ProfileData()
 {
-	m_null = std::string("");
-	m_ip_address = 0;
+
 }
 ProfileData::~ProfileData()
 {
@@ -184,7 +183,7 @@ std::string& ProfileData::GetStringReference(int enum_key)
 		return m_red;
 	case KEYS::GREEN:
 		return m_green;
-		
+
 	case KEYS::ZL:
 		return m_zl;
 	case KEYS::ZR:
@@ -375,7 +374,7 @@ const std::string& ProfileData::GetAxis(int enum_key)
 
 Client::Client()
 {
-	m_packet = UDP::DS2KeyPacket{ };
+	m_packet = UDP::DS2KeyPacket{};
 	m_keys =
 	m_keys_old = 0;
 	SetAlive(CLIENT_STATUS::ALIVE);

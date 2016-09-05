@@ -61,7 +61,7 @@ class ProfileData final
 public:
 	ProfileData();
 	~ProfileData();
-	
+
 	//Returns profile data as a human readable string
 	//
 	//Example: enum_key KEYS::UP(0x03) returns std::string "KEY_UP"
@@ -69,7 +69,7 @@ public:
 	//@param enum_key (enum KEYS) Example: KEYS::A, KEYS::UP, KEYS::GREEN
 	//@return Human readable version of (enum_key)'s current setting. Example: KEY_A, KEY_UP
 	std::string& GetStringReference(int enum_key);
-	
+
 	//Currently only used in config.cpp as of 3-30-16.
 	//Checks if enum_key qualifies as a button, then returns GetStringReference
 	//If it doesn't qualify, it returns GetCommand, which also uses GetStringReference
@@ -79,7 +79,7 @@ public:
 	//@param enum_key (enum KEYS) Example: KEYS::A, KEYS::UP, KEYS::GREEN
 	//@return Human readable version of (enum_key)'s current setting. Example: KEY_A, KEY_UP
 	std::string GetButtonString(int enum_key);
-	
+
 	//Currently only used in core.cpp as of 3-30-16 to retrieve the joystick #.
 	//Retrieves a value with GetStringReference and converts it to a uin8_t value
 	//
@@ -100,7 +100,7 @@ public:
 	//@param enum_key (enum KEYS) Example: KEYS::A, KEYS::UP, KEYS::GREEN
 	//@return system specific uint16_t (0-65535)
 	uint16_t GetVirtualKey(int enum_key);
-	
+
 //TODO:: Update comment
 	//Currently only used in config.cpp as of 3-30-16.
 	//Checks that enum_key DOES NOT qualify as a button, we assume IT IS a command after that
@@ -112,37 +112,36 @@ public:
 	//@return (std::string) containing command info, if enum_key is a button it returns "".
 	const std::string& GetCommand(int enum_key);
 	const std::string& GetAxis(int enum_key);
-	
+
 	bool SetValue(int enum_key, std::string value);
 	bool SetVirtualKey(int enum_key, uint16_t value);
 
 	void SetTouchPos(uint8_t i, uint8_t x, uint8_t y, uint8_t w, uint8_t h);
 
-	uint32_t m_ip_address;
-	std::string m_mouse;
-	std::string m_joy;
-	std::string m_dpad_up, m_dpad_down, m_dpad_left, m_dpad_right, m_a, m_b, m_x, m_y, m_l, m_r, m_start, m_select, m_lid;
+	uint32_t m_ip_address{};
+	std::string m_mouse{};
+	std::string m_joy{};
+	std::string m_dpad_up, m_dpad_down, m_dpad_left, m_dpad_right, m_a, m_b, m_x, m_y, m_l, m_r, m_start, m_select, m_lid{};
 
-	std::string m_zl, m_zr;
+	std::string m_zl, m_zr{};
 
-	std::string m_cstick_up, m_cstick_down, m_cstick_left, m_cstick_right;
+	std::string m_cstick_up, m_cstick_down, m_cstick_left, m_cstick_right{};
 
-	std::string m_cpad_up, m_cpad_down, m_cpad_left, m_cpad_right;
+	std::string m_cpad_up, m_cpad_down, m_cpad_left, m_cpad_right{};
 
-	std::string m_blue, m_yellow, m_red, m_green;
+	std::string m_blue, m_yellow, m_red, m_green{};
 
-	std::string m_slider_volume, m_slider_3d;
+	std::string m_slider_volume, m_slider_3d{};
 
-	std::string m_touch_command[12];
-	std::string m_touch_string[12];
-	uint8_t m_touch_x[12];
-	uint8_t m_touch_y[12];
-	uint8_t m_touch_w[12];
-	uint8_t m_touch_h[12];
-	std::string m_null;
+	std::string m_touch_command[12]{};
+	std::string m_touch_string[12]{};
+	uint8_t m_touch_x[12]{};
+	uint8_t m_touch_y[12]{};
+	uint8_t m_touch_w[12]{};
+	uint8_t m_touch_h[12]{};
+	std::string m_null{};
 
 private:
-	
 	bool SetVirtualKey(int enum_key, std::string value);
 	bool SetRaw(int enum_key, std::string value);
 	bool SetCommand(int enum_key, std::string value);
@@ -184,7 +183,7 @@ public:
 
 	//@return true if (key) has Turbo mode enabled
 	bool Turbo(uint32_t key);
-	
+
 	//@return IP address. 0 if not assigned
 	uint32_t GetIP();
 

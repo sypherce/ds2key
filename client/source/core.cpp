@@ -32,19 +32,19 @@ namespace D2K {
 #ifdef _3DS
 //TODO: is this filter needed? possibly on server instead? is 8 right?
 #define FILTER_SIZE 8
-static accelVector accel[FILTER_SIZE] {};
-static angularRate gyro[FILTER_SIZE] {};
+static accelVector accel[FILTER_SIZE]{};
+static angularRate gyro[FILTER_SIZE]{};
 #endif
-circlePosition g_circle_position {};
-circlePosition g_cstick_position {};
-accelVector g_accel_status {};
-angularRate g_gyro_status {};
-touchPosition g_stylus_position {};
-float g_slider_3d_status {};
-uint8_t g_slider_volume_status {};
-uint32_t wifi_status {};
-uint8_t battery_level {};
-uint8_t charging_status {};
+circlePosition g_circle_position{};
+circlePosition g_cstick_position{};
+accelVector g_accel_status{};
+angularRate g_gyro_status{};
+touchPosition g_stylus_position{};
+float g_slider_3d_status{};
+uint8_t g_slider_volume_status{};
+uint32_t wifi_status{};
+uint8_t battery_level{};
+uint8_t charging_status{};
 bool input_changed = false;
 //TODO: this should be configurable?
 bool enable_input_timeout = true;
@@ -133,8 +133,8 @@ enum
 	KEY_LID = BIT(13)
 };
 
-static uint8_t lid_open{ };
-uint8_t old_lid_open{ };
+static uint8_t lid_open{};
+uint8_t old_lid_open{};
 
 void ScanLid()
 {
@@ -224,7 +224,7 @@ void UpdateGyroAccel()
 }
 #endif
 
-uint32_t g_keys_held, g_keys_down, g_keys_up{ };
+uint32_t g_keys_held, g_keys_down, g_keys_up{};
 
 ///updates input values
 void UpdateInputs()

@@ -4,21 +4,23 @@
 
 #include "client.h"
 
-namespace D2K {namespace Config{
+namespace D2K {namespace Config {
 
 	//Loads settings from disk
 	//@return (0) upon success, else (errno)
 	int Load();
+
+	//Saves settings to disk
+	//@return (0) upon success, else (errno)
+	int Save();
+
+	//void NewProfile(ProfileData* profile_data, uint8_t profile_number);
 
 	//Loads Profile settings to disk
 	//@param profile Pointer to actual data
 	//@param profile_number Fills in # in ds2key.p#.ini. Example: ds2key.p1.ini
 	//@return (0) upon success, else (errno)
 	int LoadProfile(ProfileData* profile, uint8_t profile_number);
-
-	//Saves settings to disk
-	//@return (0) upon success, else (errno)
-	int Save();
 
 	//Saves Profile settings to disk
 	//@param profile Pointer to actual data
