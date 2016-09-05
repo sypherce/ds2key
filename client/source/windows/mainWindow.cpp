@@ -95,9 +95,9 @@ WindowClass::~WindowClass() { }
 bool WindowClass::Update()
 {
 	static char seconds = 0;
-	static std::string ip { };
-	static std::string port { };
-	static std::string profile { };
+	static std::string ip{};
+	static std::string port{};
+	static std::string profile{};
 	static int update_counter = 0;
 
 	const int UPDATE_COUNTER_MAX = 30;

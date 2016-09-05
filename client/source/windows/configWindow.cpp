@@ -16,7 +16,7 @@
 namespace D2K {namespace GUI {namespace ConfigWindow {
 
 uint16_t current_pressed_key = 0;
-bool g_config_type{ };
+bool g_config_type{};
 
 WindowClass g_window;
 Label* label_title;
@@ -53,7 +53,7 @@ Button* button_lid;
 
 void SendNewSetting(uint16_t setting, uint16_t value)
 {
-	UDP::DS2KeyNormalSettingsPacket settings = UDP::DS2KeyNormalSettingsPacket{ };
+	UDP::DS2KeyNormalSettingsPacket settings = UDP::DS2KeyNormalSettingsPacket{};
 	settings.profile = UDP::GetProfile();
 	settings.type = UDP::PACKET::NORMAL_SETTING;
 	settings.setting = setting;
@@ -65,7 +65,7 @@ void SendNewSetting(uint16_t setting, uint16_t value)
 
 void SendNewSetting(uint16_t setting)
 {
-	uint16_t value{ };
+	uint16_t value{};
 	if(g_config_type)
 		value = Gamepad::GetKey();
 	else

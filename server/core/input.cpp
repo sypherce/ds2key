@@ -92,8 +92,8 @@ enum MouseMovement
 	absolute = true,
 };
 
-static uint16_t s_press_counter[65535] = { };//this allows 1 or more profile to press the same key, instead of going crazy
-static uint16_t s_turbo_status [65535] = { };
+static uint16_t s_press_counter[65535]{};//this allows 1 or more profile to press the same key, instead of going crazy
+static uint16_t s_turbo_status [65535]{};
 
 //Presses or releases (key) depending on (state)
 //@param key Platform specific value
@@ -101,7 +101,7 @@ static uint16_t s_turbo_status [65535] = { };
 void Keyboard(uint16_t key, KeyState state)
 {
 #ifdef _WIN32
-	INPUT input{ };
+	INPUT input{};
 	switch(key)
 	{
 	case VK_LBUTTON:
@@ -166,7 +166,7 @@ void Keyboard(uint16_t key, KeyState state)
 void Mouse(MouseMovement type, signed long int x, signed long int y)
 {
 #ifdef _WIN32
-	INPUT input{ };
+	INPUT input{};
 
 	input.type = INPUT_MOUSE;
 	input.mi.dx = x;//-16 border

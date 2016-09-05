@@ -24,8 +24,9 @@ extern const uint16_t MAX_X;
 extern const uint16_t MAX_Y;
 #endif
 
-extern void VoidFunction();
 extern uint16_t* g_screen[2];
+
+void VoidFunction();
 void SetBackground(const std::string& text);
 std::string GetBackground();
 bool DrawBackgroundImage(uint8_t screen, uint8_t c);

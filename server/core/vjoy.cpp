@@ -13,12 +13,13 @@ namespace D2K {namespace Input {namespace Joystick {
 //joystick_position[0] is unused, but it makes the rest of the
 //code not need joystick_position[device+1].
 #ifdef _WIN32
-JOYSTICK_POSITION joystick_position[MAX_JOYSTICKS+1]{ };
+JOYSTICK_POSITION joystick_position[MAX_JOYSTICKS+1]{};
 #endif
-bool hat_up[MAX_JOYSTICKS+1]{ };
-bool hat_down[MAX_JOYSTICKS+1]{ };
-bool hat_left[MAX_JOYSTICKS+1]{ };
-bool hat_right[MAX_JOYSTICKS+1]{ };
+bool hat_up[MAX_JOYSTICKS+1]{};
+bool hat_down[MAX_JOYSTICKS+1]{};
+bool hat_left[MAX_JOYSTICKS+1]{};
+bool hat_right[MAX_JOYSTICKS+1]{};
+//TODO: function vjoyinterface.h::GetVJDAxisMax
 const LONG MAX_AXIS_VALUE = 32767;
 const DWORD CONTINUOUS_UP = 0;
 const DWORD CONTINUOUS_UP_RIGHT = 4500;
@@ -52,7 +53,7 @@ bool Init(uint8_t device)
 
 		return true;
 	}
-	
+
 	// If Device is Active, return success
 	if(IsActive(device))
 		return false;
@@ -99,7 +100,8 @@ bool Init(uint8_t device)
 		LOG(INFO) << "Acquired device number " << (int)device << " - OK";
 
 	joystick_position[device].bDevice = device;
-	
+
+//TODO: function vjoyinterface.h::ResetAll();
 	// Reset all buttons
 	joystick_position[device].lButtons = 0;
 	// Reset dpad
@@ -128,7 +130,7 @@ bool DeInit(uint8_t device)
 		std::clog << "vJoy device " << (int)device << " is already inactive\n";
 		return false;
 	}
-	
+
 	// Reset all buttons
 	joystick_position[device].lButtons = 0;
 	// Reset dpad
@@ -248,7 +250,7 @@ void SetAxisPercent(uint8_t device, uint8_t axis, uint8_t value)
 {
 #ifdef _WIN32
 	static LONG percent_axis_scale = MAX_AXIS_VALUE / 100;
-	
+
 	if(Init(device) != 0)
 		return;
 

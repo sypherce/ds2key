@@ -90,6 +90,9 @@ bool Rect::PointIntersect(uint16_t x, uint16_t y)
 		&& y >= std::min((uint16_t)GetY(), (uint16_t)GetY2())
 		&& y <= std::max((uint16_t)GetY(), (uint16_t)GetY2()));
 }
-Rect::~Rect() { }
+Rect::~Rect()
+{
+
+}
 
 }}//namespace D2K::GUI

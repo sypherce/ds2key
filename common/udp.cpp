@@ -76,14 +76,14 @@ bool connected = false;
 uint16_t g_port = DEFAULT_PORT;
 SOCKET socket_id = INVALID_SOCKET;
 #ifdef D2KCLIENT
-DS2KeyPacket packet = DS2KeyPacket{ };
+DS2KeyPacket packet = DS2KeyPacket{};
 uint8_t profile = 0;
 std::string remote_ip = "";
 #endif
 #if defined(D2KSERVER)
-struct sockaddr_in local_sockaddr = { };
+struct sockaddr_in local_sockaddr{};
 #endif
-struct sockaddr_in g_remote_sockaddr = { };
+struct sockaddr_in g_remote_sockaddr{};
 
 void Init()
 {
@@ -127,12 +127,12 @@ int Connect(bool non_blocking, uint16_t port)
 	SetConfigPort(port);  // Set port
 
 	UDP::g_non_blocking = non_blocking;
-	
+
 	g_remote_sockaddr.sin_family = AF_INET;
 	g_remote_sockaddr.sin_port = htons(GetPort());
 #if defined(D2KSERVER)
 	int sockaddrlength = sizeof(struct sockaddr_in);
-	local_sockaddr = sockaddr_in{ };
+	local_sockaddr = sockaddr_in{};
 	local_sockaddr.sin_family = AF_INET;
 	local_sockaddr.sin_addr.s_addr = INADDR_ANY;
 
@@ -358,7 +358,7 @@ void SendCommand(uint8_t command)
 	if(command >= UDP::SETTINGS_PACKET_MAX_BUTTONS) // Valid range is 0 - 11
 		return;
 
-	packet = DS2KeyPacket{ };                       // Clear the packet
+	packet = DS2KeyPacket{};                       // Clear the packet
 	packet.type = UDP::PACKET::COMMAND;
 	packet.profile = GetProfile();
 	packet.keys = command;
@@ -377,7 +377,7 @@ void Update(uint32_t keys, uint32_t keysTurbo, touchPosition* touch_position,
 
 	ListenForServer();                             // Listen for the server
 
-	packet = DS2KeyPacket{ };                      // Clear the packet
+	packet = DS2KeyPacket{};                      // Clear the packet
 	packet.type = UDP::PACKET::NORMAL;
 	packet.profile = GetProfile();
 	packet.keys = keys;
@@ -431,7 +431,7 @@ void Update(uint32_t keys, uint32_t keysTurbo, touchPosition* touch_position,
 
 void SendLookupPacket()
 {
-	packet = DS2KeyPacket{ };            // Clear the packet
+	packet = DS2KeyPacket{};            // Clear the packet
 	packet.type = UDP::PACKET::LOOKUP;   // Set as a lookup packet
 
 	Send(&packet, sizeof(DS2KeyPacket)); // Send the packet out
@@ -441,7 +441,7 @@ void SendLookupPacket()
 
 void RequestSettingsCommand()
 {
-	packet = UDP::DS2KeyPacket{ };                  // Clear the packet
+	packet = UDP::DS2KeyPacket{};                  // Clear the packet
 	packet.type = UDP::PACKET::COMMAND_SETTINGS;    // Set as command settings packet
 	packet.profile = UDP::GetProfile();             // Set profile
 
@@ -461,7 +461,7 @@ void ServerLookup()
 		   (0xFF << 24));
 
 	SendLookupPacket();                            // Send the lookup packet
-	
+
 	//wait for 1 second
 	for(int i = 0; i < 60; i++)
 	{
@@ -484,7 +484,7 @@ void ListenForServer()
 	if(EMULATOR)                        // Skip if emulating
 		return;
 
-	DS2KeyCommandSettingsPacket command_settings_packet = DS2KeyCommandSettingsPacket{ }; // Large packet
+	DS2KeyCommandSettingsPacket command_settings_packet = DS2KeyCommandSettingsPacket{}; // Large packet
 
 	if(UDP::IsConnected()               // Received something
 	&& UDP::Recv(&command_settings_packet, sizeof(DS2KeyCommandSettingsPacket)) == 0)
