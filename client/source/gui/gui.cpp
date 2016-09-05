@@ -100,7 +100,7 @@ void resize_crop(const char* input_image, char* output_image, uint16_t input_wid
 	{
 		for(int y = 0; y < output_height; y++)
 		{
-			int output_memory_position = GetPixelPosition(x, y, MAX_X, MAX_Y, IMAGE_BYTES, true);
+			int output_memory_position = GetPixelPosition(x, y, output_width, output_height, IMAGE_BYTES, true);
 			int input_memory_position = GetPixelPosition(x + crop_x, y + crop_y, input_width, input_height, IMAGE_BYTES, false);
 			output_image[output_memory_position + 0] = input_image[input_memory_position + 0];
 			output_image[output_memory_position + 1] = input_image[input_memory_position + 1];
@@ -135,7 +135,7 @@ void resize_bilinear(const char* input_image, char* output_image, uint16_t input
 		const char* c10 = &input_image[GetPixelPosition(gxi + 1, gyi + 0, input_width, input_height, IMAGE_BYTES, false)];
 		const char* c01 = &input_image[GetPixelPosition(gxi + 0, gyi + 1, input_width, input_height, IMAGE_BYTES, false)];
 		const char* c11 = &input_image[GetPixelPosition(gxi + 1, gyi + 1, input_width, input_height, IMAGE_BYTES, false)];
-		char* output_memory_position = &output_image[GetPixelPosition(x, y, MAX_X, MAX_Y, IMAGE_BYTES, true)];
+		char* output_memory_position = &output_image[GetPixelPosition(x, y, output_width, output_height, IMAGE_BYTES, true)];
 		for(uint8_t i = 0; i < 3; i++)
 		{
 			output_memory_position[i] = (uint8_t)blerp(c00[i], c10[i], c01[i], c11[i], gx - gxi, gy -gyi);
@@ -175,7 +175,7 @@ bool LoadBackgroundImage()
 		{
 			for(int y = 0; y < background_height; y++)
 			{
-				int output_memory_position = GetPixelPosition(x, y, MAX_X, MAX_Y, IMAGE_BYTES, true);
+				int output_memory_position = GetPixelPosition(x, y, background_width, background_height, IMAGE_BYTES, true);
 				uint8_t blue, green, red{};
 				RGB15TORGB24(Color[COLOR_BACKGROUND], red, green, blue);
 				
@@ -383,14 +383,14 @@ void DrawFilledRect(uint8_t screen, GUI::Rect rect, uint16_t c)
 {
 	for(int y = rect.GetY(); y <= rect.GetY2(); y++)
 	{
-#if defined(_NDS)
-		DrawFastHorizontleLine(screen, rect.GetX(), y, rect.GetW(), c);
-#elif defined(_3DS)
+//#if defined(_NDS)
+//		DrawFastHorizontleLine(screen, rect.GetX(), y, rect.GetW(), c);
+//#elif defined(_3DS)
 		for(int x = rect.GetX(); x <= rect.GetX2(); x++)
 		{
 			SetPixel(screen, x, y, c, alpha_setting);
 		}
-#endif
+//#endif
 	}
 }
 void DrawLine(uint8_t screen, std::string text, uint16_t x, uint16_t y, uint16_t c)
