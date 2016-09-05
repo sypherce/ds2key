@@ -74,9 +74,9 @@ uint8_t* GetScreenPointer(uint8_t screen, uint16_t x, uint16_t y)
 
 void RGB15TORGB24(uint16_t color, uint8_t &red, uint8_t &green, uint8_t &blue)
 {
-	red   =  color & 0x001f        << 3;
-	green = (color & 0x3E0)  >> 5  << 3;
-	blue  = (color & 0x7C00) >> 10 << 3;
+	red   =  (color & 0x001f       ) * 8.225806451612903;
+	green = ((color & 0x3E0)  >> 5 ) * 8.225806451612903;
+	blue  = ((color & 0x7C00) >> 10) * 8.225806451612903;
 }
 uint16_t RGB24TORGB15(uint8_t red, uint8_t green, uint8_t blue)
 {
@@ -161,8 +161,15 @@ bool LoadBackgroundImage()
 			background_image = (char*)malloc(background_image_size);
 		}
 		
-		resize_bilinear((const char*)png_image, background_image, png_width, png_height, background_width, background_height);
-		//resize_crop((const char*)png_image, background_image, png_width, png_height, background_width, background_height);
+		if(png_width  == background_width
+		&& png_height == background_height)
+		{
+			resize_crop((const char*)png_image, background_image, png_width, png_height, background_width, background_height);
+		}
+		else
+		{
+			resize_bilinear((const char*)png_image, background_image, png_width, png_height, background_width, background_height);
+		}
 
 		free(png_image);
 		return true;
@@ -257,7 +264,7 @@ void GetPixel(uint8_t screen, uint16_t x, uint16_t y, uint16_t& color)
 #if defined(_NDS)
 	color = (uint16_t)screen_pointer[0];
 #elif defined(_3DS)
-	color = RGB24TORGB15(screen_pointer[0], screen_pointer[1], screen_pointer[2]);
+	color = RGB24TORGB15(screen_pointer[2], screen_pointer[1], screen_pointer[1]);
 #endif
 }
 void GetPixel(uint8_t screen, uint16_t x, uint16_t y, uint8_t& red, uint8_t& green, uint8_t& blue)
