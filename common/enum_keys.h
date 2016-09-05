@@ -5,6 +5,8 @@ namespace D2K {
 //this represents each value in a Keys Profile array. Example: Profile[KEYS::UP] is defined as KEY_UP by default
 enum KEYS
 {
+	NAME, DESCRIPTION,
+
 	Profile, MOUSE, JOY,
 
 	_START_OF_BUTTONS_,

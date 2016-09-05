@@ -119,6 +119,8 @@ public:
 	void SetTouchPos(uint8_t i, uint8_t x, uint8_t y, uint8_t w, uint8_t h);
 
 	uint32_t m_ip_address{};
+	std::string m_name{};
+	std::string m_description{};
 	std::string m_mouse{};
 	std::string m_joy{};
 	std::string m_dpad_up, m_dpad_down, m_dpad_left, m_dpad_right, m_a, m_b, m_x, m_y, m_l, m_r, m_start, m_select, m_lid{};

@@ -58,6 +58,10 @@ int Save()
 
 void NewProfile(ProfileData* profile_data, uint8_t profile_number)
 {
+
+	profile_data->m_name = "Unnamed";
+	profile_data->m_description = "No Description";
+
 	profile_data->m_mouse = "Relative";
 	profile_data->m_joy = "0";
 
@@ -148,6 +152,9 @@ int LoadProfile(ProfileData* profile_data, uint8_t profile_number)
 	}
 
 	iniParser::dump(ini, stderr);
+
+	profile_data->m_name = iniParser::getstring(ini, "profile:name", "Unnamed");
+	profile_data->m_description = iniParser::getstring(ini, "profile:description", "No Description");
 
 	std::string mouse = iniParser::getstring(ini, "profile:mouse", "Relative");
 
@@ -297,6 +304,8 @@ int SaveProfile(ProfileData* Profile, uint8_t profileNumber)
 	}
 
 	fprintf(file, "[Profile]\n");
+	fprintf(file, "Name=%s\n", Profile->m_name.c_str());
+	fprintf(file, "Description=%s\n", Profile->m_description.c_str());
 	fprintf(file, "Mouse=%s\n", Profile->m_mouse.c_str());
 	fprintf(file, "Joy=%s\n", Profile->m_joy.c_str());
 

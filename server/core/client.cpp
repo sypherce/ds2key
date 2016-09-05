@@ -139,6 +139,10 @@ std::string& ProfileData::GetStringReference(int enum_key)
 {
 	switch(enum_key)
 	{
+	case KEYS::NAME:
+		return m_name;
+	case KEYS::DESCRIPTION:
+		return m_description;
 	case KEYS::MOUSE:
 		return m_mouse;
 	case KEYS::JOY:
