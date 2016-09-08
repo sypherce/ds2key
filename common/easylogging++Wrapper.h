@@ -1,9 +1,9 @@
 #pragma once
 
 //#define D2K_DUMP_CONFIGS
-//#define ELPP_DISABLE_DEBUG_LOGS
+#define ELPP_DISABLE_DEBUG_LOGS
 #define ELPP_DISABLE_VERBOSE_LOGS
-//#define ELPP_DISABLE_TRACE_LOGS
+#define ELPP_DISABLE_TRACE_LOGS
 //ELPP_DISABLE_INFO_LOGS
 //ELPP_DISABLE_WARNING_LOGS
 //ELPP_DISABLE_ERROR_LOGS
@@ -12,8 +12,11 @@
 #include  <iostream>
 #define TRACE
 #define DEBUG
+#define ERROR
+#define FATAL
 #define LOG(a) std::cout
 #define LOG_EVERY_N(a,b) std::cout
+#define LOG_N_TIMES(a,b) std::cout
 #define INITIALIZE_EASYLOGGINGPP
 #else
 #include "common/easylogging++.h"
