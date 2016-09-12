@@ -71,9 +71,9 @@ typedef int socklen_t;
 
 namespace D2K {namespace UDP {
 
-bool g_non_blocking = true;
+bool non_blocking = true;
 bool connected = false;
-uint16_t g_port = DEFAULT_PORT;
+uint16_t port = DEFAULT_PORT;
 SOCKET socket_id = INVALID_SOCKET;
 #ifdef D2KCLIENT
 DS2KeyPacket packet = DS2KeyPacket{};
@@ -108,12 +108,12 @@ bool IsConnected()
 
 int Connect()
 {
-	return Connect(g_non_blocking, g_port);
+	return Connect(UDP::non_blocking, UDP::port);
 }
 
 int Connect(uint16_t port)
 {
-	return Connect(g_non_blocking, port);
+	return Connect(UDP::non_blocking, port);
 }
 
 int Connect(bool non_blocking, uint16_t port)
@@ -126,7 +126,7 @@ int Connect(bool non_blocking, uint16_t port)
 
 	SetConfigPort(port);  // Set port
 
-	UDP::g_non_blocking = non_blocking;
+	UDP::non_blocking = non_blocking;
 
 	g_remote_sockaddr.sin_family = AF_INET;
 	g_remote_sockaddr.sin_port = htons(GetPort());
@@ -165,13 +165,13 @@ int Connect(bool non_blocking, uint16_t port)
 
 #ifdef _3DS
 	int flags = fcntl(socket_id, F_GETFL, 0);
-	if(non_blocking && fcntl(socket_id, F_SETFL, flags | O_NONBLOCK))
+	if(UDP::non_blocking && fcntl(socket_id, F_SETFL, flags | O_NONBLOCK))
 	{
 		int err = NETerrno;
 		LOG(ERROR) << "Error #" << err << " (fcntl): " << strerror(err) << "\n";
 #else
 	// set blocking mode
-	if(NETioctlsocket(socket_id, FIONBIO, (unsigned long*)&UDP::g_non_blocking) == SOCKET_ERROR)
+	if(NETioctlsocket(socket_id, FIONBIO, (unsigned long*)&UDP::non_blocking) == SOCKET_ERROR)
 	{
 		int err = NETerrno;
 		LOG(ERROR) << "Error #" << err << " (NETioctlsocket): " << strerror(err) << "\n";
@@ -322,7 +322,7 @@ void SetRemoteIP(unsigned long ip)
 
 uint16_t GetPort()
 {
-	return g_port;
+	return UDP::port;
 }
 std::string GetPortString()
 {
@@ -333,16 +333,14 @@ void SetConfigPort(const std::string& port)
 {
 	SetConfigPort(D2K::stol(port));
 }
-void SetConfigPort(char* port)
+void SetConfigPort(const char* port)
 {
 	SetConfigPort(atoi(port));
 }
 void SetConfigPort(uint16_t port)
 {
-	if(port == 0)                 // If port 0
-		UDP::g_port = DEFAULT_PORT; // Use default port 9501
-	else
-		UDP::g_port = port;
+	// If port is 0, Use default port 9501
+	UDP::port = port == 0 ? DEFAULT_PORT : port;
 	LOG(INFO) << "UDP Port set to #" << UDP::GetPort() << ".";
 }
 
@@ -367,53 +365,53 @@ void SendCommand(uint8_t command)
 	LOG(TRACE) << "SendCommand(" << (int)command << ")";
 }
 
-void Update(uint32_t keys, uint32_t keysTurbo, touchPosition* touch_position,
-            circlePosition* circle_position, circlePosition* cstick_position, 
-            accelVector* accel_status, angularRate* gyro_status,
-            uint8_t* slider_volume, float* slider_3d, uint16_t keyboard)
+void Update(uint32_t keys, uint32_t keysTurbo, const touchPosition* touch_position,
+            const circlePosition* circle_position, const circlePosition* cstick_position, 
+            const accelVector* accel_status, const angularRate* gyro_status,
+            const uint8_t* slider_volume, const float* slider_3d, uint16_t keyboard)
 {
-	if(EMULATOR)                                   // Skip if emulating
+	if(EMULATOR)                                  // Skip if emulating
 		return;
 
-	ListenForServer();                             // Listen for the server
+	ListenForServer();                            // Listen for the server
 
 	packet = DS2KeyPacket{};                      // Clear the packet
 	packet.type = UDP::PACKET::NORMAL;
 	packet.profile = GetProfile();
 	packet.keys = keys;
 	packet.keys_turbo = keysTurbo;
-	if(touch_position  != nullptr)                  // Touch status is active
+	if(touch_position != nullptr)                  // Touch status is active
 	{
-		packet.touch_x = touch_position->px;        // Update x
-		packet.touch_y = touch_position->py;        // Update y
+		packet.touch_x = touch_position->px;   // Update x
+		packet.touch_y = touch_position->py;   // Update y
 	}
-	else                                            // Touch status is inactive
+	else                                           // Touch status is inactive
 	{
-		packet.keys &= ~KEY_TOUCH;                  // Clear touch status
+		packet.keys &= ~KEY_TOUCH;             // Clear touch status
 	}
-	if(circle_position != nullptr)                  // Circle status is active
+	if(circle_position != nullptr)                 // Circle status is active
 	{
-		packet.circle_x = circle_position->dx;      // Update x
-		packet.circle_y = circle_position->dy;      // Update y
+		packet.circle_x = circle_position->dx; // Update x
+		packet.circle_y = circle_position->dy; // Update y
 	}
-	if(cstick_position != nullptr)                  // Cstick status is active
+	if(cstick_position != nullptr)                 // Cstick status is active
 	{
-		packet.cstick_x = cstick_position->dx;      // Update x
-		packet.cstick_y = cstick_position->dy;      // Update y
+		packet.cstick_x = cstick_position->dx; // Update x
+		packet.cstick_y = cstick_position->dy; // Update y
 	}
-	if(accel_status    != nullptr)                  // Accel status is active
+	if(accel_status    != nullptr)                 // Accel status is active
 	{
-		packet.accel_x = accel_status->x;           // Update x
-		packet.accel_y = accel_status->y;           // Update y
-		packet.accel_z = accel_status->z;           // Update z
+		packet.accel_x = accel_status->x;      // Update x
+		packet.accel_y = accel_status->y;      // Update y
+		packet.accel_z = accel_status->z;      // Update z
 	}
-	if(gyro_status     != nullptr)                  // Gyro status is active
+	if(gyro_status     != nullptr)                 // Gyro status is active
 	{
-		packet.gyro_x = gyro_status->x;             // Update x
-		packet.gyro_y = gyro_status->y;             // Update y
-		packet.gyro_z = gyro_status->z;             // Update z
+		packet.gyro_x = gyro_status->x;        // Update x
+		packet.gyro_y = gyro_status->y;        // Update y
+		packet.gyro_z = gyro_status->z;        // Update z
 	}
-	if(slider_volume   != nullptr)                  // Volume slider is active
+	if(slider_volume   != nullptr)                 // Volume slider is active
 	{
 		//raw value is 0-63, we convert to 0-100
 		packet.slider_volume = (uint8_t)((*slider_volume * 100) / 63);
@@ -431,7 +429,7 @@ void Update(uint32_t keys, uint32_t keysTurbo, touchPosition* touch_position,
 
 void SendLookupPacket()
 {
-	packet = DS2KeyPacket{};            // Clear the packet
+	packet = DS2KeyPacket{};             // Clear the packet
 	packet.type = UDP::PACKET::LOOKUP;   // Set as a lookup packet
 
 	Send(&packet, sizeof(DS2KeyPacket)); // Send the packet out
@@ -441,7 +439,7 @@ void SendLookupPacket()
 
 void RequestSettingsCommand()
 {
-	packet = UDP::DS2KeyPacket{};                  // Clear the packet
+	packet = UDP::DS2KeyPacket{};                   // Clear the packet
 	packet.type = UDP::PACKET::COMMAND_SETTINGS;    // Set as command settings packet
 	packet.profile = UDP::GetProfile();             // Set profile
 
@@ -451,16 +449,16 @@ void RequestSettingsCommand()
 
 void ServerLookup()
 {
-	if(EMULATOR)                                   // Skip if emulating
+	if(EMULATOR)                                        // Skip if emulating
 		return;
-	unsigned long saved_remote_ip = GetRemoteIP(); // Save the remote IP
-	unsigned long LocalIP = GetLocalIP();          // Get the local IP
-	SetRemoteIP(((LocalIP) & 0xFF) |               // Setup the broadcast IP
+	unsigned long saved_remote_ip = GetRemoteIP();      // Save the remote IP
+	unsigned long LocalIP = GetLocalIP();               // Get the local IP
+	SetRemoteIP(((LocalIP) & 0xFF) |                    // Setup the broadcast IP
 		   (((LocalIP >> 8) & 0xFF) << 8) |
 		   (((LocalIP >> 16) & 0xFF) << 16) |
 		   (0xFF << 24));
 
-	SendLookupPacket();                            // Send the lookup packet
+	SendLookupPacket();                                 // Send the lookup packet
 
 	//wait for 1 second
 	for(int i = 0; i < 60; i++)
@@ -481,18 +479,18 @@ void ServerLookup()
 
 void ListenForServer()
 {
-	if(EMULATOR)                        // Skip if emulating
+	if(EMULATOR)                                // Skip if emulating
 		return;
 
 	DS2KeyCommandSettingsPacket command_settings_packet = DS2KeyCommandSettingsPacket{}; // Large packet
 
-	if(UDP::IsConnected()               // Received something
+	if(UDP::IsConnected()                       // Received something
 	&& UDP::Recv(&command_settings_packet, sizeof(DS2KeyCommandSettingsPacket)) == 0)
 	{
 		switch(command_settings_packet.type)
 		{
-		case UDP::PACKET::ALIVE:  // Received a status query
-			SendLookupPacket(); // Send the lookup packet
+		case UDP::PACKET::ALIVE:            // Received a status query
+			SendLookupPacket();         // Send the lookup packet
 			break;
 		case UDP::PACKET::COMMAND_SETTINGS: //Received Command Settings
 			GUI::Command::ProcessCommandSettingsPacket(command_settings_packet);
@@ -517,7 +515,7 @@ void SetProfile(const std::string& profile)
 {
 	SetProfile(D2K::stol(profile));
 }
-void SetProfile(char* profile)
+void SetProfile(const char* profile)
 {
 	SetProfile(atoi(profile));
 }
@@ -533,4 +531,4 @@ void SendCommandSettings(DS2KeyCommandSettingsPacket settings)
 }
 #endif
 
-}}//namespace D2K::UDP
+}} // namespace D2K::UDP

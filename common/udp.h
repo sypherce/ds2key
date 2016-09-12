@@ -1,7 +1,7 @@
 #pragma once
 
-#include <cstdint>//uint16_t
-#include <string>//std::string
+#include <cstdint> // uint16_t
+#include <string>  // std::string
 
 #include "common/ds2keyPacket.h"
 
@@ -24,7 +24,7 @@ namespace D2K {namespace UDP {
 
 enum PACKET : uint8_t
 {
-	//Packet Type Definitions
+	// Packet Type Definitions
 	NORMAL = ('/' + 1),
 	COMMAND,
 	COMMAND_SETTINGS,
@@ -33,40 +33,40 @@ enum PACKET : uint8_t
 	LOOKUP = 0xFF,
 };
 
-//Sets up Winsock
+// Sets up Winsock
 void Init();
 
-//Disconnects UDP if connected and Cleans up Winsock
+// Disconnects UDP if connected and Cleans up Winsock
 void DeInit();
 
 bool IsConnected();
 
 int Connect();
 int Connect(uint16_t port);
-//connect udp system
-//@param block false == blocking, true == non-blocking
-//@param port Port to connect to. if port 0, SetConfigPort assigns to default port 9501
-//@return (0) if connected, else (errno)
+// connect udp system
+// @param block false == blocking, true == non-blocking
+// @param port Port to connect to. if port 0, SetConfigPort assigns to default port 9501
+// @return (0) if connected, else (errno)
 int Connect(bool non_blocking, uint16_t port);
 
-//disconnect udp system
-//@return (0) without error, else (errno)
+// disconnect udp system
+// @return (0) without error, else (errno)
 int Disconnect();
 
-//Sends contents of (buffer) up to (length) in size
-//@param buffer Pointer to data
-//@param length Length of data to send
-//@return (0) without error, (-1) not connected, (-2) invalid length, (-3) invalid pointer, else (errno)
+// Sends contents of (buffer) up to (length) in size
+// @param buffer Pointer to data
+// @param length Length of data to send
+// @return (0) without error, (-1) not connected, (-2) invalid length, (-3) invalid pointer, else (errno)
 int Send(const void* buffer, unsigned int length);
 
 int Recv(void* buffer, unsigned int length);
-//Receives contents into (buffer) up to (length) in size
-//@param buffer Pointer to data.
-//(buffer) must be allocated before calling.
-//(buffer) is only modified up to (length) if recvfrom is successful, otherwise it should be left un modified.
-//@param length Length of data to receive
-//@param remote_sockaddr Container for recvfrom to fill in with remote address
-//@return (0) without error, (-1) not connected, (-2) invalid length, (-3) invalid pointer, (-4) NULL remote_sockaddr, else (errno)
+// Receives contents into (buffer) up to (length) in size
+// @param buffer Pointer to data.
+// (buffer) must be allocated before calling.
+// (buffer) is only modified up to (length) if recvfrom is successful, otherwise it should be left un modified.
+// @param length Length of data to receive
+// @param remote_sockaddr Container for recvfrom to fill in with remote address
+// @return (0) without error, (-1) not connected, (-2) invalid length, (-3) invalid pointer, (-4) NULL remote_sockaddr, else (errno)
 int Recv(void* buffer, unsigned int length, struct sockaddr* remote_sockaddr);
 
 unsigned long GetLocalIP();
@@ -81,38 +81,38 @@ void SetRemoteIP(const std::string& text);
 void SetRemoteIP(unsigned long ip);
 
 void SetConfigPort(const std::string& port);
-void SetConfigPort(char* port);
+void SetConfigPort(const char* port);
 void SetConfigPort(uint16_t port);
 
 #ifdef D2KCLIENT
-//sends a command packet
-//@param command Value between 0 - 11, 12 - 255 are ignored
+// sends a command packet
+// @param command Value between 0 - 11, 12 - 255 are ignored
 void SendCommand(uint8_t command);
 
-//TODO:: this will change
+// TODO:: this will change
 void SendNormalSetting(DS2KeyNormalSettingsPacket setting);
 
-//updates current button and touch screen status
-void Update(uint32_t keys, uint32_t keysTurbo, touchPosition* touch_position,
-	    circlePosition* circle_position, circlePosition* cstick_position,
-	    accelVector* accel_status, angularRate* gyro_status,
-	    uint8_t* slider_volume, float* slider_3d, uint16_t keyboard);
+// updates current button and touch screen status
+void Update(uint32_t keys, uint32_t keysTurbo, const touchPosition* touch_position,
+            const circlePosition* circle_position, const circlePosition* cstick_position,
+            const accelVector* accel_status, const angularRate* gyro_status,
+            const uint8_t* slider_volume, const float* slider_3d, uint16_t keyboard);
 
-//listens for anything from the server and deals with it
+// listens for anything from the server and deals with it
 void ListenForServer();
 
-//searches for running servers on current port
-//todo: this should actually just return any found ip and not change our currently connected IP
+// searches for running servers on current port
+// todo: this should actually just return any found ip and not change our currently connected IP
 void ServerLookup();
 
-//sends a blank COMMAND_SETTINGS packet afterwards the server replys with a real one
+// sends a blank COMMAND_SETTINGS packet afterwards the server replys with a real one
 void RequestSettingsCommand();
 
 uint8_t GetProfile();
 std::string GetProfileString();
 
 void SetProfile(const std::string& profile);
-void SetProfile(char* profile);
+void SetProfile(const char* profile);
 void SetProfile(unsigned int profile);
 
 DS2KeyCommandSettingsPacket GetCommandSettings();
@@ -121,4 +121,4 @@ DS2KeyCommandSettingsPacket GetCommandSettings();
 void SendCommandSettings(DS2KeyCommandSettingsPacket settings);
 #endif
 
-}}//namespace D2K::UDP
+}}// namespace D2K::UDP
