@@ -105,11 +105,11 @@ bool Init(uint8_t device)
 	// Reset all buttons
 	joystick_position[device].lButtons = 0;
 	// Reset dpad
-	for(int hat = 0; hat <= 3; hat++)
+	for(uint8_t hat = 0; hat <= 3; hat++)
 		SetHat(device, hat, false);
 
 	// Reset all axis
-	for(int axis = HID_USAGE_X; axis <= HID_USAGE_WHL; axis++)
+	for(uint8_t axis = HID_USAGE_X; axis <= HID_USAGE_WHL; axis++)
 		SetAxisPercent(device, axis, 50);
 
 	// Actually perform all releases
@@ -134,11 +134,11 @@ bool DeInit(uint8_t device)
 	// Reset all buttons
 	joystick_position[device].lButtons = 0;
 	// Reset dpad
-	for(int hat = 0; hat <= 3; hat++)
+	for(uint8_t hat = 0; hat <= 3; hat++)
 		SetHat(device, hat, false);
 
 	// Reset all axis
-	for(int axis = HID_USAGE_X; axis <= HID_USAGE_WHL; axis++)
+	for(uint8_t axis = HID_USAGE_X; axis <= HID_USAGE_WHL; axis++)
 		SetAxisPercent(device, axis, 50);
 
 	// Actually perform all releases
