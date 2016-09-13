@@ -49,16 +49,16 @@ void ExecuteCommand(std::string Command)
 
 
 // Changes master volume to (volume)
-//  (volume) ranges from 0.0f, 1.0f. 
+// (volume) ranges from 0.0f, 1.0f. 
 void SetMasterVolume(float volume)
 {
 #ifdef _WIN32
 	HRESULT hresult{};
 
-	//Initialize the COM library 
+	// Initialize the COM library 
 	CoInitialize(nullptr);
 
-	//Creates a single uninitialized object
+	// Creates a single uninitialized object
 	IMMDeviceEnumerator *device_enumerator{}; 
 	hresult = CoCreateInstance(__uuidof(MMDeviceEnumerator),
 	              NULL, CLSCTX_INPROC_SERVER, __uuidof(IMMDeviceEnumerator),
@@ -66,61 +66,61 @@ void SetMasterVolume(float volume)
 	if(hresult != S_OK)
 	{
 		LOG(ERROR) << "Error (CoCreateInstance): #" << hresult;
-		//Uninitialize the COM library 
+		// Uninitialize the COM library 
 		CoUninitialize();
 
 		return;
 	}
 
-	//Retrieve the default audio endpoint using (device_enumerator)
+	// Retrieve the default audio endpoint using (device_enumerator)
 	IMMDevice *default_audio_endpoint{};
 	hresult = device_enumerator->GetDefaultAudioEndpoint(eRender, eConsole,
 	              &default_audio_endpoint);
-	//we're done with device_enumerator
+	// we're done with device_enumerator
 	device_enumerator->Release();
 	if(hresult != S_OK)
 	{
 		LOG(ERROR) << "Error (GetDefaultAudioEndpoint): #" << hresult;
-		//Uninitialize the COM library 
+		// Uninitialize the COM library 
 		CoUninitialize();
 
 		return;
 	}
 
-	//Retrieve the volume controls using (default_audio_endpoint)
+	// Retrieve the volume controls using (default_audio_endpoint)
 	IAudioEndpointVolume *endpoint_volume{};
 	hresult = default_audio_endpoint->Activate(__uuidof(IAudioEndpointVolume),
 	              CLSCTX_INPROC_SERVER, nullptr, (LPVOID*)&endpoint_volume);
-	//we're done with default_audio_endpoint
+	// we're done with default_audio_endpoint
 	default_audio_endpoint->Release();
 	if(hresult != S_OK)
 	{
 		LOG(ERROR) << "Error (IAudioEndpointVolume->Activate): #" << hresult;
-		//Uninitialize the COM library 
+		// Uninitialize the COM library 
 		CoUninitialize();
 
 		return;
 	}
 
-	//Change the volume
+	// Change the volume
 	hresult = endpoint_volume->SetMasterVolumeLevelScalar(volume, nullptr);
-	//we're done with endpoint_volume
+	// we're done with endpoint_volume
 	endpoint_volume->Release();
 	if(hresult != S_OK)
 	{
 		LOG(ERROR) << "Error (SetMasterVolumeLevelScalar): #" << hresult;
-		//Uninitialize the COM library 
+		// Uninitialize the COM library 
 		CoUninitialize();
 
 		return;
 	}
 
-	//Uninitialize the COM library 
+	// Uninitialize the COM library 
 	CoUninitialize();
 #endif
 }
 
-//Returns true if (button) is analog
+// Returns true if (button) is analog
 bool DSButtonIsAnalog(uint32_t button)
 {
 	switch(button)
@@ -141,7 +141,7 @@ bool DSButtonIsAnalog(uint32_t button)
 	return false;
 }
 
-//Example: Converts Digital (JOY_AXIS_X_MINUS) into analog (&-X) if (DSButtonIsAnalog) returns true
+// Example: Converts Digital (JOY_AXIS_X_MINUS) into analog (&-X) if (DSButtonIsAnalog) returns true
 std::string ConvertButtonToAxis(ProfileData* profile_data, int enum_key)
 {
 	uint32_t ds_button_bit = EnumKeyToNDSKeypadBit(enum_key);
@@ -225,13 +225,13 @@ std::string ConvertButtonToAxis(ProfileData* profile_data, int enum_key)
 
 void ProcessButtons(D2K::Client* client)
 {
-	//static values
+	// static values
 	static int16_t axis_max_value = 120;
 
 	ProfileData* profile_data = client->GetProfileDataPointer();
 
 	uint8_t joystick = profile_data->GetValue8(KEYS::JOY);
-	//buttons
+	// buttons
 	for(int enum_key = _START_OF_BUTTONS_ + 1; enum_key < KEYS::_END_OF_BUTTONS_; enum_key++)
 	{
 		uint32_t ds_button_bit = EnumKeyToNDSKeypadBit(enum_key);
@@ -239,16 +239,16 @@ void ProcessButtons(D2K::Client* client)
 		std::string command    = profile_data->GetCommand(enum_key);
 		std::string ds_axis    = ConvertButtonToAxis(profile_data, enum_key);
 
-		//if (enum_key) is an analog axis
+		// if (enum_key) is an analog axis
 		if(ds_axis != "")
 		{
-			//crop off the D2K_AXIS char
+			// crop off the D2K_AXIS char
 			ds_axis = ds_axis.substr(D2K_AXIS_LENGTH);
 
 			int16_t input_value = 1;
 			if(ds_axis.at(0) == '-')
 				input_value = -1;
-			//crop off the '-' or '+' char
+			// crop off the '-' or '+' char
 			ds_axis = ds_axis.substr(1);
 
 			if(ds_button_bit == DS2KEY_CPAD_LEFT || ds_button_bit == DS2KEY_CPAD_RIGHT)
@@ -303,7 +303,7 @@ void ProcessButtons(D2K::Client* client)
 				D2K::Input::Joystick::SetAxisSignedMax(joystick, output_axis, input_value, axis_max_value);
 			}
 		}
-		//if (enum_key) is a digital button
+		// if (enum_key) is a digital button
 		else if(pc_key)
 		{
 			// button enabled for turbo and pressed
@@ -325,7 +325,7 @@ void ProcessButtons(D2K::Client* client)
 				LOG(TRACE) << client->GetIPString() << ": release:" << pc_key;
 			}
 		}
-		//if (enum_key) is a command button AND was just pressed
+		// if (enum_key) is a command button AND was just pressed
 		else if(command != ""
 		&& client->Down(ds_button_bit))
 		{
@@ -337,12 +337,12 @@ void ProcessButtons(D2K::Client* client)
 
 void ProcessTouchScreen(D2K::Client* client)
 {
-	//static values
+	// static values
 	static uint16_t last_x = 0, last_y = 0;
 	static bool last_screen_touched = false;
 
 	bool screen_touched = client->Held(DS2KEY_TOUCH);
-	//if touched
+	// if touched
 	if(screen_touched)
 	{
 		// How much movement to ignore, this helps jitter
@@ -366,18 +366,18 @@ void ProcessTouchScreen(D2K::Client* client)
 			last_screen_touched = true;
 		}
 
-		//check that we've moved
+		// check that we've moved
 		if(!((x - last_x < -s_ignore)
 		|| (x - last_x > s_ignore)
 		|| (y - last_y < -s_ignore)
 		|| (y - last_y > s_ignore)))
 		{
-			//relative movement
+			// relative movement
 			if(moveType == "Relative")
 			{
 				Input::Move((x - last_x) * s_sensitivity, (y - last_y) * s_sensitivity);
 			}
-			//absolute movement
+			// absolute movement
 			else if(moveType == "Absolute")
 			{
 				int temporary_x = x;
@@ -416,7 +416,7 @@ void ProcessPacket(D2K::Client* client)
 	ProcessTouchScreen(client);
 
 #ifdef false
-	//gyro/accel test stuff
+	// gyro/accel test stuff
 	{
 		uint8_t device = 1;
 		int16_t scale = 64;
@@ -459,7 +459,7 @@ void ProcessPacket(D2K::Client* client)
 	}
 }
 
-//TODO this needs tested with multiple devices connected
+// TODO this needs tested with multiple devices connected
 void ReleaseDeadClient(D2K::Client* client)
 {
 	ProfileData* profile_data = client->GetProfileDataPointer();
@@ -470,7 +470,7 @@ void ReleaseDeadClient(D2K::Client* client)
 		uint32_t ds_button_bit = EnumKeyToNDSKeypadBit(enum_key);
 		uint16_t pc_key = profile_data->GetVirtualKey(enum_key);
 
-		//if pc_key is valid and ds_button_bit is held
+		// if pc_key is valid and ds_button_bit is held
 		if(pc_key && client->Held(ds_button_bit))
 			Input::Release(pc_key, joystick);
 	}
@@ -561,7 +561,7 @@ void Loop()
 {
 	UDP::DS2KeyCommandSettingsPacket Packet{};
 
-	//if we  are running, connected, and receive something without error
+	// if we  are running, connected, and receive something without error
 	if(g_running
 	&& UDP::IsConnected()
 	&& UDP::Recv(&Packet, sizeof(UDP::DS2KeyCommandSettingsPacket)) == 0)
@@ -621,9 +621,9 @@ void Loop()
 			D2K::Client* client_pointer = Config::GetClient(normal_packet->profile);
 			if(client_pointer->GetIP() == 0)
 				client_pointer->SetIP(UDP::GetRemoteIP());
-			//insert packet data
+			// insert packet data
 			client_pointer->SetPacket(*normal_packet);
-			//update
+			// update
 			client_pointer->Scan();
 			ProcessPacket(client_pointer);
 			LOG_EVERY_N(300, TRACE) << client_pointer->GetIPString() << ":Received UDP::PACKET::NORMAL";
@@ -677,7 +677,7 @@ void Loop()
 	// Sleep to avoid 99% cpu when not using -O2
 	std::this_thread::sleep_for(std::chrono::milliseconds(1));
 	#ifdef WIN32GUI
-	//Take care of GUI stuff
+	// Take care of GUI stuff
 	D2K::GUI::GetMessages();
 	#endif
 }
@@ -699,4 +699,4 @@ void Destroy()
 	D2K::DeInitLogging();
 }
 
-}//namespace D2K
+} // namespace D2K

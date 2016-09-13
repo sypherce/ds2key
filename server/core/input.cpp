@@ -36,10 +36,10 @@ void DeInit()
 #endif
 }
 
-//TODO check and verify for every extended key
-//Checks if (key) is an "extended" key
-//@param key Platform specific value
-//@return true if (key) is an "extended" key
+// TODO check and verify for every extended key
+// Checks if (key) is an "extended" key
+// @param key Platform specific value
+// @return true if (key) is an "extended" key
 bool IsExtended(uint16_t key)
 {
 	switch(key)
@@ -70,7 +70,7 @@ bool IsExtended(uint16_t key)
 	case VK_MEDIA_PLAY_PAUSE:
 	case VK_MEDIA_PREV_TRACK:
 	case VK_MEDIA_STOP:
-	//next are untested
+	// next are untested
 	case VK_EXECUTE:
 	case VK_SNAPSHOT:
 	case VK_APPS:
@@ -92,12 +92,12 @@ enum MouseMovement
 	absolute = true,
 };
 
-static uint16_t s_press_counter[65535]{};//this allows 1 or more profile to press the same key, instead of going crazy
+static uint16_t s_press_counter[65535]{}; // this allows 1 or more profile to press the same key, instead of going crazy
 static uint16_t s_turbo_status [65535]{};
 
-//Presses or releases (key) depending on (state)
-//@param key Platform specific value
-//@param state true = released, false = pressed
+// Presses or releases (key) depending on (state)
+// @param key Platform specific value
+// @param state true = released, false = pressed
 void Keyboard(uint16_t key, KeyState state)
 {
 #ifdef _WIN32
@@ -161,16 +161,16 @@ void Keyboard(uint16_t key, KeyState state)
 #endif
 }
 
-//Moves cursor position
-//@param type true = absolute, false = relative
+// Moves cursor position
+// @param type true = absolute, false = relative
 void Mouse(MouseMovement type, signed long int x, signed long int y)
 {
 #ifdef _WIN32
 	INPUT input{};
 
 	input.type = INPUT_MOUSE;
-	input.mi.dx = x;//-16 border
-	input.mi.dy = y;//-16 border
+	input.mi.dx = x; // -16 border
+	input.mi.dy = y; // -16 border
 	input.mi.dwFlags = (type ? MOUSEEVENTF_ABSOLUTE : 0) | MOUSEEVENTF_MOVE;
 	input.mi.dwExtraInfo = 0;
 	input.mi.mouseData = 0;
@@ -218,19 +218,19 @@ void Press(uint16_t key, uint8_t joy)
 	if(s_press_counter[key] == 0)
 	{
 		// GamePad Buttons
-		if(key >= Key::JOY && key <= Key::JOY_MAX) //virtual gamepad buttons
+		if(key >= Key::JOY && key <= Key::JOY_MAX) // virtual gamepad buttons
 		{
 			Joystick::SetButton(joy, (uint8_t)(key - Key::JOY), true);
 			Joystick::Update(joy);
 		}
 		// GamePad DPad
-		else if(key >= Key::JOY_HAT && key <= Key::JOY_HAT_MAX) //virtual gamepad buttons
+		else if(key >= Key::JOY_HAT && key <= Key::JOY_HAT_MAX) // virtual gamepad buttons
 		{
 			Joystick::SetHat(joy, (uint8_t)(key - Key::JOY_HAT), true);
 			Joystick::Update(joy);
 		}
 		// Analog Axis
-		else if(key >= Key::JOY_AXIS1 && key <= Key::JOY_AXIS5_MAX) //virtual analog axis
+		else if(key >= Key::JOY_AXIS1 && key <= Key::JOY_AXIS5_MAX) // virtual analog axis
 		{
 			switch(key)
 			{
@@ -388,4 +388,4 @@ void MoveAbsolute(signed long int x, signed long int y)
 	Mouse(MouseMovement::absolute, x, y);
 }
 
-}}//namespace D2K::Input
+}} // namespace D2K::Input

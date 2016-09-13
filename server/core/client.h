@@ -1,7 +1,7 @@
 #pragma once
 
-#include <string>   //std::string
-#include <cstdint>  //uint8_t, etc
+#include <string>  // std::string
+#include <cstdint> // uint8_t, etc
 #include "common/ds2keyPacket.h"
 #include "common/enum_keys.h"
 
@@ -36,14 +36,14 @@ static const uint32_t DS2KEY_YELLOW = (1U << (17));
 static const uint32_t DS2KEY_RED = (1U << (18));
 static const uint32_t DS2KEY_GREEN = (1U << (19));
 
-//previously defined
-//static const uint32_t DS2KEY_TOUCH = (1U << (12)) | (1 << (20));
+// previously defined
+// static const uint32_t DS2KEY_TOUCH = (1U << (12)) | (1 << (20));
 
 static const uint32_t DS2KEY_SLIDER_VOLUME = (1U << (21));
 static const uint32_t DS2KEY_SLIDER_3D = (1U << (22));
 
-//unused value
-//static const uint32_t DS2KEY_VALUE_23_PLACE_HOLDER = (1U << (23));
+// unused value
+// static const uint32_t DS2KEY_VALUE_23_PLACE_HOLDER = (1U << (23));
 
 static const uint32_t DS2KEY_CSTICK_RIGHT = (1U << (24));
 static const uint32_t DS2KEY_CSTICK_LEFT = (1U << (25));
@@ -62,54 +62,46 @@ public:
 	ProfileData();
 	~ProfileData();
 
-	//Returns profile data as a human readable string
-	//
-	//Example: enum_key KEYS::UP(0x03) returns std::string "KEY_UP"
-	//
-	//@param enum_key (enum KEYS) Example: KEYS::A, KEYS::UP, KEYS::GREEN
-	//@return Human readable version of (enum_key)'s current setting. Example: KEY_A, KEY_UP
+	// Returns profile data as a human readable string
+	// Example: enum_key KEYS::UP(0x03) returns std::string "KEY_UP"
+	// @param enum_key (enum KEYS) Example: KEYS::A, KEYS::UP, KEYS::GREEN
+	// @return Human readable version of (enum_key)'s current setting. Example: KEY_A, KEY_UP
 	std::string& GetStringReference(int enum_key);
 
-	//Currently only used in config.cpp as of 3-30-16.
-	//Checks if enum_key qualifies as a button, then returns GetStringReference
-	//If it doesn't qualify, it returns GetCommand, which also uses GetStringReference
-	//
-	//Example: enum_key KEYS::UP(0x03) returns std::string "KEY_UP"
-	//
-	//@param enum_key (enum KEYS) Example: KEYS::A, KEYS::UP, KEYS::GREEN
-	//@return Human readable version of (enum_key)'s current setting. Example: KEY_A, KEY_UP
+	// Currently only used in config.cpp as of 3-30-16.
+	// Checks if enum_key qualifies as a button, then returns GetStringReference
+	// If it doesn't qualify, it returns GetCommand, which also uses GetStringReference
+	// Example: enum_key KEYS::UP(0x03) returns std::string "KEY_UP"
+	// @param enum_key (enum KEYS) Example: KEYS::A, KEYS::UP, KEYS::GREEN
+	// @return Human readable version of (enum_key)'s current setting. Example: KEY_A, KEY_UP
 	std::string GetButtonString(int enum_key);
 
-	//Currently only used in core.cpp as of 3-30-16 to retrieve the joystick #.
-	//Retrieves a value with GetStringReference and converts it to a uin8_t value
-	//
-	//@param enum_key (enum KEYS) Example: KEYS::A, KEYS::UP, KEYS::GREEN
-	//@return uint8_t(0-255) version of (enum_key)'s current setting.
+	// Currently only used in core.cpp as of 3-30-16 to retrieve the joystick #.
+	// Retrieves a value with GetStringReference and converts it to a uin8_t value
+	// @param enum_key (enum KEYS) Example: KEYS::A, KEYS::UP, KEYS::GREEN
+	// @return uint8_t(0-255) version of (enum_key)'s current setting.
 	uint8_t GetValue8(int enum_key);
-	//Currently unused as of 3-30-16
-	//Retrieves a value with GetStringReference and converts it to a uin8_t value
-	//
-	//@param enum_key (enum KEYS) Example: KEYS::A, KEYS::UP, KEYS::GREEN
-	//@return uint16_t(0-65535) version of (enum_key)'s current setting.
+	// Currently unused as of 3-30-16
+	// Retrieves a value with GetStringReference and converts it to a uin8_t value
+	// @param enum_key (enum KEYS) Example: KEYS::A, KEYS::UP, KEYS::GREEN
+	// @return uint16_t(0-65535) version of (enum_key)'s current setting.
 	uint16_t GetValue16(int enum_key);
 
-	//Returns profile data as a system specific uint16_t (0-65535)
+	// Returns profile data as a system specific uint16_t (0-65535)
 	//
-	//Example: enum_key KEYS::UP(0x03) returns uint16_t VK_UP(0x26)
+	// Example: enum_key KEYS::UP(0x03) returns uint16_t VK_UP(0x26)
 	//
-	//@param enum_key (enum KEYS) Example: KEYS::A, KEYS::UP, KEYS::GREEN
-	//@return system specific uint16_t (0-65535)
+	// @param enum_key (enum KEYS) Example: KEYS::A, KEYS::UP, KEYS::GREEN
+	// @return system specific uint16_t (0-65535)
 	uint16_t GetVirtualKey(int enum_key);
 
-//TODO:: Update comment
-	//Currently only used in config.cpp as of 3-30-16.
-	//Checks that enum_key DOES NOT qualify as a button, we assume IT IS a command after that
-	//If it is a button, it returns ""
-	//
-	//Example: enum_key KEYS::UP(0x03) returns std::string "KEY_UP"
-	//
-	//@param enum_key (enum KEYS) Example: KEYS::A, KEYS::UP, KEYS::GREEN
-	//@return (std::string) containing command info, if enum_key is a button it returns "".
+// TODO:: Update comment
+	// Currently only used in config.cpp as of 3-30-16.
+	// Checks that enum_key DOES NOT qualify as a button, we assume IT IS a command after that
+	// If it is a button, it returns ""
+	// Example: enum_key KEYS::UP(0x03) returns std::string "KEY_UP"
+	// @param enum_key (enum KEYS) Example: KEYS::A, KEYS::UP, KEYS::GREEN
+	// @return (std::string) containing command info, if enum_key is a button it returns "".
 	const std::string& GetCommand(int enum_key);
 	const std::string& GetAxis(int enum_key);
 
@@ -149,11 +141,11 @@ private:
 	bool SetCommand(int enum_key, std::string value);
 	bool SetAxis(int enum_key, std::string value);
 
-	//returns true if `button` is a command, false otherwise
+	// returns true if `button` is a command, false otherwise
 	bool isCommand(std::string button);
-	//returns true if `button` is an axis, false otherwise
+	// returns true if `button` is an axis, false otherwise
 	bool isAxis(std::string button);
-	//returns true if `button` is a virtual keypress, false otherwise
+	// returns true if `button` is a virtual keypress, false otherwise
 	bool isVirtualKey(std::string button);
 	uint16_t StringToVirtualKey(std::string button);
 	std::string VirtualKeyToString(uint16_t button);
@@ -165,17 +157,17 @@ enum CLIENT_STATUS : bool
 	CHECKING = false,
 };
 
-//Contains a client's current state
+// Contains a client's current state
 class Client final
 {
 public:
 	Client();
 	~Client();
 
-	//Updates current button state after calls made to Press, Release
+	// Updates current button state after calls made to Press, Release
 	void Scan(void);
 
-	//@return Pointer to Profile array
+	// @return Pointer to Profile array
 	ProfileData* GetProfileDataPointer();
 
 	void SetPacket(UDP::DS2KeyPacket p);
@@ -183,68 +175,68 @@ public:
 	bool Down(uint32_t key);
 	bool Up(uint32_t key);
 
-	//@return true if (key) has Turbo mode enabled
+	// @return true if (key) has Turbo mode enabled
 	bool Turbo(uint32_t key);
 
-	//@return IP address. 0 if not assigned
+	// @return IP address. 0 if not assigned
 	uint32_t GetIP();
 
-	//@return IP address. 0 if not assigned
+	// @return IP address. 0 if not assigned
 	std::string GetIPString();
 
 	//Sets the client's IP
 	void SetIP(uint32_t ip_address);
 
-	//@return Stylus current X Position. Values range 0-255(NDS), 0-319(3DS)
+	// @return Stylus current X Position. Values range 0-255(NDS), 0-319(3DS)
 	uint16_t GetX();
 
-	//@return Stylus current Y Position. Values range 0-191(NDS), 0-239(3DS)
+	// @return Stylus current Y Position. Values range 0-191(NDS), 0-239(3DS)
 	uint16_t GetY();
 
-	//@return CLIENT_STATUS::ALIVE if confirmed, CLIENT_STATUS::CHECKING if not
+	// @return CLIENT_STATUS::ALIVE if confirmed, CLIENT_STATUS::CHECKING if not
 	bool IsAlive();
 
-	//Sets the client's status
+	// Sets the client's status
 	void SetAlive(bool client_status);
 
-	//@return Circle current X Position. Values range //TODO
+	// @return Circle current X Position. Values range // TODO
 	int16_t GetCircleX();
 
-	//@return Circle current Y Position. Values range //TODO
+	// @return Circle current Y Position. Values range // TODO
 	int16_t GetCircleY();
 
-	//@return Cstick current X Position. Values range //TODO
+	// @return Cstick current X Position. Values range // TODO
 	int16_t GetCstickX();
 
-	//@return Cstick current Y Position. Values range //TODO
+	// @return Cstick current Y Position. Values range // TODO
 	int16_t GetCstickY();
 
-	//@return Gyro current X Position. Values range //TODO
+	// @return Gyro current X Position. Values range // TODO
 	int16_t GetGyroX();
 
-	//@return Gyro current Y Position. Values range //TODO
+	// @return Gyro current Y Position. Values range // TODO
 	int16_t GetGyroY();
 
-	//@return Gyro current Z Position. Values range //TODO
+	// @return Gyro current Z Position. Values range // TODO
 	int16_t GetGyroZ();
 
-	//@return Accel current X Position. Values range //TODO
+	// @return Accel current X Position. Values range // TODO
 	int16_t GetAccelX();
 
-	//@return Accel current Y Position. Values range //TODO
+	// @return Accel current Y Position. Values range // TODO
 	int16_t GetAccelY();
 
-	//@return Accel current Z Position. Values range //TODO
+	// @return Accel current Z Position. Values range // TODO
 	int16_t GetAccelZ();
 
-	//@return Volume Slider current Position. Values range //TODO
+	// @return Volume Slider current Position. Values range // TODO
 	uint8_t GetSliderVolume();
 
-	//@return 3D Slider current Position. Values range //TODO
+	// @return 3D Slider current Position. Values range // TODO
 	uint8_t GetSlider3D();
 
-	//TODO finish/update comment... 
-	//@return DS KeyboardPress, currently only uint8_t values come through (1-255), 0 = no press
+	// TODO finish/update comment... 
+	// @return DS KeyboardPress, currently only uint8_t values come through (1-255), 0 = no press
 	uint16_t GetKeyboardPress();
 
 private:
@@ -263,4 +255,4 @@ private:
 
 extern Client* g_client_array[CLIENT_MAX];
 
-}//namespace D2K
+} // namespace D2K

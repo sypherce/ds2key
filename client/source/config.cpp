@@ -1,4 +1,4 @@
-//configuration loading/saving
+// configuration loading/saving
 
 #include <cstdio>
 #include <iostream>
@@ -31,14 +31,15 @@ int Load()
 		UDP::SetConfigPort(D2K::DEFAULT_PORT);
 		UDP::SetProfile(DEFAULT_PROFILE);
 		GUI::SetBackground(DEFAULT_BACKGROUND);
-		if(err == ENOENT) // If the file doesn't exist
+		// If the file doesn't exist
+		if(err == ENOENT)
 			Save();
 
 		return err;
 	}
 
 #ifndef ELPP_DISABLE_DEBUG_LOGS
-	//display file
+	// display file
 	iniParser::dump(ini, stderr);
 #endif
 
@@ -47,7 +48,7 @@ int Load()
 	UDP::SetProfile(iniParser::getstring(ini, "settings:profile", DEFAULT_PROFILE));
 	GUI::SetBackground(iniParser::getstring(ini, "settings:background", DEFAULT_BACKGROUND));
 
-	//close file
+	// close file
 	iniParser::freedict(ini);
 
 	return 0;
@@ -77,4 +78,4 @@ int Save()
 	return 0;
 }
 
-}}//namespace D2K::Config
+}} // namespace D2K::Config

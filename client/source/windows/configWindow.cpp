@@ -1,4 +1,4 @@
-#include <string>  // std::string
+#include <string> // std::string
 #include "configWindow.h"
 #include "gui/Button.h"
 #include "gui/label.h"
@@ -284,4 +284,4 @@ WindowClass::WindowClass() : Window()
 }
 WindowClass::~WindowClass() { }
 
-}}}//namespace D2K::GUI::ConfigWindow
+}}} // namespace D2K::GUI::ConfigWindow

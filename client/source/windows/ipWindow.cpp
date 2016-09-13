@@ -1,4 +1,4 @@
-#include <string>// std::string
+#include <string> // std::string
 #include "ipWindow.h"
 #include "gui/button.h"
 #include "gui/label.h"
@@ -130,4 +130,4 @@ void button12Function()
 	UDP::SendCommand(11);
 }
 
-}}}//namespace D2K::GUI::IP
+}}} // namespace D2K::GUI::IP

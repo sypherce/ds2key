@@ -22,7 +22,7 @@ public:
 	void SetW(uint16_t w);
 	void SetH(uint16_t h);
 
-	//@return true if (x), (y) Intersects, false if not
+	// @return true if (x), (y) Intersects, false if not
 	bool PointIntersect(uint16_t x, uint16_t y);
 
 private:
@@ -32,4 +32,4 @@ private:
 	uint16_t m_h;
 };
 
-}}//namespace D2K::GUI
+}} // namespace D2K::GUI

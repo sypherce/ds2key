@@ -459,4 +459,4 @@ typedef struct KeyEntry final
 extern uint32_t GetNumber(const char* key);
 extern const char* GetString(uint32_t key);
 
-}}//namespace D2K::Key
+}} // namespace D2K::Key

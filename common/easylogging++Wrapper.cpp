@@ -4,7 +4,7 @@ namespace D2K {
 
 void InitLogging(int argc, char* argv[])
 {
-//TODO: Fix logging on NDS
+// TODO: Fix logging on NDS
 #ifndef _NDS
 	const char* LOGGING_CONFIG = "\
 * GLOBAL:\n \
@@ -43,4 +43,4 @@ void DeInitLogging()
 #endif
 }
 
-}//namespace D2K
+} // namespace D2K

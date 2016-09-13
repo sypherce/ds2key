@@ -1,5 +1,5 @@
 #include "misc.h"
-#include <sstream>  // std::stringstream
+#include <sstream> // std::stringstream
 
 namespace D2K {
 
@@ -58,4 +58,4 @@ uint16_t string_to_uint16_t(std::string str)
 	return (uint16_t)return_value;
 }
 
-}//namespace D2K
+} // namespace D2K

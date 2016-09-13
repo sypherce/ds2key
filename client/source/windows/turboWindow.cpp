@@ -1,4 +1,4 @@
-#include <string>  // std::string
+#include <string> // std::string
 #include "turboWindow.h"
 #include "gui/checkButton.h"
 #include "gui/label.h"
@@ -207,4 +207,4 @@ void CheckButtonRedFunction()
 {
 	check_button_red->ToggleChecked();
 }
-}}}//namespace D2K::GUI::Turbo
+}}} // namespace D2K::GUI::Turbo

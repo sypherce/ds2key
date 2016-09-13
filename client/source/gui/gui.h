@@ -1,13 +1,13 @@
 #pragma once
 
 #include <stdint.h>
-#include <string>//std::string
+#include <string> // std::string
 #include "rect.h"
 
 namespace D2K {namespace GUI {
 
-//TODO Clean up SCREEN_WIDTH, _3DS_SCREEN_WIDTH 
-//when I know what I am wanting as a standard
+// TODO Clean up SCREEN_WIDTH, _3DS_SCREEN_WIDTH 
+// when I know what I am wanting as a standard
 #ifdef _3DS
 const uint16_t SCREEN_HEIGHT      = 192;
 const uint16_t SCREEN_WIDTH       = 256;
@@ -48,4 +48,4 @@ enum { 	COLOR_BACKGROUND,
 		colorMax};
 extern uint16_t Color[colorMax];
 
-}}//namespace D2K::GUI
+}} // namespace D2K::GUI

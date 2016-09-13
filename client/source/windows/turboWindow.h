@@ -13,4 +13,4 @@ public:
 extern uint32_t GetKeys();
 extern GUI::Turbo::WindowClass g_window;
 
-}}}//namespace D2K::GUI::Turbo
+}}} // namespace D2K::GUI::Turbo

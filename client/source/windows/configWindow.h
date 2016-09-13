@@ -11,8 +11,8 @@ public:
 	WindowClass();
 	~WindowClass();
 };
-extern bool g_config_type;//true = gamepad, false = keyboard
+extern bool g_config_type; // true = gamepad, false = keyboard
 extern GUI::ConfigWindow::WindowClass g_window;
 extern uint16_t current_pressed_key;
 
-}}}//namespace D2K::GUI::ConfigWindow
+}}} // namespace D2K::GUI::ConfigWindow

@@ -1,4 +1,4 @@
-#include <string>//std::string
+#include <string> // std::string
 #include "gamepadWindow.h"
 #include "configWindow.h"
 #include "turboWindow.h"
@@ -9,7 +9,7 @@
 
 namespace D2K {namespace GUI {namespace Gamepad {
 
-//this was copied from server/core/key.h
+// this was copied from server/core/key.h
 namespace Key {
 enum
 {
@@ -106,7 +106,7 @@ void append(uint16_t KEY)
 	char c = (char)KEY;
 	switch(c)
 	{
-	//TODO::UPDATE COMMMENTED SECTION
+	// TODO::UPDATE COMMMENTED SECTION
 	/*case ';':
 	{
 		ConfigWindow::current_pressed_key = 0xba;
@@ -166,8 +166,8 @@ void ButtonZLFunction()             { append(Key::JOY+4); }
 void ButtonZRFunction()             { append(Key::JOY+5); }
 #endif
 
-void ButtonLFunction()              { append(Key::JOY_AXIS_Z_MINUS); } //z
-void ButtonRFunction()              { append(Key::JOY_AXIS_Z_PLUS); }//z
+void ButtonLFunction()              { append(Key::JOY_AXIS_Z_MINUS); }  //z
+void ButtonRFunction()              { append(Key::JOY_AXIS_Z_PLUS); }   //z
 
 void ButtonSelectFunction()         { append(Key::JOY+6); }
 void ButtonStartFunction()          { append(Key::JOY+7); }
@@ -189,15 +189,15 @@ void ButtonRightFunction()          { append(Key::JOY_HAT_RIGHT); }
 void ButtonUpFunction()             { append(Key::JOY_HAT_UP); }
 void ButtonDownFunction()           { append(Key::JOY_HAT_DOWN); }
 
-void ButtonLeftCPadFunction()       { append(Key::JOY_AXIS_X_MINUS); } //x
-void ButtonRightCPadFunction()      { append(Key::JOY_AXIS_X_PLUS); }//x
-void ButtonUpCPadFunction()         { append(Key::JOY_AXIS_Y_MINUS); }   //y
-void ButtonDownCPadFunction()       { append(Key::JOY_AXIS_Y_PLUS); } //y
+void ButtonLeftCPadFunction()       { append(Key::JOY_AXIS_X_MINUS); }  //x
+void ButtonRightCPadFunction()      { append(Key::JOY_AXIS_X_PLUS); }   //x
+void ButtonUpCPadFunction()         { append(Key::JOY_AXIS_Y_MINUS); }  //y
+void ButtonDownCPadFunction()       { append(Key::JOY_AXIS_Y_PLUS); }   //y
 
-void ButtonLeftCStickFunction()     { append(Key::JOY_AXIS_RX_MINUS); }   //rx
-void ButtonRightCStickFunction()    { append(Key::JOY_AXIS_RX_PLUS); } //rx
-void ButtonUpCStickFunction()       { append(Key::JOY_AXIS_RY_MINUS); }   //ry
-void ButtonDownCStickFunction()     { append(Key::JOY_AXIS_RY_PLUS); } //ry
+void ButtonLeftCStickFunction()     { append(Key::JOY_AXIS_RX_MINUS); } //rx
+void ButtonRightCStickFunction()    { append(Key::JOY_AXIS_RX_PLUS); }  //rx
+void ButtonUpCStickFunction()       { append(Key::JOY_AXIS_RY_MINUS); } //ry
+void ButtonDownCStickFunction()     { append(Key::JOY_AXIS_RY_PLUS); }  //ry
 
 WindowClass::WindowClass() : Window()
 {
@@ -303,7 +303,7 @@ WindowClass::WindowClass() : Window()
 }
 WindowClass::~WindowClass() { }
 
-//configWindow function
+// configWindow function
 std::string GetString(Label* label, Edit* edit, std::string text, int maxLength)
 {
 	Gamepad::label_entry->SetRect(label->GetRect());
@@ -315,7 +315,7 @@ std::string GetString(Label* label, Edit* edit, std::string text, int maxLength)
 	Buffer = text;
 	BufferLen = maxLength;
 
-	ConfigWindow::g_window.SetVisible(false);                       // Hide config window
+	ConfigWindow::g_window.SetVisible(false);                      // Hide config window
 	Gamepad::g_window.SetVisible(true);                            // Show gamepad
 
 	Gamepad::g_window.Draw();                                      // And actually draw it
@@ -326,7 +326,7 @@ std::string GetString(Label* label, Edit* edit, std::string text, int maxLength)
 			        &g_circle_position, &g_cstick_position,
 			        &g_accel_status, &g_gyro_status,
 			        &g_slider_volume_status, &g_slider_3d_status,
-			        ConfigWindow::current_pressed_key); // Update keys and press active gamepad key
+			        ConfigWindow::current_pressed_key);    // Update keys and press active gamepad key
 		if(Gamepad::g_window.Update())                         // If pressed
 		{
 			ConfigWindow::current_pressed_key = 0;
@@ -335,7 +335,7 @@ std::string GetString(Label* label, Edit* edit, std::string text, int maxLength)
 	}
 	Gamepad::g_window.SetVisible(false);                           // Hide gamepad
 
-	ConfigWindow::g_window.SetVisible(true);                        // Go back to config window
+	ConfigWindow::g_window.SetVisible(true);                       // Go back to config window
 	return Buffer;
 }
 
@@ -346,21 +346,21 @@ uint16_t GetKey()
 	BufferLen = 0;
 
 	ConfigWindow::g_window.SetVisible(false); // Hide config window
-	Gamepad::g_window.SetVisible(true);      // Show gamepad
+	Gamepad::g_window.SetVisible(true);       // Show gamepad
 
-	Gamepad::g_window.Draw();                // And actually draw it
+	Gamepad::g_window.Draw();                 // And actually draw it
 	while(D2K::Loop()
 	   && Gamepad::g_window.IsVisible())
 	{
-		if(Gamepad::g_window.Update())   // If pressed
+		if(Gamepad::g_window.Update())    // If pressed
 		{
 			break;
 		}
 	}
-	Gamepad::g_window.SetVisible(false);     // Hide gamepad
+	Gamepad::g_window.SetVisible(false);      // Hide gamepad
 
 	ConfigWindow::g_window.SetVisible(true);  // Go back to config window
 	return ConfigWindow::current_pressed_key;
 }
 
-}}}//namespace D2K::GUI::Gamepad
+}}} // namespace D2K::GUI::Gamepad

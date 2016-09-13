@@ -1,6 +1,6 @@
 // ini file parser C++ wrapper
 
-#include <string>//std::string
+#include <string> // std::string
 #include "easylogging++Wrapper.h"
 #include "iniparser/src/iniparser.h"
 
@@ -30,4 +30,4 @@ void freedict(dictionary* d)
 	return iniparser_freedict(d);
 }
 
-}}//namespace D2K::iniParser
+}} // namespace D2K::iniParser

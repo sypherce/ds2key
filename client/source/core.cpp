@@ -1,4 +1,4 @@
-//NDS Init() and Update()
+// NDS Init() and Update()
 
 #include <time.h>
 #include <cstdio>
@@ -17,7 +17,7 @@
 
 #include "core.h"
 
-#include "gui/gui.h"//D2K::GUI::Screen
+#include "gui/gui.h" // D2K::GUI::Screen
 
 // This looks wrong because it's a macro
 #include "common/easylogging++Wrapper.h"
@@ -30,7 +30,7 @@ INITIALIZE_EASYLOGGINGPP
 namespace D2K {
 
 #ifdef _3DS
-//TODO: is this filter needed? possibly on server instead? is 8 right?
+// TODO: is this filter needed? possibly on server instead? is 8 right?
 #define FILTER_SIZE 8
 static accelVector accel[FILTER_SIZE]{};
 static angularRate gyro[FILTER_SIZE]{};
@@ -46,11 +46,11 @@ uint32_t wifi_status{};
 uint8_t battery_level{};
 uint8_t charging_status{};
 bool input_changed = false;
-//TODO: this should be configurable?
+// TODO: this should be configurable?
 bool enable_input_timeout = true;
-//TODO: this should be configurable?
+// TODO: this should be configurable?
 bool force_backlights_on = false;
-//TODO: this should be configurable?
+// TODO: this should be configurable?
 const bool toggle_both_lights = true;
 
 void BacklightsOn()
@@ -142,7 +142,7 @@ void ScanLid()
 	PTMU_GetShellState(&lid_open);
 }
 
-//just closed
+// just closed
 uint32_t LidDown()
 {
 	if(lid_open == 0 && old_lid_open == 1)
@@ -150,7 +150,7 @@ uint32_t LidDown()
 
 	return 0;
 }
-//still closed
+// still closed
 uint32_t LidHeld()
 {
 	if(lid_open == 0 && old_lid_open == 0)
@@ -158,7 +158,7 @@ uint32_t LidHeld()
 
 	return 0;
 }
-//just opened
+// just opened
 uint32_t LidUp()
 {
 	if(lid_open == 1 && old_lid_open == 0)
@@ -166,15 +166,15 @@ uint32_t LidUp()
 
 	return 0;
 }
-//no event for still being opened
+// no event for still being opened
 #endif
 
 #ifdef _3DS
-//debug printing
+// debug printing
 //#include <cstdio>
 void UpdateGyroAccel()
 {
-//TODO: is raw usable?
+// TODO: is raw usable?
 	const bool raw = false;
 	if(raw)
 	{
@@ -216,7 +216,7 @@ void UpdateGyroAccel()
 			//printf("\x1b[0;0HAccelerometer:\nx = %9.2f\ny = %9.2f\nz = %9.2f", accel_x, accel_y, accel_z);
 			//printf("\x1b[5;0H    Gyroscope:\nx = %9.2f\nz = %9.2f\ny = %9.2f", gyro_x, gyro_z, gyro_y);
 
-//TODO: delay was 8 before I changed it
+// TODO: delay was 8 before I changed it
 			delay = 1;
 		}
 		delay--;
@@ -226,7 +226,7 @@ void UpdateGyroAccel()
 
 uint32_t g_keys_held, g_keys_down, g_keys_up{};
 
-///updates input values
+// /updates input values
 void UpdateInputs()
 {
 	if(input_changed)
@@ -271,28 +271,28 @@ void UpdateLid()
 	static uint32_t s_vblank_count = 0;
 	static const uint32_t VBLANK_MAX = (60 * 4); // 4 seconds
 
-	if(g_keys_up&KEY_LID                     // If lid just opened OR
-	|| g_keys_held&KEY_TOUCH)                // Screen is touched
+	if(g_keys_up&KEY_LID             // If lid just opened OR
+	|| g_keys_held&KEY_TOUCH)        // Screen is touched
 	{
-		s_vblank_count = 0;              // Reset timer
-		BacklightsOn();                  // Backlights on
+		s_vblank_count = 0;      // Reset timer
+		BacklightsOn();          // Backlights on
 	}
-	else if(g_keys_down                      // A button pressed, possibly the lid OR
-	|| s_vblank_count == VBLANK_MAX)         // Enough time passed
+	else if(g_keys_down              // A button pressed, possibly the lid OR
+	|| s_vblank_count == VBLANK_MAX) // Enough time passed
 	{
-		if(!force_backlights_on)         // If Backlights are NOT forced on
-			BacklightsOff();         // Backlights off
+		if(!force_backlights_on) // If Backlights are NOT forced on
+			BacklightsOff(); // Backlights off
 	}
 
 	if(s_vblank_count < VBLANK_MAX)
-		s_vblank_count++;                // Increment timer
-	if(!enable_input_timeout)                // This avoids the screen turning off after 4 seconds
+		s_vblank_count++;        // Increment timer
+	if(!enable_input_timeout)        // This avoids the screen turning off after 4 seconds
 		s_vblank_count = 0;
-	//while(g_keys_held&KEY_LID)             // Wait here while the lid is closed
+	//while(g_keys_held&KEY_LID)     // Wait here while the lid is closed
 	//	WaitForVBlank();
 }
 
-///vblank function we assign in Init()
+// vblank function we assign in Init()
 void VBlankFunction()
 {
 #ifdef _3DS
@@ -318,16 +318,16 @@ bool Init(int argc, char* argv[])
 {
 	// Screen setup
 #if defined(_3DS)
-	gfxInitDefault();              //Graphics
-	gspLcdInit();                  //Backlight
-	ptmuInit();                    //Lid
-//TODO: these should only be enabled when used?
-	HIDUSER_EnableAccelerometer(); //Accelerometer
+	gfxInitDefault();              // Graphics
+	gspLcdInit();                  // Backlight
+	ptmuInit();                    // Lid
+// TODO: these should only be enabled when used?
+	HIDUSER_EnableAccelerometer(); // Accelerometer
 	HIDUSER_EnableGyroscope();     //Gyroscope
 	consoleInit(GFX_TOP, nullptr);
 	gfxSetDoubleBuffering(GFX_BOTTOM, false);
 
-	//Get the bottom screen's frame buffer
+	// Get the bottom screen's frame buffer
 	D2K::GUI::g_screen[0] = (uint16_t*)gfxGetFramebuffer(GFX_BOTTOM, GFX_LEFT, nullptr, nullptr);
 #elif defined(_NDS)
 	// PowerOff(PM_BACKLIGHT_TOP);
@@ -350,7 +350,8 @@ bool Init(int argc, char* argv[])
 
 	D2K::InitLogging(argc, argv);
 
-	if(EMULATOR)  // If we're running in emulator mode, let the user know
+	// If we're running in emulator mode, let the user know
+	if(EMULATOR) 
 		LOG(DEBUG) << " - Emulator Mode";
 
 	LOG(INFO) << "\n-";
@@ -365,7 +366,7 @@ bool Init(int argc, char* argv[])
 	{
 		LOG(ERROR) << "Error (Wifi_InitDefault): Failed to connect\n";
 		if(!EMULATOR)
-			return true;                // Return with error
+			return true; // Return with error
 	}
 
 #endif
@@ -407,7 +408,7 @@ void DeInit()
 {
 	D2K::DeInitLogging();
 #ifdef _3DS
-//TODO: these should only be enabled when used?
+// TODO: these should only be enabled when used?
 	HIDUSER_DisableGyroscope();     //Gyroscope
 	HIDUSER_DisableAccelerometer(); //Accelerometer
 
@@ -422,7 +423,7 @@ void DeInit()
 int Loop()
 {
 #if defined(_3DS)
-//TODO: we should send a release of all keys if we knowingly disconnect
+// TODO: we should send a release of all keys if we knowingly disconnect
 	if(!aptMainLoop())
 		return 0;
 
@@ -443,4 +444,4 @@ int Loop()
 	return 1;
 }
 
-}//namespace D2K
+} // namespace D2K

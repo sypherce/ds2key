@@ -4,7 +4,7 @@
 #include <3ds.h>
 #elif defined(_NDS)
 #include <nds.h>
-#include "dummy_types.h"      // 3ds types: circlePosition, etc
+#include "dummy_types.h" // 3ds types: circlePosition, etc
 #endif
 
 namespace D2K {
@@ -38,4 +38,4 @@ int Loop();
 // Force backlights on if (value) == true
 void ForceBacklightsOn(bool value);
 
-}//namespace D2K
+} // namespace D2K

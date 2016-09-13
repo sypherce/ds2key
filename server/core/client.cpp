@@ -3,7 +3,7 @@
 #include "client.h"
 #include "key.h"
 #include "common/misc.h"
-#include <sstream>  // std::stringstream
+#include <sstream> // std::stringstream
 
 namespace D2K {
 
@@ -119,7 +119,7 @@ uint16_t ProfileData::StringToVirtualKey(std::string button)
 	else
 		return 0;
 }
-//this currently is the same as D2K::ltos
+// this currently is the same as D2K::ltos
 std::string ProfileData::VirtualKeyToString(uint16_t button)
 {
 	std::stringstream stream;
@@ -542,4 +542,4 @@ uint16_t Client::GetKeyboardPress()
 	return m_packet.keyboard;
 }
 
-}//namespace D2K
+} // namespace D2K

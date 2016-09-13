@@ -1,4 +1,4 @@
-#include <string>//std::string
+#include <string> // std::string
 #include "keypadWindow.h"
 #include "mainWindow.h"
 #include "gui/gui.h"
@@ -131,4 +131,4 @@ std::string Entry(Label* label, Edit* edit, std::string text, int maxLength)
 	return Buffer;
 }
 
-}}}//namespace D2K::GUI::Keypad
+}}} // namespace D2K::GUI::Keypad

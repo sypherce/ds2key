@@ -22,4 +22,4 @@ extern uint8_t string_to_uint8_t(std::string str);
 // @return converts std::string into uint16_t
 extern uint16_t string_to_uint16_t(std::string str);
 
-}//namespace D2K
+} // namespace D2K

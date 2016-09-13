@@ -1,4 +1,4 @@
-#include <string>  // std::string
+#include <string> // std::string
 #include "checkButton.h"
 #include "gui.h"
 
@@ -16,7 +16,7 @@ bool CheckButton::Draw()
 	if(!Object::Draw())
 		return false;
 
-	if(IsVisible())//ifChanged()
+	if(IsVisible()) // ifChanged()
 	{
 		Clear(Color[COLOR_BUTTON_BACKGROUND]);
 		if(GetStatus() == OBJECT_STATUS::HELD)
@@ -24,7 +24,7 @@ bool CheckButton::Draw()
 		else if(GetChecked())
 			DrawRect(GetScreen(), GetRect(), Color[COLOR_BUTTON_OUTLINE]);
 		else
-			DrawRect(GetScreen(), GetRect(), Color[COLOR_BUTTON_BACKGROUND]);//draws a flat button
+			DrawRect(GetScreen(), GetRect(), Color[COLOR_BUTTON_BACKGROUND]); // draws a flat button
 		DrawString(GetScreen(), GetText(), GetRect().GetX()+3, GetRect().GetY()+3, Color[COLOR_BUTTON_TEXT]);
 	}
 
@@ -44,4 +44,4 @@ void CheckButton::ToggleChecked()
 	SetChecked(!GetChecked());
 }
 
-}}//namespace D2K::GUI
+}} // namespace D2K::GUI

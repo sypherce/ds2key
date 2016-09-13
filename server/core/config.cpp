@@ -1,6 +1,6 @@
 // configuration loading/saving
 
-#include <sstream> //ostringstream
+#include <sstream> // ostringstream
 #include "config.h"
 #include "key.h"
 #include "common/easylogging++Wrapper.h"
@@ -280,9 +280,9 @@ int LoadProfile(ProfileData* profile_data, uint8_t profile_number)
 
 	for(int i = 0; i < UDP::SETTINGS_PACKET_MAX_BUTTONS; i++)
 	{
-        if(profile_data->m_touch_w[i] == 0 &&  profile_data->m_touch_h[i] == 0) //if the button won't even show
+        if(profile_data->m_touch_w[i] == 0 &&  profile_data->m_touch_h[i] == 0) // if the button won't even show
             profile_data->m_touch_string[i].clear();
-        else                                                                    //otherwise shrink down to our max chars
+        else                                                                    // otherwise shrink down to our max chars
             profile_data->m_touch_string[i].resize(10);
 	}
 
@@ -368,7 +368,7 @@ int SetProfileSetting(ProfileData* profile_data, uint8_t profile_number, uint16_
 	return 0;
 }
 
-//Currently assigned port
+// Currently assigned port
 uint16_t port = DEFAULT_PORT;
 uint16_t GetPort()
 {
@@ -384,13 +384,13 @@ void SetConfigPort(uint16_t port)
 
 Client* GetClient(uint8_t profile)
 {
-        if(g_client_array[profile] == nullptr)                                                  //if profile not active,
+        if(g_client_array[profile] == nullptr)                                                  // if profile not active,
 	{
-		g_client_array[profile] = new Client();                                         //create it
-		Config::LoadProfile(g_client_array[profile]->GetProfileDataPointer(), profile); //then load it
+		g_client_array[profile] = new Client();                                         // create it
+		Config::LoadProfile(g_client_array[profile]->GetProfileDataPointer(), profile); // then load it
 		LOG(INFO) << "Client #:" << (int)profile << " has connected.";
 	}
 	return g_client_array[profile];
 }
 
-}}//namespace D2K::Config
+}} // namespace D2K::Config

@@ -13,4 +13,4 @@ public:
 };
 extern GUI::IP::WindowClass g_window;
 
-}}}//namespace D2K::GUI::IP
+}}} // namespace D2K::GUI::IP

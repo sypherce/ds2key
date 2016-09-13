@@ -53,7 +53,7 @@ void Object::SetStatus(uint8_t value)
 	{
 		m_status = value;
 		SetUpdate(true);
-		Draw();///I think this line needs removed
+		Draw(); // I think this line needs removed
 	}
 }
 uint8_t Object::GetStatus()
@@ -89,4 +89,4 @@ void Object::SetRect(GUI::Rect rect)
 	m_rect = rect;
 }
 
-}}//namespace D2K::GUI
+}} // namespace D2K::GUI

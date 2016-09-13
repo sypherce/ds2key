@@ -1,10 +1,9 @@
 #ifdef _NDS
-#include <nds/arm9/video.h>  // SCREEN_WIDTH
-#include <nds/dma.h>  // dmaFillHalfWords
+#include <nds/arm9/video.h> // SCREEN_WIDTH
+#include <nds/dma.h>        // dmaFillHalfWords
 #endif
 #include <iostream>
-#include <algorithm>
-//std::min, std::max
+#include <algorithm> // std::min, std::max
 #include "gui.h"
 
 namespace D2K {namespace GUI {
@@ -28,7 +27,7 @@ Rect::Rect(uint16_t x, uint16_t y, uint16_t w, uint16_t h)
 	int y_2 = y + h;
 	if(x_2 >= SCREEN_WIDTH - 1)  // If x_2 is offscreen
 		w = SCREEN_WIDTH - 1 - x;
-	if(y_2 >= SCREEN_HEIGHT - 1)  // If y_2 is offscreen
+	if(y_2 >= SCREEN_HEIGHT - 1) // If y_2 is offscreen
 		h = SCREEN_HEIGHT - 1 - y;
 	m_x = x;
 	m_y = y;
@@ -58,7 +57,7 @@ uint16_t Rect::GetW()
 void Rect::SetW(uint16_t w)
 {
 	int tempW = m_w + w;
-	if(tempW >= SCREEN_WIDTH - 1)  // If tempW is offscreen
+	if(tempW >= SCREEN_WIDTH - 1) // If tempW is offscreen
 		m_w = SCREEN_WIDTH - 1 - m_x;
 	else
 		m_w = w;
@@ -95,4 +94,4 @@ Rect::~Rect()
 
 }
 
-}}//namespace D2K::GUI
+}} // namespace D2K::GUI

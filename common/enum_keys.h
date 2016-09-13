@@ -2,7 +2,7 @@
 
 namespace D2K {
 
-//this represents each value in a Keys Profile array. Example: Profile[KEYS::UP] is defined as KEY_UP by default
+// this represents each value in a Keys Profile array. Example: Profile[KEYS::UP] is defined as KEY_UP by default
 enum KEYS
 {
 	NAME, DESCRIPTION,
@@ -32,4 +32,4 @@ enum KEYS
 	END
 };
 
-}//namespace D2K
+} // namespace D2K

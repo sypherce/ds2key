@@ -21,4 +21,4 @@ void SetAxisRaw(uint8_t device, uint8_t axis, LONG value);
 void SetAxisSignedMax(uint8_t device, uint8_t axis, LONG value, LONG max);
 bool GetButton(uint8_t device, uint8_t button);
 
-}}}//namespace D2K::Input::Joystick
+}}} // namespace D2K::Input::Joystick

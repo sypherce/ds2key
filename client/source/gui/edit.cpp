@@ -1,4 +1,4 @@
-#include <string>  // std::string
+#include <string> // std::string
 #include "edit.h"
 #include "gui.h"
 
@@ -25,4 +25,4 @@ bool Edit::Draw()
 	return true;
 }
 
-}}//namespace D2K::GUI
+}} // namespace D2K::GUI

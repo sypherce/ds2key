@@ -24,6 +24,8 @@
 
 
 namespace D2K {
+
 void InitLogging(int argc, char* argv[]);
 void DeInitLogging();
-}//namespace D2K
+
+} // namespace D2K

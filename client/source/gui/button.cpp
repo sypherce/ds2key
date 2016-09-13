@@ -10,7 +10,7 @@ Button::Button(uint8_t screen, GUI::Rect rect, std::string text, void (*function
 	int width = text.length() * 6 + 4; // Calculate width of "std::string text"
 
 	if(thisRect.GetW() < width)        // If button isn't big enough
-		thisRect.SetW(width);          // Adjust it to text's length
+		thisRect.SetW(width);      // Adjust it to text's length
 	SetRect(thisRect);                 // Then reassign the Rect
 
 	Button::Function = function;
@@ -39,4 +39,4 @@ bool Button::Draw()
 	return true;
 }
 
-}}//namespace D2K::GUI
+}} // namespace D2K::GUI

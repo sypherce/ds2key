@@ -14,4 +14,4 @@ public:
 };
 extern GUI::Main::WindowClass g_window;
 
-}}}//namespace D2K::GUI::Main
+}}} // namespace D2K::GUI::Main

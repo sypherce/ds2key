@@ -68,7 +68,7 @@ uint32_t LoadPngImage(const std::string filename, int &width, int &height, unsig
 	unsigned int sig_read = 0;
 	png_set_sig_bytes(png_ptr, sig_read);
 
-	// read the entire PNG into memory
+	// Read the entire PNG into memory
 	// PNG_TRANSFORM_STRIP_16   : Strip 16-bit samples to 8 bits
 	// PNG_TRANSFORM_PACKING    : Expand 1, 2 and 4-bit samples to bytes
 	// PNG_TRANSFORM_EXPAND     : Expand paletted images to RGB, grayscale to 8-bit images and tRNS chunks to alpha channels
@@ -102,4 +102,4 @@ uint32_t LoadPngImage(const std::string filename, int &width, int &height, unsig
 	return buffer_size;
 }
 
-}}//namespace D2K::GUI
+}} // namespace D2K::GUI

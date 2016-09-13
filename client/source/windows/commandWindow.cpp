@@ -1,11 +1,11 @@
-#include <string>  // std::string
+#include <string> // std::string
 #include "commandWindow.h"
 #include "gui/button.h"
 #include "common/udp.h"
 
 namespace D2K {namespace GUI {namespace Command {
 
-//private
+// private
 extern void button1Function();
 extern void button2Function();
 extern void button3Function();
@@ -180,4 +180,4 @@ void button12Function()
 	UDP::SendCommand(11);
 }
 
-}}}//namespace D2K::GUI::Command
+}}} // namespace D2K::GUI::Command

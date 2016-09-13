@@ -4,9 +4,9 @@
 #error "Must define D2KCLIENT or D2KSERVER"
 #endif
 
-#include <cstdlib>  // atoi
-#include <sstream>  // std::stringstream
-#include <cstring>  // strerror
+#include <cstdlib> // atoi
+#include <sstream> // std::stringstream
+#include <cstring> // strerror
 
 // system specific includes
 #if defined(_WIN32)

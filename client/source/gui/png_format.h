@@ -14,4 +14,4 @@ namespace D2K {namespace GUI {
 // return: total buffer size in bytes, 0 on failure
 uint32_t LoadPngImage(std::string filename, int &width, int &height, unsigned char **output);
 
-}}//namespace D2K::GUI
+}} // namespace D2K::GUI

@@ -1,4 +1,4 @@
-#include <string>//std::string
+#include <string> // std::string
 #include "keyboardWindow.h"
 #include "configWindow.h"
 #include "turboWindow.h"
@@ -21,7 +21,7 @@ void append(char c)
 	ConfigWindow::current_pressed_key = c;
 	switch(c)
 	{
-	//TODO::UPDATE COMMMENTED SECTION
+	// TODO::UPDATE COMMMENTED SECTION
 	/*case ';':
 	{
 		ConfigWindow::current_pressed_key = 0xba;
@@ -199,9 +199,9 @@ WindowClass::WindowClass() : Window()
 
 	{
 		AppendObject(new Button(m_screen, Rect(229, 1, 10, 10), "Close", ButtonCloseFunction));
-		//Keyboard
+		// Keyboard
 		{
-		//Function row
+		// Function row
 		{
 		x = keyboard_base_x;
 		y = keyboard_base_y;
@@ -219,7 +219,7 @@ WindowClass::WindowClass() : Window()
 		AppendObject(new Button(m_screen, Rect(x, y, w, h), "F11", ButtonF11Function));    (x += w + 7 + gap);
 		AppendObject(new Button(m_screen, Rect(x, y, w, h), "F12", ButtonF12Function));    (x += w + gap);
 		}
-		//number row
+		// number row
 		{
 		x = keyboard_base_x;
 		y += h + gap;
@@ -238,7 +238,7 @@ WindowClass::WindowClass() : Window()
 		AppendObject(new Button(m_screen, Rect(x, y, w, h),   "=",  ButtonEqualsFunction));    (x += w + gap);
 		AppendObject(new Button(m_screen, Rect(x, y, w*2, h), "<-", ButtonBackspaceFunction)); (x += w*2 + gap);
 		}
-		//qwerty row
+		// qwerty row
 		{
 		x = keyboard_base_x;
 		y += h + gap;
@@ -257,7 +257,7 @@ WindowClass::WindowClass() : Window()
 		AppendObject(new Button(m_screen, Rect(x, y, w, h),     "]",   ButtonRightBracketFunction)); (x += w + gap);
 		AppendObject(new Button(m_screen, Rect(x, y, w*1.4, h), "\\",  ButtonBackSlashFunction));    (x += w*1.4 + gap);
 		}
-		//asdfgh row
+		// asdfgh row
 		{
 		x = keyboard_base_x;
 		y += h + gap;
@@ -275,7 +275,7 @@ WindowClass::WindowClass() : Window()
 		AppendObject(new Button(m_screen, Rect(x, y, w, h),      "'",     ButtonQuoteFunction));     (x += w + gap);
 		AppendObject(new Button(m_screen, Rect(x, y, w*2.3, h),  "Enter", ButtonEnterFunction));     (x += w*2.3 + gap);
 		}
-		//zxcvbn row
+		// zxcvbn row
 		{
 		x = keyboard_base_x;
 		y += h + gap;
@@ -292,7 +292,7 @@ WindowClass::WindowClass() : Window()
 		AppendObject(new Button(m_screen, Rect(x, y, w, h),       "/",     ButtonSlashFunction));      (x += w + gap);
 		AppendObject(new Button(m_screen, Rect(x, y, w*2.5+1, h), "Shift", ButtonRightShiftFunction)); (x += w*2.5+1 + gap);
 		}
-		//ctrl row
+		// ctrl row
 		{
 		x = keyboard_base_x;
 		y += h + gap;
@@ -306,7 +306,7 @@ WindowClass::WindowClass() : Window()
 		}
 		}
 
-		//printscroll pause
+		// printscroll pause
 		{{
 		x = print_scroll_pause_base_x;
 		y = print_scroll_pause_base_y;
@@ -315,9 +315,9 @@ WindowClass::WindowClass() : Window()
 		AppendObject(new Button(m_screen, Rect(x, y, w*2, h), "PsBk", ButtonPauseBreakFunction));  (x += w*2 + gap);
 		}}
 
-		//ins home pgup del end pgdown
+		// ins home pgup del end pgdown
 		{
-		//ins home pgup
+		// ins home pgup
 		{
 		x = ins_home_pgup_base_x;
 		y = ins_home_pgup_base_y;
@@ -325,7 +325,7 @@ WindowClass::WindowClass() : Window()
 		AppendObject(new Button(m_screen, Rect(x, y, w*2, h), "Home", ButtonHomeFunction));   (x += w*2 + gap);
 		AppendObject(new Button(m_screen, Rect(x, y, w*2, h), "PgUp", ButtonPageUpFunction)); (x += w*2 + gap);
 		}
-		//del end pgdown
+		// del end pgdown
 		{
 		x = ins_home_pgup_base_x;
 		y += h + gap; // row 2
@@ -335,11 +335,11 @@ WindowClass::WindowClass() : Window()
 		}
 		}
 
-		//numpad
+		// numpad
 		{
 		const int numpad_base_x = gap + (w + gap) * 11;
 		const int numpad_base_y = gap + (h + gap) * 7;
-		//numlock row
+		// numlock row
 		{
 		x = numpad_base_x;
 		y = numpad_base_y;
@@ -348,7 +348,7 @@ WindowClass::WindowClass() : Window()
 		AppendObject(new Button(m_screen, Rect(x, y, w, h), "*",  ButtonNumPadAsteriskFunction)); (x += w + gap);
 		AppendObject(new Button(m_screen, Rect(x, y, w, h), "-",  ButtonNumPadMinusFunction));    (x += w + gap);
 		}
-		//7 8 9
+		// 7 8 9
 		{
 		x = numpad_base_x;
 		y += h + gap;
@@ -357,7 +357,7 @@ WindowClass::WindowClass() : Window()
 		AppendObject(new Button(m_screen, Rect(x, y, w, h),     "9", ButtonNumPad9Function));    (x += w + gap);
 		AppendObject(new Button(m_screen, Rect(x, y, w, h * 2), "+", ButtonNumPadPlusFunction)); (x += w + gap);
 		}
-		//4 5 6
+		// 4 5 6
 		{
 		x = numpad_base_x;
 		y += h + gap;
@@ -365,7 +365,7 @@ WindowClass::WindowClass() : Window()
 		AppendObject(new Button(m_screen, Rect(x, y, w, h), "5", ButtonNumPad5Function)); (x += w + gap);
 		AppendObject(new Button(m_screen, Rect(x, y, w, h), "6", ButtonNumPad6Function)); (x += w + gap);
 		}
-		//1 2 3
+		// 1 2 3
 		{
 		x = numpad_base_x;
 		y += h + gap;
@@ -374,7 +374,7 @@ WindowClass::WindowClass() : Window()
 		AppendObject(new Button(m_screen, Rect(x, y, w, h),      "3", ButtonNumPad3Function));     (x += w + gap);
 		AppendObject(new Button(m_screen, Rect(x, y, w, h * 2), "En", ButtonNumPadEnterFunction)); (x += w + gap);
 		}
-		//0, .
+		// 0, .
 		{
 		x = numpad_base_x;
 		y += h + gap;
@@ -383,7 +383,7 @@ WindowClass::WindowClass() : Window()
 		}
 		}
 
-		//up down left right
+		// up down left right
 		{
 		x = up_down_left_right_base_x + w + gap; // column 2
 		y = up_down_left_right_base_y;           // row 1
@@ -398,7 +398,7 @@ WindowClass::WindowClass() : Window()
 }
 WindowClass::~WindowClass() { }
 
-//configWindow function
+// configWindow function
 std::string GetString(Label* label, Edit* edit, std::string text, int maxLength)
 {
 	Keyboard::label_entry->SetRect(label->GetRect());
@@ -410,10 +410,10 @@ std::string GetString(Label* label, Edit* edit, std::string text, int maxLength)
 	Buffer = text;
 	BufferLen = maxLength;
 
-	ConfigWindow::g_window.SetVisible(false);                       // Hide config window
-	Keyboard::g_window.SetVisible(true);                            // Show keyboard
+	ConfigWindow::g_window.SetVisible(false);                   // Hide config window
+	Keyboard::g_window.SetVisible(true);                        // Show keyboard
 
-	Keyboard::g_window.Draw();                                      // And actually draw it
+	Keyboard::g_window.Draw();                                  // And actually draw it
 	while(D2K::Loop()
 	   && Keyboard::g_window.IsVisible())
 	{
@@ -422,19 +422,19 @@ std::string GetString(Label* label, Edit* edit, std::string text, int maxLength)
 			        &D2K::g_accel_status, &D2K::g_gyro_status,
 			        &D2K::g_slider_volume_status, &D2K::g_slider_3d_status,
 			        ConfigWindow::current_pressed_key); // Update keys and press active gamepad key
-		if(Keyboard::g_window.Update())                         // If pressed
+		if(Keyboard::g_window.Update())                     // If pressed
 		{
 			ConfigWindow::current_pressed_key = 0;
-			Keyboard::edit_entry->SetText(Buffer);          // Set text
+			Keyboard::edit_entry->SetText(Buffer);      // Set text
 		}
 	}
-	Keyboard::g_window.SetVisible(false);                           // Hide keyboard
+	Keyboard::g_window.SetVisible(false);                       // Hide keyboard
 
-	ConfigWindow::g_window.SetVisible(true);                        // Go back to config window
+	ConfigWindow::g_window.SetVisible(true);                    // Go back to config window
 	return Buffer;
 }
 
-//configWindow function
+// configWindow function
 uint16_t GetKey()
 {
 	Buffer = "";
@@ -458,4 +458,4 @@ uint16_t GetKey()
 	return ConfigWindow::current_pressed_key;
 }
 
-}}}//namespace D2K::GUI::Keyboard
+}}} // namespace D2K::GUI::Keyboard

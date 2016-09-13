@@ -36,7 +36,7 @@ std::string GetBackground()
 	return background_filename;
 }
 
-//orientation false = normal, true = rotated -90degrees
+// orientation false = normal, true = rotated -90degrees
 uint32_t GetPixelPosition(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint8_t byte_depth, bool orientation)
 {
 	if(x >= w)
@@ -109,7 +109,7 @@ void resize_crop(const char* input_image, char* output_image, uint16_t input_wid
 	}
 }
 
-//https://rosettacode.org/wiki/Bilinear_interpolation
+// https://rosettacode.org/wiki/Bilinear_interpolation
 float lerp(float s, float e, float t)
 {
 	return s+(e-s)*t;
@@ -144,9 +144,9 @@ void resize_bilinear(const char* input_image, char* output_image, uint16_t input
 }
 
 char* background_image{};
-//TODO:handle deallocation of background_image
-//TODO:seperate cropping function
-//TODO:logs
+// TODO:handle deallocation of background_image
+// TODO:seperate cropping function
+// TODO:logs
 bool LoadBackgroundImage()
 {
 	const int background_height = MAX_Y;
@@ -237,7 +237,7 @@ bool DrawBackgroundImage(uint8_t screen, uint8_t color)
 	}
 	else
 	{
-//TODO: Fix when background fails to load
+// TODO: Fix when background fails to load
 		for(int x = 0; x < MAX_X; x++)
 		{
 			for(int y = 0; y < MAX_Y; y++)
@@ -316,7 +316,7 @@ void SetPixel(uint8_t screen, uint16_t x, uint16_t y, uint8_t red, uint8_t green
 #endif
 	}
 }
-//TODO: add errors or fatals if the boundary checks fail
+// TODO: add errors or fatals if the boundary checks fail
 void SetPixel(uint8_t screen, uint16_t x, uint16_t y, uint16_t color, uint8_t alpha)
 {
 	if((x < MAX_X) // if we're drawing on screen
@@ -350,7 +350,7 @@ void ClearScreen(uint8_t screen, uint16_t color)
 {
 	DrawBackgroundImage(screen, color);
 }
-//TODO: add errors or fatals if the boundary checks fail
+// TODO: add errors or fatals if the boundary checks fail
 void DrawFastHorizontleLine(uint8_t screen, uint16_t x, uint16_t y, uint16_t w, uint16_t color)
 {
 	if(x >= MAX_X
@@ -959,4 +959,4 @@ void DrawString(uint8_t screen, std::string text, uint16_t x, uint16_t y, uint16
 	}
 }
 
-}}//namespace D2K::GUI
+}} // namespace D2K::GUI

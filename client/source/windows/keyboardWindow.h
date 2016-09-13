@@ -1,6 +1,6 @@
 #pragma once
 
-#include <string>//std::string
+#include <string> // std::string
 #include "gui/window.h"
 #include "gui/edit.h"
 #include "gui/label.h"
@@ -189,4 +189,4 @@ extern GUI::Keyboard::WindowClass g_window;
 extern std::string GetString(GUI::Label* label, GUI::Edit* edit, std::string text, int maxLength);
 extern uint16_t GetKey();
 
-}}}//namespace D2K::GUI::Keyboard
+}}} // namespace D2K::GUI::Keyboard

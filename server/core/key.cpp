@@ -165,10 +165,10 @@ KeyEntry g_table[] = {
 	{Key::KEY_OEM_COMMA, "KEY_OEM_COMMA"},
 	{Key::KEY_OEM_MINUS, "KEY_OEM_MINUS"},
 	{Key::KEY_OEM_PERIOD, "KEY_OEM_PERIOD"},
-	//{Key::KEY_OEM_2, "KEY_OEM_2"},//KEY_SLASH
+	//{Key::KEY_OEM_2, "KEY_OEM_2"}, // KEY_SLASH
 	{Key::KEY_OEM_3, "KEY_OEM_3"},
 	{Key::KEY_OEM_4, "KEY_OEM_4"},
-	//{Key::KEY_OEM_5, "KEY_OEM_5"},//KEY_BACKSLASH
+	//{Key::KEY_OEM_5, "KEY_OEM_5"}, // KEY_BACKSLASH
 	{Key::KEY_OEM_6, "KEY_OEM_6"},
 	{Key::KEY_OEM_7, "KEY_OEM_7"},
 	{Key::KEY_OEM_8, "KEY_OEM_8"},
@@ -273,4 +273,4 @@ const char* GetString(uint32_t key)
 	return g_table[Key::KEY_NONE].text;
 }
 
-}}//namespace D2K::Input
+}} // namespace D2K::Input

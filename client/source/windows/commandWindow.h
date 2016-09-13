@@ -16,4 +16,4 @@ public:
 void ProcessCommandSettingsPacket(UDP::DS2KeyCommandSettingsPacket settings);
 extern GUI::Command::WindowClass g_window;
 
-}}}//namespace D2K::GUI::Command
+}}} // namespace D2K::GUI::Command

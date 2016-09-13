@@ -1,6 +1,6 @@
-#include <string>  // std::string
+#include <string> // std::string
 
-//windows
+// windows
 #include "mainWindow.h"
 #include "keypadWindow.h"
 #include "keyboardWindow.h"
@@ -8,13 +8,13 @@
 #include "configWindow.h"
 #include "commandWindow.h"
 
-//controls
+// controls
 #include "gui/gui.h"
 #include "gui/edit.h"
 #include "gui/button.h"
 #include "gui/label.h"
 
-//core
+// core
 #include "common/udp.h"
 #include "common/misc.h"
 #include "config.h"
@@ -183,7 +183,7 @@ void EditProfileFunction()
 }
 void ButtonTouchFunction()
 {
-	Main::g_window.SetVisible(false);  // Hide main window
+	Main::g_window.SetVisible(false); // Hide main window
 	label_title->SetText("Touch Mode");
 	label_title->SetVisible(true);
 	button_touch->SetVisible(true);
@@ -209,10 +209,10 @@ void ButtonTouchFunction()
 
 void ButtonTurboFunction()
 {
-	Main::g_window.SetVisible(false);  // Hide main window
+	Main::g_window.SetVisible(false); // Hide main window
 	button_turbo->SetVisible(true);
 	Turbo::g_window.SetVisible(true);
-	ForceBacklightsOn(true);           // Lock backlights on
+	ForceBacklightsOn(true);          // Lock backlights on
 
 	while(D2K::Loop())
 	{
@@ -233,12 +233,12 @@ void ButtonTurboFunction()
 }
 void ButtonConfigGamepadWindowFunction()
 {
-	ConfigWindow::g_config_type = true;//true = gamepad;
+	ConfigWindow::g_config_type = true;      // true = gamepad;
 
-	Main::g_window.SetVisible(false);                    // Hide main window
+	Main::g_window.SetVisible(false);        // Hide main window
 	button_config_gamepad->SetVisible(true);
 	ConfigWindow::g_window.SetVisible(true);
-	ForceBacklightsOn(true);                             // Lock backlights on
+	ForceBacklightsOn(true);                 // Lock backlights on
 
 	while(D2K::Loop()
 	   && ConfigWindow::g_window.IsVisible())
@@ -252,7 +252,8 @@ void ButtonConfigGamepadWindowFunction()
 		ConfigWindow::current_pressed_key = 0;
 		button_config_gamepad->Draw();
 
-		if(Main::g_window.CheckClick(button_config_gamepad)) // If pressed again, break
+		// If pressed again, break
+		if(Main::g_window.CheckClick(button_config_gamepad))
 			break;
 	}
 
@@ -261,12 +262,12 @@ void ButtonConfigGamepadWindowFunction()
 }
 void ButtonConfigKeyboardWindowFunction()
 {
-	ConfigWindow::g_config_type = false;//false = keyboard;
+	ConfigWindow::g_config_type = false;      // false = keyboard;
 
-	Main::g_window.SetVisible(false);                    // Hide main window
+	Main::g_window.SetVisible(false);         // Hide main window
 	button_config_keyboard->SetVisible(true);
 	ConfigWindow::g_window.SetVisible(true);
-	ForceBacklightsOn(true);                             // Lock backlights on
+	ForceBacklightsOn(true);                  // Lock backlights on
 
 	while(D2K::Loop()
 	   && ConfigWindow::g_window.IsVisible())
@@ -280,7 +281,8 @@ void ButtonConfigKeyboardWindowFunction()
 		ConfigWindow::current_pressed_key = 0;
 		button_config_keyboard->Draw();
 
-		if(Main::g_window.CheckClick(button_config_keyboard)) // If pressed again, break
+		// If pressed again, break
+		if(Main::g_window.CheckClick(button_config_keyboard))
 			break;
 	}
 
@@ -317,4 +319,4 @@ void ButtonCommandsFunction()
 	Main::g_window.SetVisible(true);    // Show main window
 }
 
-}}}//namespace D2K::GUI::Main
+}}} // namespace D2K::GUI::Main

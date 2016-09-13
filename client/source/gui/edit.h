@@ -1,6 +1,6 @@
 #pragma once
 
-#include <string>  // std::string
+#include <string> // std::string
 #include "rect.h"
 #include "button.h"
 
@@ -17,4 +17,4 @@ public:
 	bool Draw();
 };
 
-}}//namespace D2K::GUI
+}} // namespace D2K::GUI

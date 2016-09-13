@@ -1,4 +1,4 @@
-//Joystick emulation for windows
+// Joystick emulation for windows
 
 #include "common/easylogging++Wrapper.h"
 
@@ -9,9 +9,9 @@
 
 namespace D2K {namespace Input {namespace Joystick {
 
-//We use MAX_JOYSTICKS+1 because vJoy's joysticks are 1-based.
-//joystick_position[0] is unused, but it makes the rest of the
-//code not need joystick_position[device+1].
+// We use MAX_JOYSTICKS+1 because vJoy's joysticks are 1-based.
+// joystick_position[0] is unused, but it makes the rest of the
+// code not need joystick_position[device+1].
 #ifdef _WIN32
 JOYSTICK_POSITION joystick_position[MAX_JOYSTICKS+1]{};
 #endif
@@ -19,7 +19,7 @@ bool hat_up[MAX_JOYSTICKS+1]{};
 bool hat_down[MAX_JOYSTICKS+1]{};
 bool hat_left[MAX_JOYSTICKS+1]{};
 bool hat_right[MAX_JOYSTICKS+1]{};
-//TODO: function vjoyinterface.h::GetVJDAxisMax
+// TODO: function vjoyinterface.h::GetVJDAxisMax
 const LONG MAX_AXIS_VALUE = 32767;
 const DWORD CONTINUOUS_UP = 0;
 const DWORD CONTINUOUS_UP_RIGHT = 4500;
@@ -42,7 +42,7 @@ bool IsIDValid(uint8_t device)
 #endif
 }
 
-//return false if successful
+// return false if successful
 bool Init(uint8_t device)
 {
 	// If Device ID is Invalid, return failure
@@ -101,7 +101,7 @@ bool Init(uint8_t device)
 
 	joystick_position[device].bDevice = device;
 
-//TODO: function vjoyinterface.h::ResetAll();
+// TODO: function vjoyinterface.h::ResetAll();
 	// Reset all buttons
 	joystick_position[device].lButtons = 0;
 	// Reset dpad
@@ -153,7 +153,7 @@ bool DeInit(uint8_t device)
 }
 
 
-//Returns true if device is active
+// Returns true if device is active
 bool IsActive(uint8_t device)
 {
 	if(!IsIDValid(device))
@@ -166,7 +166,7 @@ bool IsActive(uint8_t device)
 #endif
 }
 
-//Returns true if device updated
+// Returns true if device updated
 int Update(uint8_t device)
 {
 #ifdef _WIN32
@@ -191,9 +191,9 @@ void SetButton(uint8_t device, uint8_t button, bool value)
 	if(Init(device) != 0)
 		return;
 
-	if(value) //press
+	if(value) // press
 		joystick_position[device].lButtons |= 1 << button;
-	else      //release
+	else      // release
 		joystick_position[device].lButtons &= ~(1 << button);
 #endif
 }
@@ -333,4 +333,4 @@ bool GetButton(uint8_t device, uint8_t button)
 #endif
 }
 
-}}}//namespace D2K::Input
+}}} // namespace D2K::Input
