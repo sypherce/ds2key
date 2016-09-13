@@ -16,6 +16,25 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance,
 		D2K::GUI::MainWindow::Profile::checkButton1->SetVisible(false); // Disabled until implemented
 #elif defined(_WIN32) || defined(__linux__)
 
+#include <chrono>
+namespace D2K {
+
+void ExecuteCommand(std::string Command);
+void SendClient()
+{
+	using namespace std::chrono;
+	static  high_resolution_clock::time_point time_previous = high_resolution_clock::now();
+		high_resolution_clock::time_point time_current  = high_resolution_clock::now();
+	long long time_difference = duration_cast<milliseconds>(time_current - time_previous).count();
+	if(time_difference >= 5000)
+	{
+		D2K::ExecuteCommand("C:\\devkitPro\\devkitARM\\bin\\3dslink.exe C:\\Root\\Programming\\ds2key\\master\\ds2key\\client\\ds2key.3dsx");
+		time_previous = time_current;
+	}
+}
+
+}
+
 int main(int argc, char* argv[])
 {
 	if(D2K::Setup(argc, argv)) // Exit if we don't connect properly
@@ -26,6 +45,7 @@ int main(int argc, char* argv[])
 
 		while(D2K::g_running)
 		{
+			//D2K::SendClient();
 			D2K::Loop();
 		}
 

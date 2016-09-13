@@ -244,7 +244,7 @@ int Recv(void* buffer, unsigned int length)
 	return Recv(buffer, length, (struct sockaddr*)&remote_sockaddr);
 }
 
-int Recv(void* buffer, unsigned int length, struct sockaddr* remote_sockaddr)
+int Recv(void* buffer, unsigned int length, struct sockaddr* _remote_sockaddr)
 {
 	if(!IsConnected())
 	{
@@ -261,15 +261,15 @@ int Recv(void* buffer, unsigned int length, struct sockaddr* remote_sockaddr)
 		LOG(ERROR) << "Error (UDP::Recv) Invalid pointer\n";
 		return -3;
 	}
-	else if(remote_sockaddr == nullptr)
+	else if(_remote_sockaddr == nullptr)
 	{
-		LOG(ERROR) << "Error (UDP::Recv) remote_sockaddr is NULL\n";
+		LOG(ERROR) << "Error (UDP::Recv) _remote_sockaddr is NULL\n";
 		return -4;
 	}
 	else // Successful
 	{
 		socklen_t sockaddrlength = sizeof(struct sockaddr_in);
-		if(recvfrom(socket_id, (char*)buffer, length, 0, remote_sockaddr, &sockaddrlength) == SOCKET_ERROR)
+		if(recvfrom(socket_id, (char*)buffer, length, 0, _remote_sockaddr, &sockaddrlength) == SOCKET_ERROR)
 		{
 			int err = NETerrno;
 			if(err != NETEWOULDBLOCK)

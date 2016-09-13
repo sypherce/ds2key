@@ -38,4 +38,6 @@ clean:
 #---------------------------------------------------------------------------------
 run:
 	@echo launching via dslink
-	@$(DEVKITARM)/bin/dslink $(TARGET).nds
+	@start "" "C:\Program Files (x86)\DLDIrc\DLDIrc.cmd" dstwo "C:\Root\Programming\ds2key\master\ds2key\client\ds2key.nds"
+	@sleep 3s
+	@$(DEVKITARM)/bin/dslink -a 192.168.0.3 $(TARGET).nds

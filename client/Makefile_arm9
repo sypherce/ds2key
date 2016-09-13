@@ -32,7 +32,7 @@ CFLAGS	:=	-g -Wall -O2\
 			-ffast-math \
 			$(ARCH)
 
-CFLAGS	+=	$(INCLUDE) -I$(PORTLIBS)/include -DARM9 -D_NDS -DD2KCLIENT -DNULL_VALUE=0 -DEMULATOR=0
+CFLAGS	+=	$(INCLUDE) -I$(PORTLIBS)/include -I$(PORTLIBS)/include/freetype2 -DARM9 -D_NDS -DD2KCLIENT -DEMULATOR=0
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -std=c++11
 
 ASFLAGS	:=	-g $(ARCH)
@@ -41,7 +41,7 @@ LDFLAGS	=	-specs=ds_arm9.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project (order is important)
 #---------------------------------------------------------------------------------
-LIBS	:= 	-lfat -ldswifi9 -lnds9 -lpng -lz
+LIBS	:= 	-lfat -ldswifi9 -lnds9 -lpng -lfreetype -lz
 
 
 #---------------------------------------------------------------------------------
