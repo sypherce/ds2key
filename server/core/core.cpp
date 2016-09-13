@@ -151,8 +151,8 @@ std::string ConvertButtonToAxis(ProfileData* profile_data, int enum_key)
 	if((DSButtonIsAnalog(ds_button_bit))
 	&&  (ds_axis == "")
 	&& ((pc_key >= Key::JOY_AXIS1 && pc_key <= Key::JOY_AXIS5_MAX)
-		|| (pc_key == KEY_VOLUME_UP)
-		|| (pc_key == KEY_VOLUME_DOWN)))
+		|| (pc_key == Key::KEY_VOLUME_UP)
+		|| (pc_key == Key::KEY_VOLUME_DOWN)))
 	{
 		switch(pc_key)
 		{
@@ -210,10 +210,10 @@ std::string ConvertButtonToAxis(ProfileData* profile_data, int enum_key)
 		case Key::JOY_AXIS_WHL_PLUS:
 			profile_data->SetValue(enum_key, "&+WHL");
 			break;
-		case KEY_VOLUME_UP:
+		case Key::KEY_VOLUME_UP:
 			profile_data->SetValue(enum_key, "&+VOL");
 			break;
-		case KEY_VOLUME_DOWN:
+		case Key::KEY_VOLUME_DOWN:
 			profile_data->SetValue(enum_key, "&-VOL");
 			break;
 		default:
@@ -260,9 +260,9 @@ void ProcessButtons(D2K::Client* client)
 			else if(ds_button_bit == DS2KEY_CSTICK_UP || ds_button_bit == DS2KEY_CSTICK_DOWN)
 				input_value *= client->GetCstickY();
 			else if(ds_button_bit == DS2KEY_SLIDER_VOLUME)
-				input_value = (client->GetSliderVolume() * (axis_max_value / 50.0f)) - axis_max_value;
+				input_value = (int16_t)(client->GetSliderVolume() * (axis_max_value / 50.0f)) - axis_max_value;
 			else if(ds_button_bit == DS2KEY_SLIDER_3D)
-				input_value = (client->GetSlider3D() * (axis_max_value / 50.0f)) - axis_max_value;
+				input_value = (int16_t)(client->GetSlider3D() * (axis_max_value / 50.0f)) - axis_max_value;
 
 			uint8_t output_axis = 0;
 			if(ds_axis == "X")
@@ -423,28 +423,31 @@ void ProcessPacket(D2K::Client* client)
 		int16_t value = client->GetGyroX();
 		int16_t diff_value = (int16_t)1.3*scale;
 		int16_t axis_max_value = 60;
-		static int16_t adjustment_value_x = 0;
-		static int16_t adjustment_value_y = 0;
-		static int16_t adjustment_value_z = 0;
-		if(value > -diff_value && value < diff_value)
+		static int16_t adjustment_value_x = 0.0;
+		static int16_t adjustment_value_y = 0.0;
+		static int16_t adjustment_value_z = 0.0;
+		//if(value > -diff_value && value < diff_value)
 		{
-			adjustment_value_x = -client->GetAccelX();
-			adjustment_value_z = client->GetAccelZ();
+		//	adjustment_value_x = -client->GetAccelX();
+		//	adjustment_value_z = client->GetAccelZ();
 		}
 		int16_t accelX = client->GetAccelX();
 		int16_t accelY = client->GetAccelY();
 		int16_t accelZ = client->GetAccelZ();
-		int16_t gyroX = client->GetGyroX();
-		int16_t gyroY = client->GetGyroY();
-		int16_t gyroZ = client->GetGyroZ();
-		/*D2K::Input::joystick_id::SetAxisSignedMax(device, HID_USAGE_X,  client->GetAccelX() + adjustment_value_x, axis_max_value);
-		D2K::Input::joystick_id::SetAxisSignedMax(device, HID_USAGE_Y, -client->GetAccelY() + adjustment_value_y, axis_max_value);
-		D2K::Input::joystick_id::SetAxisSignedMax(device, HID_USAGE_Z, -client->GetAccelZ() + adjustment_value_z, axis_max_value);
-		D2K::Input::joystick_id::SetAxisSignedMax(device, HID_USAGE_RX,  client->GetGyroX()  + adjustment_value_x, axis_max_value);
-		D2K::Input::joystick_id::SetAxisSignedMax(device, HID_USAGE_RY, -client->GetGyroY()  + adjustment_value_y, axis_max_value);
-		D2K::Input::joystick_id::SetAxisSignedMax(device, HID_USAGE_RZ, -client->GetGyroZ()  + adjustment_value_z, axis_max_value);
+		int16_t gyroX = client->GetGyroX() * 0.05;
+		int16_t gyroY = client->GetGyroY() * 0.05;
+		int16_t gyroZ = client->GetGyroZ() * 0.05;
+		//D2K::Input::Joystick::SetAxisSignedMax(device, HID_USAGE_X,  client->GetAccelX() + adjustment_value_x, axis_max_value);
+		//D2K::Input::Joystick::SetAxisSignedMax(device, HID_USAGE_Y, -client->GetAccelY() + adjustment_value_y, axis_max_value);
+		//D2K::Input::Joystick::SetAxisSignedMax(device, HID_USAGE_Z, -client->GetAccelZ() + adjustment_value_z, axis_max_value);
+		if(client->Held(DS2KEY_ZR))
+		{
+			D2K::Input::Joystick::SetAxisSignedMax(device, HID_USAGE_RX, gyroX + adjustment_value_x, axis_max_value);
+			D2K::Input::Joystick::SetAxisSignedMax(device, HID_USAGE_RY, -gyroY + adjustment_value_y, axis_max_value);
+			D2K::Input::Joystick::SetAxisSignedMax(device, HID_USAGE_RZ, -gyroZ + adjustment_value_z, axis_max_value);
 
-		D2K::Input::joystick_id::Update(device);*/
+			D2K::Input::Joystick::Update(device);
+		}
 	}
 #endif
 
@@ -547,7 +550,7 @@ int Setup(int argc, char* argv[])
 		}
 		else if(strncmp(argv[arg], "--port=", 7) == 0)
 		{
-			Config::SetConfigPort(atoi(&argv[arg][7]));
+			Config::SetConfigPort((uint16_t)atoi(&argv[arg][7]));
 		}
 	}
 

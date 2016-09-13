@@ -148,7 +148,7 @@ void Keyboard(uint16_t key, KeyState state)
 		if(state == KeyState::released)
 			input.ki.dwFlags |= KEYEVENTF_KEYUP;
 
-		input.ki.wScan = MapVirtualKey(key, MAPVK_VK_TO_VSC);
+		input.ki.wScan = (WORD)MapVirtualKey(key, MAPVK_VK_TO_VSC);
 		break;
 	}
 	}
@@ -220,13 +220,13 @@ void Press(uint16_t key, uint8_t joy)
 		// GamePad Buttons
 		if(key >= Key::JOY && key <= Key::JOY_MAX) //virtual gamepad buttons
 		{
-			Joystick::SetButton(joy, key - Key::JOY, true);
+			Joystick::SetButton(joy, (uint8_t)(key - Key::JOY), true);
 			Joystick::Update(joy);
 		}
 		// GamePad DPad
 		else if(key >= Key::JOY_HAT && key <= Key::JOY_HAT_MAX) //virtual gamepad buttons
 		{
-			Joystick::SetHat(joy, key - Key::JOY_HAT, true);
+			Joystick::SetHat(joy, (uint8_t)(key - Key::JOY_HAT), true);
 			Joystick::Update(joy);
 		}
 		// Analog Axis
@@ -312,13 +312,13 @@ void Release(uint16_t key, uint8_t joy)
 		// GamePad Buttons
 		if(key >= Key::JOY && key <= Key::JOY_MAX)
 		{
-			Joystick::SetButton(joy, key - Key::JOY, false);
+			Joystick::SetButton(joy, (uint8_t)(key - Key::JOY), false);
 			Joystick::Update(joy);
 		}
 		// GamePad DPad
 		else if(key >= Key::JOY_HAT && key <= Key::JOY_HAT_MAX)
 		{
-			Joystick::SetHat(joy, key - Key::JOY_HAT, false);
+			Joystick::SetHat(joy, (uint8_t)( key - Key::JOY_HAT), false);
 			Joystick::Update(joy);
 		}
 		// Analog Axis

@@ -65,53 +65,53 @@ void NewProfile(ProfileData* profile_data, uint8_t profile_number)
 	profile_data->m_mouse = "Relative";
 	profile_data->m_joy = "0";
 
-	profile_data->SetVirtualKey(KEYS::DUP, KEY_UP);
-	profile_data->SetVirtualKey(KEYS::DDOWN, KEY_DOWN);
-	profile_data->SetVirtualKey(KEYS::DLEFT, KEY_LEFT);
-	profile_data->SetVirtualKey(KEYS::DRIGHT, KEY_RIGHT);
-	profile_data->SetVirtualKey(KEYS::A, KEY_F);
-	profile_data->SetVirtualKey(KEYS::B, KEY_D);
-	profile_data->SetVirtualKey(KEYS::X, KEY_S);
-	profile_data->SetVirtualKey(KEYS::Y, KEY_A);
-	profile_data->SetVirtualKey(KEYS::L, KEY_W);
-	profile_data->SetVirtualKey(KEYS::R, KEY_E);
-	profile_data->SetVirtualKey(KEYS::START, KEY_RETURN);
-	profile_data->SetVirtualKey(KEYS::SELECT, KEY_RSHIFT);
-	profile_data->SetVirtualKey(KEYS::LID, KEY_ESCAPE);
+	profile_data->SetVirtualKey(KEYS::DUP, Key::KEY_UP);
+	profile_data->SetVirtualKey(KEYS::DDOWN, Key::KEY_DOWN);
+	profile_data->SetVirtualKey(KEYS::DLEFT, Key::KEY_LEFT);
+	profile_data->SetVirtualKey(KEYS::DRIGHT, Key::KEY_RIGHT);
+	profile_data->SetVirtualKey(KEYS::A, Key::KEY_F);
+	profile_data->SetVirtualKey(KEYS::B, Key::KEY_D);
+	profile_data->SetVirtualKey(KEYS::X, Key::KEY_S);
+	profile_data->SetVirtualKey(KEYS::Y, Key::KEY_A);
+	profile_data->SetVirtualKey(KEYS::L, Key::KEY_W);
+	profile_data->SetVirtualKey(KEYS::R, Key::KEY_E);
+	profile_data->SetVirtualKey(KEYS::START, Key::KEY_RETURN);
+	profile_data->SetVirtualKey(KEYS::SELECT, Key::KEY_RSHIFT);
+	profile_data->SetVirtualKey(KEYS::LID, Key::KEY_ESCAPE);
 
-	profile_data->SetVirtualKey(KEYS::ZL, KEY_Q);
-	profile_data->SetVirtualKey(KEYS::ZR, KEY_R);
+	profile_data->SetVirtualKey(KEYS::ZL, Key::KEY_Q);
+	profile_data->SetVirtualKey(KEYS::ZR, Key::KEY_R);
 
-	profile_data->SetVirtualKey(KEYS::CSTICK_UP, KEY_NUMPAD8);
-	profile_data->SetVirtualKey(KEYS::CSTICK_DOWN, KEY_NUMPAD2);
-	profile_data->SetVirtualKey(KEYS::CSTICK_LEFT, KEY_NUMPAD4);
-	profile_data->SetVirtualKey(KEYS::CSTICK_RIGHT, KEY_NUMPAD6);
+	profile_data->SetVirtualKey(KEYS::CSTICK_UP, Key::KEY_NUMPAD8);
+	profile_data->SetVirtualKey(KEYS::CSTICK_DOWN, Key::KEY_NUMPAD2);
+	profile_data->SetVirtualKey(KEYS::CSTICK_LEFT, Key::KEY_NUMPAD4);
+	profile_data->SetVirtualKey(KEYS::CSTICK_RIGHT, Key::KEY_NUMPAD6);
 
-	profile_data->SetVirtualKey(KEYS::CPAD_UP, KEY_HOME);
-	profile_data->SetVirtualKey(KEYS::CPAD_DOWN, KEY_END);
-	profile_data->SetVirtualKey(KEYS::CPAD_LEFT, KEY_DELETE);
-	profile_data->SetVirtualKey(KEYS::CPAD_RIGHT, KEY_NEXT);
+	profile_data->SetVirtualKey(KEYS::CPAD_UP, Key::KEY_HOME);
+	profile_data->SetVirtualKey(KEYS::CPAD_DOWN, Key::KEY_END);
+	profile_data->SetVirtualKey(KEYS::CPAD_LEFT, Key::KEY_DELETE);
+	profile_data->SetVirtualKey(KEYS::CPAD_RIGHT, Key::KEY_NEXT);
 
-	profile_data->SetVirtualKey(KEYS::BLUE, KEY_NUMPAD1);
-	profile_data->SetVirtualKey(KEYS::YELLOW, KEY_NUMPAD3);
-	profile_data->SetVirtualKey(KEYS::RED, KEY_NUMPAD7);
-	profile_data->SetVirtualKey(KEYS::GREEN, KEY_NUMPAD9);
+	profile_data->SetVirtualKey(KEYS::BLUE, Key::KEY_NUMPAD1);
+	profile_data->SetVirtualKey(KEYS::YELLOW, Key::KEY_NUMPAD3);
+	profile_data->SetVirtualKey(KEYS::RED, Key::KEY_NUMPAD7);
+	profile_data->SetVirtualKey(KEYS::GREEN, Key::KEY_NUMPAD9);
 
-	profile_data->SetVirtualKey(KEYS::SLIDER_VOLUME, KEY_NUMPAD1);
-	profile_data->SetVirtualKey(KEYS::SLIDER_3D, KEY_NUMPAD3);
+	profile_data->SetVirtualKey(KEYS::SLIDER_VOLUME, Key::KEY_NUMPAD1);
+	profile_data->SetVirtualKey(KEYS::SLIDER_3D, Key::KEY_NUMPAD3);
 
-	profile_data->SetVirtualKey(KEYS::TOUCH_00, KEY_0);
-	profile_data->SetVirtualKey(KEYS::TOUCH_01, KEY_1);
-	profile_data->SetVirtualKey(KEYS::TOUCH_02, KEY_2);
-	profile_data->SetVirtualKey(KEYS::TOUCH_03, KEY_3);
-	profile_data->SetVirtualKey(KEYS::TOUCH_04, KEY_4);
-	profile_data->SetVirtualKey(KEYS::TOUCH_05, KEY_5);
-	profile_data->SetVirtualKey(KEYS::TOUCH_06, KEY_6);
-	profile_data->SetVirtualKey(KEYS::TOUCH_07, KEY_7);
-	profile_data->SetVirtualKey(KEYS::TOUCH_08, KEY_8);
-	profile_data->SetVirtualKey(KEYS::TOUCH_09, KEY_9);
-	profile_data->SetVirtualKey(KEYS::TOUCH_10, KEY_OEM_MINUS);
-	profile_data->SetVirtualKey(KEYS::TOUCH_11, KEY_OEM_PLUS);
+	profile_data->SetVirtualKey(KEYS::TOUCH_00, Key::KEY_0);
+	profile_data->SetVirtualKey(KEYS::TOUCH_01, Key::KEY_1);
+	profile_data->SetVirtualKey(KEYS::TOUCH_02, Key::KEY_2);
+	profile_data->SetVirtualKey(KEYS::TOUCH_03, Key::KEY_3);
+	profile_data->SetVirtualKey(KEYS::TOUCH_04, Key::KEY_4);
+	profile_data->SetVirtualKey(KEYS::TOUCH_05, Key::KEY_5);
+	profile_data->SetVirtualKey(KEYS::TOUCH_06, Key::KEY_6);
+	profile_data->SetVirtualKey(KEYS::TOUCH_07, Key::KEY_7);
+	profile_data->SetVirtualKey(KEYS::TOUCH_08, Key::KEY_8);
+	profile_data->SetVirtualKey(KEYS::TOUCH_09, Key::KEY_9);
+	profile_data->SetVirtualKey(KEYS::TOUCH_10, Key::KEY_OEM_MINUS);
+	profile_data->SetVirtualKey(KEYS::TOUCH_11, Key::KEY_OEM_PLUS);
 
 	for(int i = 0; i < UDP::SETTINGS_PACKET_MAX_BUTTONS; i++)
 	{
