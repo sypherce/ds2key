@@ -38,8 +38,8 @@ void DeInit()
 
 // TODO check and verify for every extended key
 // Checks if (key) is an "extended" key
-// @param key Platform specific value
-// @return true if (key) is an "extended" key
+//  param: key Platform specific value
+// return: true if (key) is an "extended" key
 bool IsExtended(uint16_t key)
 {
 	switch(key)
@@ -96,8 +96,8 @@ static uint16_t s_press_counter[65535]{}; // this allows 1 or more profile to pr
 static uint16_t s_turbo_status [65535]{};
 
 // Presses or releases (key) depending on (state)
-// @param key Platform specific value
-// @param state true = released, false = pressed
+//  param: key Platform specific value
+//  param: state true = released, false = pressed
 void Keyboard(uint16_t key, KeyState state)
 {
 #ifdef _WIN32
@@ -162,7 +162,7 @@ void Keyboard(uint16_t key, KeyState state)
 }
 
 // Moves cursor position
-// @param type true = absolute, false = relative
+//  param: type true = absolute, false = relative
 void Mouse(MouseMovement type, signed long int x, signed long int y)
 {
 #ifdef _WIN32

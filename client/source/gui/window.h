@@ -24,12 +24,13 @@ public:
 	void Draw();
 
 	// Sets window, and all child objects visibility
-	// @param visible true if visible, false if not
+	//  param: visible true if visible, false if not
 	void SetVisible(bool visible);
 	bool IsVisible();
 
-	// @param object Pointer to object to be checked
-	// @return (true) if clicked, (false) if not
+	// Checks if (object) is clicked
+	//  param: object Pointer to object to be checked
+	// return: (true) if clicked, (false) if not
 	bool CheckClick(Object* object);
 
 	bool Update();
