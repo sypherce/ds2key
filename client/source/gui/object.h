@@ -19,7 +19,7 @@ public:
 	virtual ~Object();
 
 	// Check's if object or GUI has been updated, then clears value
-	// return: (true) if updated, else (false)
+	// @return (true) if updated, else (false)
 	virtual bool Draw();
 	void (*Function)();
 
@@ -35,9 +35,9 @@ public:
 
 	bool IsVisible();
 	// checks if object is clicked at (x), (y)
-	// return: (true) if clicked, (false) if not
+	// @return (true) if clicked, (false) if not
 	bool IsClicked(uint16_t x, uint16_t y);
-	// return: current screen of object
+	// @return current screen of object
 
 	bool GetScreen();
 

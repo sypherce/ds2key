@@ -15,10 +15,10 @@ public:
 	~CheckButton();
 
 	// Draws CheckButton onto screen if it OR the gui has been updated
-	// return:  true if we updated, false if not
+	// @return true if we updated, false if not
 	bool Draw();
 
-	// return:  (true) if checked, (false) if not
+	// @return (true) if checked, (false) if not
 	bool GetChecked();
 	// sets state to (checked) and forces update
 	void SetChecked(bool checked);

@@ -18,21 +18,21 @@ extern angularRate g_gyro_status;
 extern float g_slider_3d_status;
 extern uint8_t g_slider_volume_status;
 
-// return: The current time
+// @return The current time
 char* GetTime();
 
 // Wait for VBlank and process inputs, lid
 void WaitForVBlank();
 
 // Setup the nds system. Start fat, wifi, and our udp system.
-// return: (0) upon success, else (1)
+// @return (0) upon success, else (1)
 bool Init(int argc, char* argv[]);
 
 // Shutdown the system. Currently only 3DS.
 void DeInit();
 
 // Loop function that calls VBlankFunction()
-// return: false on system shutdown
+// @return false on system shutdown
 int Loop();
 
 // Force backlights on if (value) == true
