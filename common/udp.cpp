@@ -83,7 +83,7 @@ std::string remote_ip = "";
 #if defined(D2KSERVER)
 struct sockaddr_in local_sockaddr{};
 #endif
-struct sockaddr_in g_remote_sockaddr{};
+struct sockaddr_in remote_sockaddr{};
 
 void Init()
 {
@@ -111,25 +111,25 @@ int Connect()
 	return Connect(UDP::non_blocking, UDP::port);
 }
 
-int Connect(uint16_t port)
+int Connect(uint16_t _port)
 {
-	return Connect(UDP::non_blocking, port);
+	return Connect(UDP::non_blocking, _port);
 }
 
-int Connect(bool non_blocking, uint16_t port)
+int Connect(bool _non_blocking, uint16_t _port)
 {
 	if(EMULATOR)          // Skip if emulating
 		return 0;
 
 	if(IsConnected())     // If already connected
-		Disconnect(); // Disconnect first
+		Disconnect();     // Disconnect first
 
-	SetConfigPort(port);  // Set port
+	SetConfigPort(_port); // Set port
 
-	UDP::non_blocking = non_blocking;
+	UDP::non_blocking = _non_blocking;
 
-	g_remote_sockaddr.sin_family = AF_INET;
-	g_remote_sockaddr.sin_port = htons(GetPort());
+	remote_sockaddr.sin_family = AF_INET;
+	remote_sockaddr.sin_port = htons(GetPort());
 #if defined(D2KSERVER)
 	int sockaddrlength = sizeof(struct sockaddr_in);
 	local_sockaddr = sockaddr_in{};
@@ -138,7 +138,7 @@ int Connect(bool non_blocking, uint16_t port)
 
 	local_sockaddr.sin_port = htons(GetPort());
 #endif
-	socket_id = socket(PF_INET, SOCK_DGRAM, 0);  // create a socket
+	socket_id = socket(PF_INET, SOCK_DGRAM, 0); // create a socket
 	if(socket_id == INVALID_SOCKET)
 	{
 		int err = NETerrno;
@@ -227,7 +227,7 @@ int Send(const void* buffer, unsigned int length)
 	else // Successful
 	{
 		int sockaddrlength = sizeof(struct sockaddr_in);
-		if(sendto(socket_id, (const char*)buffer, length, 0, (struct sockaddr*)&g_remote_sockaddr, sockaddrlength) == SOCKET_ERROR)
+		if(sendto(socket_id, (const char*)buffer, length, 0, (struct sockaddr*)&remote_sockaddr, sockaddrlength) == SOCKET_ERROR)
 		{
 			int err = NETerrno;
 			LOG(ERROR) << "Error #" << err << " (sendto): " << strerror(err) << "\n";
@@ -241,7 +241,7 @@ int Send(const void* buffer, unsigned int length)
 
 int Recv(void* buffer, unsigned int length)
 {
-	return Recv(buffer, length, (struct sockaddr*)&g_remote_sockaddr);
+	return Recv(buffer, length, (struct sockaddr*)&remote_sockaddr);
 }
 
 int Recv(void* buffer, unsigned int length, struct sockaddr* remote_sockaddr)
@@ -263,7 +263,7 @@ int Recv(void* buffer, unsigned int length, struct sockaddr* remote_sockaddr)
 	}
 	else if(remote_sockaddr == nullptr)
 	{
-		LOG(ERROR) << "Error (UDP::Recv) g_remote_sockaddr is NULL\n";
+		LOG(ERROR) << "Error (UDP::Recv) remote_sockaddr is NULL\n";
 		return -4;
 	}
 	else // Successful
@@ -303,21 +303,21 @@ std::string GetLocalIPString()
 
 unsigned long GetRemoteIP()
 {
-	return g_remote_sockaddr.sin_addr.s_addr;
+	return remote_sockaddr.sin_addr.s_addr;
 }
 std::string GetRemoteIPString()
 {
-	std::string IP = inet_ntoa(g_remote_sockaddr.sin_addr);
+	std::string IP = inet_ntoa(remote_sockaddr.sin_addr);
 	return IP;
 }
 
 void SetRemoteIP(const std::string& text)
 {
-	g_remote_sockaddr.sin_addr.s_addr = inet_addr(text.c_str());
+	remote_sockaddr.sin_addr.s_addr = inet_addr(text.c_str());
 }
 void SetRemoteIP(unsigned long ip)
 {
-	g_remote_sockaddr.sin_addr.s_addr = ip;
+	remote_sockaddr.sin_addr.s_addr = ip;
 }
 
 uint16_t GetPort()
@@ -329,18 +329,18 @@ std::string GetPortString()
 	return ltos(GetPort());
 }
 
-void SetConfigPort(const std::string& port)
+void SetConfigPort(const std::string& _port)
 {
-	SetConfigPort(D2K::stol(port));
+	SetConfigPort((uint16_t)D2K::stol(_port));
 }
-void SetConfigPort(const char* port)
+void SetConfigPort(const char* _port)
 {
-	SetConfigPort(atoi(port));
+	SetConfigPort((uint16_t)atoi(_port));
 }
-void SetConfigPort(uint16_t port)
+void SetConfigPort(uint16_t _port)
 {
 	// If port is 0, Use default port 9501
-	UDP::port = port == 0 ? DEFAULT_PORT : port;
+	UDP::port = _port == 0 ? DEFAULT_PORT : _port;
 	LOG(INFO) << "UDP Port set to #" << UDP::GetPort() << ".";
 }
 
@@ -416,7 +416,7 @@ void Update(uint32_t keys, uint32_t keysTurbo, const touchPosition* touch_positi
 		//raw value is 0-63, we convert to 0-100
 		packet.slider_volume = (uint8_t)((*slider_volume * 100) / 63);
 	}
-	if(slider_3d       != nullptr)                  // 3D slider is active
+	if(slider_3d       != nullptr)                 // 3D slider is active
 	{
 		//raw value is 0.0f-1.0f, we convert to 0-100
 		packet.slider_3d = (uint8_t)(*slider_3d * 100);
@@ -511,17 +511,17 @@ std::string GetProfileString()
 	return ltos(GetProfile());
 }
 
-void SetProfile(const std::string& profile)
+void SetProfile(const std::string& _profile)
 {
-	SetProfile(D2K::stol(profile));
+	SetProfile(D2K::stol(_profile));
 }
-void SetProfile(const char* profile)
+void SetProfile(const char* _profile)
 {
-	SetProfile(atoi(profile));
+	SetProfile(atoi(_profile));
 }
-void SetProfile(unsigned int profile)
+void SetProfile(uint8_t _profile)
 {
-	UDP::profile = profile;
+	UDP::profile = _profile;
 }
 #elif defined(D2KSERVER)
 void SendCommandSettings(DS2KeyCommandSettingsPacket settings)
