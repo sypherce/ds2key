@@ -22,7 +22,6 @@
     <ClCompile Include="source\gui\object.cpp" />
     <ClCompile Include="source\gui\png_format.cpp" />
     <ClCompile Include="source\gui\rect.cpp" />
-    <ClCompile Include="source\gui\ttf_format.cpp" />
     <ClCompile Include="source\gui\window.cpp" />
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\windows\commandWindow.cpp" />
@@ -57,7 +56,6 @@
     <ClInclude Include="source\gui\object.h" />
     <ClInclude Include="source\gui\png_format.h" />
     <ClInclude Include="source\gui\rect.h" />
-    <ClInclude Include="source\gui\ttf_format.h" />
     <ClInclude Include="source\gui\window.h" />
     <ClInclude Include="source\windows\commandWindow.h" />
     <ClInclude Include="source\windows\configWindow.h" />
@@ -107,7 +105,7 @@
     <NMakeOutput>ds2key.nds</NMakeOutput>
     <NMakeCleanCommandLine>C:\devkitPro\msys\bin\make.exe -f Makefile_nds clean</NMakeCleanCommandLine>
     <NMakePreprocessorDefinitions>EMULATOR=0;D2KCLIENT;ARM9;_NDS;</NMakePreprocessorDefinitions>
-    <IncludePath>$(ProjectDir)source;$(ProjectDir)..\common;$(ProjectDir)..;C:\devkitPro\portlibs\armv5te\include\freetype2;C:\devkitPro\portlibs\armv5te\include;C:\devkitPro\devkitARM\include;C:\devkitPro\libnds\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <IncludePath>$(ProjectDir)source;$(ProjectDir)..\common;$(ProjectDir)..;C:\devkitPro\portlibs\armv5te\include;C:\devkitPro\devkitARM\include;C:\devkitPro\libnds\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <NMakeReBuildCommandLine>C:\devkitPro\msys\bin\make.exe -f Makefile_nds clean &amp;&amp; C:\devkitPro\msys\bin\make.exe -f Makefile_nds</NMakeReBuildCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='3DS|ARM'">
@@ -115,7 +113,7 @@
     <NMakeOutput>3ds2key.3dsx</NMakeOutput>
     <NMakeCleanCommandLine>C:\devkitPro\msys\bin\make.exe -f Makefile_3ds clean</NMakeCleanCommandLine>
     <NMakePreprocessorDefinitions>EMULATOR=0;D2KCLIENT;ARM11;_3DS;</NMakePreprocessorDefinitions>
-    <IncludePath>$(ProjectDir)source;$(ProjectDir)..\common;$(ProjectDir)..;C:\devkitPro\portlibs\armv6k\include\freetype2;C:\devkitPro\portlibs\armv6k\include;C:\devkitPro\devkitARM\include;C:\devkitPro\libctru\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <IncludePath>$(ProjectDir)source;$(ProjectDir)..\common;$(ProjectDir)..;C:\devkitPro\portlibs\armv6k\include;C:\devkitPro\devkitARM\include;C:\devkitPro\libctru\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <NMakeReBuildCommandLine>C:\devkitPro\msys\bin\make.exe -f Makefile_3ds clean &amp;&amp; C:\devkitPro\msys\bin\make.exe -f Makefile_3ds</NMakeReBuildCommandLine>
   </PropertyGroup>
   <ItemDefinitionGroup>

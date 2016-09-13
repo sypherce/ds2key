@@ -21,7 +21,7 @@ public:
 	std::string GetText();
 
 	// Draws Label onto screen if it OR the gui has been updated
-	// @return true if we updated, false if not
+	// return: true if we updated, false if not
 	bool Draw();
 };
 

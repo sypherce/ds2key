@@ -96,9 +96,6 @@
     <ClCompile Include="source\gui\png_format.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\gui\ttf_format.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\ds2keyPacket.h">
@@ -186,9 +183,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\gui\png_format.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\gui\ttf_format.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
