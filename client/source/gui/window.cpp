@@ -50,7 +50,7 @@ void Window::Draw()
 }
 void Window::SetVisible(bool visible)
 {
-	m_visible = visible;                                          //window is now set
+	m_visible = visible;                                         //window is now set
 	for(unsigned int i = 0; i < m_objects.size(); i++)           //for each child
 	{
 		m_objects.at(i)->SetVisible(visible);                //set the same
