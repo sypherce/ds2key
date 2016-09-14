@@ -20,14 +20,14 @@
 #include <dswifi9.h>
 #include <netinet/in.h>
 #include <netdb.h>
-#include <errno.h>
+#include <cerrno>
 #elif defined(_3DS)
 #include <3ds.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/ioctl.h>
-#include <stdio.h>
+#include <cstdio>
 #include <unistd.h>
 #include <fcntl.h>
 #endif

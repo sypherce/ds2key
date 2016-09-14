@@ -4,7 +4,7 @@
 #ifdef _WIN32
 #include <windows.h>
 #elif defined(__linux__)
-#include <string.h>
+#include <cstring>
 #include <X11/keysym.h>
 #endif
 

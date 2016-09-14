@@ -1,14 +1,14 @@
 // NDS Init() and Update()
 
-#include <time.h>
+#include <ctime>
 #include <cstdio>
 #include <iostream>
-#include <errno.h>
+#include <cerrno>
 
 #if defined(_3DS)
 #include <3ds.h>
 #include <malloc.h>
-#include <stdio.h>
+#include <cstdio>
 #elif defined(_NDS)
 #include <nds.h>
 #include <fat.h>

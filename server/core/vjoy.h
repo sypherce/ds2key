@@ -1,7 +1,7 @@
 #pragma once
 
 #include <windows.h>
-#include <stdint.h>
+#include <cstdint>
 #include "vjoy/inc/public.h"
 
 namespace D2K {namespace Input { namespace Joystick {

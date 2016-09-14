@@ -2,7 +2,7 @@
 
 #include <cstdio>
 #include <iostream>
-#include <errno.h>
+#include <cerrno>
 #include "config.h"
 #include "gui/gui.h"
 #include "common/easylogging++Wrapper.h"
