@@ -273,29 +273,29 @@ std::string ProfileData::GetButtonString(int enum_key)
 }
 uint8_t ProfileData::GetValue8(int enum_key)
 {
-	std::string& pointer = GetStringReference(enum_key);
+	std::string& string_reference = GetStringReference(enum_key);
 
-	return D2K::string_to_uint8_t(pointer);
+	return D2K::string_to_uint8_t(string_reference);
 }
 uint16_t ProfileData::GetValue16(int enum_key)
 {
-	std::string& pointer = GetStringReference(enum_key);
+	std::string& string_reference = GetStringReference(enum_key);
 
-	return D2K::string_to_uint16_t(pointer);
+	return D2K::string_to_uint16_t(string_reference);
 }
 uint16_t ProfileData::GetVirtualKey(int enum_key)
 {
-	std::string& pointer = GetStringReference(enum_key);
+	std::string& string_reference = GetStringReference(enum_key);
 
-	return StringToVirtualKey(pointer);
+	return StringToVirtualKey(string_reference);
 }
 
 bool ProfileData::SetRaw(int enum_key, std::string value)
 {
-	std::string& pointer = GetStringReference(enum_key);
-	if(&pointer == &m_null)
+	std::string& string_reference = GetStringReference(enum_key);
+	if(&string_reference == &m_null)
 		return false;
-	pointer = value;
+	string_reference = value;
 
 	return true;
 }
@@ -341,11 +341,11 @@ bool ProfileData::SetVirtualKey(int enum_key, uint16_t value)
 bool ProfileData::SetValue(int enum_key, std::string value)
 {
 	if(SetCommand(enum_key, value))
-	   return true;
+		return true;
 	if(SetVirtualKey(enum_key, value))
-	   return true;
+		return true;
 	if(SetAxis(enum_key, value))
-	   return true;
+		return true;
 
 	return false;
 }
@@ -361,17 +361,17 @@ void ProfileData::SetTouchPos(uint8_t i, uint8_t x, uint8_t y, uint8_t w, uint8_
 }
 const std::string& ProfileData::GetCommand(int enum_key)
 {
-	std::string& pointer = GetStringReference(enum_key);
-	if(isCommand(pointer))
-		return pointer;
+	std::string& string_reference = GetStringReference(enum_key);
+	if(isCommand(string_reference))
+		return string_reference;
 
 	return m_null;
 }
 const std::string& ProfileData::GetAxis(int enum_key)
 {
-	std::string& pointer = GetStringReference(enum_key);
-	if(isAxis(pointer))
-		return pointer;
+	std::string& string_reference = GetStringReference(enum_key);
+	if(isAxis(string_reference))
+		return string_reference;
 
 	return m_null;
 }

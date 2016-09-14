@@ -99,15 +99,12 @@ public:
 	// return system specific uint16_t (0-65535)
 	uint16_t GetVirtualKey(int enum_key);
 
-// TODO:: Update comment
-	// Currently only used in config.cpp as of 3-30-16.
-	// Checks that enum_key DOES NOT qualify as a button, we assume IT IS a command after that
-	// If it is a button, it returns ""
+	// Checks that enum_key is a command, and returns a (std::string) containing the command
 	//
 	// Example: enum_key KEYS::UP(0x03) returns std::string "KEY_UP"
 	//
 	//  param: enum_key Contains a value from (enum KEYS) Examples: KEYS::A, KEYS::UP, KEYS::GREEN
-	// return: (std::string) containing command info, if enum_key is a button it returns "".
+	// return: (std::string) containing command info, otherwise it returns an empty string
 	const std::string& GetCommand(int enum_key);
 	const std::string& GetAxis(int enum_key);
 
