@@ -471,7 +471,8 @@ void ReleaseDeadClient(D2K::Client* client)
 		uint16_t pc_key = profile_data->GetVirtualKey(enum_key);
 
 		// if pc_key is valid and ds_button_bit is held
-		if(pc_key && client->Held(ds_button_bit))
+		if(pc_key
+		&& client->Held(ds_button_bit))
 			Input::Release(pc_key, joystick);
 	}
 
@@ -605,8 +606,6 @@ void Loop()
 					strncpy(settings.text[i],
 						profile_data->m_touch_string[i].c_str(),
 						UDP::SETTINGS_PACKET_MAX_TEXT);
-// TODO: This shouldn't be needed?
-					settings.text[i][UDP::SETTINGS_PACKET_MAX_TEXT] = 0;
 				}
 
 				// Send settings packet
