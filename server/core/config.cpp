@@ -384,7 +384,7 @@ void SetConfigPort(uint16_t port)
 
 Client* GetClient(uint8_t profile)
 {
-        if(g_client_array[profile] == nullptr)                                                  // if profile not active,
+	if(g_client_array[profile] == nullptr)                                                  // if profile not active,
 	{
 		g_client_array[profile] = new Client();                                         // create it
 		Config::LoadProfile(g_client_array[profile]->GetProfileDataPointer(), profile); // then load it
