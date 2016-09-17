@@ -403,9 +403,9 @@ enum {
 
 enum {
 
-JOY           = 0x100,
+JOY = 0x100,
 // Check key.cpp for final JOY value
-JOY_MAX       = JOY + 31,
+JOY_MAX = JOY + 31,
 
 JOY_HAT,
 JOY_HAT_UP = JOY_HAT,

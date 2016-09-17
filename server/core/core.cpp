@@ -61,8 +61,8 @@ void SetMasterVolume(float volume)
 	// Creates a single uninitialized object
 	IMMDeviceEnumerator *device_enumerator{}; 
 	hresult = CoCreateInstance(__uuidof(MMDeviceEnumerator),
-	              NULL, CLSCTX_INPROC_SERVER, __uuidof(IMMDeviceEnumerator),
-	              (LPVOID *)&device_enumerator);
+	          NULL, CLSCTX_INPROC_SERVER, __uuidof(IMMDeviceEnumerator),
+	          (LPVOID *)&device_enumerator);
 	if(hresult != S_OK)
 	{
 		LOG(ERROR) << "Error (CoCreateInstance): #" << hresult;

@@ -19,8 +19,8 @@ int Load()
 	if(ini == nullptr)
 	{
 		int err = errno;
-		LOG(ERROR) << "Error (iniParser::load): #" << err << "\n" << 
-		             "Failed to open file: " << INI_FILENAME;
+		LOG(ERROR) << "Error (iniParser::load): #" << err << "\n"
+		           << "Failed to open file: " << INI_FILENAME;
 		SetConfigPort(DEFAULT_PORT);
 		Save();
 
@@ -41,8 +41,8 @@ int Save()
 	if(file == nullptr)
 	{
 		int err = errno;
-		LOG(ERROR) << "Error (fopen): #" << err << "\n" <<
-		             "Failed to open file: " << INI_FILENAME;
+		LOG(ERROR) << "Error (fopen): #" << err << "\n"
+		           << "Failed to open file: " << INI_FILENAME;
 
 		return err;
 	}
@@ -143,8 +143,8 @@ int LoadProfile(ProfileData* profile_data, uint8_t profile_number)
 	if(ini == nullptr)
 	{
 		int err = errno;
-		LOG(ERROR) << "Error (iniParser::load): #" << err << "\n" << 
-		             "Failed to open file: " << INI_FILENAME;
+		LOG(ERROR) << "Error (iniParser::load): #" << err << "\n"
+		           << "Failed to open file: " << INI_FILENAME;
 
 		NewProfile(profile_data, profile_number);
 
@@ -280,10 +280,10 @@ int LoadProfile(ProfileData* profile_data, uint8_t profile_number)
 
 	for(int i = 0; i < UDP::SETTINGS_PACKET_MAX_BUTTONS; i++)
 	{
-        if(profile_data->m_touch_w[i] == 0 &&  profile_data->m_touch_h[i] == 0) // if the button won't even show
-            profile_data->m_touch_string[i].clear();
-        else                                                                    // otherwise shrink down to our max chars
-            profile_data->m_touch_string[i].resize(10);
+	if(profile_data->m_touch_w[i] == 0 &&  profile_data->m_touch_h[i] == 0) // if the button won't even show
+		profile_data->m_touch_string[i].clear();
+	else                                                                    // otherwise shrink down to our max chars
+		profile_data->m_touch_string[i].resize(10);
 	}
 
 	return 0;
@@ -297,8 +297,8 @@ int SaveProfile(ProfileData* Profile, uint8_t profileNumber)
 	if(file == nullptr)
 	{
 		int err = errno;
-		LOG(ERROR) << "Error (fopen): #" << err << "\n" <<
-		             "Failed to save file: " << INI_FILENAME;
+		LOG(ERROR) << "Error (fopen): #" << err << "\n"
+		           << "Failed to save file: " << INI_FILENAME;
 
 		return err;
 	}
