@@ -27,6 +27,10 @@ INITIALIZE_EASYLOGGINGPP
 #include "common/misc.h"
 #include "config.h"
 
+#if defined(_3DS)
+extern Handle hidHandle;
+#endif
+
 namespace D2K {
 
 #ifdef _3DS
@@ -169,6 +173,47 @@ uint32_t LidUp()
 // no event for still being opened
 #endif
 
+#if defined(_3DS)
+Result HIDUSER_GetGyroscopeLowCalibrateParam(u8 result[20]){
+    u32* cmdbuf = getThreadCommandBuffer();
+    cmdbuf[0] = IPC_MakeHeader(0x16, 0, 0); // 0x160000
+
+    Result ret = 0;
+    if(R_FAILED(ret = svcSendSyncRequest(hidHandle)))return ret;
+
+    memcpy(result, cmdbuf+2, 20);
+
+    return cmdbuf[1];
+}
+// ctrulib bug (PR#269)
+Result HIDUSER_GetGyroscopeRawToDpsCoefficient_(float *coeff){
+    u32* cmdbuf = getThreadCommandBuffer();
+    cmdbuf[0] = IPC_MakeHeader(0x15, 0, 0); // 0x150000
+
+    Result ret = 0;
+    if(R_FAILED(ret = svcSendSyncRequest(hidHandle)))return ret;
+
+    *coeff = *(float*)(cmdbuf+2);
+
+    return cmdbuf[1];
+}
+
+Result GetAnalogStickCalibrateParam(u8 result[20]){
+    u32* cmdbuf = getThreadCommandBuffer();
+    cmdbuf[0] = IPC_MakeHeader(0x0e, 0, 0); // 0x0e0000
+
+    Result ret = 0;
+    if(R_FAILED(ret = svcSendSyncRequest(hidHandle)))return ret;
+
+    memcpy(result, cmdbuf+2, 20);
+
+    return cmdbuf[1];
+}
+
+float s_gyro_coeff{};
+angularRate gyro_calibration{};
+#endif
+
 #ifdef _3DS
 // debug printing
 //#include <cstdio>
@@ -180,6 +225,9 @@ void UpdateGyroAccel()
 	{
 		hidAccelRead(&g_accel_status);
 		hidGyroRead(&g_gyro_status);
+		g_gyro_status.x += gyro_calibration.x;
+		g_gyro_status.y += gyro_calibration.y;
+		g_gyro_status.z += gyro_calibration.z;
 	}
 	else
 	{
@@ -196,23 +244,23 @@ void UpdateGyroAccel()
 			float gyro_x = 0, gyro_y = 0, gyro_z = 0;
 			for(size_t i = 0; i < FILTER_SIZE; ++i)
 			{
-//TODO: why are we scaling this? should we use float or decimal?
-				float scale = 0.1f / FILTER_SIZE;
-				accel_x += accel[i].x * scale;
-				accel_y += accel[i].y * scale;
-				accel_z += accel[i].z * scale;
-				gyro_x += gyro[i].x * scale;
-				gyro_y += gyro[i].y * scale;
-				gyro_z += gyro[i].z * scale;
+// TODO: why are we scaling this? should we use float or decimal?
+				float scale = 1.0f / FILTER_SIZE;
+				accel_x += accel[i].x;
+				accel_y += accel[i].y;
+				accel_z += accel[i].z;
+				gyro_x += gyro[i].x + gyro_calibration.x;
+				gyro_y += gyro[i].y + gyro_calibration.y;
+				gyro_z += gyro[i].z + gyro_calibration.z;
 			}
-			g_accel_status.x = accel_x;
-			g_accel_status.y = accel_y;
-			g_accel_status.z = accel_z;
-			g_gyro_status.x = gyro_x;
-			g_gyro_status.y = gyro_y;
-			g_gyro_status.z = gyro_z;
+			g_accel_status.x = accel_x / FILTER_SIZE;
+			g_accel_status.y = accel_y / FILTER_SIZE;
+			g_accel_status.z = accel_z / FILTER_SIZE;
+			g_gyro_status.x = gyro_x / FILTER_SIZE;
+			g_gyro_status.y = gyro_y / FILTER_SIZE;
+			g_gyro_status.z = gyro_z / FILTER_SIZE;
 
-			//debug printing
+			// debug printing
 			//printf("\x1b[0;0HAccelerometer:\nx = %9.2f\ny = %9.2f\nz = %9.2f", accel_x, accel_y, accel_z);
 			//printf("\x1b[5;0H    Gyroscope:\nx = %9.2f\nz = %9.2f\ny = %9.2f", gyro_x, gyro_z, gyro_y);
 
@@ -323,7 +371,19 @@ bool Init(int argc, char* argv[])
 	ptmuInit();                    // Lid
 // TODO: these should only be enabled when used?
 	HIDUSER_EnableAccelerometer(); // Accelerometer
-	HIDUSER_EnableGyroscope();     //Gyroscope
+
+	// Gyroscope
+	HIDUSER_EnableGyroscope();
+	HIDUSER_GetGyroscopeRawToDpsCoefficient_(&s_gyro_coeff);
+	s8 Calibrate[20];
+	//HIDUSER_GetGyroscopeLowCalibrateParam((u8*)Calibrate);
+	GetAnalogStickCalibrateParam((u8*)Calibrate);
+	gyro_calibration = {
+		- Calibrate[0] - ((Calibrate[1] + Calibrate[2]) / 2),
+		- Calibrate[3] - ((Calibrate[4] + Calibrate[5]) / 2),
+		- Calibrate[6] - ((Calibrate[7] + Calibrate[8]) / 2)
+	};
+
 	consoleInit(GFX_TOP, nullptr);
 	gfxSetDoubleBuffering(GFX_BOTTOM, false);
 
@@ -349,6 +409,15 @@ bool Init(int argc, char* argv[])
 #endif
 
 	D2K::InitLogging(argc, argv);
+#if defined(_3DS)
+#if false
+	for(int i = 0; i < 15; i++)
+	{
+		printf("%i: %i\n", i, Calibrate[i]);
+	}
+				printf("%i.%i.%i\n", gyro_calibration.x, gyro_calibration.y, gyro_calibration.z);
+#endif
+#endif
 
 	// If we're running in emulator mode, let the user know
 	if(EMULATOR) 

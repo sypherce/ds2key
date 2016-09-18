@@ -5,11 +5,6 @@
 #include "edit.h"
 #include "gui.h"
 
-// example1.c
-//
-// This small program shows how to print a rotated string with the 
-// FreeType 2 library.
-
 #include <cstdio>
 #include <cstring>
 #include <math.h>
@@ -25,7 +20,7 @@ FT_Face face{};
 FT_Error Init()
 {
 	static bool initialized = false;
-	//If already initialized, return
+	// If already initialized, return
 	if(initialized)
 		return 0;
 	
@@ -55,7 +50,7 @@ FT_Error Init()
 
 void DeInit()
 {
-	//If never initialized, return
+	// If never initialized, return
 	if(TTF::Init())
 		return;
 
@@ -133,7 +128,7 @@ FT_Error DrawString(uint8_t screen, uint16_t x, uint16_t y, uint8_t font_size, u
 		if(error)
 		{
 			LOG(DEBUG) << "FT_Load_Char ERROR#" << (int)error;
-			continue;     // ignore errors
+			continue; // ignore errors
 		}
 
 		// now, draw to our target surface(convert position)

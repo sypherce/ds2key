@@ -44,3 +44,13 @@
 *.lst
 client.nds
 DS2Key.nds
+/client/ds2key/dstwo_icon.bmp
+/client/ds2key/background.png
+/server/htpc.lnk
+/client/background.png
+/client/background_.png
+/client/NO$GBA.INP
+/client/NO$GBA.FNT
+/SDCARD/ds2key/font_small.ttf
+/SDCARD/ds2key/font_large.ttf
+/SDCARD/ds2key/background.png
