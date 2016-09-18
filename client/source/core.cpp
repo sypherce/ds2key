@@ -298,7 +298,7 @@ void UpdateGyroAccel()
 
 uint32_t g_keys_held, g_keys_down, g_keys_up{};
 
-// /updates input values
+// updates input values
 void UpdateInputs()
 {
 	if(input_changed)
@@ -321,9 +321,9 @@ void UpdateInputs()
 		g_keys_down |= LidDown();
 		g_keys_up   |= LidUp();
 #elif defined(_NDS)
-		guitarGripScanKeys();
 		if(guitarGripIsInserted())
 		{
+			guitarGripScanKeys();
 			g_keys_held |= (guitarGripKeysHeld() << 24) >> 13;
 			g_keys_down |= (guitarGripKeysDown() << 24) >> 13;
 			g_keys_up   |= (guitarGripKeysUp()   << 24) >> 13;
