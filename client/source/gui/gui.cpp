@@ -7,6 +7,7 @@
 #include "common/easylogging++Wrapper.h"
 #include "gui.h"
 #include "png_format.h"
+#include "ttf_format.h"
 
 namespace D2K {namespace GUI {
 
@@ -23,7 +24,7 @@ const uint8_t IMAGE_BYTES = 3;
 uint16_t* g_screen[2];
 bool Update = false;
 uint16_t Color[colorMax];
-uint8_t alpha_setting = 70;
+uint8_t alpha_setting = 178;
 void VoidFunction() { }
 
 std::string background_filename{};
@@ -35,9 +36,18 @@ std::string GetBackground()
 {
 	return background_filename;
 }
+std::string font_filename{};
+void SetFont(const std::string& text)
+{
+	font_filename = text;
+}
+std::string GetFont()
+{
+	return font_filename;
+}
 
 // orientation false = normal, true = rotated -90degrees
-uint32_t GetPixelPosition(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint8_t byte_depth, bool orientation)
+inline uint32_t GetPixelPosition(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint8_t byte_depth, bool orientation)
 {
 	if(x >= w)
 	{
@@ -61,7 +71,7 @@ uint32_t GetPixelPosition(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint8_
 	}
 }
 
-uint8_t* GetScreenPointer(uint8_t screen, uint16_t x, uint16_t y)
+inline uint8_t* GetScreenPointer(uint8_t screen, uint16_t x, uint16_t y)
 {
 	uint8_t* screen_pointer = (uint8_t*)GUI::g_screen[screen];
 #if defined(_NDS)
@@ -72,13 +82,13 @@ uint8_t* GetScreenPointer(uint8_t screen, uint16_t x, uint16_t y)
 	return screen_pointer;
 }
 
-void RGB15TORGB24(uint16_t color, uint8_t &red, uint8_t &green, uint8_t &blue)
+inline void RGB15TORGB24(uint16_t color, uint8_t &red, uint8_t &green, uint8_t &blue)
 {
 	red   =  (color & 0x001f       ) * 8.225806451612903;
 	green = ((color & 0x3E0)  >> 5 ) * 8.225806451612903;
 	blue  = ((color & 0x7C00) >> 10) * 8.225806451612903;
 }
-uint16_t RGB24TORGB15(uint8_t red, uint8_t green, uint8_t blue)
+inline uint16_t RGB24TORGB15(uint8_t red, uint8_t green, uint8_t blue)
 {
 	return ARGB16(1, (red >> 3), (green >> 3), (blue >> 3));
 }
@@ -279,71 +289,131 @@ void GetPixel(uint8_t screen, uint16_t x, uint16_t y, uint8_t& red, uint8_t& gre
 #endif
 }
 
+
+struct LookupLevel
+{
+	uint8_t Values[256];
+};
+
+struct LookupTable
+{
+	LookupLevel Levels[256];
+} AlphaTable;
+
+__inline uint8_t clipByte(int value)
+{
+	value = (0 & (-(int)(value < 0))) | (value & (-(int)!(value < 0)));
+	value = (255 & (-(int)(value > 255))) | (value & (-(int)!(value > 255)));
+	return value;
+}
+
+int InitTable()
+{
+	static bool initialized = false;
+	if(initialized)
+		return true;
+	initialized = true;
+
+	float fValue, fAlpha;
+	int iValue, iAlpha;
+	for (iAlpha = 0; iAlpha < 256; iAlpha++)
+	{
+		fAlpha = ((float)iAlpha) / 255;
+		for (iValue = 0; iValue < 256; iValue++)
+		{
+			fValue = ((float)iValue) / 255;
+			AlphaTable.Levels[iAlpha].Values[iValue] = clipByte((int)((fValue * fAlpha) * 255));
+		}
+	}
+	return true;
+}
+
+LookupLevel* LookupPointer(int alpha)
+{
+	return &AlphaTable.Levels[clipByte(alpha)];
+}
+
+
 uint8_t AlphaBlend(uint8_t color_1, uint8_t color_2, uint8_t alpha)
 {
+#if 1
+	InitTable();
+
+	uint8_t NewColor;
+	LookupLevel* SourceTable = LookupPointer(255 - alpha);
+	LookupLevel* DestTable = LookupPointer(alpha);
+
+	// The clipByte's aren't really necessary, but they're there to remove the
+	// chance for an occasional overflow. They only eat a couple clock cycles anyway.
+	NewColor = clipByte(SourceTable->Values[color_2] +
+	                      DestTable->Values[color_1]);
+	return NewColor;
+#else
 	return (alpha  * color_1 + (100 - alpha) * color_2) / 100;
+#endif
 }
 void SetPixel(uint8_t screen, uint16_t x, uint16_t y, uint16_t color)
 {
-	if((x < MAX_X) // if we're drawing on screen
-	&& (y < MAX_Y))
-	{
+	if((x > MAX_X) // if we're not drawing on screen
+	|| (y > MAX_Y))
+		return;
 #if defined(_NDS)
-		uint16_t* screen_pointer = (uint16_t*)GetScreenPointer(screen, x, y);
+	uint16_t* screen_pointer = (uint16_t*)GetScreenPointer(screen, x, y);
 
-		screen_pointer[0] = color;
+	screen_pointer[0] = color;
 #elif defined(_3DS)
-		uint8_t blue, green, red{};
-		RGB15TORGB24(color, red, green, blue);
+	uint8_t blue, green, red{};
+	RGB15TORGB24(color, red, green, blue);
 		
-		SetPixel(screen, x, y, red, green, blue);
+	SetPixel(screen, x, y, red, green, blue);
 #endif
-	}
 }
 void SetPixel(uint8_t screen, uint16_t x, uint16_t y, uint8_t red, uint8_t green, uint8_t blue)
 {
-	if((x < MAX_X) // if we're drawing on screen
-	&& (y < MAX_Y))
-	{
+	if((x > MAX_X) // if we're not drawing on screen
+	|| (y > MAX_Y))
+		return;
 #if defined(_3DS)
-		uint8_t* screen_pointer = GetScreenPointer(screen, x, y);
+	uint8_t* screen_pointer = GetScreenPointer(screen, x, y);
 
-		screen_pointer[0] = blue;
-		screen_pointer[1] = green;
-		screen_pointer[2] = red;
+	screen_pointer[0] = blue;
+	screen_pointer[1] = green;
+	screen_pointer[2] = red;
 #elif defined(_NDS)
-		SetPixel(screen, x, y, RGB24TORGB15(red, green, blue));
+	SetPixel(screen, x, y, RGB24TORGB15(red, green, blue));
 #endif
-	}
 }
 // TODO: add errors or fatals if the boundary checks fail
 void SetPixel(uint8_t screen, uint16_t x, uint16_t y, uint16_t color, uint8_t alpha)
 {
-	if((x < MAX_X) // if we're drawing on screen
-	&& (y < MAX_Y))
-	{
-		if(alpha >= 100 || background_image == nullptr)
-			SetPixel(screen, x, y, color);
-		else if(alpha == 0)
-			return;
+	if((x > MAX_X) // if we're not drawing on screen
+	|| (y > MAX_Y))
+		return;
 
-		uint8_t color_blue, color_green, color_red{};
-		RGB15TORGB24(color,
-		             color_red,
-		             color_green,
-		             color_blue);
+	//if(alpha >= 100)// || background_image == nullptr)
+	//{
+	//	SetPixel(screen, x, y, color);
+	//	return;
+	//}
+	else if(alpha == 0)
+		return;
 
-		uint8_t screen_pointer_blue, screen_pointer_green, screen_pointer_red{};
-		GetPixel(screen, x, y,
-		         screen_pointer_red,
-		         screen_pointer_green,
-		         screen_pointer_blue);
+	uint8_t color_blue, color_green, color_red{};
+	RGB15TORGB24(color,
+		     color_red,
+		     color_green,
+		     color_blue);
 
-		SetPixel(screen, x, y,
-		         AlphaBlend(color_red,   screen_pointer_red  , alpha),
-		         AlphaBlend(color_green, screen_pointer_green, alpha),
-		         AlphaBlend(color_blue,  screen_pointer_blue , alpha));
-	}
+	uint8_t screen_pointer_blue, screen_pointer_green, screen_pointer_red{};
+	GetPixel(screen, x, y,
+		 screen_pointer_red,
+		 screen_pointer_green,
+		 screen_pointer_blue);
+
+	SetPixel(screen, x, y,
+		 AlphaBlend(color_red,   screen_pointer_red  , alpha),
+		 AlphaBlend(color_green, screen_pointer_green, alpha),
+		 AlphaBlend(color_blue,  screen_pointer_blue , alpha));
 }
 
 void ClearScreen(uint8_t screen, uint16_t color)
@@ -353,9 +423,10 @@ void ClearScreen(uint8_t screen, uint16_t color)
 // TODO: add errors or fatals if the boundary checks fail
 void DrawFastHorizontleLine(uint8_t screen, uint16_t x, uint16_t y, uint16_t w, uint16_t color)
 {
-	if(x >= MAX_X
-	|| y >= MAX_Y)
+	if((x > MAX_X) // if we're not drawing on screen
+	|| (y > MAX_Y))
 		return;
+
 	if(x + w >= MAX_X)
 	{
 		if(MAX_X - x > 0)
@@ -953,10 +1024,14 @@ void DrawLetter(uint8_t screen, char letter, uint16_t x, uint16_t y, uint16_t c)
 }
 void DrawString(uint8_t screen, std::string text, uint16_t x, uint16_t y, uint16_t c)
 {
+#if defined(_3DS)
+	TTF::DrawString(screen, x, y, 7, c, text.c_str());
+#elif defined(_NDS)
 	for(unsigned int i = 0; i < text.length(); i++)
 	{
 		DrawLetter(screen, text.at(i), x + (i * 6), y, c);
 	}
+#endif
 }
 
 }} // namespace D2K::GUI

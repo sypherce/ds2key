@@ -34,12 +34,14 @@ std::string Object::GetText()
 }
 void Object::Clear(uint16_t color)
 {
-	GUI::DrawBackgroundImage(m_screen, m_rect, color);
+	if(!GUI::IsUpdated())
+		GUI::DrawBackgroundImage(m_screen, m_rect, color);
 	GUI::DrawFilledRect(m_screen, m_rect, color);
 }
 void Object::Clear()
 {
-	GUI::DrawBackgroundImage(m_screen, m_rect, Color[COLOR_BACKGROUND]);
+	if(!GUI::IsUpdated())
+		GUI::DrawBackgroundImage(m_screen, m_rect, Color[COLOR_BACKGROUND]);
 }
 void Object::SetVisible(bool visible)
 {
@@ -53,7 +55,7 @@ void Object::SetStatus(uint8_t value)
 	{
 		m_status = value;
 		SetUpdate(true);
-		Draw(); // I think this line needs removed
+		//Draw(); // I think this line needs removed
 	}
 }
 uint8_t Object::GetStatus()

@@ -9,7 +9,7 @@ void InitLogging(int argc, char* argv[])
 	const char* LOGGING_CONFIG = "\
 * GLOBAL:\n \
 FORMAT=\"[%datetime{%H:%m:%s}] %msg\"\n \
-FILENAME=\"./ds2key.log\"\n \
+FILENAME=\"/ds2key/ds2key.log\"\n \
 ENABLED=true\n \
 TO_FILE=true\n \
 TO_STANDARD_OUTPUT=true\n \
