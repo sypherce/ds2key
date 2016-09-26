@@ -93,15 +93,15 @@ FT_Error DrawString(uint8_t screen, uint16_t x, uint16_t y, uint8_t font_size, u
 	int num_chars = strlen(text);
 
 	// untransformed origin
-	FT_Vector pen = {    
+	FT_Vector pen = {
 		// the pen position in 26.6 cartesian space coordinates;
 		// start at(300,200)relative to the upper left corner
-		pen.x = x * 64,
+		pen.x =  x * 64,
 		pen.y = -y * 64
 	};
 
 	// Initialize fonts
-	error = Init();
+	error = TTF::Init();
 	if(error)
 	{
 		LOG(DEBUG) << "TTF::Init() ERROR#" << (int)error;
