@@ -25,9 +25,9 @@ Rect::Rect(uint16_t x, uint16_t y, uint16_t w, uint16_t h)
 {
 	int x_2 = x + w;
 	int y_2 = y + h;
-	if(x_2 >= SCREEN_WIDTH - 1)  // If x_2 is offscreen
+	if(x_2 > SCREEN_WIDTH - 1)  // If x_2 is offscreen
 		w = SCREEN_WIDTH - 1 - x;
-	if(y_2 >= SCREEN_HEIGHT - 1) // If y_2 is offscreen
+	if(y_2 > SCREEN_HEIGHT - 1) // If y_2 is offscreen
 		h = SCREEN_HEIGHT - 1 - y;
 	m_x = x;
 	m_y = y;
@@ -56,8 +56,8 @@ uint16_t Rect::GetW()
 }
 void Rect::SetW(uint16_t w)
 {
-	int tempW = m_w + w;
-	if(tempW >= SCREEN_WIDTH - 1) // If tempW is offscreen
+	int tempW = m_x + w;
+	if(tempW > SCREEN_WIDTH - 1) // If tempW is offscreen
 		m_w = SCREEN_WIDTH - 1 - m_x;
 	else
 		m_w = w;
@@ -69,7 +69,7 @@ uint16_t Rect::GetH()
 void Rect::SetH(uint16_t h)
 {
 	int tempH = m_y + h;
-	if(tempH >= SCREEN_HEIGHT - 1) // If tempH is offscreen
+	if(tempH > SCREEN_HEIGHT - 1) // If tempH is offscreen
 		m_h = SCREEN_HEIGHT - 1 - m_y;
 	else
 		m_h = h;
