@@ -533,6 +533,7 @@ int Loop()
 	// Flush and swap framebuffers
 	gfxFlushBuffers();
 	gfxSwapBuffers();
+	D2K::GUI::g_screen[0] = (uint16_t*)gfxGetFramebuffer(GFX_BOTTOM, GFX_LEFT, nullptr, nullptr);
 #endif
 
 	input_changed = true;
