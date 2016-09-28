@@ -7,6 +7,7 @@
 #include "turboWindow.h"
 #include "configWindow.h"
 #include "commandWindow.h"
+#include "connectionWindow.h"
 
 // controls
 #include "gui/gui.h"
@@ -34,6 +35,7 @@ extern void ButtonTurboFunction();
 extern void ButtonConfigKeyboardWindowFunction();
 extern void ButtonConfigGamepadWindowFunction();
 extern void ButtonIPFunction();
+extern void ButtonConnectionFunction();
 extern void ButtonCommandsFunction();
 
 WindowClass g_window;
@@ -53,6 +55,7 @@ Button* button_turbo;
 Button* button_config_keyboard;
 Button* button_config_gamepad;
 Button* button_ip;
+Button* button_connection;
 Button* button_commands;
 
 WindowClass::WindowClass() : Window()
@@ -76,6 +79,7 @@ WindowClass::WindowClass() : Window()
 
 	AppendObject(label_title           = new Label(m_screen, Rect(24,0+3,128,10), D2K::VERSION_STRING));
 	AppendObject(label_clock           = new Label(m_screen, Rect(160,0+3,70,10), D2K::GetTime()));
+	AppendObject(button_connection     = new Button(m_screen, Rect(0,24+3,10,10), "Connection", &ButtonConnectionFunction));
 	AppendObject(label_ip              = new Label(m_screen, Rect(64,24+3,10,10), "IP:"));
 	AppendObject(label_port            = new Label(m_screen, Rect(64,48+3,10,10), "Port:"));
 	AppendObject(label_profile         = new Label(m_screen, Rect(64,72+3,10,10), "Profile:"));
@@ -100,6 +104,7 @@ bool WindowClass::Update()
 	static std::string profile{};
 	static int update_counter = 0;
 
+//TODO: this delay's for the clock?
 	const int UPDATE_COUNTER_MAX = 30;
 
 	ForceBacklightsOn(false); // Let backlights timeout
@@ -293,6 +298,35 @@ void ButtonIPFunction()
 {
 	UDP::ServerLookup();
 	edit_ip->SetText(UDP::GetRemoteIPString());
+}
+void ButtonConnectionFunction()
+{
+	Main::g_window.SetVisible(false);      // Hide main window
+	button_connection->SetVisible(true);   // Keep [Connection] button visible
+	Connection::g_window.SetVisible(true); // Show connection window
+	ForceBacklightsOn(true);               // Lock backlights on
+
+	while(D2K::Loop())
+	{
+		Connection::g_window.Update(); // Update and draw command window
+		button_commands->Draw();       // Draw [Commands] button
+
+		// If (A) is pressed
+		if(g_keys_down&KEY_A)
+			D2K::GUI::Main::EditIPFunction();
+		else if(g_keys_down&KEY_B)
+			D2K::GUI::Main::EditPortFunction();
+		else if(g_keys_down&KEY_START)
+			break;
+		
+		// If pressed again, break
+		if(Main::g_window.CheckClick(button_commands))
+			break;
+	}
+
+	Connection::g_window.SetVisible(false);
+	Main::g_window.SetVisible(true);       // Show main window
+
 }
 void ButtonCommandsFunction()
 {

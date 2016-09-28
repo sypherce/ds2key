@@ -19,6 +19,7 @@
     <ClCompile Include="source\gui\edit.cpp" />
     <ClCompile Include="source\gui\gui.cpp" />
     <ClCompile Include="source\gui\label.cpp" />
+    <ClCompile Include="source\gui\letterButton.cpp" />
     <ClCompile Include="source\gui\object.cpp" />
     <ClCompile Include="source\gui\png_format.cpp" />
     <ClCompile Include="source\gui\rect.cpp" />
@@ -27,6 +28,7 @@
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\windows\commandWindow.cpp" />
     <ClCompile Include="source\windows\configWindow.cpp" />
+    <ClCompile Include="source\windows\connectionWindow.cpp" />
     <ClCompile Include="source\windows\gamepadWindow.cpp" />
     <ClCompile Include="source\windows\ipWindow.cpp" />
     <ClCompile Include="source\windows\keyboardWindow.cpp" />
@@ -54,6 +56,7 @@
     <ClInclude Include="source\gui\edit.h" />
     <ClInclude Include="source\gui\gui.h" />
     <ClInclude Include="source\gui\label.h" />
+    <ClInclude Include="source\gui\letterButton.h" />
     <ClInclude Include="source\gui\object.h" />
     <ClInclude Include="source\gui\png_format.h" />
     <ClInclude Include="source\gui\rect.h" />
@@ -61,6 +64,7 @@
     <ClInclude Include="source\gui\window.h" />
     <ClInclude Include="source\windows\commandWindow.h" />
     <ClInclude Include="source\windows\configWindow.h" />
+    <ClInclude Include="source\windows\connectionWindow.h" />
     <ClInclude Include="source\windows\gamepadWindow.h" />
     <ClInclude Include="source\windows\ipWindow.h" />
     <ClInclude Include="source\windows\keyboardWindow.h" />
