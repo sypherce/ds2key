@@ -7,7 +7,9 @@
 
 namespace D2K {namespace GUI{
 
-uint32_t LoadPngImage(const std::string filename, int &width, int &height, unsigned char **output)
+//TODO: merge GUI::LoadPngImage, GUI::LoadButtonImage, GUI::DrawButtonImage, GUI::LoadBackgroundImage, GUI::DrawBackgroundImage
+//TODO: into a class
+uint32_t LoadPngImage(const std::string filename, int &width, int &height, bool alpha, unsigned char **output)
 {
 	// Open png file
 	FILE *file = fopen(filename.c_str(), "rb");
@@ -73,7 +75,7 @@ uint32_t LoadPngImage(const std::string filename, int &width, int &height, unsig
 	// PNG_TRANSFORM_PACKING    : Expand 1, 2 and 4-bit samples to bytes
 	// PNG_TRANSFORM_EXPAND     : Expand paletted images to RGB, grayscale to 8-bit images and tRNS chunks to alpha channels
 	// PNG_TRANSFORM_STRIP_ALPHA: Discard the alpha channel
-	png_read_png(png_ptr, info_ptr, PNG_TRANSFORM_STRIP_16 | PNG_TRANSFORM_PACKING | PNG_TRANSFORM_EXPAND | PNG_TRANSFORM_STRIP_ALPHA, nullptr);
+	png_read_png(png_ptr, info_ptr, PNG_TRANSFORM_STRIP_16 | PNG_TRANSFORM_PACKING | PNG_TRANSFORM_EXPAND | (alpha ? 0 : PNG_TRANSFORM_STRIP_ALPHA), nullptr);
 
 	// Read some variables, width, height, depth...
 	int bit_depth, color_type, interlace_type;

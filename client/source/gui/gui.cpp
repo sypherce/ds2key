@@ -1,3 +1,4 @@
+#if defined(_NDS)
 #include <nds/arm9/video.h> // SCREEN_WIDTH
 #include <nds/dma.h>        // dmaFillHalfWords
 #endif
@@ -20,6 +21,7 @@ const uint16_t MAX_Y = _3DS_SCREEN_HEIGHT;
 const uint8_t SCREEN_BYTES = 3;
 #endif
 const uint8_t IMAGE_BYTES = 3;
+const uint8_t ALPHA_IMAGE_BYTES = 4;
 uint16_t* g_screen[2];
 bool Update = false;
 uint16_t Color[colorMax];
@@ -92,7 +94,7 @@ inline uint16_t RGB24TORGB15(uint8_t red, uint8_t green, uint8_t blue)
 	return ARGB16(1, (red >> 3), (green >> 3), (blue >> 3));
 }
 
-void resize_crop(const char* input_image, char* output_image, uint16_t input_width, uint16_t input_height, uint16_t output_width, uint16_t output_height)
+void resize_crop(const char* input_image, char* output_image, uint16_t input_width, uint16_t input_height, uint16_t output_width, uint16_t output_height, uint8_t image_bytes)
 {
 	int crop_x = 0;
 	int crop_y = 0;
@@ -109,11 +111,13 @@ void resize_crop(const char* input_image, char* output_image, uint16_t input_wid
 	{
 		for(int y = 0; y < output_height; y++)
 		{
-			int output_memory_position = GetPixelPosition(x, y, output_width, output_height, IMAGE_BYTES, true);
-			int input_memory_position = GetPixelPosition(x + crop_x, y + crop_y, input_width, input_height, IMAGE_BYTES, false);
-			output_image[output_memory_position + 0] = input_image[input_memory_position + 0];
-			output_image[output_memory_position + 1] = input_image[input_memory_position + 1];
-			output_image[output_memory_position + 2] = input_image[input_memory_position + 2];
+			int output_memory_position = GetPixelPosition(x, y, output_width, output_height, image_bytes, true);
+			int input_memory_position = GetPixelPosition(x + crop_x, y + crop_y, input_width, input_height, image_bytes, false);
+
+			for(uint8_t i = 0; i < image_bytes; i++)
+			{
+				output_image[output_memory_position + i] = input_image[input_memory_position + i];
+			}
 		}
 	}
 }
@@ -127,7 +131,7 @@ float blerp(float c00, float c10, float c01, float c11, float tx, float ty)
 {
     return lerp(lerp(c00, c10, tx), lerp(c01, c11, tx), ty);
 }
-void resize_bilinear(const char* input_image, char* output_image, uint16_t input_width, uint16_t input_height, uint16_t output_width, uint16_t output_height) 
+void resize_bilinear(const char* input_image, char* output_image, uint16_t input_width, uint16_t input_height, uint16_t output_width, uint16_t output_height, uint8_t image_bytes) 
 {
 	int x, y;
 	for(x= 0, y=0; y < output_height; x++)
@@ -140,12 +144,12 @@ void resize_bilinear(const char* input_image, char* output_image, uint16_t input
 		float gy = y / (float)(output_height) * (input_height - 1);
 		int gxi = (int)gx;
 		int gyi = (int)gy;
-		const char* c00 = &input_image[GetPixelPosition(gxi + 0, gyi + 0, input_width, input_height, IMAGE_BYTES, false)];
-		const char* c10 = &input_image[GetPixelPosition(gxi + 1, gyi + 0, input_width, input_height, IMAGE_BYTES, false)];
-		const char* c01 = &input_image[GetPixelPosition(gxi + 0, gyi + 1, input_width, input_height, IMAGE_BYTES, false)];
-		const char* c11 = &input_image[GetPixelPosition(gxi + 1, gyi + 1, input_width, input_height, IMAGE_BYTES, false)];
-		char* output_memory_position = &output_image[GetPixelPosition(x, y, output_width, output_height, IMAGE_BYTES, true)];
-		for(uint8_t i = 0; i < 3; i++)
+		const char* c00 = &input_image[GetPixelPosition(gxi + 0, gyi + 0, input_width, input_height, image_bytes, false)];
+		const char* c10 = &input_image[GetPixelPosition(gxi + 1, gyi + 0, input_width, input_height, image_bytes, false)];
+		const char* c01 = &input_image[GetPixelPosition(gxi + 0, gyi + 1, input_width, input_height, image_bytes, false)];
+		const char* c11 = &input_image[GetPixelPosition(gxi + 1, gyi + 1, input_width, input_height, image_bytes, false)];
+		char* output_memory_position = &output_image[GetPixelPosition(x, y, output_width, output_height, image_bytes, true)];
+		for(uint8_t i = 0; i < image_bytes; i++)
 		{
 			output_memory_position[i] = (uint8_t)blerp(c00[i], c10[i], c01[i], c11[i], gx - gxi, gy -gyi);
 		}
@@ -163,21 +167,22 @@ bool LoadBackgroundImage()
 	const int background_image_size = background_width * background_height * IMAGE_BYTES;
 	int png_width, png_height;
 	char* png_image{};
-	if(LoadPngImage(GetBackground(), png_width, png_height, (unsigned char**)&png_image))
+	if(LoadPngImage(GetBackground(), png_width, png_height, false, (unsigned char**)&png_image))
 	{
-		if(background_image == nullptr)
+		if(background_image != nullptr)
 		{
-			background_image = (char*)malloc(background_image_size);
+			free(background_image);
 		}
+		background_image = (char*)malloc(background_image_size);
 		
 		if(png_width  == background_width
 		&& png_height == background_height)
 		{
-			resize_crop((const char*)png_image, background_image, png_width, png_height, background_width, background_height);
+			resize_crop((const char*)png_image, background_image, png_width, png_height, background_width, background_height, IMAGE_BYTES);
 		}
 		else
 		{
-			resize_bilinear((const char*)png_image, background_image, png_width, png_height, background_width, background_height);
+			resize_bilinear((const char*)png_image, background_image, png_width, png_height, background_width, background_height, IMAGE_BYTES);
 		}
 
 		free(png_image);
@@ -214,7 +219,7 @@ bool DrawBackgroundImage(uint8_t screen, GUI::Rect rect, uint8_t color)
 		{
 			for(int y = rect.GetY(); y <= rect.GetY2(); y++)
 			{
-				int background_memory_position = (x * MAX_Y + (MAX_Y - 1 - y)) * 3;
+				int background_memory_position = GetPixelPosition(x, y, MAX_X, MAX_Y, IMAGE_BYTES, true);
 
 				SetPixel(screen, x, y, background_image[background_memory_position + 0], background_image[background_memory_position + 1], background_image[background_memory_position + 2]);
 			}
@@ -223,39 +228,87 @@ bool DrawBackgroundImage(uint8_t screen, GUI::Rect rect, uint8_t color)
 	}
 	else
 	{
-		for(int x = rect.GetX(); x <= rect.GetX2(); x++)
-		{
-			for(int y = rect.GetY(); y <= rect.GetY2(); y++)
-			{
-				SetPixel(screen, x, y, color);
-			}
-		}
+// TODO: Check when background fails to load
+		DrawFilledRect(screen, rect, color);
 		return false;
 	}
 }
 bool DrawBackgroundImage(uint8_t screen, uint8_t color)
 {
-	if(background_image == nullptr)
-		LoadBackgroundImage();
+	GUI::Rect rect = { 0, 0, MAX_X, MAX_Y };
+	return DrawBackgroundImage(screen, rect, color);
+}
 
-	if(background_image)
+char* button_image{};
+const int button_max_h = 21;
+const int button_max_w = 21;
+bool LoadButtonImage()
+{
+	int png_width, png_height;
+	char* png_image{};
+	if(LoadPngImage("/ds2key/button.png", png_width, png_height, true, (unsigned char**)&png_image))
 	{
-		GUI::Rect rect = { 0, 0, MAX_X-1, MAX_Y-1 };
-		DrawBackgroundImage(screen, rect, color);
-		return true;
+		int target_height = button_max_h;
+		int target_width  = button_max_w;
+		if(png_width < target_width)
+			target_width = png_width;
+		if(png_height < target_height)
+			target_height = png_height;
+
+		int target_image_size = png_width * png_height * (ALPHA_IMAGE_BYTES);
+
+		if(button_image == nullptr)
+		{
+			button_image = png_image;
+			return true;
+		}
 	}
 	else
 	{
-// TODO: Fix when background fails to load
-		for(int x = 0; x < MAX_X; x++)
-		{
-			for(int y = 0; y < MAX_Y; y++)
-			{
-				SetPixel(screen, x, y, color);
-			}
-		}
-		return false;
+		LOG(INFO) << "Failed to open:" << "/ds2key/button.png" << ".";
 	}
+	return false;
+}
+bool DrawButtonImage(uint8_t screen, char* letter, GUI::Rect rect)
+{
+	/*if(rect.GetH() > button_max_h)
+		rect.SetH(button_max_h);
+	if(rect.GetW() > button_max_w)
+		rect.SetW(button_max_w);*/
+
+	if(button_image == nullptr)
+	{
+		if(LoadButtonImage() == false)
+		{
+			return false;
+		}
+	}
+
+	for(int x = rect.GetX(); x <= rect.GetX2(); x++)
+	{
+		for(int y = rect.GetY(); y <= rect.GetY2(); y++)
+		{
+			if((x - rect.GetX()) >= button_max_w
+			|| (y - rect.GetY()) >= button_max_h)
+				continue;
+
+			int button_memory_position = GetPixelPosition(x - rect.GetX(), y - rect.GetY(), button_max_w, button_max_h, ALPHA_IMAGE_BYTES, true);
+
+			SetPixel(screen, x, y,
+			         RGB24TORGB15(button_image[button_memory_position + 0],
+			                      button_image[button_memory_position + 1],
+			                      button_image[button_memory_position + 2]),
+			         button_image[button_memory_position + 3]);
+		}
+	}
+	DrawString(screen, letter, TTF::FONT_SIZE_BUTTON_IMAGE, TTF::FONT_BOLD, rect.GetX()+5, rect.GetY()+7, Color[COLOR_BUTTON_TEXT]);
+
+	return true;
+}
+bool DrawButtonImage(uint8_t screen, char* letter, uint16_t x, uint16_t y)
+{
+	GUI::Rect rect = { x, y, button_max_w, button_max_h };
+	return DrawButtonImage(screen, letter, rect);
 }
 
 void SetUpdate(bool value)
@@ -387,11 +440,11 @@ void SetPixel(uint8_t screen, uint16_t x, uint16_t y, uint16_t color, uint8_t al
 	|| (y >= MAX_Y))
 		return;
 
-	//if(alpha >= 100)// || background_image == nullptr)
-	//{
-	//	SetPixel(screen, x, y, color);
-	//	return;
-	//}
+	if(alpha == 255 || background_image == nullptr)
+	{
+		SetPixel(screen, x, y, color);
+		return;
+	}
 	else if(alpha == 0)
 		return;
 
