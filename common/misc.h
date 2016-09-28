@@ -22,4 +22,12 @@ uint8_t string_to_uint8_t(std::string str);
 // return: converts std::string into uint16_t
 uint16_t string_to_uint16_t(std::string str);
 
+// We'll have c++17 someday!
+// TODO: comment
+template <class T>
+constexpr const T& clamp(const T& v, const T& lo, const T& hi)
+{
+	return std::max(lo, std::min(v, hi ));
+}
+
 } // namespace D2K

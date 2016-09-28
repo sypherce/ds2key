@@ -1,5 +1,6 @@
 #include "misc.h"
-#include <sstream> // std::stringstream
+#include <sstream>   // std::stringstream
+#include <algorithm> // std::min, std::max
 
 namespace D2K {
 
@@ -33,29 +34,17 @@ long stol(std::string str)
 	std::stringstream stream(str);
 	long return_value;
 
-	return !(stream >> return_value) ? 0 : return_value;
+	return !(stream >> return_value) ? 0L : return_value;
 }
 
 uint8_t string_to_uint8_t(std::string str)
 {
-	long return_value = D2K::stol(str);
-	// Clamp to uint8_t
-	if(return_value > 255
-	|| return_value < 0)
-		return_value = 0;
-
-	return (uint8_t)return_value;
+	return (uint8_t)D2K::clamp(D2K::stol(str), 0L, (long)UINT8_MAX);
 }
 
 uint16_t string_to_uint16_t(std::string str)
 {
-	long return_value = D2K::stol(str);
-	// Clamp to uint16_t
-	if(return_value > 65535
-	|| return_value < 0)
-		return_value = 0;
-
-	return (uint16_t)return_value;
+	return (uint16_t)D2K::clamp(D2K::stol(str), 0L, (long)UINT16_MAX);
 }
 
 } // namespace D2K
