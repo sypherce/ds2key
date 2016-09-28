@@ -19,7 +19,7 @@ bool Edit::Draw()
 			DrawRect(GetScreen(), GetRect(), Color[COLOR_EDIT_OUTLINE_ACTIVE]);
 		else
 			DrawRect(GetScreen(), GetRect(), Color[COLOR_EDIT_OUTLINE]);
-		DrawString(GetScreen(), GetText(), GetRect().GetX()+3, GetRect().GetY()+3, Color[COLOR_EDIT_TEXT]);
+		DrawString(GetScreen(), GetText(), TTF::FONT_SIZE_REGULAR, TTF::FONT_REGULAR, GetRect().GetX()+3, GetRect().GetY()+3, Color[COLOR_EDIT_TEXT]);
 	}
 
 	return true;

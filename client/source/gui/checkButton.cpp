@@ -25,7 +25,7 @@ bool CheckButton::Draw()
 			DrawRect(GetScreen(), GetRect(), Color[COLOR_BUTTON_OUTLINE]);
 		else
 			DrawRect(GetScreen(), GetRect(), Color[COLOR_BUTTON_BACKGROUND]); // draws a flat button
-		DrawString(GetScreen(), GetText(), GetRect().GetX()+3, GetRect().GetY()+3, Color[COLOR_BUTTON_TEXT]);
+		DrawString(GetScreen(), GetText(), TTF::FONT_SIZE_REGULAR, TTF::FONT_REGULAR, GetRect().GetX()+3, GetRect().GetY()+3, Color[COLOR_BUTTON_TEXT]);
 	}
 
 	return true;

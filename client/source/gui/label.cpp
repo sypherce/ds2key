@@ -23,7 +23,7 @@ bool Label::Draw()
 	if(IsVisible())
 	{
 		Clear();
-		DrawString(GetScreen(), GetText(), GetRect().GetX(), GetRect().GetY(), Color[COLOR_LABEL_TEXT]);
+		DrawString(GetScreen(), GetText(), TTF::FONT_SIZE_REGULAR, TTF::FONT_REGULAR, GetRect().GetX(), GetRect().GetY(), Color[COLOR_LABEL_TEXT]);
 	}
 
 	return true;

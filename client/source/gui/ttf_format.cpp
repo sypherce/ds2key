@@ -15,13 +15,13 @@
 namespace D2K {namespace GUI{namespace TTF{
 
 FT_Library library{};
-FT_Face face{};
+FT_Face face[FACE_TYPE_MAX]{};
 
-FT_Error Init()
+FT_Error Init(uint8_t face_type)
 {
-	static bool initialized = false;
+	static bool initialized[FACE_TYPE_MAX]{};
 	// If already initialized, return
-	if(initialized)
+	if(initialized[face_type])
 		return 0;
 	
 	FT_Error error{};
@@ -35,26 +35,26 @@ FT_Error Init()
 	}
 
 	// create face object
-	error = FT_New_Face(library, GUI::GetFont().c_str(), 0, &face);
+	error = FT_New_Face(library, GUI::GetFont(face_type).c_str(), 0, &face[face_type]);
 	if(error)
 	{
 		LOG(DEBUG) << "FT_New_Face ERROR#" << (int)error;
-		FT_Done_Face(face);
+		FT_Done_Face(face[face_type]);
 		return error;
 	}
 
-	initialized = true;
+	initialized[face_type] = true;
 
 	return 0;
 }
 
-void DeInit()
+void DeInit(uint8_t face_type)
 {
 	// If never initialized, return
-	if(TTF::Init())
+	if(TTF::Init(face_type))
 		return;
 
-	FT_Done_Face(face);
+	FT_Done_Face(face[face_type]);
 	FT_Done_FreeType(library);
 }
 
@@ -85,7 +85,7 @@ FT_Matrix matrix = {
 	matrix.yx = (FT_Fixed)(sin(angle) * 0x10000L),
 	matrix.yy = (FT_Fixed)(cos(angle) * 0x10000L),
 };
-FT_Error DrawString(uint8_t screen, uint16_t x, uint16_t y, uint8_t font_size, uint16_t color, const char* text)
+FT_Error DrawString(uint8_t screen, uint16_t x, uint16_t y, uint8_t font_size, uint8_t face_type, uint16_t color, const char* text)
 {
 //TODO:why does this need adjusted?
 	y = y + 8;
@@ -101,7 +101,7 @@ FT_Error DrawString(uint8_t screen, uint16_t x, uint16_t y, uint8_t font_size, u
 	};
 
 	// Initialize fonts
-	error = TTF::Init();
+	error = TTF::Init(face_type);
 	if(error)
 	{
 		LOG(DEBUG) << "TTF::Init() ERROR#" << (int)error;
@@ -109,27 +109,27 @@ FT_Error DrawString(uint8_t screen, uint16_t x, uint16_t y, uint8_t font_size, u
 	}
 
 	// set character size
-	error = FT_Set_Char_Size(face, font_size * 64, 0, 100, 0); 
+	error = FT_Set_Char_Size(face[face_type], font_size * 64, 0, 100, 0); 
 	if(error)
 	{
 		LOG(DEBUG) << "FT_Set_Char_Size ERROR#" << (int)error;
 		return error;
 	}
-
-	FT_GlyphSlot slot = face->glyph;
+	
 
 	for(int n = 0; n < num_chars; n++)
 	{
 		// set transformation
-		FT_Set_Transform(face, &matrix, &pen);
+		FT_Set_Transform(face[face_type], &matrix, &pen);
 
 		// load glyph image into the slot(erase previous one)
-		error = FT_Load_Char(face, text[n], FT_LOAD_RENDER);
+		error = FT_Load_Char(face[face_type], text[n], FT_LOAD_RENDER);
 		if(error)
 		{
 			LOG(DEBUG) << "FT_Load_Char ERROR#" << (int)error;
 			continue; // ignore errors
 		}
+		FT_GlyphSlot slot = face[face_type]->glyph;
 
 		// now, draw to our target surface(convert position)
 		TTF::Draw(screen, slot->bitmap_left, -slot->bitmap_top, color, &slot->bitmap);

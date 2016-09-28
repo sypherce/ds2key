@@ -16,7 +16,10 @@ const std::string DEFAULT_IP = "192.168.1.255";
 const std::string DEFAULT_PROFILE = "0";
 const std::string INI_FILENAME = "/ds2key/settings.ini";
 const std::string DEFAULT_BACKGROUND = "/ds2key/background.png";
-const std::string DEFAULT_FONT = "/ds2key/font.ttf";
+const std::string DEFAULT_FONT = "/ds2key/FreeUniversal-Regular.ttf";
+const std::string DEFAULT_FONT_BOLD = "/ds2key/FreeUniversal-Bold.ttf";
+const std::string DEFAULT_FONT_ITALIC = "/ds2key/FreeUniversal-Italic.ttf";
+const std::string DEFAULT_FONT_BOLD_ITALIC = "/ds2key/FreeUniversal-BoldItalic.ttf";
 
 int Load()
 {
@@ -32,7 +35,10 @@ int Load()
 		UDP::SetConfigPort(D2K::DEFAULT_PORT);
 		UDP::SetProfile(DEFAULT_PROFILE);
 		GUI::SetBackground(DEFAULT_BACKGROUND);
-		GUI::SetFont(DEFAULT_FONT);
+		GUI::SetFont(GUI::TTF::FONT_REGULAR, DEFAULT_FONT);
+		GUI::SetFont(GUI::TTF::FONT_BOLD, DEFAULT_FONT_BOLD);
+		GUI::SetFont(GUI::TTF::FONT_ITALIC, DEFAULT_FONT_ITALIC);
+		GUI::SetFont(GUI::TTF::FONT_BOLD_ITALIC, DEFAULT_FONT_BOLD_ITALIC);
 		// If the file doesn't exist
 		if(err == ENOENT)
 			Save();
@@ -49,7 +55,10 @@ int Load()
 	UDP::SetConfigPort(iniParser::getstring(ini, "settings:port", D2K::ltos(D2K::DEFAULT_PORT)));
 	UDP::SetProfile(iniParser::getstring(ini, "settings:profile", DEFAULT_PROFILE));
 	GUI::SetBackground(iniParser::getstring(ini, "settings:background", DEFAULT_BACKGROUND));
-	GUI::SetFont(iniParser::getstring(ini, "settings:font", DEFAULT_FONT));
+	GUI::SetFont(GUI::TTF::FONT_REGULAR, iniParser::getstring(ini, "settings:font", DEFAULT_FONT));
+	GUI::SetFont(GUI::TTF::FONT_BOLD, iniParser::getstring(ini, "settings:font_bold", DEFAULT_FONT_BOLD));
+	GUI::SetFont(GUI::TTF::FONT_ITALIC, iniParser::getstring(ini, "settings:font_italic", DEFAULT_FONT_ITALIC));
+	GUI::SetFont(GUI::TTF::FONT_BOLD_ITALIC, iniParser::getstring(ini, "settings:font_bold_italic", DEFAULT_FONT_BOLD_ITALIC));
 
 	// close file
 	iniParser::freedict(ini);
@@ -75,7 +84,10 @@ int Save()
 	fprintf(file, "Port=%u\n", UDP::GetPort());
 	fprintf(file, "Profile=%u\n", UDP::GetProfile());
 	fprintf(file, "Background=%s\n", GUI::GetBackground().c_str());
-	fprintf(file, "Font=%s\n", GUI::GetFont().c_str());
+	fprintf(file, "Font=%s\n", GUI::GetFont(GUI::TTF::FONT_REGULAR).c_str());
+	fprintf(file, "Font_Bold=%s\n", GUI::GetFont(GUI::TTF::FONT_BOLD).c_str());
+	fprintf(file, "Font_Italic=%s\n", GUI::GetFont(GUI::TTF::FONT_ITALIC).c_str());
+	fprintf(file, "Font_Bold_Italic=%s\n", GUI::GetFont(GUI::TTF::FONT_BOLD_ITALIC).c_str());
 	fclose(file);
 	Load(); // Reload settings
 

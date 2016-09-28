@@ -1,4 +1,3 @@
-#ifdef _NDS
 #include <nds/arm9/video.h> // SCREEN_WIDTH
 #include <nds/dma.h>        // dmaFillHalfWords
 #endif
@@ -36,14 +35,14 @@ std::string GetBackground()
 {
 	return background_filename;
 }
-std::string font_filename{};
-void SetFont(const std::string& text)
+std::string font_filename[TTF::FACE_TYPE_MAX]{};
+void SetFont(uint8_t face_type, const std::string& text)
 {
-	font_filename = text;
+	font_filename[face_type] = text;
 }
-std::string GetFont()
+std::string GetFont(uint8_t face_type)
 {
-	return font_filename;
+	return font_filename[face_type];
 }
 
 // orientation false = normal, true = rotated -90degrees
@@ -289,7 +288,6 @@ void GetPixel(uint8_t screen, uint16_t x, uint16_t y, uint8_t& red, uint8_t& gre
 #endif
 }
 
-
 struct LookupLevel
 {
 	uint8_t Values[256];
@@ -333,7 +331,6 @@ LookupLevel* LookupPointer(int alpha)
 	return &AlphaTable.Levels[clipByte(alpha)];
 }
 
-
 uint8_t AlphaBlend(uint8_t color_1, uint8_t color_2, uint8_t alpha)
 {
 #if 1
@@ -346,7 +343,7 @@ uint8_t AlphaBlend(uint8_t color_1, uint8_t color_2, uint8_t alpha)
 	// The clipByte's aren't really necessary, but they're there to remove the
 	// chance for an occasional overflow. They only eat a couple clock cycles anyway.
 	NewColor = clipByte(SourceTable->Values[color_2] +
-	                      DestTable->Values[color_1]);
+	                    DestTable->Values[color_1]);
 	return NewColor;
 #else
 	return (alpha  * color_1 + (100 - alpha) * color_2) / 100;
@@ -354,8 +351,8 @@ uint8_t AlphaBlend(uint8_t color_1, uint8_t color_2, uint8_t alpha)
 }
 void SetPixel(uint8_t screen, uint16_t x, uint16_t y, uint16_t color)
 {
-	if((x > MAX_X) // if we're not drawing on screen
-	|| (y > MAX_Y))
+	if((x >= MAX_X) // if we're not drawing on screen
+	|| (y >= MAX_Y))
 		return;
 #if defined(_NDS)
 	uint16_t* screen_pointer = (uint16_t*)GetScreenPointer(screen, x, y);
@@ -370,8 +367,8 @@ void SetPixel(uint8_t screen, uint16_t x, uint16_t y, uint16_t color)
 }
 void SetPixel(uint8_t screen, uint16_t x, uint16_t y, uint8_t red, uint8_t green, uint8_t blue)
 {
-	if((x > MAX_X) // if we're not drawing on screen
-	|| (y > MAX_Y))
+	if((x >= MAX_X) // if we're not drawing on screen
+	|| (y >= MAX_Y))
 		return;
 #if defined(_3DS)
 	uint8_t* screen_pointer = GetScreenPointer(screen, x, y);
@@ -386,8 +383,8 @@ void SetPixel(uint8_t screen, uint16_t x, uint16_t y, uint8_t red, uint8_t green
 // TODO: add errors or fatals if the boundary checks fail
 void SetPixel(uint8_t screen, uint16_t x, uint16_t y, uint16_t color, uint8_t alpha)
 {
-	if((x > MAX_X) // if we're not drawing on screen
-	|| (y > MAX_Y))
+	if((x >= MAX_X) // if we're not drawing on screen
+	|| (y >= MAX_Y))
 		return;
 
 	//if(alpha >= 100)// || background_image == nullptr)
@@ -1022,10 +1019,10 @@ void DrawLetter(uint8_t screen, char letter, uint16_t x, uint16_t y, uint16_t c)
 	}
 	}
 }
-void DrawString(uint8_t screen, std::string text, uint16_t x, uint16_t y, uint16_t c)
+void DrawString(uint8_t screen, std::string text, uint8_t font_size, uint8_t face_type, uint16_t x, uint16_t y, uint16_t c)
 {
 #if defined(_3DS)
-	TTF::DrawString(screen, x, y, 7, c, text.c_str());
+	TTF::DrawString(screen, x, y, font_size, face_type, c, text.c_str());
 #elif defined(_NDS)
 	for(unsigned int i = 0; i < text.length(); i++)
 	{

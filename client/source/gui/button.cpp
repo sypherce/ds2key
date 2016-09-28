@@ -32,7 +32,7 @@ bool Button::Draw()
 		else                                   // If we're idle
 			DrawRect(GetScreen(), GetRect(), Color[COLOR_BUTTON_OUTLINE]);
 
-		DrawString(GetScreen(), GetText(),
+		DrawString(GetScreen(), GetText(), TTF::FONT_SIZE_REGULAR, TTF::FONT_REGULAR,
 			GetRect().GetX() + 3, GetRect().GetY() + 3, Color[COLOR_BUTTON_TEXT]);
 	}
 
