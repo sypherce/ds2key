@@ -34,18 +34,14 @@ bool LetterButton::Draw()
 		else                                   // If we're idle
 			DrawRect(GetScreen(), GetRect(), Color[COLOR_BUTTON_OUTLINE]);
 
-		Rect button_image_rect = GetRect();
-		button_image_rect.SetX(button_image_rect.GetX() + (10));
-		button_image_rect.SetY(button_image_rect.GetY() + (10));
-
 		char letter[2]{};
 		letter[0] = LetterButton::m_letter;
-		DrawButtonImage(GetScreen(), (char*)letter, button_image_rect);
-		
+		DrawButtonImage(GetScreen(), (char*)letter, GetRect().GetX2() - 25, GetRect().GetY2() - 25);
+
 		DrawString(GetScreen(), GetText(), TTF::FONT_SIZE_TITLE, TTF::FONT_BOLD,
-			GetRect().GetX() + 3, GetRect().GetY() + 3, Color[COLOR_BUTTON_TEXT]);
+			GetRect().GetX() + 3, GetRect().GetY() + 9, Color[COLOR_BUTTON_TEXT]);
 		DrawString(GetScreen(), GetSubText(), TTF::FONT_SIZE_REGULAR, TTF::FONT_REGULAR,
-			GetRect().GetX() + 15, GetRect().GetY() + 10, Color[COLOR_BUTTON_TEXT]);
+			GetRect().GetX() + 15, GetRect().GetY() + 21, Color[COLOR_BUTTON_TEXT]);
 	}
 
 	return true;

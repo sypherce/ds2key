@@ -47,6 +47,8 @@ WindowClass::WindowClass() : Window()
 WindowClass::~WindowClass() { }
 void WindowClass::SetVisible(bool visible)
 {
+	button_1->SetSubText(UDP::GetRemoteIPString());
+	button_2->SetSubText(UDP::GetPortString());
 
 	return Window::SetVisible(visible);
 }
@@ -54,10 +56,12 @@ void WindowClass::SetVisible(bool visible)
 void button1Function()
 {
 	D2K::GUI::Main::EditIPFunction();
+	button_1->SetSubText(UDP::GetRemoteIPString());
 }
 void button2Function()
 {
 	D2K::GUI::Main::EditPortFunction();
+	button_2->SetSubText(UDP::GetPortString());
 }
 
 }}} // namespace D2K::GUI::Command

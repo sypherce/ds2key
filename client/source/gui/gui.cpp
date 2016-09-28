@@ -25,7 +25,7 @@ const uint8_t ALPHA_IMAGE_BYTES = 4;
 uint16_t* g_screen[2];
 bool Update = false;
 uint16_t Color[colorMax];
-uint8_t alpha_setting = 178;
+uint8_t alpha_setting = 140;
 void VoidFunction() { }
 
 std::string background_filename{};
@@ -244,9 +244,10 @@ const int button_max_h = 21;
 const int button_max_w = 21;
 bool LoadButtonImage()
 {
+	char *button_filename = "/ds2key/button.png";
 	int png_width, png_height;
 	char* png_image{};
-	if(LoadPngImage("/ds2key/button.png", png_width, png_height, true, (unsigned char**)&png_image))
+	if(LoadPngImage(button_filename, png_width, png_height, true, (unsigned char**)&png_image))
 	{
 		int target_height = button_max_h;
 		int target_width  = button_max_w;
@@ -265,17 +266,12 @@ bool LoadButtonImage()
 	}
 	else
 	{
-		LOG(INFO) << "Failed to open:" << "/ds2key/button.png" << ".";
+		LOG(INFO) << "Failed to open:" << button_filename << ".";
 	}
 	return false;
 }
-bool DrawButtonImage(uint8_t screen, char* letter, GUI::Rect rect)
+bool DrawButtonImage(uint8_t screen, char* letter, uint16_t x, uint16_t y)
 {
-	/*if(rect.GetH() > button_max_h)
-		rect.SetH(button_max_h);
-	if(rect.GetW() > button_max_w)
-		rect.SetW(button_max_w);*/
-
 	if(button_image == nullptr)
 	{
 		if(LoadButtonImage() == false)
@@ -284,31 +280,22 @@ bool DrawButtonImage(uint8_t screen, char* letter, GUI::Rect rect)
 		}
 	}
 
-	for(int x = rect.GetX(); x <= rect.GetX2(); x++)
+	for(int button_x = 0; button_x < button_max_w; button_x++)
 	{
-		for(int y = rect.GetY(); y <= rect.GetY2(); y++)
+		for(int button_y = 0; button_y < button_max_h; button_y++)
 		{
-			if((x - rect.GetX()) >= button_max_w
-			|| (y - rect.GetY()) >= button_max_h)
-				continue;
+			int button_memory_position = GetPixelPosition(button_x, button_y, button_max_w, button_max_h, ALPHA_IMAGE_BYTES, true);
 
-			int button_memory_position = GetPixelPosition(x - rect.GetX(), y - rect.GetY(), button_max_w, button_max_h, ALPHA_IMAGE_BYTES, true);
-
-			SetPixel(screen, x, y,
+			SetPixel(screen, x + button_x, y + button_y,
 			         RGB24TORGB15(button_image[button_memory_position + 0],
 			                      button_image[button_memory_position + 1],
 			                      button_image[button_memory_position + 2]),
-			         button_image[button_memory_position + 3]);
+			                      button_image[button_memory_position + 3]);
 		}
 	}
-	DrawString(screen, letter, TTF::FONT_SIZE_BUTTON_IMAGE, TTF::FONT_BOLD, rect.GetX()+5, rect.GetY()+7, Color[COLOR_BUTTON_TEXT]);
+	DrawString(screen, letter, TTF::FONT_SIZE_BUTTON_IMAGE, TTF::FONT_BOLD, x + 5, y + 7, Color[COLOR_BUTTON_TEXT]);
 
 	return true;
-}
-bool DrawButtonImage(uint8_t screen, char* letter, uint16_t x, uint16_t y)
-{
-	GUI::Rect rect = { x, y, button_max_w, button_max_h };
-	return DrawButtonImage(screen, letter, rect);
 }
 
 void SetUpdate(bool value)
