@@ -326,16 +326,22 @@ uint16_t GetPort()
 }
 std::string GetPortString()
 {
-	return ltos(GetPort());
+	return D2K::ltos(GetPort());
 }
 
-void SetConfigPort(const std::string& _port)
+void SetConfigPort(const std::string& _port_string)
 {
-	SetConfigPort((uint16_t)D2K::stol(_port));
+	long _port = D2K::stol(_port_string);
+	if(_port > UINT16_MAX) // if _port is invalid
+		_port = 0;     // set to 0, SetConfigPort will take care of it
+	SetConfigPort((uint16_t)_port);
 }
-void SetConfigPort(const char* _port)
+void SetConfigPort(const char* _port_char)
 {
-	SetConfigPort((uint16_t)atoi(_port));
+	int _port = atoi(_port_char);
+	if(_port > UINT16_MAX) // if _port is invalid
+		_port = 0;     // set to 0, SetConfigPort will take care of it
+	SetConfigPort((uint16_t)_port);
 }
 void SetConfigPort(uint16_t _port)
 {
