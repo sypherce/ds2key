@@ -124,6 +124,9 @@ std::string Entry(Label* label, Edit* edit, std::string text, int maxLength)
 	{
 		if(Keypad::g_window.Update())                // If pressed
 			Keypad::edit_entry->SetText(Buffer); // Set text
+//TODO: this interacts badly, search
+		if(D2K::g_keys_down&KEY_START)
+			break;
 	}
 	Keypad::g_window.SetVisible(false);                  // Hide keypad
 

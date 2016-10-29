@@ -4,7 +4,7 @@
 
 namespace D2K {namespace GUI {
 
-LetterButton::LetterButton(uint8_t screen, GUI::Rect rect, char letter, std::string text, std::string sub_text, void (*function)()) : Label(screen, rect, text)
+LetterButton::LetterButton(uint8_t screen, GUI::Rect rect, std::string letter, std::string text, std::string sub_text, void (*function)()) : Label(screen, rect, text)
 {
 	GUI::Rect thisRect = GetRect();
 	int width = text.length() * 6 + 4; // Calculate width of "std::string text"
@@ -34,9 +34,7 @@ bool LetterButton::Draw()
 		else                                   // If we're idle
 			DrawRect(GetScreen(), GetRect(), Color[COLOR_BUTTON_OUTLINE]);
 
-		char letter[2]{};
-		letter[0] = LetterButton::m_letter;
-		DrawButtonImage(GetScreen(), (char*)letter, GetRect().GetX2() - 25, GetRect().GetY2() - 25);
+		DrawButtonImage(GetScreen(), m_letter, GetRect().GetX2() - 25, GetRect().GetY2() - 25);
 
 		DrawString(GetScreen(), GetText(), TTF::FONT_SIZE_TITLE, TTF::FONT_BOLD,
 			GetRect().GetX() + 3, GetRect().GetY() + 9, Color[COLOR_BUTTON_TEXT]);

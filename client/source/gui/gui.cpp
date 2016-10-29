@@ -270,30 +270,44 @@ bool LoadButtonImage()
 	}
 	return false;
 }
-bool DrawButtonImage(uint8_t screen, char* letter, uint16_t x, uint16_t y)
+bool DrawButtonImage(uint8_t screen, std::string letter, uint16_t x, uint16_t y)
 {
-	if(button_image == nullptr)
+	if(letter.length() == 1)
 	{
-		if(LoadButtonImage() == false)
+		if(button_image == nullptr)
 		{
-			return false;
+			if(LoadButtonImage() == false)
+			{
+				return false;
+			}
 		}
-	}
+		for(int button_x = 0; button_x < button_max_w; button_x++)
+		{
+			for(int button_y = 0; button_y < button_max_h; button_y++)
+			{
+				int button_memory_position = GetPixelPosition(button_x, button_y, button_max_w, button_max_h, ALPHA_IMAGE_BYTES, true);
 
-	for(int button_x = 0; button_x < button_max_w; button_x++)
+				SetPixel(screen, x + button_x, y + button_y,
+				         RGB24TORGB15(button_image[button_memory_position + 0],
+				                      button_image[button_memory_position + 1],
+				                      button_image[button_memory_position + 2]),
+				                      button_image[button_memory_position + 3]);
+			}
+		}
+		DrawString(screen, letter, TTF::FONT_SIZE_BUTTON_IMAGE, TTF::FONT_BOLD, x + 5, y + 7, Color[COLOR_BUTTON_TEXT]);
+	}
+	else if(letter.length() > 1)
 	{
-		for(int button_y = 0; button_y < button_max_h; button_y++)
+		//DrawFilledRect doesn't work since we use raw x/y not scaled ;_;
+		for(int button_x = 0; button_x < button_max_w; button_x++)
 		{
-			int button_memory_position = GetPixelPosition(button_x, button_y, button_max_w, button_max_h, ALPHA_IMAGE_BYTES, true);
-
-			SetPixel(screen, x + button_x, y + button_y,
-			         RGB24TORGB15(button_image[button_memory_position + 0],
-			                      button_image[button_memory_position + 1],
-			                      button_image[button_memory_position + 2]),
-			                      button_image[button_memory_position + 3]);
+			for(int button_y = 0; button_y < button_max_h; button_y++)
+			{
+				SetPixel(screen,  + button_x, y + button_y, Color[COLOR_BUTTON_BACKGROUND]);
+			}
 		}
+		DrawString(screen, letter, TTF::FONT_SIZE_BUTTON_IMAGE, TTF::FONT_BOLD, x + 5 - 25, y + 7, Color[COLOR_BUTTON_TEXT]);
 	}
-	DrawString(screen, letter, TTF::FONT_SIZE_BUTTON_IMAGE, TTF::FONT_BOLD, x + 5, y + 7, Color[COLOR_BUTTON_TEXT]);
 
 	return true;
 }
