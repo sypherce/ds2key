@@ -51,18 +51,18 @@ uint8_t g_slider_volume_status{};
 uint32_t wifi_status{};
 uint8_t battery_level{};
 uint8_t charging_status{};
-bool input_changed = false;
+bool input_changed{false};
 // TODO: this should be configurable?
-bool enable_input_timeout = true;
+bool enable_input_timeout{true};
 // TODO: this should be configurable?
-bool force_backlights_on = false;
+bool force_backlights_on{false};
 // TODO: this should be configurable?
-const bool toggle_both_lights = true;
+const bool toggle_both_lights{true};
 
-//current status of backlights
-//used by BacklightsOn() and BacklightsOff()
-//true = on, false = off
-bool backlights_status = true;
+// current status of backlights
+// used by BacklightsOn() and BacklightsOff()
+// true = on, false = off
+bool backlights_status{true};
 void BacklightsOn()
 {
 	if(backlights_status == false) // if backlights are off
@@ -276,7 +276,7 @@ void UpdateGyroAccel()
 			g_gyro_status.y = gyro_y / FILTER_SIZE;
 			g_gyro_status.z = gyro_z / FILTER_SIZE;
 #else
-//TODO: why are we scaling this? should we use float or decimal?
+// TODO: why are we scaling this? should we use float or decimal?
 				float scale = 0.1f / FILTER_SIZE;
 				accel_x += accel[i].x * scale;
 				accel_y += accel[i].y * scale;
@@ -401,7 +401,7 @@ void VBlankFunction()
 void WaitForVBlank()
 {
 #if defined(_3DS)
-//TODO: This was commented, was it supposed to be?
+// TODO: This was commented, was it supposed to be?
 	//gspWaitForVBlank();
 	VBlankFunction();
 #elif defined(_NDS)
@@ -431,7 +431,7 @@ bool Init(int argc, char* argv[])
 		- Calibrate[6] - ((Calibrate[7] + Calibrate[8]) / 2)
 	};
 #else
-	HIDUSER_EnableGyroscope();     //Gyroscope
+	HIDUSER_EnableGyroscope();     // Gyroscope
 #endif
 	consoleInit(GFX_TOP, nullptr);
 	gfxSetDoubleBuffering(GFX_BOTTOM, false);
@@ -512,7 +512,6 @@ bool Init(int argc, char* argv[])
 	}
 #endif
 
-
 	UDP::Init();    // Initilize UDP
 	Config::Load(); // Load UDP settings
 	UDP::Connect(); // Connect with settings
@@ -529,10 +528,10 @@ void DeInit()
 	D2K::DeInitLogging();
 #ifdef _3DS
 // TODO: these should only be enabled when used?
-	HIDUSER_DisableGyroscope();     //Gyroscope
-	HIDUSER_DisableAccelerometer(); //Accelerometer
+	HIDUSER_DisableGyroscope();     // Gyroscope
+	HIDUSER_DisableAccelerometer(); // Accelerometer
 
-	ptmuExit();                     //Lid
+	ptmuExit();                     // Lid
 	GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_BOTH);
 	gspLcdExit();
 	socExit();

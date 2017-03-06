@@ -14,7 +14,7 @@
 
 int main(int argc, char* argv[])
 {
-	if(D2K::Init(argc, argv) && !EMULATOR)               // DS hardware setup
+	if(D2K::Init(argc, argv) && !EMULATOR)     // DS hardware setup
 	{
 		D2K::DeInit();
 

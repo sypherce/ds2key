@@ -47,7 +47,6 @@ void ExecuteCommand(std::string Command)
 	}
 }
 
-
 // Changes master volume to (volume)
 // (volume) ranges from 0.0f, 1.0f. 
 void SetMasterVolume(float volume)
@@ -459,7 +458,7 @@ void ProcessPacket(D2K::Client* client)
 	}
 }
 
-// TODO this needs tested with multiple devices connected
+// TODO: this needs tested with multiple devices connected
 void ReleaseDeadClient(D2K::Client* client)
 {
 	ProfileData* profile_data = client->GetProfileDataPointer();

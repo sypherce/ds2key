@@ -7,7 +7,7 @@
 
 namespace D2K {namespace GUI {
 
-// TODO Clean up SCREEN_WIDTH, _3DS_SCREEN_WIDTH 
+// TODO: Clean up SCREEN_WIDTH, _3DS_SCREEN_WIDTH 
 // when I know what I am wanting as a standard
 #ifdef _3DS
 const uint16_t SCREEN_HEIGHT      = 192;

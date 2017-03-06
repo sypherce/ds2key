@@ -36,7 +36,7 @@ void DeInit()
 #endif
 }
 
-// TODO check and verify for every extended key
+// TODO: check and verify for every extended key
 // Checks if (key) is an "extended" key
 //  param: key Platform specific value
 // return: true if (key) is an "extended" key

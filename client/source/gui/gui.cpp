@@ -129,7 +129,7 @@ float lerp(float s, float e, float t)
 }
 float blerp(float c00, float c10, float c01, float c11, float tx, float ty)
 {
-    return lerp(lerp(c00, c10, tx), lerp(c01, c11, tx), ty);
+	return lerp(lerp(c00, c10, tx), lerp(c01, c11, tx), ty);
 }
 void resize_bilinear(const char* input_image, char* output_image, uint16_t input_width, uint16_t input_height, uint16_t output_width, uint16_t output_height, uint8_t image_bytes) 
 {
@@ -213,6 +213,7 @@ bool DrawBackgroundImage(uint8_t screen, GUI::Rect rect, uint8_t color)
 	if(background_image == nullptr)
 		LoadBackgroundImage();
 
+// TODO: This could be optimized into a simple memcpy after the first run
 	if(background_image)
 	{
 		for(int x = rect.GetX(); x <= rect.GetX2(); x++)
@@ -244,7 +245,7 @@ const int button_max_h = 21;
 const int button_max_w = 21;
 bool LoadButtonImage()
 {
-	char *button_filename = "/ds2key/button.png";
+	char* button_filename = "/ds2key/button.png";
 	int png_width, png_height;
 	char* png_image{};
 	if(LoadPngImage(button_filename, png_width, png_height, true, (unsigned char**)&png_image))
@@ -298,7 +299,7 @@ bool DrawButtonImage(uint8_t screen, std::string letter, uint16_t x, uint16_t y)
 	}
 	else if(letter.length() > 1)
 	{
-		//DrawFilledRect doesn't work since we use raw x/y not scaled ;_;
+		// DrawFilledRect doesn't work since we use raw x/y not scaled ;_;
 		for(int button_x = 0; button_x < button_max_w; button_x++)
 		{
 			for(int button_y = 0; button_y < button_max_h; button_y++)

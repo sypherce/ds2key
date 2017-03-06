@@ -11,7 +11,7 @@ class LetterButton : public Label
 public:
 	// (screen), (rect), and (text) are setup by calling the label function.
 	// (sub_text) is setup in this function
-//TODO: adjust (rect) to text, sub_text, and the letter button
+// TODO: adjust (rect) to text, sub_text, and the letter button
 	// (rect) is then adjusted to fit the contents of (text).
 	// (function) is assigned here, and is called when "LetterButton" is clicked.
 	LetterButton(uint8_t screen, GUI::Rect rect, std::string letter, std::string text, std::string sub_text, void (*function)());

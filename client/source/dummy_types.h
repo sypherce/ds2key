@@ -1,6 +1,6 @@
 #pragma once
 
-//the following typedef's are dummy's
+// the following typedef's are dummy's
 #if defined(_NDS)
 /// Circle Pad position.
 typedef struct

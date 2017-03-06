@@ -19,8 +19,8 @@ public:
 	void RemoveObject(Object* object);
 
 	bool m_screen;
-	// Draws windows and all child objects
 
+	// Draws windows and all child objects
 	void Draw();
 
 	// Sets window, and all child objects visibility

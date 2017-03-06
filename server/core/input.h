@@ -17,8 +17,8 @@ void DeInit();
 // Sends a virtual key press and release, or a virtual gamepad button press and release
 //  param: Key Platform specific key or gamepad button value
 //  param: Joy (vjoy) device number, Value ranges 0-15, Ignored if (key) is not a gamepad button value
-// TODO currently if NULL/0 is passed to 'joy' it'll still use joystick 0, This could be replaced with an invalid amount -1, 16? Probably use an value similar to const uint8 JOY_NONE=-1
-// TODO also, we're using unsigned char, and uint8_t elsewhere I believe
+// TODO: currently if NULL/0 is passed to 'joy' it'll still use joystick 0, This could be replaced with an invalid amount -1, 16? Probably use an value similar to const uint8 JOY_NONE=-1
+// TODO: also, we're using unsigned char, and uint8_t elsewhere I believe
 void Tap(uint16_t key, unsigned char joy);
 
 // Sends a virtual key press, or a virtual gamepad button press
@@ -29,8 +29,8 @@ void Press(uint16_t key, uint8_t joy);
 // Sends a virtual key release, or a virtual gamepad button release
 //  param: Key Platform specific key or gamepad button value
 //  param: Joy (vjoy) device number, Value ranges 0-15, Ignored if (key) is not a gamepad button value
-// TODO currently if NULL/0 is passed to 'joy' it'll still use joystick 0, This could be replaced with an invalid amount -1, 16? Probably use an value similar to const uint8 JOY_NONE=-1
-// TODO also, we're using unsigned char, and uint8_t elsewhere I believe
+// TODO: currently if NULL/0 is passed to 'joy' it'll still use joystick 0, This could be replaced with an invalid amount -1, 16? Probably use an value similar to const uint8 JOY_NONE=-1
+// TODO: also, we're using unsigned char, and uint8_t elsewhere I believe
 void Release(uint16_t key, unsigned char joy);
 
 // Moves cursor relative to it's current position

@@ -71,7 +71,7 @@ void button2Function()
 }
 void button3Function()
 {
-//TODO: this is really hacky
+// TODO: this is really hacky
 	D2K::g_keys_down &= KEY_START;
 }
 

@@ -124,7 +124,7 @@ void Update(uint32_t keys, uint32_t keysTurbo, const touchPosition* touch_positi
 void RequestSettingsCommand();
 
 // searches for running servers on current port
-// todo: this should actually just return any found ip and not change our currently connected IP
+// TODO: this should actually just return any found ip and not change our currently connected IP
 void ServerLookup();
 
 // listens for anything from the server and deals with it

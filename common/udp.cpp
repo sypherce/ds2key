@@ -419,12 +419,12 @@ void Update(uint32_t keys, uint32_t keysTurbo, const touchPosition* touch_positi
 	}
 	if(slider_volume   != nullptr)                 // Volume slider is active
 	{
-		//raw value is 0-63, we convert to 0-100
+		// raw value is 0-63, we convert to 0-100
 		packet.slider_volume = (uint8_t)((*slider_volume * 100) / 63);
 	}
 	if(slider_3d       != nullptr)                 // 3D slider is active
 	{
-		//raw value is 0.0f-1.0f, we convert to 0-100
+		// raw value is 0.0f-1.0f, we convert to 0-100
 		packet.slider_3d = (uint8_t)(*slider_3d * 100);
 	}
 	packet.keyboard = keyboard;
@@ -441,7 +441,6 @@ void SendLookupPacket()
 	Send(&packet, sizeof(DS2KeyPacket)); // Send the packet out
 	LOG_EVERY_N(10, TRACE) << "SendLookupPacket()";
 }
-
 
 void RequestSettingsCommand()
 {
@@ -466,7 +465,7 @@ void ServerLookup()
 
 	SendLookupPacket();                                 // Send the lookup packet
 
-	//wait for 1 second
+	// wait for 1 second
 	for(int i = 0; i < 60; i++)
 	{
 		WaitForVBlank();
@@ -498,7 +497,7 @@ void ListenForServer()
 		case UDP::PACKET::ALIVE:            // Received a status query
 			SendLookupPacket();         // Send the lookup packet
 			break;
-		case UDP::PACKET::COMMAND_SETTINGS: //Received Command Settings
+		case UDP::PACKET::COMMAND_SETTINGS: // Received Command Settings
 			GUI::Command::ProcessCommandSettingsPacket(command_settings_packet);
 			LOG(TRACE) << "Received UDP::PACKET::COMMAND_SETTINGS";
 			break;

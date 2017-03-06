@@ -87,7 +87,7 @@ FT_Matrix matrix = {
 };
 FT_Error DrawString(uint8_t screen, uint16_t x, uint16_t y, uint8_t font_size, uint8_t face_type, uint16_t color, const char* text)
 {
-//TODO:why does this need adjusted?
+// TODO:why does this need adjusted?
 	y = y + 8;
 	FT_Error error;
 	int num_chars = strlen(text);
@@ -115,7 +115,6 @@ FT_Error DrawString(uint8_t screen, uint16_t x, uint16_t y, uint8_t font_size, u
 		LOG(DEBUG) << "FT_Set_Char_Size ERROR#" << (int)error;
 		return error;
 	}
-	
 
 	for(int n = 0; n < num_chars; n++)
 	{

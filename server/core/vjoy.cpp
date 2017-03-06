@@ -152,7 +152,6 @@ bool DeInit(uint8_t device)
 	return true;
 }
 
-
 // Returns true if device is active
 bool IsActive(uint8_t device)
 {

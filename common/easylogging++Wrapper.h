@@ -22,7 +22,6 @@
 #include "common/easylogging++.h"
 #endif
 
-
 namespace D2K {
 
 void InitLogging(int argc, char* argv[]);

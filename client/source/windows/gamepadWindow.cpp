@@ -60,7 +60,6 @@ JOY_AXIS5_MAX = JOY_AXIS_WHL_PLUS,
 };
 }
 
-
 WindowClass g_window;
 
 Label* label_title;
@@ -166,8 +165,8 @@ void ButtonZLFunction()             { append(Key::JOY+4); }
 void ButtonZRFunction()             { append(Key::JOY+5); }
 #endif
 
-void ButtonLFunction()              { append(Key::JOY_AXIS_Z_MINUS); }  //z
-void ButtonRFunction()              { append(Key::JOY_AXIS_Z_PLUS); }   //z
+void ButtonLFunction()              { append(Key::JOY_AXIS_Z_MINUS); }  // z
+void ButtonRFunction()              { append(Key::JOY_AXIS_Z_PLUS); }   // z
 
 void ButtonSelectFunction()         { append(Key::JOY+6); }
 void ButtonStartFunction()          { append(Key::JOY+7); }
@@ -189,15 +188,15 @@ void ButtonRightFunction()          { append(Key::JOY_HAT_RIGHT); }
 void ButtonUpFunction()             { append(Key::JOY_HAT_UP); }
 void ButtonDownFunction()           { append(Key::JOY_HAT_DOWN); }
 
-void ButtonLeftCPadFunction()       { append(Key::JOY_AXIS_X_MINUS); }  //x
-void ButtonRightCPadFunction()      { append(Key::JOY_AXIS_X_PLUS); }   //x
-void ButtonUpCPadFunction()         { append(Key::JOY_AXIS_Y_MINUS); }  //y
-void ButtonDownCPadFunction()       { append(Key::JOY_AXIS_Y_PLUS); }   //y
+void ButtonLeftCPadFunction()       { append(Key::JOY_AXIS_X_MINUS); }  // x
+void ButtonRightCPadFunction()      { append(Key::JOY_AXIS_X_PLUS); }   // x
+void ButtonUpCPadFunction()         { append(Key::JOY_AXIS_Y_MINUS); }  // y
+void ButtonDownCPadFunction()       { append(Key::JOY_AXIS_Y_PLUS); }   // y
 
-void ButtonLeftCStickFunction()     { append(Key::JOY_AXIS_RX_MINUS); } //rx
-void ButtonRightCStickFunction()    { append(Key::JOY_AXIS_RX_PLUS); }  //rx
-void ButtonUpCStickFunction()       { append(Key::JOY_AXIS_RY_MINUS); } //ry
-void ButtonDownCStickFunction()     { append(Key::JOY_AXIS_RY_PLUS); }  //ry
+void ButtonLeftCStickFunction()     { append(Key::JOY_AXIS_RX_MINUS); } // rx
+void ButtonRightCStickFunction()    { append(Key::JOY_AXIS_RX_PLUS); }  // rx
+void ButtonUpCStickFunction()       { append(Key::JOY_AXIS_RY_MINUS); } // ry
+void ButtonDownCStickFunction()     { append(Key::JOY_AXIS_RY_PLUS); }  // ry
 
 WindowClass::WindowClass() : Window()
 {
@@ -216,7 +215,6 @@ WindowClass::WindowClass() : Window()
 	const int ins_home_pgup_base_y      = gap + (h + gap) * 8;
 	const int up_down_left_right_base_x = gamepad_base_x;
 	const int up_down_left_right_base_y = gap + (h + gap) * 10;
-
 
 	m_screen = 0;
 
@@ -322,11 +320,11 @@ std::string GetString(Label* label, Edit* edit, std::string text, int maxLength)
 	while(D2K::Loop()
 	   && Gamepad::g_window.IsVisible())
 	{
-		UDP::Update(g_keys_held, Turbo::GetKeys(), nullptr, 
-			        &g_circle_position, &g_cstick_position,
-			        &g_accel_status, &g_gyro_status,
-			        &g_slider_volume_status, &g_slider_3d_status,
-			        ConfigWindow::current_pressed_key);    // Update keys and press active gamepad key
+		UDP::Update(D2K::g_keys_held, Turbo::GetKeys(), nullptr,
+		            &D2K::g_circle_position, &D2K::g_cstick_position,
+		            &D2K::g_accel_status, &D2K::g_gyro_status,
+		            &D2K::g_slider_volume_status, &D2K::g_slider_3d_status,
+		            ConfigWindow::current_pressed_key);    // Update keys and press active gamepad key
 		if(Gamepad::g_window.Update())                         // If pressed
 		{
 			ConfigWindow::current_pressed_key = 0;
@@ -339,7 +337,7 @@ std::string GetString(Label* label, Edit* edit, std::string text, int maxLength)
 	return Buffer;
 }
 
-//configWindow function
+// configWindow function
 uint16_t GetKey()
 {
 	Buffer = "";

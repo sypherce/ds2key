@@ -4,7 +4,6 @@
 #include "easylogging++Wrapper.h"
 #include "iniparser/src/iniparser.h"
 
-
 namespace D2K {namespace iniParser {
 
 void dump(dictionary* d, FILE* f)

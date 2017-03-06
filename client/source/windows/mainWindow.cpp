@@ -104,7 +104,7 @@ bool WindowClass::Update()
 	static std::string profile{};
 	static int update_counter = 0;
 
-//TODO: this delay's for the clock?
+// TODO: this delay's for the clock?
 	const int UPDATE_COUNTER_MAX = 30;
 
 	ForceBacklightsOn(false); // Let backlights timeout
@@ -316,7 +316,7 @@ void ButtonConnectionFunction()
 			D2K::GUI::Main::EditIPFunction();
 		else if(g_keys_down&KEY_B)
 			D2K::GUI::Main::EditPortFunction();
-//TODO: this interacts badly, search
+// TODO: this interacts badly, search
 		else if(g_keys_down&KEY_START)
 			break;
 		

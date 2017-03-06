@@ -131,6 +131,7 @@ std::string Entry(Label* label, Edit* edit, std::string text, int maxLength)
 	Keypad::g_window.SetVisible(false);                  // Hide keypad
 
 	Main::g_window.SetVisible(true);                     // Go back to main window
+
 	return Buffer;
 }
 
