@@ -8,7 +8,7 @@ namespace D2K {namespace GUI {
 class Label : public Object
 {
 protected:
-	std::string m_text;
+	std::string m_text{};
 public:
 	// (screen), and (rect) are setup by calling the object function.
 	// SetText(text) is called.
