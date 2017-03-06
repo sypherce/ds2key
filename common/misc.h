@@ -5,7 +5,17 @@
 
 namespace D2K {
 
-extern const std::string VERSION_STRING;
+#if defined(_NDS)
+const static std::string VERSION_STRING = "DS2Key (DS) git Build";
+#elif defined(_3DS)
+const static std::string VERSION_STRING = "DS2Key (3DS) git Build";
+#elif defined(__linux__)
+const static std::string VERSION_STRING = "DS2Key (Linux) git Build";
+#elif defined(WIN32GUI)
+const static std::string VERSION_STRING = "DS2Key (GUI) git Build";
+#elif defined(_WIN32)
+const static std::string VERSION_STRING = "DS2Key (Console) git Build";
+#endif
 
 // Default port
 const static uint16_t DEFAULT_PORT = 9501;

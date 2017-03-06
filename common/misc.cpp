@@ -4,18 +4,6 @@
 
 namespace D2K {
 
-#if defined(_NDS)
-const std::string VERSION_STRING = "DS2Key (DS) git Build";
-#elif defined(_3DS)
-const std::string VERSION_STRING = "DS2Key (3DS) git Build";
-#elif defined(__linux__)
-const std::string VERSION_STRING = "DS2Key (Linux) git Build";
-#elif defined(WIN32GUI)
-const std::string VERSION_STRING = "DS2Key (GUI) git Build";
-#elif defined(_WIN32)
-const std::string VERSION_STRING = "DS2Key (Console) git Build";
-#endif
-
 std::string ltos(long i)
 {
 	std::stringstream stream;
