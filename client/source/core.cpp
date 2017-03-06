@@ -59,39 +59,51 @@ bool force_backlights_on = false;
 // TODO: this should be configurable?
 const bool toggle_both_lights = true;
 
+//current status of backlights
+//used by BacklightsOn() and BacklightsOff()
+//true = on, false = off
+bool backlights_status = true;
 void BacklightsOn()
 {
+	if(backlights_status == false) // if backlights are off
+	{
+		backlights_status = !backlights_status;
 #if defined(_NDS)
-	powerOn(PM_BACKLIGHT_BOTTOM);
+		powerOn(PM_BACKLIGHT_BOTTOM);
 #elif defined(_3DS)
-	GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_BOTTOM);
+		GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_BOTTOM);
 #endif
 	// Turn on top light only if enabled
-	if(toggle_both_lights)
-	{
+		if(toggle_both_lights)
+		{
 #if defined(_NDS)
-		powerOn(PM_BACKLIGHT_TOP);	
+			powerOn(PM_BACKLIGHT_TOP);
 #elif defined(_3DS)
-		GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_TOP);	
+			GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_TOP);
 #endif
+		}
 	}
 }
 
 void BacklightsOff()
 {
+	if(backlights_status == true) // if backlights are on
+	{
+		backlights_status = !backlights_status;
 #if defined(_NDS)
-	powerOff(PM_BACKLIGHT_BOTTOM);
+		powerOff(PM_BACKLIGHT_BOTTOM);
 #elif defined(_3DS)
-	GSPLCD_PowerOffBacklight(GSPLCD_SCREEN_BOTTOM);
+		GSPLCD_PowerOffBacklight(GSPLCD_SCREEN_BOTTOM);
 #endif
 	// Turn off top light only if enabled
-	if(toggle_both_lights)
-	{
+		if(toggle_both_lights)
+		{
 #if defined(_NDS)
-		powerOff(PM_BACKLIGHT_TOP);
+			powerOff(PM_BACKLIGHT_TOP);
 #elif defined(_3DS)
-		GSPLCD_PowerOffBacklight(GSPLCD_SCREEN_TOP);
+			GSPLCD_PowerOffBacklight(GSPLCD_SCREEN_TOP);
 #endif
+		}
 	}
 }
 
@@ -115,14 +127,11 @@ char* GetTime()
 	
 	if(hour < 12)
 		am = true;
+
 	if(hour == 0)
-	{
 		hour = 12;
-	}
 	else if(hour > 12)
-	{
 		hour = hour - 12;
-	}
 
 	
 	if(am)
@@ -315,7 +324,11 @@ void UpdateInputs()
 		hidCircleRead(&g_circle_position);
 		hidCstickRead(&g_cstick_position);
 		g_slider_3d_status = osGet3DSliderState();
+#if defined(EMULATOR) // this is a stub function and just causes noise in citra's command line
+		g_slider_volume_status = 63; // dummy max value
+#else
 		HIDUSER_GetSoundVolume(&g_slider_volume_status);
+#endif
 		ScanLid();
 		g_keys_held |= LidHeld();
 		g_keys_down |= LidDown();
@@ -368,9 +381,18 @@ void UpdateLid()
 void VBlankFunction()
 {
 #ifdef _3DS
-	ACU_GetWifiStatus(&wifi_status);
+#if defined(EMULATOR) // these are all stub functions and just causes noise in citra's command line
+	wifi_status = 3;     // dummy max value
+	battery_level = 5;   // dummy max value
+	charging_status = 1; // dummy max value
+#else
+	//ACU_GetWifiStatus(&wifi_status);
+	//if(wifi_status != 0)
+		wifi_status = osGetWifiStrength();
+
 	PTMU_GetBatteryLevel(&battery_level);
 	PTMU_GetBatteryChargeState(&charging_status);
+#endif
 #endif
 	UpdateInputs();
 	UpdateLid();
@@ -379,7 +401,8 @@ void VBlankFunction()
 void WaitForVBlank()
 {
 #if defined(_3DS)
-	gspWaitForVBlank();
+//TODO: This was commented, was it supposed to be?
+	//gspWaitForVBlank();
 	VBlankFunction();
 #elif defined(_NDS)
 	swiWaitForVBlank();
@@ -524,10 +547,12 @@ int Loop()
 	if(!aptMainLoop())
 		return 0;
 
-	if((g_keys_held&KEY_START)
-	&& (g_keys_held&KEY_SELECT)
-	&& (g_keys_held&KEY_L)
-	&& (g_keys_held&KEY_R))
+	if((g_keys_held&KEY_L)
+	&& (g_keys_held&KEY_R)
+	&& (g_keys_held&KEY_A)
+	&& (g_keys_held&KEY_B)
+	&& (g_keys_held&KEY_X)
+	&& (g_keys_held&KEY_Y))
 		return 0;
 
 	// Flush and swap framebuffers
@@ -540,6 +565,14 @@ int Loop()
 	WaitForVBlank();
 
 	return 1;
+}
+
+bool MagicKeys()
+{
+	return g_keys_held&KEY_START
+	    && g_keys_held&KEY_SELECT
+	    && g_keys_held&KEY_L
+	    && g_keys_held&KEY_R;
 }
 
 } // namespace D2K

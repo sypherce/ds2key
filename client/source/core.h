@@ -35,6 +35,10 @@ void DeInit();
 // return: false on system shutdown
 int Loop();
 
+// Checks if the magic key combo is held
+// return: true if keys are held
+bool MagicKeys();
+
 // Force backlights on if (value) == true
 void ForceBacklightsOn(bool value);
 
