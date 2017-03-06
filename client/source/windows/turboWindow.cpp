@@ -1,8 +1,16 @@
 #include <string> // std::string
+
+// windows
 #include "turboWindow.h"
+#include "barWindow.h"
+
+// controls
 #include "gui/checkButton.h"
 #include "gui/label.h"
+
+// core
 #include "core.h"
+#include "common/udp.h"
 
 #ifdef _3DS
 #include "gui/gui.h"
@@ -29,7 +37,6 @@ extern void CheckButtonRedFunction();
 extern void CheckButtonGreenFunction();
 
 WindowClass g_window;
-Label* label_title;
 CheckButton* check_button_l;
 CheckButton* check_button_r;
 CheckButton* check_button_left;
@@ -48,11 +55,16 @@ CheckButton* check_button_yellow;
 CheckButton* check_button_red;
 CheckButton* check_button_green;
 
+void ButtonCloseFunction()
+{
+	Turbo::g_window.SetVisible(false);
+}
+
 WindowClass::WindowClass() : Window()
 {
 	m_screen = 0;
 
-	AppendObject(label_title                = new Label(m_screen, Rect(24,0+3,128,10), "Turbo Settings"));
+	AppendObject(new Button(m_screen, Rect(220, 1, 10, 10), "Close", ButtonCloseFunction));
 				
 	AppendObject(check_button_l             = new CheckButton(m_screen, Rect(39,39,10,10), "L", &CheckButtonLFunction));
 	AppendObject(check_button_r             = new CheckButton(m_screen, Rect(205,40,10,10), "R", &CheckButtonRFunction));
@@ -79,6 +91,30 @@ WindowClass::WindowClass() : Window()
 #endif
 }
 WindowClass::~WindowClass() { }
+
+void WindowClass::SetVisible(bool visible)
+{
+	Window::SetVisible(visible);
+
+	if(!visible)
+		return;
+
+	Bar::SetText("[Turbo Settings]");
+	Bar::g_window.SetVisible(true);
+
+	ForceBacklightsOn(true);          // Lock backlights on
+}
+bool WindowClass::Update()
+{
+	UDP::Update(D2K::g_keys_held, Turbo::GetKeys(), nullptr,
+	            &D2K::g_circle_position, &D2K::g_cstick_position,
+	            &D2K::g_accel_status, &D2K::g_gyro_status,
+	            &D2K::g_slider_volume_status, &D2K::g_slider_3d_status, 0);
+
+	return Window::Update()
+	    || Bar::g_window.Update();
+}
+
 uint32_t currentTurboKeys = 0;
 void UpdateTurboKeys()
 {

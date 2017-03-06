@@ -25,7 +25,7 @@ public:
 
 	// Sets window, and all child objects visibility
 	//  param: visible true if visible, false if not
-	void SetVisible(bool visible);
+	virtual void SetVisible(bool visible);
 	bool IsVisible();
 
 	// Checks if (object) is clicked
@@ -33,7 +33,7 @@ public:
 	// return: (true) if clicked, (false) if not
 	bool CheckClick(Object* object);
 
-	bool Update();
+	virtual bool Update();
 
 private:
 	std::vector<GUI::Object*> m_objects;

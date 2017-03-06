@@ -83,7 +83,6 @@ void append(char c)
 void ButtonEnterFunction()
 {
 	Keypad::g_window.SetVisible(false);
-	Main::g_window.SetVisible(true);
 }
 
 void Button1Function()      { append('1'); }
@@ -118,17 +117,15 @@ std::string Entry(Label* label, Edit* edit, std::string text, int maxLength)
 	Main::g_window.SetVisible(false);                    // Hide main window
 	Keypad::g_window.SetVisible(true);                   // Show keypad
 
-	Keypad::g_window.Draw();                             // And actually draw it
 	while(D2K::Loop()
 	   && Keypad::g_window.IsVisible())
 	{
 		if(Keypad::g_window.Update())                // If pressed
 			Keypad::edit_entry->SetText(Buffer); // Set text
-//TODO: this interacts badly, search
-		if(D2K::g_keys_down&KEY_START)
-			break;
+// TODO: this interacts badly, search
+		if(D2K::g_keys_up&KEY_START)
+			Keypad::g_window.SetVisible(false);  // Hide keypad
 	}
-	Keypad::g_window.SetVisible(false);                  // Hide keypad
 
 	Main::g_window.SetVisible(true);                     // Go back to main window
 

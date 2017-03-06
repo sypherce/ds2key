@@ -12,6 +12,7 @@ public:
 	~WindowClass();
 
 	void SetVisible(bool visible);
+	bool Update();
 };
 void ProcessCommandSettingsPacket(UDP::DS2KeyCommandSettingsPacket settings);
 extern GUI::Command::WindowClass g_window;

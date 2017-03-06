@@ -105,6 +105,24 @@
     <ClCompile Include="source\gui\letterButton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\gui\canvas.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\windows\barWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\gui\frame.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\windows\lockedWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\windows\settingsWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\windows\touchWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\ds2keyPacket.h">
@@ -201,6 +219,24 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\gui\letterButton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\gui\canvas.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\windows\barWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\gui\frame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\windows\lockedWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\windows\settingsWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\windows\touchWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

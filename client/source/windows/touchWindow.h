@@ -1,18 +1,19 @@
 #pragma once
 
 #include "gui/window.h"
+#include "common/udp.h"
 
-namespace D2K {namespace GUI {namespace Main {
+namespace D2K {namespace GUI {namespace Touch {
 
 class WindowClass : public GUI::Window
 {
 public:
 	WindowClass();
 	~WindowClass();
-
+	
 	void SetVisible(bool visible);
 	bool Update();
 };
-extern GUI::Main::WindowClass g_window;
+extern GUI::Touch::WindowClass g_window;
 
-}}} // namespace D2K::GUI::Main
+}}} // namespace D2K::GUI::Touch

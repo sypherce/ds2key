@@ -15,8 +15,10 @@
     <ClCompile Include="source\config.cpp" />
     <ClCompile Include="source\core.cpp" />
     <ClCompile Include="source\gui\button.cpp" />
+    <ClCompile Include="source\gui\canvas.cpp" />
     <ClCompile Include="source\gui\checkButton.cpp" />
     <ClCompile Include="source\gui\edit.cpp" />
+    <ClCompile Include="source\gui\frame.cpp" />
     <ClCompile Include="source\gui\gui.cpp" />
     <ClCompile Include="source\gui\label.cpp" />
     <ClCompile Include="source\gui\letterButton.cpp" />
@@ -26,6 +28,7 @@
     <ClCompile Include="source\gui\ttf_format.cpp" />
     <ClCompile Include="source\gui\window.cpp" />
     <ClCompile Include="source\main.cpp" />
+    <ClCompile Include="source\windows\barWindow.cpp" />
     <ClCompile Include="source\windows\commandWindow.cpp" />
     <ClCompile Include="source\windows\configWindow.cpp" />
     <ClCompile Include="source\windows\connectionWindow.cpp" />
@@ -33,7 +36,9 @@
     <ClCompile Include="source\windows\ipWindow.cpp" />
     <ClCompile Include="source\windows\keyboardWindow.cpp" />
     <ClCompile Include="source\windows\keypadWindow.cpp" />
+    <ClCompile Include="source\windows\lockedWindow.cpp" />
     <ClCompile Include="source\windows\mainWindow.cpp" />
+    <ClCompile Include="source\windows\touchWindow.cpp" />
     <ClCompile Include="source\windows\turboWindow.cpp" />
     <ClCompile Include="..\common\iniParserWrapper.cpp" />
     <ClCompile Include="..\common\iniparser\src\dictionary.c" />
@@ -43,6 +48,7 @@
     <ClCompile Include="source\arm7\main7.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='3DS|ARM'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="source\windows\settingsWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\easylogging++.h" />
@@ -52,8 +58,10 @@
     <ClInclude Include="source\core.h" />
     <ClInclude Include="source\dummy_types.h" />
     <ClInclude Include="source\gui\button.h" />
+    <ClInclude Include="source\gui\canvas.h" />
     <ClInclude Include="source\gui\checkButton.h" />
     <ClInclude Include="source\gui\edit.h" />
+    <ClInclude Include="source\gui\frame.h" />
     <ClInclude Include="source\gui\gui.h" />
     <ClInclude Include="source\gui\label.h" />
     <ClInclude Include="source\gui\letterButton.h" />
@@ -62,6 +70,7 @@
     <ClInclude Include="source\gui\rect.h" />
     <ClInclude Include="source\gui\ttf_format.h" />
     <ClInclude Include="source\gui\window.h" />
+    <ClInclude Include="source\windows\barWindow.h" />
     <ClInclude Include="source\windows\commandWindow.h" />
     <ClInclude Include="source\windows\configWindow.h" />
     <ClInclude Include="source\windows\connectionWindow.h" />
@@ -69,7 +78,9 @@
     <ClInclude Include="source\windows\ipWindow.h" />
     <ClInclude Include="source\windows\keyboardWindow.h" />
     <ClInclude Include="source\windows\keypadWindow.h" />
+    <ClInclude Include="source\windows\lockedWindow.h" />
     <ClInclude Include="source\windows\mainWindow.h" />
+    <ClInclude Include="source\windows\touchWindow.h" />
     <ClInclude Include="source\windows\turboWindow.h" />
     <ClInclude Include="..\common\ds2keyPacket.h" />
     <ClInclude Include="..\common\iniParserWrapper.h" />
@@ -77,6 +88,7 @@
     <ClInclude Include="..\common\iniparser\src\iniparser.h" />
     <ClInclude Include="..\common\misc.h" />
     <ClInclude Include="..\common\udp.h" />
+    <ClInclude Include="source\windows\settingsWindow.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{6CEBDB4B-370A-4F11-A723-651484B0EF49}</ProjectGuid>

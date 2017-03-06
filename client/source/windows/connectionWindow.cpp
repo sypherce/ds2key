@@ -1,8 +1,15 @@
 #include <string> // std::string
-#include "core.h" // g_keys_down
+
+// windows
 #include "connectionWindow.h"
+#include "barWindow.h"
+
+// controls
 #include "gui/button.h"
 #include "gui/letterButton.h"
+
+// core
+#include "core.h" // g_keys_down
 #include "common/udp.h"
 
 namespace D2K {namespace GUI {namespace Main {
@@ -46,17 +53,40 @@ WindowClass::WindowClass() : Window()
 
 	AppendObject(button_1 = new LetterButton(m_screen, Rect(  2, 2, 122, 42), "A", "Server IP:", UDP::GetRemoteIPString(), &button1Function));
 	AppendObject(button_2 = new LetterButton(m_screen, Rect(130, 2, 122, 42), "B", "Port:", UDP::GetPortString(), &button2Function));
-
-	//This next line is freezing
-	AppendObject(button_3 = new LetterButton(m_screen, Rect(  2, 150, 252, 42), "Start", "Exit", "", &button3Function));
+	AppendObject(button_3 = new LetterButton(m_screen, Rect(  2, 150, 252, 22), "Start", "Exit", "", &button3Function));
 }
 WindowClass::~WindowClass() { }
 void WindowClass::SetVisible(bool visible)
 {
-	button_1->SetSubText(UDP::GetRemoteIPString());
-	button_2->SetSubText(UDP::GetPortString());
+	if(visible)
+	{
+		button_1->SetSubText(UDP::GetRemoteIPString());
+		button_2->SetSubText(UDP::GetPortString());
+	}
 
-	return Window::SetVisible(visible);
+	Window::SetVisible(visible);
+
+	if(!visible)
+		return;
+	
+	Bar::SetText("[Connection]");
+	Bar::g_window.SetVisible(true);
+
+	ForceBacklightsOn(true); // Lock backlights on
+}
+bool WindowClass::Update()
+{
+	// If (A) is pressed
+	if(g_keys_down&KEY_A)
+		D2K::GUI::Main::EditIPFunction();
+	else if(g_keys_down&KEY_B)
+		D2K::GUI::Main::EditPortFunction();
+// TODO: this interacts badly, search
+	else if(g_keys_up&KEY_START)
+		Connection::g_window.SetVisible(false);
+
+	return Window::Update()
+	    || Bar::g_window.Update();
 }
 
 void button1Function()
@@ -72,7 +102,8 @@ void button2Function()
 void button3Function()
 {
 // TODO: this is really hacky
-	D2K::g_keys_down &= KEY_START;
+	g_window.SetVisible(false);
+	D2K::g_keys_up &= KEY_START;
 }
 
 }}} // namespace D2K::GUI::Command

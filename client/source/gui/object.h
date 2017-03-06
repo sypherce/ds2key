@@ -27,7 +27,7 @@ public:
 	virtual std::string GetText();
 
 	// sets visibility to (visible) and forces an update
-	void SetVisible(bool visible);
+	virtual void SetVisible(bool visible);
 
 	// sets status to (value) and forces an update
 	virtual void SetStatus(uint8_t value);
@@ -36,7 +36,7 @@ public:
 	bool IsVisible();
 	// checks if object is clicked at (x), (y)
 	// return: (true) if clicked, (false) if not
-	bool IsClicked(uint16_t x, uint16_t y);
+	virtual bool IsClicked(uint16_t x, uint16_t y);
 	// return: current screen of object
 
 	bool GetScreen();
@@ -44,8 +44,11 @@ public:
 	GUI::Rect GetRect();
 	void SetRect(GUI::Rect rect);
 
+	uint16_t GetColor();
+	void SetColor(uint16_t color);
+
 protected:
-	uint8_t m_status; // possible values 0-2
+	uint8_t m_status{}; // possible values 0-2
 
 	void SetUpdate(bool value);
 	bool IsUpdated();
@@ -55,6 +58,7 @@ protected:
 	void Clear();
 
 private:
+	uint16_t m_color{UINT16_MAX}; // color used by Clear function
 	bool m_visible;
 	bool m_update;
 	GUI::Rect m_rect;

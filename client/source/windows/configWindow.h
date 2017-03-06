@@ -10,6 +10,9 @@ class WindowClass : public GUI::Window
 public:
 	WindowClass();
 	~WindowClass();
+
+	void SetVisible(bool visible);
+	bool Update();
 };
 extern bool g_config_type; // true = gamepad, false = keyboard
 extern GUI::ConfigWindow::WindowClass g_window;

@@ -38,10 +38,16 @@ void Object::Clear(uint16_t color)
 		GUI::DrawBackgroundImage(m_screen, m_rect, color);
 	GUI::DrawFilledRect(m_screen, m_rect, color);
 }
+// TODO: This function still doesn't work how it should I don't think...
 void Object::Clear()
 {
 	if(!GUI::IsUpdated())
-		GUI::DrawBackgroundImage(m_screen, m_rect, Color[COLOR_BACKGROUND]);
+	{
+		if(GetColor() != UINT16_MAX)
+			Clear(GetColor());
+		else
+			GUI::DrawBackgroundImage(m_screen, m_rect, Color[COLOR_BACKGROUND]);
+	}
 }
 void Object::SetVisible(bool visible)
 {
@@ -70,6 +76,7 @@ bool Object::IsClicked(uint16_t x, uint16_t y)
 {
 	return m_rect.PointIntersect(x, y);
 }
+// TODO: value should be the same as Status, you could update parts of the object by status
 void Object::SetUpdate(bool value)
 {
 	m_update = value;
@@ -89,6 +96,14 @@ D2K::GUI::Rect Object::GetRect()
 void Object::SetRect(GUI::Rect rect)
 {
 	m_rect = rect;
+}
+uint16_t Object::GetColor()
+{
+	return m_color;
+}
+void Object::SetColor(uint16_t color)
+{
+	m_color = color;
 }
 
 }} // namespace D2K::GUI

@@ -9,6 +9,9 @@ class WindowClass : public GUI::Window
 public:
 	WindowClass();
 	~WindowClass();
+
+	void SetVisible(bool visible);
+	bool Update();
 };
 extern uint32_t GetKeys();
 extern GUI::Turbo::WindowClass g_window;

@@ -1,17 +1,24 @@
 #include <string> // std::string
+
+// windows
 #include "configWindow.h"
+#include "barWindow.h"
+#include "keyboardWindow.h"
+#include "gamepadWindow.h"
+#include "turboWindow.h"
+
+// controls
 #include "gui/Button.h"
 #include "gui/label.h"
-#include "core.h"
 
+// core
+#include "core.h"
 #include "common/udp.h"
 #include "config.h"
 
 #ifdef _3DS
 #include "gui/gui.h"
 #endif
-#include "keyboardWindow.h"
-#include "gamepadWindow.h"
 
 namespace D2K {namespace GUI {namespace ConfigWindow {
 
@@ -19,7 +26,6 @@ uint16_t current_pressed_key = 0;
 bool g_config_type{};
 
 WindowClass g_window;
-Label* label_title;
 Button* button_l;
 Button* button_zl;
 Button* button_zr;
@@ -65,11 +71,7 @@ void SendNewSetting(uint16_t setting, uint16_t value)
 
 void SendNewSetting(uint16_t setting)
 {
-	uint16_t value{};
-	if(g_config_type)
-		value = Gamepad::GetKey();
-	else
-		value = Keyboard::GetKey();
+	uint16_t value = g_config_type ? Gamepad::GetKey() : Keyboard::GetKey();
 	if(value != 0)
 		SendNewSetting(setting, value);
 }
@@ -201,9 +203,7 @@ WindowClass::WindowClass() : Window()
 {
 	m_screen = 0;
 
-	AppendObject(new Button(m_screen, Rect(229, 1, 10, 10), "Close", ButtonCloseFunction));
-
-	AppendObject(label_title = new Label(m_screen, Rect(24,0+3,128,10), "Config Settings"));
+	AppendObject(new Button(m_screen, Rect(220, 1, 10, 10), "Close", ButtonCloseFunction));
 				
 	static uint16_t lx, ly;
 	lx = 9;
@@ -283,5 +283,31 @@ WindowClass::WindowClass() : Window()
 	AppendObject(button_lid  = new Button(m_screen, Rect(lid_x, lid_y, 10, 10), "Lid", &ButtonLidFunction));
 }
 WindowClass::~WindowClass() { }
+
+void WindowClass::SetVisible(bool visible)
+{
+	Window::SetVisible(visible);
+
+	if(!visible)
+		return;
+
+	Window::SetVisible(visible);
+	Bar::SetText(g_config_type ? "[Gamepad]" : "[Keyboard]");
+	Bar::g_window.SetVisible(true);
+
+	ForceBacklightsOn(true);          // Lock backlights on
+}
+bool WindowClass::Update()
+{
+	UDP::Update(D2K::g_keys_held, Turbo::GetKeys(), nullptr,
+		        &g_circle_position, &g_cstick_position,
+		        &g_accel_status, &g_gyro_status,
+		        &g_slider_volume_status, &g_slider_3d_status,
+		        0);
+	ConfigWindow::current_pressed_key = 0;
+
+	return Window::Update()
+	    || Bar::g_window.Update();
+}
 
 }}} // namespace D2K::GUI::ConfigWindow
