@@ -1076,14 +1076,15 @@ void DrawLetter(uint8_t screen, char letter, uint16_t x, uint16_t y, uint16_t c)
 }
 void DrawString(uint8_t screen, std::string text, uint8_t font_size, uint8_t face_type, uint16_t x, uint16_t y, uint16_t c)
 {
-#if defined(_3DS)
-	TTF::DrawString(screen, x, y, font_size, face_type, c, text.c_str());
-#elif defined(_NDS)
+// TODO:Disabled TTF functions for now, REALLY SLOW!
+//#if defined(_3DS)
+//	TTF::DrawString(screen, x, y, font_size, face_type, c, text.c_str());
+//#elif defined(_NDS)
 	for(unsigned int i = 0; i < text.length(); i++)
 	{
 		DrawLetter(screen, text.at(i), x + (i * 6), y, c);
 	}
-#endif
+//#endif
 }
 
 }} // namespace D2K::GUI
