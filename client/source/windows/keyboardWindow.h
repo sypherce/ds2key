@@ -187,6 +187,7 @@ public:
 };
 extern GUI::Keyboard::WindowClass g_window;
 extern std::string GetString(GUI::Label* label, GUI::Edit* edit, std::string text, int maxLength);
-extern uint16_t GetKey();
+// true = button, false = key
+extern uint16_t GetButtonOrKey(bool button_or_key);
 
 }}} // namespace D2K::GUI::Keyboard

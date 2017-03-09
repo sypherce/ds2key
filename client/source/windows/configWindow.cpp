@@ -4,7 +4,6 @@
 #include "configWindow.h"
 #include "barWindow.h"
 #include "keyboardWindow.h"
-#include "gamepadWindow.h"
 #include "turboWindow.h"
 
 // controls
@@ -71,7 +70,7 @@ void SendNewSetting(uint16_t setting, uint16_t value)
 
 void SendNewSetting(uint16_t setting)
 {
-	uint16_t value = g_config_type ? Gamepad::GetKey() : Keyboard::GetKey();
+	uint16_t value = Keyboard::GetButtonOrKey(g_config_type);
 	if(value != 0)
 		SendNewSetting(setting, value);
 }
