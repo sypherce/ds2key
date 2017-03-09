@@ -18,7 +18,7 @@ Label* label_1;
 
 WindowClass::WindowClass() : Window()
 {
-	AppendObject(label_1 = new Label(m_screen, Rect(2, 2, 61, 42), "Press L+R+START+SELECT to unlock screen"));
+	AppendObject(label_1 = new Label(m_screen, Rect(2, 2, 61, 10), "Press L+R+START+SELECT to unlock screen"));
 }
 WindowClass::~WindowClass() { }
 void WindowClass::SetVisible(bool visible)

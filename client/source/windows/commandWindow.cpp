@@ -87,7 +87,7 @@ WindowClass::WindowClass() : Window()
 		y += h + gap;
 	button_rects[11] = Rect(x,y,w,h);
 	
-	AppendObject(label_1 = new Label(m_screen, Rect(2, 2, 61, 42), "Press L+R+START+SELECT to unlock screen"));
+	AppendObject(label_1 = new Label(m_screen, Rect(2, 2, 61, 10), "Press L+R+START+SELECT to unlock screen"));
 
 	AppendObject(command_button[0] = new Button(m_screen, button_rects[0], "Command 0", &button1Function));
 	AppendObject(command_button[1] = new Button(m_screen, button_rects[1], "Command 1", &button2Function));
