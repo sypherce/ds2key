@@ -123,7 +123,7 @@ void WindowClass::SetVisible(bool visible)
 	Bar::SetText("[" + D2K::VERSION_STRING + "]");
 	Bar::g_window.SetVisible(true);
 	
-	ForceBacklightsOn(false); // Let backlights timeout
+	ForceBacklightsOn(true); // Lock backlights on
 }
 
 bool WindowClass::Update()
