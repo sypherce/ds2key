@@ -212,10 +212,10 @@ WindowClass::WindowClass() : Window()
 	
 	AppendObject(frame_main            = new Frame(m_screen,  Rect(0,           header_y, 191, title_x - 5), background_color));
 	AppendObject(frame_title           = new Frame(m_screen,  Rect(title_x - 5, header_y, 191, 255 - (title_x - 5)), title_background_color));
-	AppendObject(canvas_wifi           = new Canvas(m_screen, Rect(wifi_x,      header_y, 14, 14)));
+	AppendObject(canvas_wifi           = new Canvas(m_screen, wifi_x,      header_y, 14, 14));
 	canvas_wifi->SetBuffer((uint16_t*)Wifi_4);
 	canvas_wifi->SetColor(background_color);
-	AppendObject(canvas_battery        = new Canvas(m_screen, Rect(battery_x,   header_y, 8, 14)));
+	AppendObject(canvas_battery        = new Canvas(m_screen, battery_x,   header_y, 8, 14));
 	canvas_battery->SetBuffer((uint16_t*)Battery_5);
 	canvas_battery->SetColor(background_color);
 	AppendObject(label_clock           = new Label(m_screen,  Rect(clock_x,     header_y + 5,  70, 10), D2K::GetTime()));

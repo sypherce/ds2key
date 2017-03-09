@@ -11,8 +11,7 @@ namespace D2K {namespace GUI {
 #if defined(_NDS)
 const float SCREEN_SCALE = 1.0;
 #elif defined(_3DS)
-//const float SCREEN_SCALE = 1.25;
-const float SCREEN_SCALE = 1.0;
+const float SCREEN_SCALE = 1.25;
 #endif
 
 Rect::Rect()

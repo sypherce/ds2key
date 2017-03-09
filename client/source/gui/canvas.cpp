@@ -6,8 +6,10 @@ namespace D2K {namespace GUI {
 
 extern const uint8_t SCREEN_BYTES;
 
-Canvas::Canvas(uint8_t screen, GUI::Rect rect) : Object(screen, rect)
+Canvas::Canvas(uint8_t screen, uint16_t x, uint16_t y, uint16_t w, uint16_t h) : Object(screen, GUI::Rect(x, y, w, h))
 {
+	m_w = w;
+	m_h = h;
 }
 
 Canvas::~Canvas()
@@ -28,11 +30,11 @@ bool Canvas::Draw()
 		if(!m_buffer)
 			return false;
 
-		for(int x = 0; x < GetRect().GetW(); x++)
+		for(int x = 0; x < m_w; x++)
 		{
-			for(int y = 0; y < GetRect().GetH(); y++)
+			for(int y = 0; y < m_h; y++)
 			{
-				int buffer_memory_position = x + (y * GetRect().GetW());
+				int buffer_memory_position = x + (y * m_w);
 
 				// ignore pure black for transparency
 				if(m_buffer[buffer_memory_position] != 0x0000)
