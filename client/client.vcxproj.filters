@@ -63,9 +63,6 @@
     <ClCompile Include="source\windows\commandWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\windows\ipWindow.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\windows\keypadWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -174,9 +171,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\windows\commandWindow.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\windows\ipWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\windows\keypadWindow.h">
