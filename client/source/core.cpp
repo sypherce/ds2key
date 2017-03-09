@@ -401,8 +401,7 @@ void VBlankFunction()
 void WaitForVBlank()
 {
 #if defined(_3DS)
-// TODO: This was commented, was it supposed to be?
-	//gspWaitForVBlank();
+	gspWaitForVBlank();
 	VBlankFunction();
 #elif defined(_NDS)
 	swiWaitForVBlank();
