@@ -273,7 +273,7 @@ int Recv(void* buffer, unsigned int length, struct sockaddr* _remote_sockaddr)
 		{
 			int err = NETerrno;
 			if(err != NETEWOULDBLOCK)
-#if !defined(EMULATOR) // this errors each time and just causes noise in citra's command line
+#if EMULATOR == 0 // this errors each time and just causes noise in citra's command line
 				LOG(ERROR) << "Error #" << err << " (recvfrom): " << strerror(err) << "\n";
 #endif
 			return err;

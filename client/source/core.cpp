@@ -324,7 +324,7 @@ void UpdateInputs()
 		hidCircleRead(&g_circle_position);
 		hidCstickRead(&g_cstick_position);
 		g_slider_3d_status = osGet3DSliderState();
-#if defined(EMULATOR) // this is a stub function and just causes noise in citra's command line
+#if EMULATOR == 1 // this is a stub function and just causes noise in citra's command line
 		g_slider_volume_status = 63; // dummy max value
 #else
 		HIDUSER_GetSoundVolume(&g_slider_volume_status);
@@ -381,7 +381,7 @@ void UpdateLid()
 void VBlankFunction()
 {
 #ifdef _3DS
-#if defined(EMULATOR) // these are all stub functions and just causes noise in citra's command line
+#if EMULATOR == 1// these are all stub functions and just causes noise in citra's command line
 	wifi_status = 3;     // dummy max value
 	battery_level = 5;   // dummy max value
 	charging_status = 1; // dummy max value
