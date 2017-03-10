@@ -275,6 +275,8 @@ bool WindowClass::Update()
 			canvas_battery->SetBuffer((uint16_t*)Battery_3);
 			break;
 		case 4:
+			canvas_battery->SetBuffer((uint16_t*)Battery_4);
+			break;
 		case 5:
 			canvas_battery->SetBuffer((uint16_t*)Battery_5);
 			break;
