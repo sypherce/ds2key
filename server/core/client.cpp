@@ -81,6 +81,7 @@ uint32_t EnumKeyToNDSKeypadBit(int enum_key)
 		return DS2KEY_SLIDER_3D;
 
 	default:
+// TODO: This actually returns KEYS::Name. Probably should make a KEYS::Invalid or something set to 0
 		return 0;
 	}
 }

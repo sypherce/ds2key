@@ -58,10 +58,10 @@ void SetMasterVolume(float volume)
 	CoInitialize(nullptr);
 
 	// Creates a single uninitialized object
-	IMMDeviceEnumerator *device_enumerator{}; 
+	IMMDeviceEnumerator* device_enumerator{}; 
 	hresult = CoCreateInstance(__uuidof(MMDeviceEnumerator),
 	          NULL, CLSCTX_INPROC_SERVER, __uuidof(IMMDeviceEnumerator),
-	          (LPVOID *)&device_enumerator);
+	          (LPVOID*)&device_enumerator);
 	if(hresult != S_OK)
 	{
 		LOG(ERROR) << "Error (CoCreateInstance): #" << hresult;
@@ -72,7 +72,7 @@ void SetMasterVolume(float volume)
 	}
 
 	// Retrieve the default audio endpoint using (device_enumerator)
-	IMMDevice *default_audio_endpoint{};
+	IMMDevice* default_audio_endpoint{};
 	hresult = device_enumerator->GetDefaultAudioEndpoint(eRender, eConsole,
 	              &default_audio_endpoint);
 	// we're done with device_enumerator
@@ -87,7 +87,7 @@ void SetMasterVolume(float volume)
 	}
 
 	// Retrieve the volume controls using (default_audio_endpoint)
-	IAudioEndpointVolume *endpoint_volume{};
+	IAudioEndpointVolume* endpoint_volume{};
 	hresult = default_audio_endpoint->Activate(__uuidof(IAudioEndpointVolume),
 	              CLSCTX_INPROC_SERVER, nullptr, (LPVOID*)&endpoint_volume);
 	// we're done with default_audio_endpoint

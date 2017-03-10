@@ -495,7 +495,7 @@ bool Init(int argc, char* argv[])
 	static uint32_t SOC_BUFFERSIZE = 0x100000;
 
 	// allocate buffer for SOC service
-	static uint32_t *SOC_buffer = (uint32_t*)memalign(SOC_ALIGN, SOC_BUFFERSIZE);
+	static uint32_t* SOC_buffer = (uint32_t*)memalign(SOC_ALIGN, SOC_BUFFERSIZE);
 
 	if(SOC_buffer == nullptr) {
 		LOG(ERROR) << "memalign: failed to allocate";

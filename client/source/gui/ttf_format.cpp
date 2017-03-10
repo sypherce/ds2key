@@ -60,7 +60,7 @@ void DeInit(uint8_t face_type)
 
 void Draw(uint8_t screen, uint16_t x, uint16_t y, uint16_t color, FT_Bitmap *bitmap)
 {
-	uint8_t *buffer = bitmap->buffer;
+	uint8_t* buffer = bitmap->buffer;
 	int buffer_gap = bitmap->pitch - bitmap->width;
 	for(unsigned int y_i = 0; y_i < bitmap->rows; y_i++)
 	{
