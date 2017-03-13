@@ -17,6 +17,10 @@ extern accelVector g_accel_status;
 extern angularRate g_gyro_status;
 extern float g_slider_3d_status;
 extern uint8_t g_slider_volume_status;
+extern int8_t wifi_status;
+const int8_t WIFI_NOT_CONNECTED = -1;
+extern uint8_t battery_level;
+extern uint8_t charging_status;
 
 // return: The current time
 char* GetTime();

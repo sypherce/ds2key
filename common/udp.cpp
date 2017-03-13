@@ -119,10 +119,27 @@ int Connect(uint16_t _port)
 int Connect(bool _non_blocking, uint16_t _port)
 {
 	if(EMULATOR)          // Skip if emulating
-		return 0;
+	{
+		LOG_N_TIMES(1, ERROR) << "Wifi disabled for emulator.\n";
+		return 1;
+	}
+
+	static bool wifi_not_connected_log{}; // Helps us not spam the log
+#if defined(_3DS)
+	if(wifi_status == WIFI_NOT_CONNECTED)
+	{
+		if(!wifi_not_connected_log)
+		{
+			LOG(ERROR) << "Error: Wifi not connected. Is it enabled?\n";
+			wifi_not_connected_log = true;
+		}
+		return 1;
+	}
+#endif
+	wifi_not_connected_log = false;
 
 	if(IsConnected())     // If already connected
-		Disconnect();     // Disconnect first
+		Disconnect(); // Disconnect first
 
 	SetConfigPort(_port); // Set port
 
@@ -190,6 +207,7 @@ int Disconnect()
 {
 	if(EMULATOR) // Skip if emulating
 		return 0;
+
 	if(IsConnected())
 	{
 		// udp system disconnects even if NETclosesocket returns error
@@ -273,9 +291,8 @@ int Recv(void* buffer, unsigned int length, struct sockaddr* _remote_sockaddr)
 		{
 			int err = NETerrno;
 			if(err != NETEWOULDBLOCK)
-#if EMULATOR == 0 // this errors each time and just causes noise in citra's command line
 				LOG(ERROR) << "Error #" << err << " (recvfrom): " << strerror(err) << "\n";
-#endif
+
 			return err;
 		}
 		LOG_EVERY_N(300, TRACE) << "Received " << length << " bytes";
@@ -381,6 +398,10 @@ void Update(uint32_t keys, uint32_t keysTurbo, const touchPosition* touch_positi
 	if(EMULATOR)                                  // Skip if emulating
 		return;
 
+	if(!UDP::IsConnected()                        // Skip if not connected
+	&& Connect())                                 // and can't connect
+		return;
+
 	ListenForServer();                            // Listen for the server
 
 	packet = DS2KeyPacket{};                      // Clear the packet
@@ -458,6 +479,11 @@ void ServerLookup()
 {
 	if(EMULATOR)                                        // Skip if emulating
 		return;
+
+	if(!UDP::IsConnected()                              // Skipe if not connected
+	&& Connect())                                       // and can't connect
+		return;
+
 	unsigned long saved_remote_ip = GetRemoteIP();      // Save the remote IP
 	unsigned long LocalIP = GetLocalIP();               // Get the local IP
 	SetRemoteIP(((LocalIP) & 0xFF) |                    // Setup the broadcast IP
@@ -489,10 +515,14 @@ void ListenForServer()
 	if(EMULATOR)                                // Skip if emulating
 		return;
 
-	DS2KeyCommandSettingsPacket command_settings_packet = DS2KeyCommandSettingsPacket{}; // Large packet
+	if(!UDP::IsConnected()                      // Skipe if not connected
+	&& Connect())                               // and can't connect
+		return;
 
-	if(UDP::IsConnected()                       // Received something
-	&& UDP::Recv(&command_settings_packet, sizeof(DS2KeyCommandSettingsPacket)) == 0)
+	DS2KeyCommandSettingsPacket command_settings_packet = DS2KeyCommandSettingsPacket{}; // Large packet
+	
+	// Received something
+	if(UDP::Recv(&command_settings_packet, sizeof(DS2KeyCommandSettingsPacket)) == 0)
 	{
 		switch(command_settings_packet.type)
 		{

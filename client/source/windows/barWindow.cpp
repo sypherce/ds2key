@@ -17,14 +17,6 @@
 #include "common/misc.h"
 #include "config.h"
 
-namespace D2K {
-
-extern uint32_t wifi_status;
-extern uint8_t battery_level;
-extern uint8_t charging_status;
-
-}
-
 namespace D2K {namespace GUI {namespace Bar {
 
 WindowClass g_window;

@@ -48,7 +48,10 @@ angularRate g_gyro_status{};
 touchPosition g_stylus_position{};
 float g_slider_3d_status{};
 uint8_t g_slider_volume_status{};
-uint32_t wifi_status{};
+// Current wifi_status
+// 0 - 3 represents wifi strength
+// -1 represents the wifi is not connected
+int8_t wifi_status{};
 uint8_t battery_level{};
 uint8_t charging_status{};
 bool input_changed{false};
@@ -380,15 +383,18 @@ void UpdateLid()
 // vblank function we assign in Init()
 void VBlankFunction()
 {
+	uint32_t wifi_connected{};
 #ifdef _3DS
 #if EMULATOR == 1// these are all stub functions and just causes noise in citra's command line
 	wifi_status = 3;     // dummy max value
 	battery_level = 5;   // dummy max value
 	charging_status = 1; // dummy max value
 #else
-	//ACU_GetWifiStatus(&wifi_status);
-	//if(wifi_status != 0)
-		wifi_status = osGetWifiStrength();
+	ACU_GetWifiStatus(&wifi_connected);
+	if(wifi_connected)
+		wifi_status = (int8_t)osGetWifiStrength();
+	else
+		wifi_status = WIFI_NOT_CONNECTED;
 
 	PTMU_GetBatteryLevel(&battery_level);
 	PTMU_GetBatteryChargeState(&charging_status);
@@ -470,29 +476,28 @@ bool Init(int argc, char* argv[])
 #endif
 
 	// If we're running in emulator mode, let the user know
-	if(EMULATOR) 
+	if(EMULATOR)
 		LOG(DEBUG) << " - Emulator Mode";
 
 	LOG(INFO) << "\n-";
 
-#ifdef _NDS
+#if defined(_NDS)
 	if(!fatInitDefault())
 		LOG(ERROR) << "Error (fatInitDefault): Failed to access storage\n";
-	
-	LOG(INFO) << "Connecting via WFC data\n";
-	if(EMULATOR
-	|| !Wifi_InitDefault(WFC_CONNECT))
+
+	if(!EMULATOR) 
 	{
-		LOG(ERROR) << "Error (Wifi_InitDefault): Failed to connect\n";
-		if(!EMULATOR)
+		LOG(INFO) << "Connecting via WFC data\n";
+		if(!Wifi_InitDefault(WFC_CONNECT))
+		{
+			LOG(ERROR) << "Error (Wifi_InitDefault): Failed to connect\n";
+
 			return true; // Return with error
+		}
 	}
-
-#endif
-
-#ifdef _3DS
-	static uint32_t SOC_ALIGN = 0x1000;
-	static uint32_t SOC_BUFFERSIZE = 0x100000;
+#elif defined(_3DS)
+	const uint32_t SOC_ALIGN = 0x1000;
+	const uint32_t SOC_BUFFERSIZE = 0x100000;
 
 	// allocate buffer for SOC service
 	static uint32_t* SOC_buffer = (uint32_t*)memalign(SOC_ALIGN, SOC_BUFFERSIZE);
