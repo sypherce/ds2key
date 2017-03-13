@@ -93,6 +93,12 @@ bool WindowClass::Update()
 	else if(g_keys_up&KEY_START)
 		Settings::g_window.SetVisible(false);
 
+	UDP::Update(0, 0, nullptr,
+	            nullptr, nullptr,
+	            nullptr, nullptr,
+	            nullptr, nullptr,
+	            0);
+
 	return Window::Update()
 	    || Bar::g_window.Update();
 }

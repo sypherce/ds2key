@@ -154,7 +154,14 @@ bool WindowClass::Update()
 		// Search for server on start
 		ButtonIPFunction();
 	}
-		
+
+	if(g_keys_down&KEY_A)
+		D2K::GUI::Main::ButtonSettingsFunction();
+	else if(g_keys_down&KEY_B)
+		D2K::GUI::Main::ButtonTouchFunction();
+	else if(g_keys_down&KEY_X)
+		D2K::GUI::Main::ButtonCommandsFunction();
+
 	if(edit_ip->IsVisible())
 	{
 		std::string temp_ip = UDP::GetRemoteIPString();
@@ -182,6 +189,12 @@ bool WindowClass::Update()
 			edit_profile->SetText(profile);
 		}
 	}
+	
+	UDP::Update(0, 0, nullptr,
+	            nullptr, nullptr,
+	            nullptr, nullptr,
+	            nullptr, nullptr,
+	            0);
 
 	return Window::Update()
 	    || Bar::g_window.Update();
