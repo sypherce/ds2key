@@ -389,6 +389,7 @@ Client* GetClient(uint8_t profile)
 		g_client_array[profile] = new Client();                                         // create it
 		Config::LoadProfile(g_client_array[profile]->GetProfileDataPointer(), profile); // then load it
 		LOG(INFO) << "Client #:" << (int)profile << " has connected.";
+		PlaySound(TEXT("DeviceConnect"), nullptr, SND_ASYNC);
 	}
 	return g_client_array[profile];
 }

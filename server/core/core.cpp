@@ -503,6 +503,7 @@ void CheckForDeadClients()
 				delete(g_client_array[i]);
 				g_client_array[i] = nullptr;
 				LOG(INFO) << "Client #:" << i << " removed from inactivity.";
+				PlaySound(TEXT("DeviceDisconnect"), nullptr, SND_ASYNC);
 			}
 			else
 			{
