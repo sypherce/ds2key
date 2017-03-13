@@ -299,10 +299,10 @@ void WindowClass::SetVisible(bool visible)
 bool WindowClass::Update()
 {
 	UDP::Update(D2K::g_keys_held, Turbo::GetKeys(), nullptr,
-		        &g_circle_position, &g_cstick_position,
-		        &g_accel_status, &g_gyro_status,
-		        &g_slider_volume_status, &g_slider_3d_status,
-		        0);
+	            &g_circle_position, &g_cstick_position,
+	            &g_accel_status, &g_gyro_status,
+	            &g_slider_volume_status, &g_slider_3d_status,
+	            0);
 	ConfigWindow::current_pressed_key = 0;
 
 	return Window::Update()

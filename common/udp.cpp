@@ -480,7 +480,7 @@ void ServerLookup()
 	if(EMULATOR)                                        // Skip if emulating
 		return;
 
-	if(!UDP::IsConnected()                              // Skipe if not connected
+	if(!UDP::IsConnected()                              // Skip if not connected
 	&& Connect())                                       // and can't connect
 		return;
 
@@ -515,7 +515,7 @@ void ListenForServer()
 	if(EMULATOR)                                // Skip if emulating
 		return;
 
-	if(!UDP::IsConnected()                      // Skipe if not connected
+	if(!UDP::IsConnected()                      // Skip if not connected
 	&& Connect())                               // and can't connect
 		return;
 
