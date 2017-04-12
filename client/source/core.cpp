@@ -146,11 +146,6 @@ char* GetTime()
 }
 
 #ifdef _3DS
-enum
-{
-	KEY_LID = BIT(13)
-};
-
 static uint8_t lid_open{};
 uint8_t old_lid_open{};
 

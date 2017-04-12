@@ -9,6 +9,11 @@
 
 namespace D2K {
 
+enum
+{
+	KEY_LID = BIT(13)
+};
+
 extern uint32_t g_keys_held, g_keys_down, g_keys_up;
 extern touchPosition g_stylus_position;
 extern circlePosition g_circle_position;
