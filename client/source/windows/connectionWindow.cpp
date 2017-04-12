@@ -31,12 +31,6 @@ LetterButton* button_1;
 LetterButton* button_2;
 LetterButton* button_3;
 
-// Request a settings packet, use the info if we get any
-
-void ProcessCommandSettingsPacket(UDP::DS2KeyCommandSettingsPacket settings)
-{
-}
-
 WindowClass::WindowClass() : Window()
 {
 	m_screen = 0;
