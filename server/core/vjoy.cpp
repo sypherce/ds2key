@@ -2,23 +2,24 @@
 
 #include "common/easylogging++Wrapper.h"
 
+#include "vjoy.h"
 #ifdef _WIN32
-#include "VJoy.h"
 #include "vjoy/inc/vjoyinterface.h"
 #endif
 
 namespace D2K {namespace Input {namespace Joystick {
+
+bool hat_up[MAX_JOYSTICKS+1]{};
+bool hat_down[MAX_JOYSTICKS+1]{};
+bool hat_left[MAX_JOYSTICKS+1]{};
+bool hat_right[MAX_JOYSTICKS+1]{};
 
 // We use MAX_JOYSTICKS+1 because vJoy's joysticks are 1-based.
 // joystick_position[0] is unused, but it makes the rest of the
 // code not need joystick_position[device+1].
 #ifdef _WIN32
 JOYSTICK_POSITION joystick_position[MAX_JOYSTICKS+1]{};
-#endif
-bool hat_up[MAX_JOYSTICKS+1]{};
-bool hat_down[MAX_JOYSTICKS+1]{};
-bool hat_left[MAX_JOYSTICKS+1]{};
-bool hat_right[MAX_JOYSTICKS+1]{};
+
 // TODO: function vjoyinterface.h::GetVJDAxisMax
 const LONG MAX_AXIS_VALUE = 32767;
 const DWORD CONTINUOUS_UP = 0;
@@ -30,6 +31,7 @@ const DWORD CONTINUOUS_DOWN_LEFT = 22500;
 const DWORD CONTINUOUS_LEFT = 27000;
 const DWORD CONTINUOUS_UP_LEFT = 31500;
 const DWORD CONTINUOUS_NEUTRAL = 0xFFFFFFFF;
+#endif
 
 bool IsIDValid(uint8_t device)
 {

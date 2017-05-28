@@ -12,6 +12,8 @@
 
 // core
 #include "core.h"
+#include "common/enum_keys.h"
+#include "common/key.h"
 #include "common/udp.h"
 #include "config.h"
 
@@ -19,48 +21,44 @@
 #include "gui/gui.h"
 #endif
 
+// TODO: Remove
+#include "common/misc.h"
+
 namespace D2K {namespace GUI {namespace ConfigWindow {
 
-uint16_t current_pressed_key = 0;
+uint16_t current_pressed_key = Key::KEY_NONE;
 bool g_config_type{};
 
 WindowClass g_window;
-Button* button_l;
-Button* button_zl;
-Button* button_zr;
-Button* button_r;
-Button* button_left;
-Button* button_right;
-Button* button_up;
-Button* button_down;
-Button* button_cpad_left;
-Button* button_cpad_right;
-Button* button_cpad_up;
-Button* button_cpad_down;
-Button* button_cstick_left;
-Button* button_cstick_right;
-Button* button_cstick_up;
-Button* button_cstick_down;
-Button* button_a;
-Button* button_b;
-Button* button_x;
-Button* button_y;
-Button* button_start;
-Button* button_select;
-Button* button_enable;
 Button* button_slider_volume;
 Button* button_slider_3d;
-Button* button_blue;
-Button* button_yellow;
-Button* button_red;
-Button* button_green;
 Button* button_lid;
+
+Label* instructions_label;
+Label* label[KEYS::KEYS_BUTTON_COUNT];
+
+void ProcessInputSettingsPacket(UDP::DS2KeyInputSettingsPacket settings)
+{
+	for(int KeyCounter = KEYS::_START_OF_BUTTONS_; KeyCounter <= KEYS::_END_OF_BUTTONS_; KeyCounter++)
+	{
+		int SettingsCounter = KeyCounter - KEYS::_START_OF_BUTTONS_;
+
+		std::string temporary_string = D2K::Key::GetString(settings.value[SettingsCounter]);
+		if(temporary_string.find("KEY_NONE") == 0)
+			temporary_string = "(None)";
+		else if(temporary_string.find("KEY_") == 0)
+			temporary_string.erase(0, 3);
+		temporary_string = KEYS::GetKeyName(KeyCounter) + ": " + temporary_string;
+
+		label[SettingsCounter]->SetText(temporary_string);
+	}
+}
 
 void SendNewSetting(uint16_t setting, uint16_t value)
 {
-	UDP::DS2KeyNormalSettingsPacket settings = UDP::DS2KeyNormalSettingsPacket{};
+	UDP::DS2KeySingleInputSettingPacket settings = UDP::DS2KeySingleInputSettingPacket{};
 	settings.profile = UDP::GetProfile();
-	settings.type = UDP::PACKET::NORMAL_SETTING;
+	settings.type = UDP::PACKET::SINGLE_INPUT_SETTING;
 	settings.setting = setting;
 	settings.value = value;
 
@@ -71,7 +69,7 @@ void SendNewSetting(uint16_t setting, uint16_t value)
 void SendNewSetting(uint16_t setting)
 {
 	uint16_t value = Keyboard::GetButtonOrKey(g_config_type);
-	if(value != 0)
+	if(value != Key::KEY_NONE)
 		SendNewSetting(setting, value);
 }
 
@@ -203,88 +201,41 @@ WindowClass::WindowClass() : Window()
 	m_screen = 0;
 
 	AppendObject(new Button(m_screen, Rect(220, 1, 10, 10), "Close", ButtonCloseFunction));
-				
-	static uint16_t lx, ly;
-	lx = 9;
-	ly = 15;
-	AppendObject(button_l  = new Button(m_screen, Rect(lx,ly,10,10), "L", &ButtonLFunction));
-#ifdef _3DS
-	AppendObject(button_zl = new Button(m_screen, Rect(lx,ly+13,10,10), "ZL", &ButtonZLFunction));
-#endif
-		
-	static uint16_t rx, ry;
-	rx = 235;
-	ry = ly;
-	AppendObject(button_r  = new Button(m_screen, Rect(rx,ry,10,10), "R", &ButtonRFunction));
-#ifdef _3DS
-	AppendObject(button_zr = new Button(m_screen, Rect(rx,ry+13,10,10), "ZR", &ButtonZRFunction));
-#endif
+	AppendObject(instructions_label = new Label(m_screen, Rect(15, 20, 55, 10), "Press a button to configure."));
 
-	static uint16_t dpad_x, dpad_y;
-	dpad_x = 9;
-	dpad_y = 80;
-	AppendObject(button_left  = new Button(m_screen, Rect(dpad_x,      dpad_y + 15, 10, 10), "<", &ButtonLeftFunction));
-	AppendObject(button_right = new Button(m_screen, Rect(dpad_x + 60, dpad_y + 15, 10, 10), ">", &ButtonRightFunction));
-	AppendObject(button_up    = new Button(m_screen, Rect(dpad_x + 30, dpad_y,      10, 10), "^", &ButtonUpFunction));
-	AppendObject(button_down  = new Button(m_screen, Rect(dpad_x + 30, dpad_y + 30, 10, 10), "v", &ButtonDownFunction));
-	
-#ifdef _3DS
-	static uint16_t cpad_x, cpad_y;
-	cpad_x = 30;
-	cpad_y = 15;
-	AppendObject(button_left  = new Button(m_screen, Rect(cpad_x,      cpad_y + 15, 10, 10), "CP <", &ButtonLeftCPadFunction));
-	AppendObject(button_right = new Button(m_screen, Rect(cpad_x + 60, cpad_y + 15, 10, 10), "CP >", &ButtonRightCPadFunction));
-	AppendObject(button_up    = new Button(m_screen, Rect(cpad_x + 30, cpad_y,      10, 10), "CP ^", &ButtonUpCPadFunction));
-	AppendObject(button_down  = new Button(m_screen, Rect(cpad_x + 30, cpad_y + 30, 10, 10), "CP v", &ButtonDownCPadFunction));
-	
-	static uint16_t cstick_x, cstick_y;
-	cstick_x = 135;
-	cstick_y = 15;
-	AppendObject(button_left  = new Button(m_screen, Rect(cstick_x,      cstick_y + 15, 10, 10), "CS <", &ButtonLeftCStickFunction));
-	AppendObject(button_right = new Button(m_screen, Rect(cstick_x + 60, cstick_y + 15, 10, 10), "CS >", &ButtonRightCStickFunction));
-	AppendObject(button_up    = new Button(m_screen, Rect(cstick_x + 30, cstick_y,      10, 10), "CS ^", &ButtonUpCStickFunction));
-	AppendObject(button_down  = new Button(m_screen, Rect(cstick_x + 30, cstick_y + 30, 10, 10), "CS v", &ButtonDownCStickFunction));
-#endif
-	
-	static uint16_t abxy_x, abxy_y;
-	abxy_x = 175;
-	abxy_y = 80;
-	AppendObject(button_a = new Button(m_screen, Rect(abxy_x + 60, abxy_y + 15, 10, 10), "A", &ButtonAFunction));
-	AppendObject(button_b = new Button(m_screen, Rect(abxy_x + 30, abxy_y + 30, 10, 10), "B", &ButtonBFunction));
-	AppendObject(button_x = new Button(m_screen, Rect(abxy_x + 30, abxy_y,      10, 10), "X", &ButtonXFunction));
-	AppendObject(button_y = new Button(m_screen, Rect(abxy_x     , abxy_y + 15, 10, 10), "Y", &ButtonYFunction));
-	
-	static uint16_t start_select_x, start_select_y;
-	start_select_x = 85;
-	start_select_y = 115;
-	AppendObject(button_start  = new Button(m_screen, Rect(start_select_x + 60, start_select_y, 10, 10), "Start", &ButtonStartFunction));
-	AppendObject(button_select = new Button(m_screen, Rect(start_select_x,     start_select_y, 10, 10), "Select", &ButtonSelectFunction));
-	
-#if defined(_3DS)
+
 	static uint16_t sliders_x, sliders_y;
 	sliders_x = 40;
 	sliders_y = 130;
 	AppendObject(button_slider_volume = new Button(m_screen, Rect(sliders_x,       sliders_y, 10, 10), "Volume", &ButtonSliderVolumeFunction));
 	AppendObject(button_slider_3d     = new Button(m_screen, Rect(sliders_x + 100, sliders_y, 10, 10), "3D Slider", &ButtonSlider3DFunction));
-#elif defined(_NDS)
-	static uint16_t byrg_x, byrg_y;
-	byrg_x = 40;
-	byrg_y = 130;
-	AppendObject(button_blue   = new Button(m_screen, Rect(byrg_x,       byrg_y, 10, 10), "Blue", &ButtonBlueFunction));
-	AppendObject(button_yellow = new Button(m_screen, Rect(byrg_x + 50,  byrg_y, 10, 10), "Yellow", &ButtonYellowFunction));
-	AppendObject(button_red    = new Button(m_screen, Rect(byrg_x + 100, byrg_y, 10, 10), "Red", &ButtonRedFunction));
-	AppendObject(button_green  = new Button(m_screen, Rect(byrg_x + 150, byrg_y, 10, 10), "Green", &ButtonGreenFunction));
-#endif
 
 	static uint16_t lid_x, lid_y;
 	lid_x = 115;
 	lid_y = 145;
 	AppendObject(button_lid  = new Button(m_screen, Rect(lid_x, lid_y, 10, 10), "Lid", &ButtonLidFunction));
+
+	for(int i = 0; i < KEYS::KEYS_BUTTON_COUNT; i++)
+	{
+		static uint16_t x = 0;
+		static uint16_t y = 0;
+
+		AppendObject(label[i] = new Label(m_screen, Rect(x, y, 35, 10), ""));
+		y += 10;
+		if(y > 165)
+		{
+			y = 0;
+			x += 128;
+		}
+	}
 }
 WindowClass::~WindowClass() { }
 
 void WindowClass::SetVisible(bool visible)
 {
+	if(visible)
+		UDP::RequestInputSettings();
+
 	Window::SetVisible(visible);
 
 	if(!visible)
@@ -298,12 +249,89 @@ void WindowClass::SetVisible(bool visible)
 }
 bool WindowClass::Update()
 {
-	UDP::Update(D2K::g_keys_held, Turbo::GetKeys(), nullptr,
-	            &g_circle_position, &g_cstick_position,
-	            &g_accel_status, &g_gyro_status,
-	            &g_slider_volume_status, &g_slider_3d_status,
+	static uint8_t last_slider_volume_status = g_slider_volume_status;
+	static uint8_t last_slider_3d_status = g_slider_3d_status;
+	
+	UDP::Update(0, 0, nullptr,
+	            nullptr, nullptr,
+	            nullptr, nullptr,
+	            nullptr, nullptr,
 	            0);
-	ConfigWindow::current_pressed_key = 0;
+	ConfigWindow::current_pressed_key = Key::KEY_NONE;
+
+	if(g_keys_down&KEY_L)
+		ButtonLFunction();
+#ifdef _3DS
+	else if(g_keys_down&KEY_ZL)
+		ButtonZLFunction();
+#endif
+	else if(g_keys_down&KEY_R)
+		ButtonRFunction();
+#ifdef _3DS
+	else if(g_keys_down&KEY_ZR)
+		ButtonZRFunction();
+#endif
+	else if(g_keys_down&KEY_LEFT)
+		ButtonLeftFunction();
+	else if(g_keys_down&KEY_RIGHT)
+		ButtonRightFunction();
+	else if(g_keys_down&KEY_UP)
+		ButtonUpFunction();
+	else if(g_keys_down&KEY_DOWN)
+		ButtonDownFunction();
+#ifdef _3DS
+	else if(g_keys_down&KEY_CPAD_LEFT)
+		ButtonLeftCPadFunction();
+	else if(g_keys_down&KEY_CPAD_RIGHT)
+		ButtonRightCPadFunction();
+	else if(g_keys_down&KEY_CPAD_UP)
+		ButtonUpCPadFunction();
+	else if(g_keys_down&KEY_CPAD_DOWN)
+		ButtonDownCPadFunction();
+	else if(g_keys_down&KEY_CSTICK_LEFT)
+		ButtonLeftCStickFunction();
+	else if(g_keys_down&KEY_CSTICK_RIGHT)
+		ButtonRightCStickFunction();
+	else if(g_keys_down&KEY_CSTICK_UP)
+		ButtonUpCStickFunction();
+	else if(g_keys_down&KEY_CSTICK_DOWN)
+		ButtonDownCStickFunction();
+#endif
+	else if(g_keys_down&KEY_A)
+		ButtonAFunction();
+	else if(g_keys_down&KEY_B)
+		ButtonBFunction();
+	else if(g_keys_down&KEY_X)
+		ButtonXFunction();
+	else if(g_keys_down&KEY_Y)
+		ButtonYFunction();
+	else if(g_keys_down&KEY_START)
+		ButtonStartFunction();
+	else if(g_keys_down&KEY_SELECT)
+		ButtonSelectFunction();
+#if defined(_3DS)
+	else if(last_slider_volume_status != g_slider_volume_status)
+	{
+		ButtonSliderVolumeFunction();
+		last_slider_volume_status = g_slider_volume_status;
+	}
+	else if(last_slider_3d_status != g_slider_3d_status)
+	{
+		ButtonSlider3DFunction();
+		last_slider_3d_status = g_slider_3d_status;
+	}
+#elif defined(_NDS)
+	else if(g_keys_down&KEY_BLUE)
+		ButtonBlueFunction();
+	else if(g_keys_down&KEY_YELLOW)
+		ButtonYellowFunction();
+	else if(g_keys_down&KEY_RED)
+		ButtonRedFunction();
+	else if(g_keys_down&KEY_GREEN)
+		ButtonGreenFunction();
+#endif
+	else if(g_keys_down&KEY_LID)
+		ButtonLidFunction();
 
 	return Window::Update()
 	    || Bar::g_window.Update();

@@ -1,6 +1,7 @@
 #pragma once
 
-#include <cstdint> // uint8_t, uint16_t, uint32_t
+#include <cstdint>     // uint8_t, uint16_t, uint32_t
+#include "enum_keys.h" // _END_OF_BUTTONS_, KEYS::_START_OF_BUTTONS_
 
 namespace D2K {namespace UDP{
 
@@ -51,13 +52,22 @@ typedef struct DS2KeyCommandSettingsPacket final
 // TODO: this will change
 // currently this contains 1 setting an 1 value, eventually we may include the
 // entire config file when we update and a CRC or some other verification
-typedef struct DS2KeyNormalSettingsPacket final
+typedef struct DS2KeySingleInputSettingPacket final
 {
 	uint8_t type;              // byte [0] has to by `type` across all packets
 	uint8_t profile;           // byte [1] has to by `profile` across all packets
 	uint16_t setting;
 	uint16_t value;
-} __attribute__((packed)) DS2KeyNormalSettingsPacket;
+} __attribute__((packed)) DS2KeySingleInputSettingPacket;
+
+// TODO: this will change
+// TODO: these values need to be synced between DSKEY_ and VK_ and XK_ this IS BROKEN!
+typedef struct DS2KeyInputSettingsPacket final
+{
+	uint8_t type;              // byte [0] has to by `type` across all packets
+	uint8_t profile;           // byte [1] has to by `profile` across all packets
+	uint16_t value[KEYS::KEYS_BUTTON_COUNT];
+} __attribute__((packed)) DS2KeyInputSettingsPacket;
 #ifdef _MSC_VER
 #pragma pack()
 #undef __attribute__

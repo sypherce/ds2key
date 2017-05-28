@@ -22,7 +22,7 @@
 INITIALIZE_EASYLOGGINGPP
 
 #include "common/udp.h"
-#include "key.h"
+#include "common/key.h"
 #include "input.h"
 #include "config.h"
 #include "client.h"
@@ -155,6 +155,7 @@ std::string ConvertButtonToAxis(ProfileData* profile_data, int enum_key)
 	{
 		switch(pc_key)
 		{
+#ifdef _WIN32
 		case Key::JOY_AXIS_X_MINUS:
 			profile_data->SetValue(enum_key, "&-X");
 			break;
@@ -215,6 +216,7 @@ std::string ConvertButtonToAxis(ProfileData* profile_data, int enum_key)
 		case Key::KEY_VOLUME_DOWN:
 			profile_data->SetValue(enum_key, "&-VOL");
 			break;
+#endif
 		default:
 			break;
 		}
@@ -231,7 +233,7 @@ void ProcessButtons(D2K::Client* client)
 
 	uint8_t joystick = profile_data->GetValue8(KEYS::JOY);
 	// buttons
-	for(int enum_key = _START_OF_BUTTONS_ + 1; enum_key < KEYS::_END_OF_BUTTONS_; enum_key++)
+	for(int enum_key = KEYS::_START_OF_BUTTONS_; enum_key <= KEYS::_END_OF_BUTTONS_; enum_key++)
 	{
 		uint32_t ds_button_bit = EnumKeyToNDSKeypadBit(enum_key);
 		uint16_t pc_key        = profile_data->GetVirtualKey(enum_key);
@@ -241,6 +243,7 @@ void ProcessButtons(D2K::Client* client)
 		// if (enum_key) is an analog axis
 		if(ds_axis != "")
 		{
+#ifdef _WIN32
 			// crop off the D2K_AXIS char
 			ds_axis = ds_axis.substr(D2K_AXIS_LENGTH);
 
@@ -301,6 +304,7 @@ void ProcessButtons(D2K::Client* client)
 			{
 				D2K::Input::Joystick::SetAxisSignedMax(joystick, output_axis, input_value, axis_max_value);
 			}
+#endif
 		}
 		// if (enum_key) is a digital button
 		else if(pc_key)
@@ -464,7 +468,7 @@ void ReleaseDeadClient(D2K::Client* client)
 	ProfileData* profile_data = client->GetProfileDataPointer();
 	uint8_t joystick = profile_data->GetValue8(KEYS::JOY);
 
-	for(int enum_key = _START_OF_BUTTONS_ + 1; enum_key < KEYS::_END_OF_BUTTONS_; enum_key++)
+	for(int enum_key = KEYS::_START_OF_BUTTONS_; enum_key <= KEYS::_END_OF_BUTTONS_; enum_key++)
 	{
 		uint32_t ds_button_bit = EnumKeyToNDSKeypadBit(enum_key);
 		uint16_t pc_key = profile_data->GetVirtualKey(enum_key);
@@ -503,7 +507,9 @@ void CheckForDeadClients()
 				delete(g_client_array[i]);
 				g_client_array[i] = nullptr;
 				LOG(INFO) << "Client #:" << i << " removed from inactivity.";
+#ifdef _WIN32
 				PlaySound(TEXT("DeviceDisconnect"), nullptr, SND_ASYNC);
+#endif
 			}
 			else
 			{
@@ -628,16 +634,41 @@ void Loop()
 			LOG_EVERY_N(300, TRACE) << client_pointer->GetIPString() << ":Received UDP::PACKET::NORMAL";
 			break;
 		}
-		case UDP::PACKET::NORMAL_SETTING:
+		case UDP::PACKET::SINGLE_INPUT_SETTING:
 		{
-			LOG(TRACE) << "Received UDP::PACKET::NORMAL_SETTING";
-			UDP::DS2KeyNormalSettingsPacket* normal_setting_packet = (UDP::DS2KeyNormalSettingsPacket*)&Packet;
+			LOG(TRACE) << "Received UDP::PACKET::SINGLE_INPUT_SETTING";
+			UDP::DS2KeySingleInputSettingPacket* single_input_setting_packet = (UDP::DS2KeySingleInputSettingPacket*)&Packet;
 			// If profile is active
-			if(g_client_array[normal_setting_packet->profile] != nullptr)
+			if(g_client_array[single_input_setting_packet->profile] != nullptr)
 			{
 				LOG(TRACE) << "Profile is active";
-				ProfileData* profile_data = g_client_array[normal_setting_packet->profile]->GetProfileDataPointer();
-				Config::SetProfileSetting(profile_data, normal_setting_packet->profile, normal_setting_packet->setting, normal_setting_packet->value);
+				ProfileData* profile_data = g_client_array[single_input_setting_packet->profile]->GetProfileDataPointer();
+				Config::SetProfileSetting(profile_data, single_input_setting_packet->profile, single_input_setting_packet->setting, Key::ConvertDSToPCValue(single_input_setting_packet->value));
+			}
+			break;
+		}
+		case UDP::PACKET::INPUT_SETTINGS:
+		{
+			LOG(TRACE) << "Received UDP::PACKET::INPUT_SETTINGS";
+			UDP::DS2KeyInputSettingsPacket* single_input_setting_packet = (UDP::DS2KeyInputSettingsPacket*)&Packet;
+			// If profile is active
+			if(g_client_array[Packet.profile] != nullptr)
+			{
+				LOG(TRACE) << "Profile is active";
+				UDP::DS2KeyInputSettingsPacket settings = UDP::DS2KeyInputSettingsPacket{};
+
+				settings.type = UDP::PACKET::INPUT_SETTINGS;
+
+				// Make a pointer to the profile
+				ProfileData* profile_data = g_client_array[Packet.profile]->GetProfileDataPointer();
+
+				for(int i = 0; i < KEYS::KEYS_BUTTON_COUNT; i++)
+				{
+					settings.value[i] = Key::ConvertPCToDSValue(profile_data->GetValue16(i + KEYS::_START_OF_BUTTONS_));
+				}
+
+				// Send settings packet
+				UDP::SendInputSettings(settings);
 			}
 			break;
 		}

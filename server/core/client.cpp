@@ -1,9 +1,12 @@
 // Virtual DS status
 
 #include "client.h"
-#include "key.h"
+#include "common/key.h"
 #include "common/misc.h"
 #include <sstream> // std::stringstream
+#if defined(__linux__)
+#include <arpa/inet.h>
+#endif
 
 namespace D2K {
 
@@ -380,8 +383,8 @@ const std::string& ProfileData::GetAxis(int enum_key)
 Client::Client()
 {
 	m_packet = UDP::DS2KeyPacket{};
-	m_keys =
-	m_keys_old = 0;
+	m_keys = {};
+	m_keys_old = {};
 	SetAlive(CLIENT_STATUS::ALIVE);
 }
 

@@ -64,6 +64,7 @@ typedef int socklen_t;
 #if defined(_NDS) || defined(_3DS)
 #include "core.h"
 #include "commandWindow.h"
+#include "configWindow.h"
 #endif
 
 #include "udp.h"
@@ -371,9 +372,9 @@ void SetConfigPort(uint16_t _port)
 
 #if defined(D2KCLIENT)
 
-void SendNormalSetting(DS2KeyNormalSettingsPacket setting)
+void SendNormalSetting(DS2KeySingleInputSettingPacket setting)
 {
-	Send(&setting, sizeof(DS2KeyNormalSettingsPacket));
+	Send(&setting, sizeof(DS2KeySingleInputSettingPacket));
 	LOG(TRACE) << "SendNormalSetting()";
 }
 void SendCommand(uint8_t command)
@@ -475,6 +476,16 @@ void RequestSettingsCommand()
 	LOG(TRACE) << "RequestSettingsCommand()";
 }
 
+void RequestInputSettings()
+{
+	packet = UDP::DS2KeyPacket{};                   // Clear the packet
+	packet.type = UDP::PACKET::INPUT_SETTINGS;      // Set as input settings packet
+	packet.profile = UDP::GetProfile();             // Set profile
+
+	UDP::Send(&packet, sizeof(UDP::DS2KeyPacket));  // Send the packet out
+	LOG(TRACE) << "RequestInputSettings()";
+}
+
 void ServerLookup()
 {
 	if(EMULATOR)                                        // Skip if emulating
@@ -520,6 +531,7 @@ void ListenForServer()
 		return;
 
 	DS2KeyCommandSettingsPacket command_settings_packet = DS2KeyCommandSettingsPacket{}; // Large packet
+	DS2KeyInputSettingsPacket* input_settings_packet_pointer = (DS2KeyInputSettingsPacket*)&command_settings_packet;
 	
 	// Received something
 	if(UDP::Recv(&command_settings_packet, sizeof(DS2KeyCommandSettingsPacket)) == 0)
@@ -532,6 +544,10 @@ void ListenForServer()
 		case UDP::PACKET::COMMAND_SETTINGS: // Received Command Settings
 			GUI::Command::ProcessCommandSettingsPacket(command_settings_packet);
 			LOG(TRACE) << "Received UDP::PACKET::COMMAND_SETTINGS";
+			break;
+		case UDP::PACKET::INPUT_SETTINGS:  // Received Input Settings
+			GUI::ConfigWindow::ProcessInputSettingsPacket(*input_settings_packet_pointer);
+			LOG(TRACE) << "Received UDP::PACKET::INPUT_SETTINGS";
 			break;
 		default:
 			break;
@@ -565,6 +581,11 @@ void SendCommandSettings(DS2KeyCommandSettingsPacket settings)
 {
 	Send(&settings, sizeof(DS2KeyCommandSettingsPacket));
 	LOG(TRACE) << "SendCommandSettings()";
+}
+void SendInputSettings(DS2KeyInputSettingsPacket settings)
+{
+	Send(&settings, sizeof(DS2KeyInputSettingsPacket));
+	LOG(TRACE) << "SendInputSettings()";
 }
 #endif
 

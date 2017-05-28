@@ -4,61 +4,11 @@
 #include "turboWindow.h"
 #include "gui/gui.h"
 #include "common/udp.h"
+#include "common/key.h"
 #include "config.h"
 #include "core.h"
 
 namespace D2K {namespace GUI {namespace Keyboard {
-
-// this was copied from server/core/key.h
-namespace Key {
-enum
-{
-
-JOY = 0x100,
-// Check key.cpp for final JOY value
-JOY_MAX = JOY + 31,
-
-JOY_HAT,
-JOY_HAT_UP = JOY_HAT,
-JOY_HAT_DOWN,
-JOY_HAT_LEFT,
-JOY_HAT_RIGHT,
-JOY_HAT_MAX = JOY_HAT_RIGHT,
-
-JOY_AXIS1,
-JOY_AXIS_Y_MINUS = JOY_AXIS1,
-JOY_AXIS_Y_PLUS,
-JOY_AXIS_X_MINUS,
-JOY_AXIS_X_PLUS,
-JOY_AXIS1_MAX = JOY_AXIS_X_PLUS,
-
-JOY_AXIS2,
-JOY_AXIS_RX_MINUS = JOY_AXIS2,
-JOY_AXIS_RX_PLUS,
-JOY_AXIS_Z_MINUS,
-JOY_AXIS_Z_PLUS,
-JOY_AXIS2_MAX = JOY_AXIS_Z_PLUS,
-
-JOY_AXIS3,
-JOY_AXIS_RZ_MINUS = JOY_AXIS3,
-JOY_AXIS_RZ_PLUS,
-JOY_AXIS_RY_MINUS,
-JOY_AXIS_RY_PLUS,
-JOY_AXIS3_MAX = JOY_AXIS_RY_PLUS,
-
-JOY_AXIS4,
-JOY_AXIS_SL1_MINUS = JOY_AXIS4,
-JOY_AXIS_SL1_PLUS,
-JOY_AXIS_SL0_MINUS,
-JOY_AXIS_SL0_PLUS,
-JOY_AXIS4_MAX = JOY_AXIS_SL0_PLUS,
-
-JOY_AXIS_WHL_MINUS,
-JOY_AXIS_WHL_PLUS,
-JOY_AXIS5_MAX = JOY_AXIS_WHL_PLUS,
-
-};
-}
 
 WindowClass g_window;
 
@@ -106,7 +56,7 @@ void append(uint16_t KEY)
 			ConfigWindow::current_pressed_key = 0xbb;
 			break;
 		}*/
-		case WINKEY_BACK:
+		case Key::DSKEY_BACK:
 		{
 			if(Buffer.length() > 0)
 				Buffer.resize(Buffer.length() - 1);
@@ -127,118 +77,118 @@ void ButtonCloseFunction()
 
 void ButtonEnterFunction()
 {
-	append(WINKEY_RETURN);
+	append(Key::DSKEY_RETURN);
 	ButtonCloseFunction();
 }
 
 // Keyboard Functions
-void Button1Function()              { append(WINKEY_1); }
-void Button2Function()              { append(WINKEY_2); }
-void Button3Function()              { append(WINKEY_3); }
-void Button4Function()              { append(WINKEY_4); }
-void Button5Function()              { append(WINKEY_5); }
-void Button6Function()              { append(WINKEY_6); }
-void Button7Function()              { append(WINKEY_7); }
-void Button8Function()              { append(WINKEY_8); }
-void Button9Function()              { append(WINKEY_9); }
-void Button0Function()              { append(WINKEY_0); }
+void Button1Function()              { append(Key::DSKEY_1); }
+void Button2Function()              { append(Key::DSKEY_2); }
+void Button3Function()              { append(Key::DSKEY_3); }
+void Button4Function()              { append(Key::DSKEY_4); }
+void Button5Function()              { append(Key::DSKEY_5); }
+void Button6Function()              { append(Key::DSKEY_6); }
+void Button7Function()              { append(Key::DSKEY_7); }
+void Button8Function()              { append(Key::DSKEY_8); }
+void Button9Function()              { append(Key::DSKEY_9); }
+void Button0Function()              { append(Key::DSKEY_0); }
 
-void ButtonMinusFunction()          { append(WINKEY_OEM_MINUS); }
-void ButtonEqualsFunction()         { append(WINKEY_OEM_PLUS); }
+void ButtonMinusFunction()          { append(Key::DSKEY_OEM_MINUS); }
+void ButtonEqualsFunction()         { append(Key::DSKEY_OEM_PLUS); }
 
-void ButtonEscapeFunction()         { append(WINKEY_ESCAPE); }
-void ButtonF1Function()             { append(WINKEY_F1); }
-void ButtonF2Function()             { append(WINKEY_F2); }
-void ButtonF3Function()             { append(WINKEY_F3); }
-void ButtonF4Function()             { append(WINKEY_F4); }
-void ButtonF5Function()             { append(WINKEY_F5); }
-void ButtonF6Function()             { append(WINKEY_F6); }
-void ButtonF7Function()             { append(WINKEY_F7); }
-void ButtonF8Function()             { append(WINKEY_F8); }
-void ButtonF9Function()             { append(WINKEY_F9); }
-void ButtonF10Function()            { append(WINKEY_F10); }
-void ButtonF11Function()            { append(WINKEY_F11); }
-void ButtonF12Function()            { append(WINKEY_F12); }
+void ButtonEscapeFunction()         { append(Key::DSKEY_ESCAPE); }
+void ButtonF1Function()             { append(Key::DSKEY_F1); }
+void ButtonF2Function()             { append(Key::DSKEY_F2); }
+void ButtonF3Function()             { append(Key::DSKEY_F3); }
+void ButtonF4Function()             { append(Key::DSKEY_F4); }
+void ButtonF5Function()             { append(Key::DSKEY_F5); }
+void ButtonF6Function()             { append(Key::DSKEY_F6); }
+void ButtonF7Function()             { append(Key::DSKEY_F7); }
+void ButtonF8Function()             { append(Key::DSKEY_F8); }
+void ButtonF9Function()             { append(Key::DSKEY_F9); }
+void ButtonF10Function()            { append(Key::DSKEY_F10); }
+void ButtonF11Function()            { append(Key::DSKEY_F11); }
+void ButtonF12Function()            { append(Key::DSKEY_F12); }
 
-void ButtonBackQuoteFunction()      { append(WINKEY_OEM_3); }
-void ButtonTabFunction()            { append(WINKEY_TAB); }
-void ButtonLeftBracketFunction()    { append(WINKEY_OEM_4); }
-void ButtonRightBracketFunction()   { append(WINKEY_OEM_6); }
-void ButtonBackSlashFunction()      { append(WINKEY_OEM_5); }
-void ButtonCapsLockFunction()       { append(WINKEY_CAPITAL);}
-void ButtonSemiColonFunction()      { append(WINKEY_OEM_1); }
-void ButtonQuoteFunction()          { append(WINKEY_OEM_7); }
-void ButtonLeftShiftFunction()      { append(WINKEY_LSHIFT); }
-void ButtonCommaFunction()          { append(WINKEY_OEM_COMMA); }
-void ButtonPeriodFunction()         { append(WINKEY_OEM_PERIOD); }
-void ButtonSlashFunction()          { append(WINKEY_OEM_2); }
-void ButtonRightShiftFunction()     { append(WINKEY_RSHIFT); }
-void ButtonLeftControlFunction()    { append(WINKEY_LCONTROL); }
-void ButtonLeftWinFunction()        { append(WINKEY_LWIN); }
-void ButtonLeftAltFunction()        { append(WINKEY_LMENU); }
-void ButtonSpaceFunction()          { append(WINKEY_SPACE); }
-void ButtonRightAltFunction()       { append(WINKEY_RMENU); }
-void ButtonRightWinFunction()       { append(WINKEY_RWIN); }
-void ButtonRightControlFunction()   { append(WINKEY_RCONTROL); }
+void ButtonBackQuoteFunction()      { append(Key::DSKEY_OEM_3); }
+void ButtonTabFunction()            { append(Key::DSKEY_TAB); }
+void ButtonLeftBracketFunction()    { append(Key::DSKEY_OEM_4); }
+void ButtonRightBracketFunction()   { append(Key::DSKEY_OEM_6); }
+void ButtonBackSlashFunction()      { append(Key::DSKEY_OEM_5); }
+void ButtonCapsLockFunction()       { append(Key::DSKEY_CAPITAL);}
+void ButtonSemiColonFunction()      { append(Key::DSKEY_OEM_1); }
+void ButtonQuoteFunction()          { append(Key::DSKEY_OEM_7); }
+void ButtonLeftShiftFunction()      { append(Key::DSKEY_LSHIFT); }
+void ButtonCommaFunction()          { append(Key::DSKEY_OEM_COMMA); }
+void ButtonPeriodFunction()         { append(Key::DSKEY_OEM_PERIOD); }
+void ButtonSlashFunction()          { append(Key::DSKEY_OEM_2); }
+void ButtonRightShiftFunction()     { append(Key::DSKEY_RSHIFT); }
+void ButtonLeftControlFunction()    { append(Key::DSKEY_LCONTROL); }
+void ButtonLeftWinFunction()        { append(Key::DSKEY_LWIN); }
+void ButtonLeftAltFunction()        { append(Key::DSKEY_LMENU); }
+void ButtonSpaceFunction()          { append(Key::DSKEY_SPACE); }
+void ButtonRightAltFunction()       { append(Key::DSKEY_RMENU); }
+void ButtonRightWinFunction()       { append(Key::DSKEY_RWIN); }
+void ButtonRightControlFunction()   { append(Key::DSKEY_RCONTROL); }
 
-void ButtonAFunction()              { append(WINKEY_A); }
-void ButtonBFunction()              { append(WINKEY_B); }
-void ButtonCFunction()              { append(WINKEY_C); }
-void ButtonDFunction()              { append(WINKEY_D); }
-void ButtonEFunction()              { append(WINKEY_E); }
-void ButtonFFunction()              { append(WINKEY_F); }
-void ButtonGFunction()              { append(WINKEY_G); }
-void ButtonHFunction()              { append(WINKEY_H); }
-void ButtonIFunction()              { append(WINKEY_I); }
-void ButtonJFunction()              { append(WINKEY_J); }
-void ButtonKFunction()              { append(WINKEY_K); }
-void ButtonLFunction()              { append(WINKEY_L); }
-void ButtonMFunction()              { append(WINKEY_M); }
-void ButtonNFunction()              { append(WINKEY_N); }
-void ButtonOFunction()              { append(WINKEY_O); }
-void ButtonPFunction()              { append(WINKEY_P); }
-void ButtonQFunction()              { append(WINKEY_Q); }
-void ButtonRFunction()              { append(WINKEY_R); }
-void ButtonSFunction()              { append(WINKEY_S); }
-void ButtonTFunction()              { append(WINKEY_T); }
-void ButtonUFunction()              { append(WINKEY_U); }
-void ButtonVFunction()              { append(WINKEY_V); }
-void ButtonWFunction()              { append(WINKEY_W); }
-void ButtonXFunction()              { append(WINKEY_X); }
-void ButtonYFunction()              { append(WINKEY_Y); }
-void ButtonZFunction()              { append(WINKEY_Z); }
+void ButtonAFunction()              { append(Key::DSKEY_A); }
+void ButtonBFunction()              { append(Key::DSKEY_B); }
+void ButtonCFunction()              { append(Key::DSKEY_C); }
+void ButtonDFunction()              { append(Key::DSKEY_D); }
+void ButtonEFunction()              { append(Key::DSKEY_E); }
+void ButtonFFunction()              { append(Key::DSKEY_F); }
+void ButtonGFunction()              { append(Key::DSKEY_G); }
+void ButtonHFunction()              { append(Key::DSKEY_H); }
+void ButtonIFunction()              { append(Key::DSKEY_I); }
+void ButtonJFunction()              { append(Key::DSKEY_J); }
+void ButtonKFunction()              { append(Key::DSKEY_K); }
+void ButtonLFunction()              { append(Key::DSKEY_L); }
+void ButtonMFunction()              { append(Key::DSKEY_M); }
+void ButtonNFunction()              { append(Key::DSKEY_N); }
+void ButtonOFunction()              { append(Key::DSKEY_O); }
+void ButtonPFunction()              { append(Key::DSKEY_P); }
+void ButtonQFunction()              { append(Key::DSKEY_Q); }
+void ButtonRFunction()              { append(Key::DSKEY_R); }
+void ButtonSFunction()              { append(Key::DSKEY_S); }
+void ButtonTFunction()              { append(Key::DSKEY_T); }
+void ButtonUFunction()              { append(Key::DSKEY_U); }
+void ButtonVFunction()              { append(Key::DSKEY_V); }
+void ButtonWFunction()              { append(Key::DSKEY_W); }
+void ButtonXFunction()              { append(Key::DSKEY_X); }
+void ButtonYFunction()              { append(Key::DSKEY_Y); }
+void ButtonZFunction()              { append(Key::DSKEY_Z); }
 
-void ButtonPrintScreenFunction()    { append(WINKEY_PRINT); }
-void ButtonScrollLockFunction()     { append(WINKEY_SCROLL); }
-void ButtonPauseBreakFunction()     { append(WINKEY_PAUSE); }
-void ButtonInsertFunction()         { append(WINKEY_INSERT); }
-void ButtonHomeFunction()           { append(WINKEY_HOME); }
-void ButtonPageUpFunction()         { append(WINKEY_PRIOR); }
-void ButtonNumLockFunction()        { append(WINKEY_NUMLOCK); }
-void ButtonNumPadSlashFunction()    { append(WINKEY_DIVIDE); }
-void ButtonNumPadAsteriskFunction() { append(WINKEY_MULTIPLY); }
-void ButtonDeleteFunction()         { append(WINKEY_DELETE); } // TODO: currently unsupported
-void ButtonNumPadMinusFunction()    { append(WINKEY_SUBTRACT); }
-void ButtonEndFunction()            { append(WINKEY_END); }
-void ButtonPageDownFunction()       { append(WINKEY_NEXT); }
-void ButtonNumPad7Function()        { append(WINKEY_NUMPAD7); }
-void ButtonNumPad8Function()        { append(WINKEY_NUMPAD8); }
-void ButtonNumPad9Function()        { append(WINKEY_NUMPAD9); }
-void ButtonNumPadPlusFunction()     { append(WINKEY_ADD); }
-void ButtonNumPad4Function()        { append(WINKEY_NUMPAD4); }
-void ButtonNumPad5Function()        { append(WINKEY_NUMPAD5); }
-void ButtonNumPad6Function()        { append(WINKEY_NUMPAD6); }
-void ButtonNumPad1Function()        { append(WINKEY_NUMPAD1); }
-void ButtonNumPad2Function()        { append(WINKEY_NUMPAD2); }
-void ButtonNumPad3Function()        { append(WINKEY_NUMPAD3); }
-void ButtonNumPadEnterFunction()    { append(WINKEY_RETURN); } // TODO: currently unsupported
-void ButtonNumPad0Function()        { append(WINKEY_NUMPAD0); }
-void ButtonNumPadPeriodFunction()   { append(WINKEY_DECIMAL); }
-void ButtonUpFunction()             { append(WINKEY_UP); }
-void ButtonDownFunction()           { append(WINKEY_DOWN); }
-void ButtonLeftFunction()           { append(WINKEY_LEFT); }
-void ButtonRightFunction()          { append(WINKEY_RIGHT); }
-void ButtonBackspaceFunction()      { append(WINKEY_BACK); }
+void ButtonPrintScreenFunction()    { append(Key::DSKEY_PRINT); }
+void ButtonScrollLockFunction()     { append(Key::DSKEY_SCROLL); }
+void ButtonPauseBreakFunction()     { append(Key::DSKEY_PAUSE); }
+void ButtonInsertFunction()         { append(Key::DSKEY_INSERT); }
+void ButtonHomeFunction()           { append(Key::DSKEY_HOME); }
+void ButtonPageUpFunction()         { append(Key::DSKEY_PRIOR); }
+void ButtonNumLockFunction()        { append(Key::DSKEY_NUMLOCK); }
+void ButtonNumPadSlashFunction()    { append(Key::DSKEY_DIVIDE); }
+void ButtonNumPadAsteriskFunction() { append(Key::DSKEY_MULTIPLY); }
+void ButtonDeleteFunction()         { append(Key::DSKEY_DELETE); } // TODO: currently unsupported
+void ButtonNumPadMinusFunction()    { append(Key::DSKEY_SUBTRACT); }
+void ButtonEndFunction()            { append(Key::DSKEY_END); }
+void ButtonPageDownFunction()       { append(Key::DSKEY_NEXT); }
+void ButtonNumPad7Function()        { append(Key::DSKEY_NUMPAD7); }
+void ButtonNumPad8Function()        { append(Key::DSKEY_NUMPAD8); }
+void ButtonNumPad9Function()        { append(Key::DSKEY_NUMPAD9); }
+void ButtonNumPadPlusFunction()     { append(Key::DSKEY_ADD); }
+void ButtonNumPad4Function()        { append(Key::DSKEY_NUMPAD4); }
+void ButtonNumPad5Function()        { append(Key::DSKEY_NUMPAD5); }
+void ButtonNumPad6Function()        { append(Key::DSKEY_NUMPAD6); }
+void ButtonNumPad1Function()        { append(Key::DSKEY_NUMPAD1); }
+void ButtonNumPad2Function()        { append(Key::DSKEY_NUMPAD2); }
+void ButtonNumPad3Function()        { append(Key::DSKEY_NUMPAD3); }
+void ButtonNumPadEnterFunction()    { append(Key::DSKEY_RETURN); } // TODO: currently unsupported
+void ButtonNumPad0Function()        { append(Key::DSKEY_NUMPAD0); }
+void ButtonNumPadPeriodFunction()   { append(Key::DSKEY_DECIMAL); }
+void ButtonUpFunction()             { append(Key::DSKEY_UP); }
+void ButtonDownFunction()           { append(Key::DSKEY_DOWN); }
+void ButtonLeftFunction()           { append(Key::DSKEY_LEFT); }
+void ButtonRightFunction()          { append(Key::DSKEY_RIGHT); }
+void ButtonBackspaceFunction()      { append(Key::DSKEY_BACK); }
 
 // Gamepad Functions
 void ButtonGamepadAFunction()              { append(Key::JOY+0); }
@@ -258,7 +208,7 @@ void ButtonGamepadSelectFunction()         { append(Key::JOY+6); }
 void ButtonGamepadStartFunction()          { append(Key::JOY+7); }
 
 #if defined(_3DS)
-void ButtonGamepadSliderVolumeFunction()   { append(WINKEY_VOLUME_UP); }
+void ButtonGamepadSliderVolumeFunction()   { append(Key::DSKEY_VOLUME_UP); }
 void ButtonGamepadSlider3DFunction()       { append(Key::JOY+9); }
 #elif defined(_NDS)
 void ButtonGamepadBlueFunction()           { append(Key::JOY+4); }
@@ -632,7 +582,7 @@ std::string GetString(Label* label, Edit* edit, std::string text, int maxLength)
 		            ConfigWindow::current_pressed_key); // Update keys and press active gamepad key
 		if(Keyboard::g_window.Update())                 // If pressed
 		{
-			ConfigWindow::current_pressed_key = 0;
+			ConfigWindow::current_pressed_key = Key::KEY_NONE;
 			Keyboard::edit_entry->SetText(Buffer);  // Set text
 		}
 	}

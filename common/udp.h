@@ -28,7 +28,8 @@ enum PACKET : uint8_t
 	NORMAL = ('/' + 1),
 	COMMAND,
 	COMMAND_SETTINGS,
-	NORMAL_SETTING,
+	SINGLE_INPUT_SETTING,
+	INPUT_SETTINGS,
 	ALIVE,
 	LOOKUP = 0xFF,
 };
@@ -108,7 +109,7 @@ void SetConfigPort(uint16_t _port);
 
 #if defined(D2KCLIENT)
 // TODO:: this will change
-void SendNormalSetting(DS2KeyNormalSettingsPacket setting);
+void SendNormalSetting(DS2KeySingleInputSettingPacket setting);
 
 // sends a command packet
 //  param: command Value between 0 - 11, 12 - 255 are ignored
@@ -122,6 +123,9 @@ void Update(uint32_t keys, uint32_t keysTurbo, const touchPosition* touch_positi
 
 // sends a blank COMMAND_SETTINGS packet afterwards the server replys with a real one
 void RequestSettingsCommand();
+
+// TODO: Documentation
+void RequestInputSettings();
 
 // searches for running servers on current port
 // TODO: this should actually just return any found ip and not change our currently connected IP
@@ -143,6 +147,8 @@ DS2KeyCommandSettingsPacket GetCommandSettings();
 // sends a packet containing all the command button strings, and positions
 // refer to DS2KeyCommandSettingsPacket in ds2keyPacket.h for more details
 void SendCommandSettings(DS2KeyCommandSettingsPacket settings);
+// TODO: documentation
+void SendInputSettings(DS2KeyInputSettingsPacket settings);
 #endif
 
 }} // namespace D2K::UDP

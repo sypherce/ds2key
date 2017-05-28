@@ -1,8 +1,12 @@
 #pragma once
 
-#include <windows.h>
 #include <cstdint>
+#if defined(_WIN32)
+#include <windows.h>
 #include "vjoy/inc/public.h"
+#elif defined(__linux__)
+typedef long LONG;
+#endif
 
 namespace D2K {namespace Input { namespace Joystick {
 

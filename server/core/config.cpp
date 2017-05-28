@@ -2,7 +2,7 @@
 
 #include <sstream> // ostringstream
 #include "config.h"
-#include "key.h"
+#include "common/key.h"
 #include "common/easylogging++Wrapper.h"
 #include "common/iniParserWrapper.h"
 #include "common/misc.h"
@@ -369,17 +369,17 @@ int SetProfileSetting(ProfileData* profile_data, uint8_t profile_number, uint16_
 }
 
 // Currently assigned port
-uint16_t port = DEFAULT_PORT;
+uint16_t g_port = DEFAULT_PORT;
 uint16_t GetPort()
 {
-	return Config::port;
+	return Config::g_port;
 }
 void SetConfigPort(uint16_t port)
 {
 	if(port == 0)
-		Config::port = DEFAULT_PORT;
+		Config::g_port = DEFAULT_PORT;
 	else
-		Config::port = port;
+		Config::g_port = port;
 }
 
 Client* GetClient(uint8_t profile)
@@ -389,7 +389,9 @@ Client* GetClient(uint8_t profile)
 		g_client_array[profile] = new Client();                                         // create it
 		Config::LoadProfile(g_client_array[profile]->GetProfileDataPointer(), profile); // then load it
 		LOG(INFO) << "Client #:" << (int)profile << " has connected.";
+#ifdef _WIN32
 		PlaySound(TEXT("DeviceConnect"), nullptr, SND_ASYNC);
+#endif
 	}
 	return g_client_array[profile];
 }

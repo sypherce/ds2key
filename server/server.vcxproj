@@ -145,13 +145,13 @@
     <ClInclude Include="..\common\iniParserWrapper.h" />
     <ClInclude Include="..\common\iniparser\src\dictionary.h" />
     <ClInclude Include="..\common\iniparser\src\iniparser.h" />
+    <ClInclude Include="..\common\key.h" />
     <ClInclude Include="..\common\misc.h" />
     <ClInclude Include="..\common\udp.h" />
     <ClInclude Include="core\client.h" />
     <ClInclude Include="core\config.h" />
     <ClInclude Include="core\core.h" />
     <ClInclude Include="core\input.h" />
-    <ClInclude Include="core\key.h" />
     <ClInclude Include="core\vjoy.h" />
     <ClInclude Include="core\vjoy\inc\public.h" />
     <ClInclude Include="core\vjoy\inc\vjoyinterface.h" />
@@ -246,13 +246,13 @@
     <ClCompile Include="..\common\iniParserWrapper.cpp" />
     <ClCompile Include="..\common\iniparser\src\dictionary.c" />
     <ClCompile Include="..\common\iniparser\src\iniparser.c" />
+    <ClCompile Include="..\common\key.cpp" />
     <ClCompile Include="..\common\misc.cpp" />
     <ClCompile Include="..\common\udp.cpp" />
     <ClCompile Include="core\client.cpp" />
     <ClCompile Include="core\config.cpp" />
     <ClCompile Include="core\core.cpp" />
     <ClCompile Include="core\input.cpp" />
-    <ClCompile Include="core\key.cpp" />
     <ClCompile Include="core\vjoy.cpp" />
     <ClCompile Include="gui\controls\button.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>

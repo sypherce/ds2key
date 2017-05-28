@@ -4,13 +4,13 @@
 #include "touchWindow.h"
 #include "barWindow.h"
 #include "turboWindow.h"
-#include "keyboardWindow.h"
 
 // controls
 #include "gui/button.h"
 
 // core
 #include "core.h"
+#include "common/key.h"
 #include "common/udp.h"
 
 namespace D2K {namespace GUI {namespace Touch {
@@ -78,12 +78,12 @@ bool WindowClass::Update()
 
 void ButtonLeftFunction()
 {
-	key_press = Keyboard::WINKEY_LBUTTON;
+	key_press = Key::DSKEY_LBUTTON;
 }
 
 void ButtonRightFunction()
 {
-	key_press = Keyboard::WINKEY_RBUTTON;
+	key_press = Key::DSKEY_RBUTTON;
 }
 
 }}} // namespace D2K::GUI::Touch

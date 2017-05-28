@@ -7,10 +7,279 @@
 // XK_Return = "Key::KEY_RETURN"
 
 #include "key.h"
+#include "misc.h"
 
 namespace D2K {namespace Key {
 
+DSKeyEntry g_ds_table[] = {
+	{Key::KEY_NONE, Key::DSKEY_NONE},
+	{Key::KEY_VOID, Key::DSKEY_VOID},
+
+	{Key::KEY_LBUTTON, Key::DSKEY_LBUTTON},
+	{Key::KEY_RBUTTON, Key::DSKEY_RBUTTON},
+	{Key::KEY_CANCEL, Key::DSKEY_CANCEL},
+	{Key::KEY_MBUTTON, Key::DSKEY_MBUTTON},
+	{Key::KEY_XBUTTON1, Key::DSKEY_XBUTTON1},
+	{Key::KEY_XBUTTON2, Key::DSKEY_XBUTTON2},
+	{Key::KEY_BACK, Key::DSKEY_BACK},
+	{Key::KEY_TAB, Key::DSKEY_TAB},
+	{Key::KEY_CLEAR, Key::DSKEY_CLEAR},
+	{Key::KEY_RETURN, Key::DSKEY_RETURN},
+	{Key::KEY_SHIFT, Key::DSKEY_SHIFT},
+	{Key::KEY_CONTROL, Key::DSKEY_CONTROL},
+	{Key::KEY_MENU, Key::DSKEY_MENU},
+	{Key::KEY_PAUSE, Key::DSKEY_PAUSE},
+	{Key::KEY_CAPITAL, Key::DSKEY_CAPITAL},
+	{Key::KEY_KANA, Key::DSKEY_KANA},
+	{Key::KEY_HANGEUL, Key::DSKEY_HANGEUL},
+	{Key::KEY_HANGUL, Key::DSKEY_HANGUL},
+	{Key::KEY_JUNJA, Key::DSKEY_JUNJA},
+	{Key::KEY_FINAL, Key::DSKEY_FINAL},
+	{Key::KEY_HANJA, Key::DSKEY_HANJA},
+	{Key::KEY_KANJI, Key::DSKEY_KANJI},
+	{Key::KEY_ESCAPE, Key::DSKEY_ESCAPE},
+	{Key::KEY_CONVERT, Key::DSKEY_CONVERT},
+	{Key::KEY_NONCONVERT, Key::DSKEY_NONCONVERT},
+	{Key::KEY_ACCEPT, Key::DSKEY_ACCEPT},
+	{Key::KEY_MODECHANGE, Key::DSKEY_MODECHANGE},
+	{Key::KEY_SPACE, Key::DSKEY_SPACE},
+	{Key::KEY_PRIOR, Key::DSKEY_PRIOR},
+	{Key::KEY_NEXT, Key::DSKEY_NEXT},
+	{Key::KEY_END, Key::DSKEY_END},
+	{Key::KEY_HOME, Key::DSKEY_HOME},
+	{Key::KEY_LEFT, Key::DSKEY_LEFT},
+	{Key::KEY_UP, Key::DSKEY_UP},
+	{Key::KEY_RIGHT, Key::DSKEY_RIGHT},
+	{Key::KEY_DOWN, Key::DSKEY_DOWN},
+	{Key::KEY_SELECT, Key::DSKEY_SELECT},
+	{Key::KEY_PRINT, Key::DSKEY_PRINT},
+	{Key::KEY_EXEC, Key::DSKEY_EXEC},
+	{Key::KEY_SNAPSHOT, Key::DSKEY_SNAPSHOT},
+	{Key::KEY_INSERT, Key::DSKEY_INSERT},
+	{Key::KEY_DELETE, Key::DSKEY_DELETE},
+	{Key::KEY_HELP, Key::DSKEY_HELP},
+	{Key::KEY_0, Key::DSKEY_0},
+	{Key::KEY_1, Key::DSKEY_1},
+	{Key::KEY_2, Key::DSKEY_2},
+	{Key::KEY_3, Key::DSKEY_3},
+	{Key::KEY_4, Key::DSKEY_4},
+	{Key::KEY_5, Key::DSKEY_5},
+	{Key::KEY_6, Key::DSKEY_6},
+	{Key::KEY_7, Key::DSKEY_7},
+	{Key::KEY_8, Key::DSKEY_8},
+	{Key::KEY_9, Key::DSKEY_9},
+	{Key::KEY_A, Key::DSKEY_A},
+	{Key::KEY_B, Key::DSKEY_B},
+	{Key::KEY_C, Key::DSKEY_C},
+	{Key::KEY_D, Key::DSKEY_D},
+	{Key::KEY_E, Key::DSKEY_E},
+	{Key::KEY_F, Key::DSKEY_F},
+	{Key::KEY_G, Key::DSKEY_G},
+	{Key::KEY_H, Key::DSKEY_H},
+	{Key::KEY_I, Key::DSKEY_I},
+	{Key::KEY_J, Key::DSKEY_J},
+	{Key::KEY_K, Key::DSKEY_K},
+	{Key::KEY_L, Key::DSKEY_L},
+	{Key::KEY_M, Key::DSKEY_M},
+	{Key::KEY_N, Key::DSKEY_N},
+	{Key::KEY_O, Key::DSKEY_O},
+	{Key::KEY_P, Key::DSKEY_P},
+	{Key::KEY_Q, Key::DSKEY_Q},
+	{Key::KEY_R, Key::DSKEY_R},
+	{Key::KEY_S, Key::DSKEY_S},
+	{Key::KEY_T, Key::DSKEY_T},
+	{Key::KEY_U, Key::DSKEY_U},
+	{Key::KEY_V, Key::DSKEY_V},
+	{Key::KEY_W, Key::DSKEY_W},
+	{Key::KEY_X, Key::DSKEY_X},
+	{Key::KEY_Y, Key::DSKEY_Y},
+	{Key::KEY_Z, Key::DSKEY_Z},
+	{Key::KEY_LWIN, Key::DSKEY_LWIN},
+	{Key::KEY_RWIN, Key::DSKEY_RWIN},
+	{Key::KEY_APPS, Key::DSKEY_APPS},
+	{Key::KEY_SLEEP, Key::DSKEY_SLEEP},
+	{Key::KEY_NUMPAD0, Key::DSKEY_NUMPAD0},
+	{Key::KEY_NUMPAD1, Key::DSKEY_NUMPAD1},
+	{Key::KEY_NUMPAD2, Key::DSKEY_NUMPAD2},
+	{Key::KEY_NUMPAD3, Key::DSKEY_NUMPAD3},
+	{Key::KEY_NUMPAD4, Key::DSKEY_NUMPAD4},
+	{Key::KEY_NUMPAD5, Key::DSKEY_NUMPAD5},
+	{Key::KEY_NUMPAD6, Key::DSKEY_NUMPAD6},
+	{Key::KEY_NUMPAD7, Key::DSKEY_NUMPAD7},
+	{Key::KEY_NUMPAD8, Key::DSKEY_NUMPAD8},
+	{Key::KEY_NUMPAD9, Key::DSKEY_NUMPAD9},
+	{Key::KEY_MULTIPLY, Key::DSKEY_MULTIPLY},
+	{Key::KEY_ADD, Key::DSKEY_ADD},
+	{Key::KEY_SEPARATOR, Key::DSKEY_SEPARATOR},
+	{Key::KEY_SUBTRACT, Key::DSKEY_SUBTRACT},
+	{Key::KEY_DECIMAL, Key::DSKEY_DECIMAL},
+	{Key::KEY_DIVIDE, Key::DSKEY_DIVIDE},
+	{Key::KEY_F1, Key::DSKEY_F1},
+	{Key::KEY_F2, Key::DSKEY_F2},
+	{Key::KEY_F3, Key::DSKEY_F3},
+	{Key::KEY_F4, Key::DSKEY_F4},
+	{Key::KEY_F5, Key::DSKEY_F5},
+	{Key::KEY_F6, Key::DSKEY_F6},
+	{Key::KEY_F7, Key::DSKEY_F7},
+	{Key::KEY_F8, Key::DSKEY_F8},
+	{Key::KEY_F9, Key::DSKEY_F9},
+	{Key::KEY_F10, Key::DSKEY_F10},
+	{Key::KEY_F11, Key::DSKEY_F11},
+	{Key::KEY_F12, Key::DSKEY_F12},
+	{Key::KEY_F13, Key::DSKEY_F13},
+	{Key::KEY_F14, Key::DSKEY_F14},
+	{Key::KEY_F15, Key::DSKEY_F15},
+	{Key::KEY_F16, Key::DSKEY_F16},
+	{Key::KEY_F17, Key::DSKEY_F17},
+	{Key::KEY_F18, Key::DSKEY_F18},
+	{Key::KEY_F19, Key::DSKEY_F19},
+	{Key::KEY_F20, Key::DSKEY_F20},
+	{Key::KEY_F21, Key::DSKEY_F21},
+	{Key::KEY_F22, Key::DSKEY_F22},
+	{Key::KEY_F23, Key::DSKEY_F23},
+	{Key::KEY_F24, Key::DSKEY_F24},
+	{Key::KEY_NUMLOCK, Key::DSKEY_NUMLOCK},
+	{Key::KEY_SCROLL, Key::DSKEY_SCROLL},
+	{Key::KEY_LSHIFT, Key::DSKEY_LSHIFT},
+	{Key::KEY_RSHIFT, Key::DSKEY_RSHIFT},
+	{Key::KEY_LCONTROL, Key::DSKEY_LCONTROL},
+	{Key::KEY_RCONTROL, Key::DSKEY_RCONTROL},
+	{Key::KEY_LMENU, Key::DSKEY_LMENU},
+	{Key::KEY_RMENU, Key::DSKEY_RMENU},
+	{Key::KEY_BROWSER_BACK, Key::DSKEY_BROWSER_BACK},
+	{Key::KEY_BROWSER_FORWARD, Key::DSKEY_BROWSER_FORWARD},
+	{Key::KEY_BROWSER_REFRESH, Key::DSKEY_BROWSER_REFRESH},
+	{Key::KEY_BROWSER_STOP, Key::DSKEY_BROWSER_STOP},
+	{Key::KEY_BROWSER_SEARCH, Key::DSKEY_BROWSER_SEARCH},
+	{Key::KEY_BROWSER_FAVORITES, Key::DSKEY_BROWSER_FAVORITES},
+	{Key::KEY_BROWSER_HOME, Key::DSKEY_BROWSER_HOME},
+	{Key::KEY_VOLUME_MUTE, Key::DSKEY_VOLUME_MUTE},
+	{Key::KEY_VOLUME_DOWN, Key::DSKEY_VOLUME_DOWN},
+	{Key::KEY_VOLUME_UP, Key::DSKEY_VOLUME_UP},
+	{Key::KEY_MEDIA_NEXT_TRACK, Key::DSKEY_MEDIA_NEXT_TRACK},
+	{Key::KEY_MEDIA_PREV_TRACK, Key::DSKEY_MEDIA_PREV_TRACK},
+	{Key::KEY_MEDIA_STOP, Key::DSKEY_MEDIA_STOP},
+	{Key::KEY_MEDIA_PLAY_PAUSE, Key::DSKEY_MEDIA_PLAY_PAUSE},
+	{Key::KEY_LAUNCH_MAIL, Key::DSKEY_LAUNCH_MAIL},
+	{Key::KEY_LAUNCH_MEDIA_SELECT, Key::DSKEY_LAUNCH_MEDIA_SELECT},
+	{Key::KEY_LAUNCH_APP1, Key::DSKEY_LAUNCH_APP1},
+	{Key::KEY_LAUNCH_APP2, Key::DSKEY_LAUNCH_APP2},
+	{Key::KEY_OEM_1, Key::DSKEY_OEM_1},
+	{Key::KEY_OEM_PLUS, Key::DSKEY_OEM_PLUS},
+	{Key::KEY_OEM_COMMA, Key::DSKEY_OEM_COMMA},
+	{Key::KEY_OEM_MINUS, Key::DSKEY_OEM_MINUS},
+	{Key::KEY_OEM_PERIOD, Key::DSKEY_OEM_PERIOD},
+	//{Key::KEY_OEM_2, Key::DSKEY_OEM_2}, // KEY_SLASH
+	{Key::KEY_OEM_3, Key::DSKEY_OEM_3},
+	{Key::KEY_OEM_4, Key::DSKEY_OEM_4},
+	//{Key::KEY_OEM_5, Key::DSKEY_OEM_5}, // KEY_BACKSLASH
+	{Key::KEY_OEM_6, Key::DSKEY_OEM_6},
+	{Key::KEY_OEM_7, Key::DSKEY_OEM_7},
+	{Key::KEY_OEM_8, Key::DSKEY_OEM_8},
+	{Key::KEY_OEM_102, Key::DSKEY_OEM_102},
+	{Key::KEY_PROCESSKEY, Key::DSKEY_PROCESSKEY},
+	{Key::KEY_PACKET, Key::DSKEY_PACKET},
+	{Key::KEY_ATTN, Key::DSKEY_ATTN},
+	{Key::KEY_CRSEL, Key::DSKEY_CRSEL},
+	{Key::KEY_EXSEL, Key::DSKEY_EXSEL},
+	{Key::KEY_EREOF, Key::DSKEY_EREOF},
+	{Key::KEY_PLAY, Key::DSKEY_PLAY},
+	{Key::KEY_ZOOM, Key::DSKEY_ZOOM},
+	{Key::KEY_NONAME, Key::DSKEY_NONAME},
+	{Key::KEY_PA1, Key::DSKEY_PA1},
+	{Key::KEY_OEM_CLEAR, Key::DSKEY_OEM_CLEAR},
+	{Key::KEY_SLASH, Key::DSKEY_SLASH},
+	{Key::KEY_BACKSLASH, Key::DSKEY_BACKSLASH},
+	{Key::JOY, JOY},
+	{Key::JOY + 1,  Key::JOY + 1},
+	{Key::JOY + 2,  Key::JOY + 2},
+	{Key::JOY + 3,  Key::JOY + 3},
+	{Key::JOY + 4,  Key::JOY + 4},
+	{Key::JOY + 5,  Key::JOY + 5},
+	{Key::JOY + 6,  Key::JOY + 6},
+	{Key::JOY + 7,  Key::JOY + 7},
+	{Key::JOY + 8,  Key::JOY + 8},
+	{Key::JOY + 9,  Key::JOY + 9},
+	{Key::JOY + 10, Key::JOY + 10},
+	{Key::JOY + 11, Key::JOY + 11},
+	{Key::JOY + 12, Key::JOY + 12},
+	{Key::JOY + 13, Key::JOY + 13},
+	{Key::JOY + 14, Key::JOY + 14},
+	{Key::JOY + 15, Key::JOY + 15},
+	{Key::JOY + 16, Key::JOY + 16},
+	{Key::JOY + 17, Key::JOY + 17},
+	{Key::JOY + 18, Key::JOY + 18},
+	{Key::JOY + 19, Key::JOY + 19},
+	{Key::JOY + 20, Key::JOY + 20},
+	{Key::JOY + 21, Key::JOY + 21},
+	{Key::JOY + 22, Key::JOY + 22},
+	{Key::JOY + 23, Key::JOY + 23},
+	{Key::JOY + 24, Key::JOY + 24},
+	{Key::JOY + 25, Key::JOY + 25},
+	{Key::JOY + 26, Key::JOY + 26},
+	{Key::JOY + 27, Key::JOY + 27},
+	{Key::JOY + 28, Key::JOY + 28},
+	{Key::JOY + 29, Key::JOY + 29},
+	{Key::JOY + 30, Key::JOY + 30},
+	{Key::JOY + 31, Key::JOY + 31},
+
+	{Key::JOY_HAT_UP,         Key::JOY_HAT_UP},
+	{Key::JOY_HAT_DOWN,       Key::JOY_HAT_DOWN},
+	{Key::JOY_HAT_LEFT,       Key::JOY_HAT_LEFT},
+	{Key::JOY_HAT_RIGHT,      Key::JOY_HAT_RIGHT},
+
+	{Key::JOY_AXIS_Y_MINUS,   Key::JOY_AXIS_Y_MINUS},
+	{Key::JOY_AXIS_Y_PLUS,    Key::JOY_AXIS_Y_PLUS},
+	{Key::JOY_AXIS_X_MINUS,   Key::JOY_AXIS_X_MINUS},
+	{Key::JOY_AXIS_X_PLUS,    Key::JOY_AXIS_X_PLUS},
+
+	{Key::JOY_AXIS_RX_MINUS,  Key::JOY_AXIS_RX_MINUS},
+	{Key::JOY_AXIS_RX_PLUS,   Key::JOY_AXIS_RX_PLUS},
+	{Key::JOY_AXIS_Z_MINUS,   Key::JOY_AXIS_Z_MINUS},
+	{Key::JOY_AXIS_Z_PLUS,    Key::JOY_AXIS_Z_PLUS},
+
+	{Key::JOY_AXIS_RZ_MINUS,  Key::JOY_AXIS_RZ_MINUS},
+	{Key::JOY_AXIS_RZ_PLUS,   Key::JOY_AXIS_RZ_PLUS},
+	{Key::JOY_AXIS_RY_MINUS,  Key::JOY_AXIS_RY_MINUS},
+	{Key::JOY_AXIS_RY_PLUS,   Key::JOY_AXIS_RY_PLUS},
+
+	{Key::JOY_AXIS_SL1_MINUS, Key::JOY_AXIS_SL1_MINUS},
+	{Key::JOY_AXIS_SL1_PLUS,  Key::JOY_AXIS_SL1_PLUS},
+	{Key::JOY_AXIS_SL0_MINUS, Key::JOY_AXIS_SL0_MINUS},
+	{Key::JOY_AXIS_SL0_PLUS,  Key::JOY_AXIS_SL0_PLUS},
+
+	{Key::JOY_AXIS_WHL_MINUS, Key::JOY_AXIS_WHL_MINUS},
+	{Key::JOY_AXIS_WHL_PLUS,  Key::JOY_AXIS_WHL_PLUS},
+	{0xffffffff,  0xffffffff},
+};
+
+uint32_t ConvertDSToPCValue(uint32_t ds_value)
+{
+	for(DSKeyEntry* entry = g_ds_table; entry->pc_value != Key::ENTRY_MAX; entry++)
+	{
+		if(entry->ds_value == ds_value)
+			return entry->pc_value;
+	}
+
+	return Key::KEY_NONE;
+}
+
+uint32_t ConvertPCToDSValue(uint32_t pc_value)
+{
+	for(DSKeyEntry* entry = g_ds_table; entry->pc_value != Key::ENTRY_MAX; entry++)
+	{
+		if(entry->pc_value == pc_value)
+			return entry->ds_value;
+	}
+
+	return Key::KEY_NONE;
+}
+
+
 KeyEntry g_table[] = {
+	{Key::KEY_NONE, "KEY_NONE"},
+	{Key::KEY_VOID, "KEY_VOID"},
+
 	{Key::KEY_LBUTTON, "KEY_LBUTTON"},
 	{Key::KEY_RBUTTON, "KEY_RBUTTON"},
 	{Key::KEY_CANCEL, "KEY_CANCEL"},
@@ -246,14 +515,12 @@ KeyEntry g_table[] = {
 
 	{Key::JOY_AXIS_WHL_MINUS, "JOY_AXIS_WHL_MINUS"},
 	{Key::JOY_AXIS_WHL_PLUS,  "JOY_AXIS_WHL_PLUS"},
-
-	{Key::KEY_NONE, "KEY_NONE"},
-	{Key::KEY_VOID, "KEY_VOID"}
+	{0xffffffff,  "End Of Entries"},
 };
 
 uint32_t GetNumber(const char* key)
 {
-	for(KeyEntry* entry = g_table; entry->value != Key::KEY_VOID; entry++)
+	for(KeyEntry* entry = g_table; entry->value != Key::ENTRY_MAX; entry++)
 	{
 		if(!strcmp(entry->text, key))
 			return entry->value;
@@ -264,7 +531,7 @@ uint32_t GetNumber(const char* key)
 
 const char* GetString(uint32_t key)
 {
-	for(KeyEntry* entry = g_table; entry->value != Key::KEY_VOID; entry++)
+	for(KeyEntry* entry = g_table; entry->value != Key::ENTRY_MAX; entry++)
 	{
 		if(entry->value == key)
 			return entry->text;
